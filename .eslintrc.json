@@ -1,0 +1,27 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript", "eslint:recommended"],
+  "plugins": ["@typescript-eslint", "simple-import-sort"],
+  "rules": {
+    "no-unused-vars": "warn",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // 1. Side effect imports at the start. To import reset.css and global styles at the top of my main file.
+          ["^\\u0000"],
+          // 2. `react` and packages: Things that start with a letter (or digit or underscore), or `@` followed by a letter.
+          ["^react$", "^@?\\w"],
+          // 3. Absolute imports and other imports `@/foo`.
+          // Anything not matched in another group. (also relative imports starting with "../")
+          ["^@", "^"],
+          // 4. relative imports from same folder "./" (To have them grouped together)
+          ["^\\./"],
+          // 5. style module imports always come last, this helps to avoid CSS order issues
+          ["^.+\\.(module.css|module.scss)$"],
+          // 6. media imports
+          ["^.+\\.(gif|png|svg|jpg)$"]
+        ]
+      }
+    ]
+  }
+}

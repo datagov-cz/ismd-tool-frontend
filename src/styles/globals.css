@@ -1,0 +1,107 @@
+@import './govDesignSystem.css';
+@import '../fonts/roboto.css';
+
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-blue: #1d3c5d;
+  --color-blue-subtle: #e5eef9;
+  --color-secondary: #d1d1d1;
+  --color-dark-primary: #262626;
+  --color-dark-secondary: #4f4f4f;
+  --color-link: #c5dbf2;
+  --color-blue-primary: #1e62a2;
+  --color-footer-separator: #2362a2;
+  --color-page-background: #f6f6f6;
+  --color-border-grey: #e7e7e7;
+  --breakpoint-desktop: 1200px;
+  --spacing-desktop: 1200px;
+  --color-blue-hover: #1e5086;
+  --color-blue-outlined-hover: #c5dbf2;
+  --color-button-solid-disabled: #d1d1d1;
+
+  /* Dark mode colors */
+  --color-dark-bg: #1a1a1a;
+  --color-dark-surface: #2d2d2d;
+  --color-dark-text: #ffffff;
+  --color-dark-text-secondary: #b3b3b3;
+  --color-dark-border: #404040;
+  --color-dark-blue-subtle: #1e3a5f;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--color-page-background);
+  font-family: Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Dark mode styles */
+:root[data-theme='dark'] {
+  --color-page-background: var(--color-dark-bg);
+  --color-blue-subtle: var(--color-dark-blue-subtle);
+  --color-border-grey: var(--color-dark-border);
+  --color-dark-primary: var(--color-dark-text);
+}
+
+[data-theme='dark'] body {
+  background: var(--color-dark-bg);
+  color: var(--color-dark-text);
+}
+
+[data-theme='dark'] .bg-white {
+  background-color: var(--color-dark-surface);
+}
+
+[data-theme='dark'] .text-blue-primary {
+  color: #4a9eff;
+}
+
+[data-theme='dark'] .bg-blue-subtle {
+  background-color: var(--color-dark-blue-subtle);
+}
+
+[data-theme='dark'] .border-border-grey {
+  border-color: var(--color-dark-border);
+}
+
+[data-theme='dark'] .text-dark-primary {
+  color: var(--color-dark-text);
+}
+
+[data-theme='dark'] .text-dark-secondary {
+  color: var(--color-dark-text-secondary);
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+@layer {
+  table {
+    @apply border-collapse;
+  }
+
+  table td,
+  table th {
+    @apply text-left py-2 pr-6 min-w-[180px] max-w-[130px] align-top;
+  }
+}

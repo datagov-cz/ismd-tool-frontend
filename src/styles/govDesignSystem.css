@@ -1,0 +1,66 @@
+@import '@gov-design-system-ce/styles/lib/tokens.css';
+/* General settings. */
+/* @import '@gov-design-system-ce/styles/lib/styles.css'; */
+/* Styles for basic layout and containers. */
+/* @import '@gov-design-system-ce/styles/lib/layout.css'; */
+/* Styles of individual components. */
+@import '@gov-design-system-ce/styles/lib/components.css';
+
+gov-button[type='link'],
+gov-button[type='link'] .element,
+.gov-button[type='link'],
+.gov-button[type='link'] .element {
+  text-decoration: none;
+}
+
+footer gov-link .element,
+.gov-link .element {
+  color: var(--color-link);
+}
+
+header gov-link .element:visited > span,
+gov-link .element:visited gov-icon,
+gov-link .element:visited .gov-icon,
+.gov-link .element:visited > span,
+.gov-link .element:visited gov-icon,
+.gov-link .element:visited .gov-icon {
+  color: var(--color-blue-primary);
+}
+
+footer gov-link .element:visited > span,
+gov-link .element:visited gov-icon,
+gov-link .element:visited .gov-icon,
+.gov-link .element:visited > span,
+.gov-link .element:visited gov-icon,
+.gov-link .element:visited .gov-icon {
+  color: var(--color-link);
+}
+
+gov-dropdown li gov-button[expanded=''] .element,
+gov-dropdown li gov-button[expanded='true' i] .element,
+gov-dropdown li gov-button[expanded='1'] .element,
+gov-dropdown li .gov-button[expanded=''] .element,
+gov-dropdown li .gov-button[expanded='true' i] .element,
+gov-dropdown li .gov-button[expanded='1'] .element,
+.gov-dropdown li gov-button[expanded=''] .element,
+.gov-dropdown li gov-button[expanded='true' i] .element,
+.gov-dropdown li gov-button[expanded='1'] .element,
+.gov-dropdown li .gov-button[expanded=''] .element,
+.gov-dropdown li .gov-button[expanded='true' i] .element,
+.gov-dropdown li .gov-button[expanded='1'] .element {
+  justify-content: start;
+}
+
+gov-wizard-item,
+.gov-wizard-item {
+  background-color: transparent;
+}
+
+.gov-tooltip span {
+  @apply flex items-center gap-x-2;
+}
+
+gov-tooltip-content,
+.gov-tooltip-content {
+  visibility: visible;
+}

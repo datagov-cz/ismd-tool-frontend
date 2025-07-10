@@ -1,0 +1,22 @@
+name: Build Docker on Dev
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # Tests are currently disabled in the reusable-test.yml workflow
+  # as there's no test script defined in package.json
+  run-tests:
+    uses: ./.github/workflows/reusable-test.yml
+
+  build-docker:
+    needs: run-tests
+    uses: ./.github/workflows/reusable-docker-build.yml
+    with:
+      branch: dev
