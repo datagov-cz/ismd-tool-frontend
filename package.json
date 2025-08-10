@@ -15,16 +15,16 @@
   },
   "dependencies": {
     "@gov-design-system-ce/react": "^2.4.2",
-    "@tailwindcss/postcss": "^4.1.8",
-    "@tanstack/react-query": "^5.80.6",
-    "axios": "^1.9.0",
-    "next": "14.2.29",
-    "next-intl": "^4.1.0",
-    "postcss": "^8.5.4",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@tanstack/react-query": "^5.84.2",
+    "axios": "^1.11.0",
+    "next": "14.2.31",
+    "next-intl": "^4.3.4",
+    "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwindcss": "^4.1.5",
-    "zustand": "^5.0.5"
+    "tailwindcss": "^4.1.11",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
@@ -32,12 +32,12 @@
     "@types/react-dom": "^18.3.7",
     "copyfiles": "^2.4.1",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.29",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.4.1",
+    "eslint-config-next": "14.2.31",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "orval": "^7.9.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.3"
+    "orval": "^7.11.2",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
   }
 }
