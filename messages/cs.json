@@ -59,6 +59,9 @@
     "WelcomeSection": {
       "Title": "Vítejte v nástroji ISMD",
       "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit."
+    },
+    "News": {
+      "Title": "Co je nového"
     }
   }
 }

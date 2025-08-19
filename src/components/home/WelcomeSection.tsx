@@ -1,0 +1,21 @@
+import { GovButton } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
+
+export const WelcomeSection = () => {
+  const t = useTranslations('Home');
+
+  return (
+    <div className="max-w-[780px] mx-auto flex flex-col items-center gap-y-6">
+      <p className="text-center text-xl lg:text-2xl">
+        {t('WelcomeSection.Description')}
+      </p>
+      <GovButton type="solid" size="l" color="primary" slot="button">
+        {t('LoginButton')}
+      </GovButton>
+      <h2 className="text-2xl lg:text-3xl font-bold">
+        {t('WelcomeSection.Title')}
+      </h2>
+      <p></p>
+    </div>
+  );
+};
