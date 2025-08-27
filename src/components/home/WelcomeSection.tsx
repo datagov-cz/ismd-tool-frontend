@@ -15,7 +15,10 @@ export const WelcomeSection = () => {
       <h2 className="text-2xl lg:text-3xl font-bold">
         {t('WelcomeSection.Title')}
       </h2>
-      <p></p>
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem nihil
+        dignissimos numquam. Doloremque, exercitationem natus.
+      </p>
     </div>
   );
 };

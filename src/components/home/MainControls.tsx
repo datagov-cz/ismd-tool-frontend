@@ -26,7 +26,7 @@ export const MainControls = () => {
           <GovFormSearch>
             <GovFormInput
               slot="input"
-              placeholder="Vyberte slovník z Výrobní linky..."
+              placeholder={t('MainControls.SearchPlaceholder')}
             />
             <GovButton slot="button">
               <GovIcon name="search" slot="icon-start" />

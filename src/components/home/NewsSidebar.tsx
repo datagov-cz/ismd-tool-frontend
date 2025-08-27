@@ -1,24 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { NewsArticle } from './NewsArticle';
-
-const tempArticles = [
-  {
-    id: 1,
-    date: '2.5.2025',
-    title: 'Nová funkce pro správu slovníků',
-    description:
-      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium, totam ab commodi ut veniam similique laboriosam enim odit quaerat cupiditate?',
-    href: '/',
-  },
-  {
-    id: 2,
-    date: '28.4.2025',
-    title: 'Aktualizace uživatelského rozhraní',
-    description:
-      'Vylepšili jsme uživatelské rozhraní pro lepší přehlednost a snadnější používání aplikace.',
-    href: '/',
-  },
-];
+import { tempArticles } from '@/lib/constants';
 
 export function NewsSidebar() {
   const t = useTranslations('Home');

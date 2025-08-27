@@ -52,7 +52,8 @@
   "Home": {
     "MainControls": {
       "OpenDictFromFile": "Otevřít slovník ze souboru...",
-      "CreateNewDict": "Vytvořit nový slovník..."
+      "CreateNewDict": "Vytvořit nový slovník...",
+      "SearchPlaceholder": "Hledat pojmy a slovníky..."
     },
     "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
     "LoginButton": "Přihlásit",
