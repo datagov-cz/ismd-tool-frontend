@@ -1,4 +1,5 @@
-import React, { ComponentPropsWithoutRef } from 'react';
+import { ComponentPropsWithoutRef } from 'react';
+import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import { highlight } from 'sugar-high';
 
@@ -109,10 +110,9 @@ const components = {
   ),
 };
 
-declare global {
-  type MDXProvidedComponents = typeof components;
-}
-
-export function useMDXComponents(): MDXProvidedComponents {
-  return components;
+export function useMDXComponents(userComponents?: MDXComponents): MDXComponents {
+  return {
+    ...components,
+    ...userComponents,
+  };
 }

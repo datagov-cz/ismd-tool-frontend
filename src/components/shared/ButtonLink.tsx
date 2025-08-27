@@ -10,7 +10,6 @@ interface Props extends LinkProps {
 
 export const ButtonLink = ({
   href,
-  color = 'primary',
   type = 'base',
   className,
   children,

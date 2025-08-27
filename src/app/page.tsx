@@ -1,5 +1,5 @@
-import { NewsSidebar } from '@/components/home/NewsSidebar';
 import { MainControls } from '@/components/home/MainControls';
+import { NewsSidebar } from '@/components/home/NewsSidebar';
 import { WelcomeSection } from '@/components/home/WelcomeSection';
 
 export default function Home() {

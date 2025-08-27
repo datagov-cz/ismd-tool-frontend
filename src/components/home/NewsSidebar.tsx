@@ -1,6 +1,8 @@
 import { useTranslations } from 'next-intl';
-import { NewsArticle } from './NewsArticle';
+
 import { tempArticles } from '@/lib/constants';
+
+import { NewsArticle } from './NewsArticle';
 
 export function NewsSidebar() {
   const t = useTranslations('Home');
