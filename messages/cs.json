@@ -2,13 +2,22 @@
   "Header": {
     "LogoTitle": "Informační systém pro modelování dat",
     "Nav": {
-      "Link1": "Nástroj na tvorbu slovníků",
-      "Link2": "Dokumentace API",
+      "Link1": "Nápověda",
       "Dropdown": {
         "Label": "Zpětná vazba",
         "Link1": "Nahlásit chybu",
         "Link2": "Navrhnout vylepšení"
       }
+    },
+    "NavLogged": {
+      "Link1": "Nastavení",
+      "Link2": "Nápověda",
+      "Dropdown": {
+        "Label": "Zpětná vazba",
+        "Link1": "Nahlásit chybu",
+        "Link2": "Navrhnout vylepšení"
+      },
+      "Logout": "Odhlásit"
     },
     "MenuButtonAria": "Otevřít navigaci"
   },
@@ -41,144 +50,19 @@
     "BackToTopAria": "Na začátek stránky"
   },
   "Home": {
-    "Banner": {
-      "Headline": "Kontrola a převod slovníků",
-      "Description": "Kontrola slovníků a jejich převod do formátu dle Otevřené formální normy.",
-      "Button": "Jak to funguje?"
+    "MainControls": {
+      "OpenDictFromFile": "Otevřít slovník ze souboru...",
+      "CreateNewDict": "Vytvořit nový slovník...",
+      "SearchPlaceholder": "Hledat pojmy a slovníky..."
     },
-    "Message": {
-      "Content": "Nevíte, co jsou slovníky? Navštivte stránku",
-      "Link": "Popis dat.",
-      "CloseButtonAria": "Zavřít zprávu"
+    "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
+    "LoginButton": "Přihlásit",
+    "WelcomeSection": {
+      "Title": "Vítejte v nástroji ISMD",
+      "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit."
     },
-    "FormSection": {
-      "Step1": {
-        "Headline": "Vyberte slovník ke zkontrolování a převodu",
-        "Annotation": "Máte na výběr ze slovníku ze souboru na Vašem zařízení, z adresy URL, nebo ze Sémantického slovníku pojmů.",
-        "FileForm": {
-          "Label": "Nahrát ze souboru",
-          "Placeholder": "Přetáhněte soubor nebo",
-          "Button": "Nahrát ze zařízení",
-          "SupportedFormatsLabel": "Podporované formáty XLSX, XML, TTL, JSON-LD",
-          "MultipleFilesError": "Lze nahrát pouze jeden soubor najednou"
-        },
-        "UrlForm": {
-          "Label": "Nahrát z URL"
-        },
-        "DictForm": {
-          "Label": "Vybrat ze Sémantického slovníku pojmů"
-        }
-      },
-      "Step2": {
-        "Headline": "Zkontrolujte a převeďte slovník",
-        "Annotation": "Klikněte na tlačítko 'Zkontrolovat a převést' a počkejte, až systém kontrolu a převod dokončí.",
-        "Button": "Zkontrolovat a převést",
-        "ConversionUknownError": "Během převodu došlo k chybě: zaslaný vstup není podporovaný. Pokud problém přetrvává a máte pocit, že je problém na naší straně,",
-        "ConversionErrorLinkText": "nahlašte nám prosím chybu."
-      },
-      "Step3": {
-        "Headline": "Stáhněte si výstupy z převodu a kontroly",
-        "Annotation": "Přečtěte si podrobnosti níže.",
-        "Dialog": {
-          "Title": "Slovník zákona o silničním provozu",
-          "Message": {
-            "Success": "Skvělá práce! Ve slovníku nebyly nalezeny žádné chyby.",
-            "Warning": "Ve slovníku byly nalezeny přípustné chyby. Slovník si ale přesto můžete stáhnout.",
-            "Error": "Ve slovníku byly nalezeny závažné chyby. Upravte slovník a zkuste kontrolu znovu."
-          },
-          "InfoTable": {
-            "AffectedConcepts": "Zjištění se týká",
-            "FindingDescription": "Popis zjištění",
-            "FindingType": "Typ zjištění"
-          },
-          "DownloadSection": {
-            "Success-Warning": {
-              "Row1": {
-                "Title": "Pro další využití si slovník stáhněte do Vašeho zařízení.",
-                "Tooltips": {
-                  "Title1": "Co mám dělat se staženým slovníkem?",
-                  "Description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                },
-                "ButtonText": "Stáhnout slovník"
-              },
-              "Row2": {
-                "Title": "Podrobnosti zjištění jsou dostupné ve výpisu z kontroly.",
-                "Tooltips": {
-                  "Title1": "Jaké typy zjištění se rozlišují?",
-                  "Description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                },
-                "ButtonText": "Stáhnout výpis z kontroly"
-              },
-              "Row3": {
-                "Title": "Pro publikování slovníku je nezbytný katalogizační záznam.",
-                "Tooltips": {
-                  "Title1": "Co mám dělat s nekompletním katalogizačním záznamem?",
-                  "Description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                  "Title2": "Proč je katalogizační záznam nekompletní?",
-                  "Description2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                },
-                "ButtonText": "Stáhnout nekompletní katalogizační záznam"
-              }
-            },
-            "Error": {
-              "Row1": {
-                "Title": "Slovník s chybami nelze stáhnout.",
-                "Tooltips": {
-                  "Title1": "Co mám dělat dále?",
-                  "Description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                },
-                "ButtonText": "Stáhnout slovník"
-              },
-              "Row2": {
-                "Title": "Podrobnosti zjištění jsou dostupné ve výpisu z kontroly.",
-                "Tooltips": {
-                  "Title1": "Jaké typy zjištění se rozlišují?",
-                  "Description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                },
-                "ButtonText": "Stáhnout výpis z kontroly"
-              }
-            }
-          }
-        }
-      }
-    },
-    "InfoSection": {
-      "Headline": "Mohlo by se vám hodit",
-      "Item1": {
-        "Title": "Popis dat",
-        "Description": "Struktura a význam dat v informačních systémech dle metodických doporučení"
-      },
-      "Item2": {
-        "Title": "Informační systém pro modelování dat",
-        "Description": "Zajišťuje lepší propojení dat a systémů, zvyšuje kvalitu služeb"
-      },
-      "Item3": {
-        "Title": "Otevřené formální normy",
-        "Description": "Technická doporučení zaměřená na vybrané datové sady"
-      },
-      "Item4": {
-        "Title": "Portál o datech",
-        "Description": "Poskytuje strukturované a standardizované informace o datech "
-      }
-    },
-    "FaqSection": {
-      "Headline": "Časté dotazy",
-      "Item1": {
-        "Question": "Co jsou slovníky a jaké je jejich využití?",
-        "Answer": "Více informací najdete na stránce"
-      },
-      "Item2": {
-        "Question": "Co je to Otevřená formální norma?",
-        "Answer": "Více informací najdete na stránce"
-      },
-      "Item3": {
-        "Question": "Kdo je povinnen slovníky tvořit?",
-        "Answer": "Více informací najdete na stránce"
-      },
-      "Item4": {
-        "Question": "Co když slovník neprojde kontrolou?",
-        "Answer": "Více informací najdete na stránce"
-      }
+    "News": {
+      "Title": "Co je nového"
     }
   }
 }

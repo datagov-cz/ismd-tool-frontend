@@ -1,11 +1,18 @@
+import createMDX from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  pageExtensions: ['mdx', 'tsx'],
   publicRuntimeConfig: {
     backendUrl: process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:8080',
   },
+  experimental: {
+    mdxRs: true,
+  },
 };
 
+const withMDX = createMDX({});
 const withNextIntl = createNextIntlPlugin();
-export default withNextIntl(nextConfig);
+
+export default withNextIntl(withMDX(nextConfig));

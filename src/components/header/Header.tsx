@@ -28,7 +28,7 @@ export const Header = () => {
             <GovIcon name="logo-lion" slot="icon-start" className="!size-10" />
             {t('LogoTitle')}
           </a>
-          <nav>
+          <nav className="ml-auto">
             <ul className="hidden gap-x-4 px-3 flex-col lg:flex-row flex-wrap items-center desktop:flex">
               <NavItems />
             </ul>
