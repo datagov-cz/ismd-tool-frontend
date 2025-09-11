@@ -12,7 +12,9 @@ const nextConfig = {
   },
 };
 
-const withMDX = createMDX({});
+const withMDX = createMDX({
+  extension: /\.(md|mdx)$/,
+});
 const withNextIntl = createNextIntlPlugin();
 
 export default withNextIntl(withMDX(nextConfig));

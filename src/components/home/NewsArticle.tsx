@@ -1,4 +1,5 @@
 import { ButtonLink } from '@/components/shared/ButtonLink';
+import { useTranslations } from 'next-intl';
 
 interface NewsArticleProps {
   date: string;
@@ -7,7 +8,14 @@ interface NewsArticleProps {
   href: string;
 }
 
-export function NewsArticle({ date, title, description, href }: NewsArticleProps) {
+export function NewsArticle({
+  date,
+  title,
+  description,
+  href,
+}: NewsArticleProps) {
+  const t = useTranslations('Home');
+
   return (
     <div className="flex flex-col gap-y-2">
       <div>
@@ -16,7 +24,7 @@ export function NewsArticle({ date, title, description, href }: NewsArticleProps
         <p className="line-clamp-3 text-sm lg:text-base">{description}</p>
       </div>
       <ButtonLink href={href} className="self-end">
-        Více
+        {t('News.ToDetailButton')}
       </ButtonLink>
     </div>
   );
