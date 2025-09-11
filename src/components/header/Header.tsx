@@ -9,6 +9,7 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { NavItems } from './NavItems';
+import Link from 'next/link';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,13 +22,22 @@ export const Header = () => {
     <>
       <header className="bg-white py-3 z-50 transition-colors duration-300">
         <section className="mx-auto max-w-desktop px-5 flex justify-between items-center gap-x-4">
-          <a
-            href="./"
-            className="h-12 no-underline flex items-center text-blue-primary font-medium gap-2"
-          >
-            <GovIcon name="logo-lion" slot="icon-start" className="!size-10" />
-            {t('LogoTitle')}
-          </a>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="h-12 no-underline flex items-center text-blue-primary font-medium gap-2"
+            >
+              <GovIcon
+                name="logo-lion"
+                slot="icon-start"
+                className="!size-10"
+              />
+              {t('LogoTitle')}
+            </Link>
+            <Link href="/" className="flex items-center">
+              <GovIcon name="house-door-fill" slot="icon-start" size="l" />
+            </Link>
+          </div>
           <nav className="ml-auto">
             <ul className="hidden gap-x-4 px-3 flex-col lg:flex-row flex-wrap items-center desktop:flex">
               <NavItems />
