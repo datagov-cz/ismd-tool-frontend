@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import { NavItems } from './NavItems';
 import { ThemeSwitch } from '../shared/ThemeSwitch';
+
+import { NavItems } from './NavItems';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
