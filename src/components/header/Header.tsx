@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
 import { NavItems } from './NavItems';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Hintbox } from './Hintbox';
+import { HintSidebox } from './HintSidebox';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -104,7 +104,7 @@ export const Header = () => {
           </ul>
         </nav>
       </aside>
-      <Hintbox />
+      <HintSidebox />
     </>
   );
 };
