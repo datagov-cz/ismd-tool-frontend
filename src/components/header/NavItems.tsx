@@ -3,6 +3,7 @@ import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { NavItem } from './NavItem';
+import { useHintboxStore } from '@/store/hintBoxStore';
 
 export const NavItems = () => {
   const t = useTranslations('Header');
@@ -10,10 +11,19 @@ export const NavItems = () => {
 
   const isLogged = false;
 
+  const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
+
   if (!isLogged) {
     return (
       <>
-        <NavItem href="">{t('Nav.Link1')}</NavItem>
+        <GovButton
+          color="primary"
+          size="m"
+          type="base"
+          onGovClick={() => setIsHintboxOpen(true)}
+        >
+          {t('Nav.Link1')}
+        </GovButton>
         <GovDropdown
           position="left"
           onGovChange={(e) => setIsDropdownOpen(e.detail.open)}

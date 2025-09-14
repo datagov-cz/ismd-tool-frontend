@@ -10,6 +10,8 @@ import { useTranslations } from 'next-intl';
 
 import { NavItems } from './NavItems';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Hintbox } from './Hintbox';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,6 +19,8 @@ export const Header = () => {
 
   const handleToggleMenu = () => setIsMenuOpen((prev) => !prev);
   const handleCloseMenu = () => setIsMenuOpen(false);
+
+  const router = useRouter();
 
   return (
     <>
@@ -32,11 +36,34 @@ export const Header = () => {
                 slot="icon-start"
                 className="!size-10"
               />
-              {t('LogoTitle')}
+              <span className="hidden desktop:inline-block">
+                {t('LogoTitle')}
+              </span>
+              <span className="inline-block desktop:hidden">
+                {t('LogoTitleMobile')}
+              </span>
             </Link>
-            <Link href="/" className="flex items-center">
-              <GovIcon name="house-door-fill" slot="icon-start" size="l" />
+            <Link href="/" className="items-center hidden desktop:flex">
+              <GovIcon name="home" slot="icon-start" size="l" />
             </Link>
+            <div className="flex items-center gap-2">
+              <GovIcon
+                className="cursor-pointer"
+                name="chevron-left"
+                size="l"
+                onClick={() => router.back()}
+              />
+              <GovIcon
+                className="cursor-pointer"
+                name="chevron-right"
+                size="l"
+                onClick={() => router.forward()}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <GovIcon name="undo" size="l" />
+              <GovIcon name="redo" size="l" />
+            </div>
           </div>
           <nav className="ml-auto">
             <ul className="hidden gap-x-4 px-3 flex-col lg:flex-row flex-wrap items-center desktop:flex">
@@ -77,6 +104,7 @@ export const Header = () => {
           </ul>
         </nav>
       </aside>
+      <Hintbox />
     </>
   );
 };

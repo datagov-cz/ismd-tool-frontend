@@ -1,6 +1,7 @@
 {
   "Header": {
     "LogoTitle": "Informační systém pro modelování dat",
+    "LogoTitleMobile": "ISMD",
     "Nav": {
       "Link1": "Nápověda",
       "Dropdown": {
@@ -19,7 +20,10 @@
       },
       "Logout": "Odhlásit"
     },
-    "MenuButtonAria": "Otevřít navigaci"
+    "MenuButtonAria": "Otevřít navigaci",
+    "Hintbox": {
+      "CloseAria": "Zavřít nápovědu"
+    }
   },
   "Footer": {
     "LinkColumn": {
