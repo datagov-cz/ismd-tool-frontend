@@ -3,7 +3,7 @@ import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { NavItem } from './NavItem';
-import { useHintboxStore } from '@/store/hintBoxStore';
+import { useHintboxStore } from '@/store/hintboxStore';
 
 export const NavItems = () => {
   const t = useTranslations('Header');
