@@ -3,7 +3,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ['mdx', 'tsx'],
+  pageExtensions: ['ts', 'tsx', 'mdx'],
   publicRuntimeConfig: {
     backendUrl: process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:8080',
   },

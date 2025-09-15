@@ -1,48 +1,28 @@
 import fs from 'fs';
 import path from 'path';
 
-export interface HintPage {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
-  category: string;
-}
+import { FileNode } from './appTypes';
 
-export function getHintPages(): HintPage[] {
-  const hintsDir = path.join(process.cwd(), 'hints');
-  
-  try {
-    const categories = fs.readdirSync(hintsDir, { withFileTypes: true })
-      .filter(entry => entry.isDirectory());
-    
-    const pages: HintPage[] = [];
-    
-    categories.forEach(category => {
-      const categoryPath = path.join(hintsDir, category.name);
-      const files = fs.readdirSync(categoryPath)
-        .filter(file => file.endsWith('.md'));
-      
-      files.forEach(file => {
-        const filePath = path.join(categoryPath, file);
-        const content = fs.readFileSync(filePath, 'utf-8');
-        const title = content.match(/^# (.+)$/m)?.[1] || file.replace('.md', '');
-        const slug = file.replace('.md', '');
-        
-        if (slug !== 'README') {
-          pages.push({
-            id: `${category.name}-${slug}`,
-            title,
-            description: `Nápověda: ${title}`,
-            href: `/hints/${category.name}/${slug}`,
-            category: category.name,
-          });
-        }
-      });
-    });
-    
-    return pages;
-  } catch {
-    return [];
-  }
+const HINTS_PATH = path.join(process.cwd(), 'src/app/hints');
+
+export function getHintStructure(dirPath = HINTS_PATH): FileNode[] {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  return entries.map((entry) => {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      return {
+        name: entry.name,
+        path: fullPath.replace(HINTS_PATH, ''), // relative path
+        type: 'folder',
+        children: getHintStructure(fullPath),
+      };
+    } else {
+      return {
+        name: entry.name,
+        path: fullPath.replace(HINTS_PATH, ''),
+        type: 'file',
+      };
+    }
+  });
 }
