@@ -89,7 +89,7 @@ export const HintSidebox = () => {
           {/* File tree */}
           <div className="col-span-1">
             <h2 className="font-bold text-lg mb-2">📂 {t('FileExplorer')}</h2>
-            <div className="overflow-y-auto h-[66vh]">
+            <div className="overflow-y-auto h-[74vh] desktop:h-[66vh]">
               {tree.map((node) => (
                 <FileNodeComponent key={node.path} node={node} />
               ))}
@@ -101,7 +101,7 @@ export const HintSidebox = () => {
             {selectedFile && (
               <h2 className="font-bold text-lg mb-2">📄 {selectedFile}</h2>
             )}
-            <div className="h-[66vh] overflow-y-auto">
+            <div className="h-[74vh] desktop:h-[66vh] overflow-y-auto">
               {selectedFile ? (
                 <div className="prose prose-h1:my-4 prose-h2:my-3 prose-h3:my-3 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 max-w-none">
                   <ReactMarkdown>{fileContent}</ReactMarkdown>
