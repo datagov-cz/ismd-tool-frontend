@@ -1,5 +1,6 @@
-import { ButtonLink } from '@/components/shared/ButtonLink';
 import { useTranslations } from 'next-intl';
+
+import { ButtonLink } from '@/components/shared/ButtonLink';
 
 interface NewsArticleProps {
   date: string;

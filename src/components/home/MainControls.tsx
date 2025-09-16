@@ -1,12 +1,6 @@
-import {
-  GovButton,
-  GovFormControl,
-  GovFormGroup,
-  GovFormInput,
-  GovFormSearch,
-  GovIcon,
-} from '@gov-design-system-ce/react';
+import { GovButton } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
+
 import { Searchbar } from '../shared/Searchbar';
 
 export const MainControls = () => {
@@ -24,7 +18,6 @@ export const MainControls = () => {
       </div>
       <Searchbar
         placeholder={t('MainControls.SearchPlaceholder')}
-        onSearch={(query) => console.log(query)}
         hasSearchIcon
       />
     </div>

@@ -1,12 +1,13 @@
 'use client';
 
-import { useHintboxStore } from '@/store/hintboxStore';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Sidebox } from '../shared/Sidebox';
-import { useState, useEffect } from 'react';
-import { FileNode } from '@/lib/appTypes';
 import ReactMarkdown from 'react-markdown';
+
+import { FileNode } from '@/lib/appTypes';
+import { useHintboxStore } from '@/store/hintboxStore';
 import { Searchbar } from '../shared/Searchbar';
+import { Sidebox } from '../shared/Sidebox';
 
 export const HintSidebox = () => {
   const isHintboxOpen = useHintboxStore((state) => state.isOpen);
@@ -24,7 +25,6 @@ export const HintSidebox = () => {
   useEffect(() => {
     fetch('/api/hint-tree')
       .then((res) => {
-        console.log(res);
         return res.json();
       })
       .then(setTree);
@@ -88,7 +88,6 @@ export const HintSidebox = () => {
       <div className="space-y-4">
         <Searchbar
           placeholder={t('SearchPlaceholder')}
-          onSearch={() => {}}
           hasSearchIcon
           size="s"
         />

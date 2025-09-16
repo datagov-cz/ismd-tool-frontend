@@ -1,7 +1,8 @@
-import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { ReactNode } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
-import { ReactNode } from 'react';
+
+import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 interface Props {
   title?: string;

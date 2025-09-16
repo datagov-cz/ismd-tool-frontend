@@ -9,21 +9,19 @@ import {
 
 interface Props {
   placeholder: string;
-  onSearch: (query: string) => void;
   hasSearchIcon?: boolean;
   size?: 's' | 'm' | 'l';
 }
 
 export const Searchbar = ({
   placeholder,
-  onSearch,
   hasSearchIcon,
   size = 'm',
 }: Props) => {
   return (
     <GovFormControl className="w-full">
-      <GovFormGroup>
-        <GovFormSearch size={size}>
+      <GovFormGroup onChange={() => console.log('asdad')}>
+        <GovFormSearch size={size} onChange={(e) => console.log(e.target)}>
           <GovFormInput slot="input" placeholder={placeholder} size={size} />
           {hasSearchIcon && (
             <GovButton slot="button">

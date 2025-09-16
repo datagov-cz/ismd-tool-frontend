@@ -6,12 +6,12 @@ import {
   GovIcon,
   GovThemeSwitch,
 } from '@gov-design-system-ce/react';
-import { useTranslations } from 'next-intl';
-
-import { NavItems } from './NavItems';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+
 import { HintSidebox } from './HintSidebox';
+import { NavItems } from './NavItems';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
