@@ -32,7 +32,7 @@ export const Sidebox = ({
       />
 
       <aside
-        className={`fixed top-[72px] desktop:my-10 right-0 h-full desktop:h-[80vh] w-full desktop:w-1/2 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out p-4 ${
+        className={`fixed top-[72px] desktop:my-10 right-0 h-full desktop:h-[80vh] w-full desktop:w-1/2 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         ref={ref}
@@ -52,7 +52,7 @@ export const Sidebox = ({
             />
           </GovButton>
         </div>
-        <div className="mt-4">{children}</div>
+        <div className="mt-4 overflow-hidden">{children}</div>
       </aside>
     </>
   );

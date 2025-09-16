@@ -14,6 +14,9 @@ export const HintSidebox = () => {
   const [tree, setTree] = useState<FileNode[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>('');
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set(),
+  );
 
   const t = useTranslations('Header.Hintbox');
 
@@ -28,24 +31,35 @@ export const HintSidebox = () => {
 
   const handleFileClick = (path: string) => {
     setSelectedFile(path);
+
     fetch(`/api/hint-file?filePath=${encodeURIComponent(path)}`)
       .then((res) => res.json())
       .then((data) => setFileContent(data.content));
   };
 
+  const toggleFolder = (folderPath: string) => {
+    const newExpanded = new Set(expandedFolders);
+    if (newExpanded.has(folderPath)) {
+      newExpanded.delete(folderPath);
+    } else {
+      newExpanded.add(folderPath);
+    }
+    setExpandedFolders(newExpanded);
+  };
+
   function FileNodeComponent({ node }: { node: FileNode }) {
-    const [expanded, setExpanded] = useState(false);
+    const isExpanded = expandedFolders.has(node.path);
 
     if (node.type === 'folder') {
       return (
-        <div className="ml-4">
+        <div className="ml-2">
           <div
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => toggleFolder(node.path)}
             className="cursor-pointer font-bold"
           >
-            📂 {node.name}
+            {isExpanded ? '📂' : '📁'} {node.name}
           </div>
-          {expanded &&
+          {isExpanded &&
             node.children?.map((child) => (
               <FileNodeComponent key={child.path} node={child} />
             ))}
@@ -55,7 +69,7 @@ export const HintSidebox = () => {
 
     return (
       <div
-        className="ml-8 cursor-pointer hover:underline"
+        className={`ml-5 cursor-pointer hover:underline ${selectedFile === node.path ? 'font-medium' : ''}`}
         onClick={() => handleFileClick(node.path)}
       >
         📄 {node.name}
@@ -70,26 +84,32 @@ export const HintSidebox = () => {
       setIsOpen={setIsHintboxOpen}
       closeAriaLabel={t('CloseAria')}
     >
-      <div className="space-y-4 h-full">
-        <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="gap-y-4">
+        <div className="grid grid-cols-3 gap-4">
           {/* File tree */}
-          <div className="col-span-1 overflow-y-auto">
-            <h2 className="font-bold text-lg mb-2">📂 File Explorer</h2>
-            {tree.map((node) => (
-              <FileNodeComponent key={node.path} node={node} />
-            ))}
+          <div className="col-span-1">
+            <h2 className="font-bold text-lg mb-2">📂 {t('FileExplorer')}</h2>
+            <div className="overflow-y-auto h-[66vh]">
+              {tree.map((node) => (
+                <FileNodeComponent key={node.path} node={node} />
+              ))}
+            </div>
           </div>
 
           {/* File viewer */}
-          <div className="overflow-y-auto h-[60vh] col-span-2">
-            <h2 className="font-bold text-lg mb-2">📄 Viewer</h2>
-            {selectedFile ? (
-              <div className="prose max-w-none">
-                <ReactMarkdown>{fileContent}</ReactMarkdown>
-              </div>
-            ) : (
-              <p>Select a file to view its contents</p>
+          <div className="col-span-2">
+            {selectedFile && (
+              <h2 className="font-bold text-lg mb-2">📄 {selectedFile}</h2>
             )}
+            <div className="h-[66vh] overflow-y-auto">
+              {selectedFile ? (
+                <div className="prose prose-h1:my-4 prose-h2:my-3 prose-h3:my-3 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 max-w-none">
+                  <ReactMarkdown>{fileContent}</ReactMarkdown>
+                </div>
+              ) : (
+                <p>{t('SelectFile')}</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

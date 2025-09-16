@@ -11,12 +11,14 @@ Návod pro personalizaci ISMD nástroje podle vašich potřeb.
 ## Základní nastavení
 
 ### Jazyk a lokalizace
+
 - **Jazyk rozhraní** - čeština, angličtina
 - **Formát data** - DD.MM.YYYY, MM/DD/YYYY
 - **Formát času** - 24h, 12h (AM/PM)
 - **Oddělovač tisíců** - mezera, čárka, tečka
 
 ### Vzhled rozhraní
+
 - **Barevné téma** - světlé, tmavé, automatické
 - **Velikost písma** - malé, střední, velké
 - **Hustota rozhraní** - kompaktní, pohodlné
@@ -25,12 +27,14 @@ Návod pro personalizaci ISMD nástroje podle vašich potřeb.
 ## Pokročilé nastavení
 
 ### Výchozí hodnoty
+
 - **Formát exportu** - CSV, Excel, PDF
 - **Počet řádků na stránku** - 10, 25, 50, 100
 - **Automatické ukládání** - interval v minutách
 - **Výchozí graf** - typ grafu pro nová data
 
 ### Notifikace
+
 - **E-mailové upozornění** - dokončení analýz
 - **Zvukové signály** - chyby a varování
 - **Desktop notifikace** - systémová oznámení
@@ -38,12 +42,14 @@ Návod pro personalizaci ISMD nástroje podle vašich potřeb.
 ## Správa profilů
 
 ### Vytvoření profilu
+
 1. Klikněte na "Nový profil"
 2. Zadejte název profilu
 3. Nastavte požadované parametry
 4. Uložte profil
 
 ### Přepínání profilů
+
 - Rychlé přepnutí v hlavním menu
 - Klávesová zkratka Ctrl+P
 - Automatické načtení při startu
@@ -51,11 +57,13 @@ Návod pro personalizaci ISMD nástroje podle vašich potřeb.
 ## Zálohování nastavení
 
 ### Export konfigurace
+
 1. V nastavení klikněte na "Export"
 2. Vyberte umístění souboru
 3. Soubor .config se uloží
 
 ### Import konfigurace
+
 1. Klikněte na "Import"
 2. Vyberte soubor .config
 3. Potvrďte načtení nastavení
@@ -67,10 +75,3 @@ Návod pro personalizaci ISMD nástroje podle vašich potřeb.
 1. V nastavení klikněte na "Obnovit výchozí"
 2. Potvrďte akci
 3. Aplikace se restartuje s výchozím nastavením
-
-## Související odkazy
-
-- [Systémové nastavení](./systemove-nastaveni.md)
-- [První kroky](../uvod/prvni-kroky.md)
-
-[← Zpět do sekce Nastavení](./README.md)

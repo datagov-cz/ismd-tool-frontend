@@ -5,16 +5,19 @@ Návod pro import dat do ISMD nástroje z různých zdrojů.
 ## Podporované formáty
 
 ### CSV soubory
+
 - Kódování: UTF-8, Windows-1250
 - Oddělovače: čárka, středník, tabulátor
 - Možnost nastavení hlaviček
 
 ### Excel soubory
+
 - Formáty: .xlsx, .xls
 - Více listů v jednom souboru
 - Automatická detekce datových typů
 
 ### JSON a XML
+
 - Strukturovaná data
 - Vnořené objekty
 - Pole a kolekce
@@ -33,10 +36,3 @@ Návod pro import dat do ISMD nástroje z různých zdrojů.
 3. **Náhled a validace**
    - Zkontrolujte náhled dat
    - Ověřte datové typy
-
-## Související odkazy
-
-- [Validace dat](./validace-dat.md)
-- [Časté problémy s importem](../reseni-problemu/caste-problemy.md)
-
-[← Zpět do sekce Správa dat](./README.md)

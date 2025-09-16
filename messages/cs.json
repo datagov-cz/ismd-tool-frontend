@@ -23,7 +23,9 @@
     "MenuButtonAria": "Otevřít navigaci",
     "Hintbox": {
       "Title": "Nápověda",
-      "CloseAria": "Zavřít nápovědu"
+      "CloseAria": "Zavřít nápovědu",
+      "FileExplorer": "Procházet soubory",
+      "SelectFile": "Vyberte soubor pro zobrazení jeho obsahu"
     }
   },
   "Footer": {
