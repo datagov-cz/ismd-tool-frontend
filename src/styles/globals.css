@@ -96,6 +96,11 @@ html[data-theme='light'] {
   color-scheme: light;
 }
 
+gov-form-search:focus-within,
+.gov-form-search:focus-within {
+  outline: none;
+}
+
 @layer {
   table {
     @apply border-collapse;

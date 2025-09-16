@@ -25,7 +25,8 @@
       "Title": "Nápověda",
       "CloseAria": "Zavřít nápovědu",
       "FileExplorer": "Procházet soubory",
-      "SelectFile": "Vyberte soubor pro zobrazení jeho obsahu"
+      "SelectFile": "Vyberte soubor pro zobrazení jeho obsahu",
+      "SearchPlaceholder": "Hledat nápovědy..."
     }
   },
   "Footer": {

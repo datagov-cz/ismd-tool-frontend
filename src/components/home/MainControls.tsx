@@ -7,6 +7,7 @@ import {
   GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
+import { Searchbar } from '../shared/Searchbar';
 
 export const MainControls = () => {
   const t = useTranslations('Home');
@@ -21,19 +22,11 @@ export const MainControls = () => {
           {t('MainControls.CreateNewDict')}
         </GovButton>
       </div>
-      <GovFormControl className="w-full">
-        <GovFormGroup>
-          <GovFormSearch>
-            <GovFormInput
-              slot="input"
-              placeholder={t('MainControls.SearchPlaceholder')}
-            />
-            <GovButton slot="button">
-              <GovIcon name="search" slot="icon-start" />
-            </GovButton>
-          </GovFormSearch>
-        </GovFormGroup>
-      </GovFormControl>
+      <Searchbar
+        placeholder={t('MainControls.SearchPlaceholder')}
+        onSearch={(query) => console.log(query)}
+        hasSearchIcon
+      />
     </div>
   );
 };
