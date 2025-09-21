@@ -95,6 +95,10 @@ html[data-theme='light'] {
   color-scheme: light;
 }
 
+.gov-button {
+  @apply cursor-pointer;
+}
+
 @layer {
   table {
     @apply border-collapse;

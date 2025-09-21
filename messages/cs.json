@@ -53,7 +53,13 @@
     "MainControls": {
       "OpenDictFromFile": "Otevřít slovník ze souboru...",
       "CreateNewDict": "Vytvořit nový slovník...",
-      "SearchPlaceholder": "Hledat pojmy a slovníky..."
+      "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "Logged": {
+        "DraftDictionaries": "Rozpracované slovníky",
+        "PublishedDictionaries": "Publikované slovníky",
+        "Definitions": "Pojmy",
+        "Diagrams": "Diagramy"
+      }
     },
     "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
     "LoginButton": "Přihlásit",
