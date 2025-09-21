@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { useUserStore } from '@/store/userStore';
+
 import { NavItem } from './NavItem';
 
 export const NavItems = () => {
   const t = useTranslations('Header');
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const isLogged = false;
+  const user = useUserStore((state) => state.user);
 
-  if (!isLogged) {
+  if (!user) {
     return (
       <>
         <NavItem href="">{t('Nav.Link1')}</NavItem>

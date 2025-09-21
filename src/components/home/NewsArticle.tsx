@@ -7,7 +7,12 @@ interface NewsArticleProps {
   href: string;
 }
 
-export function NewsArticle({ date, title, description, href }: NewsArticleProps) {
+export function NewsArticle({
+  date,
+  title,
+  description,
+  href,
+}: NewsArticleProps) {
   return (
     <div className="flex flex-col gap-y-2">
       <div>

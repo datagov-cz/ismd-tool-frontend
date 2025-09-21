@@ -1,6 +1,5 @@
 'use client';
 
-import { useUserStore } from '@/store/userStore';
 import {
   GovButton,
   GovFormControl,
@@ -10,6 +9,8 @@ import {
   GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
+
+import { useUserStore } from '@/store/userStore';
 
 export const MainControls = () => {
   const t = useTranslations('Home');

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint:next": "next lint",
+    "lint:next": "next lint --fix",
     "lint": "eslint .",
     "format": "prettier --write .",
     "copy:icons": "copyfiles --flat ./node_modules/@gov-design-system-ce/icons/lib/components/* ./public/assets/icons/components && copyfiles --flat ./node_modules/@gov-design-system-ce/icons/lib/complex/* ./public/assets/icons/components",

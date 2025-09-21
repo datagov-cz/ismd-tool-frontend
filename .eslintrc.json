@@ -1,5 +1,10 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript", "eslint:recommended"],
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "eslint:recommended",
+    "plugin:prettier/recommended"
+  ],
   "plugins": ["@typescript-eslint", "simple-import-sort"],
   "rules": {
     "no-unused-vars": "warn",

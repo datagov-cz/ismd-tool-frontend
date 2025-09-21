@@ -1,10 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { MainControls } from '@/components/home/MainControls';
 import { NewsSidebar } from '@/components/home/NewsSidebar';
 import { WelcomeSection } from '@/components/home/WelcomeSection';
 import { useUserStore } from '@/store/userStore';
-import { useTranslations } from 'next-intl';
 
 export default function Home() {
   const t = useTranslations('Home');
