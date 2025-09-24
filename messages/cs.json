@@ -92,6 +92,14 @@
         "Description": "Popis",
         "RelatedResources": "Související zdroje",
         "Terms": "Pojmy"
+      },
+      "ControlPanel": {
+        "GetLink": "Získání odkazu",
+        "Comments": "Komentáře",
+        "ValidationPassed": "Validace proběhla úspěšně",
+        "ValidationFailed": "Validace neprošla",
+        "Download": "Stáhnout",
+        "Delete": "Smazat"
       }
     }
   }

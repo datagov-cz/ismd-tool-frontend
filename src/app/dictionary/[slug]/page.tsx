@@ -1,6 +1,7 @@
 import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
 import { SidebarContainer } from '@/components/shared/SidebarContainer';
 
@@ -26,7 +27,7 @@ const DictionaryDetail = () => {
           />
         </div>
       </SidebarContainer>
-      <div className="w-full px-4 space-y-6">
+      <div className="w-full pl-2 pr-8 space-y-6 relative">
         <GridContainer>
           <div className="space-y-2 col-span-4 col-start-2">
             <h1 className="text-xl lg:text-3xl font-bold">Slovník 360/2023</h1>
@@ -59,6 +60,7 @@ const DictionaryDetail = () => {
           <p className="font-medium text-xl">{t('Main.Sections.Terms')}</p>
           <div className="col-span-4"></div>
         </GridContainer>
+        <ControlPanel />
       </div>
     </>
   );
