@@ -78,5 +78,21 @@
     "News": {
       "Title": "Co je nového"
     }
+  },
+  "DictionaryDetail": {
+    "Sidebar": {
+      "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy..."
+    },
+    "Main": {
+      "DictionaryStatus": {
+        "Draft": "Rozpracovaný slovník",
+        "Published": "Publikovaný slovník"
+      },
+      "Sections": {
+        "Description": "Popis",
+        "RelatedResources": "Související zdroje",
+        "Terms": "Pojmy"
+      }
+    }
   }
 }
