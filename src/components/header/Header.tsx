@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  GovButton,
-  GovIcon,
-  GovThemeSwitch,
-} from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
+
+import { ThemeSwitch } from '../shared/ThemeSwitch';
 
 import { NavItems } from './NavItems';
 
@@ -34,7 +32,7 @@ export const Header = () => {
             </ul>
           </nav>
           <ul className="flex gap-x-4">
-            <GovThemeSwitch />
+            <ThemeSwitch />
             <GovButton
               size="m"
               type="outlined"
