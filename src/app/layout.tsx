@@ -44,8 +44,10 @@ export default async function RootLayout({
     <html lang={locale}>
       <NextIntlClientProvider>
         <body>
-          <Header />
-          <Providers environmentVariables={variables}>{children}</Providers>
+          <Providers environmentVariables={variables}>
+            <Header />
+            {children}
+          </Providers>
           <Footer />
         </body>
       </NextIntlClientProvider>

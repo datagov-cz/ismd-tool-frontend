@@ -71,7 +71,7 @@ export const Header = () => {
             </ul>
           </nav>
           <ul className="flex gap-x-4">
-            <GovThemeSwitch />
+            <ThemeSwitch />
             <GovButton
               size="m"
               type="outlined"
