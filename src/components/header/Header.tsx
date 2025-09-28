@@ -1,15 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  GovButton,
-  GovIcon,
-  GovThemeSwitch,
-} from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
+import { ThemeSwitch } from '../shared/ThemeSwitch';
 import { HintSidebox } from './HintSidebox';
 import { NavItems } from './NavItems';
 
