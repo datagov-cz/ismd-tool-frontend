@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { FileNode } from '@/lib/appTypes';
@@ -109,7 +109,7 @@ export const HintSidebox = () => {
             )}
             <div className="h-[70vh] desktop:h-[60vh] overflow-y-auto">
               {selectedFile ? (
-                <div className="prose prose-h1:my-4 prose-h2:my-3 prose-h3:my-3 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 max-w-none">
+                <div className="prose prose-h1:my-4 prose-h2:my-3 prose-h3:my-3 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 max-w-none dark:prose-invert">
                   <ReactMarkdown>{fileContent}</ReactMarkdown>
                 </div>
               ) : (
