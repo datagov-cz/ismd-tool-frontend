@@ -1,6 +1,6 @@
+import { ComponentPropsWithoutRef } from 'react';
 import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
-import { ComponentPropsWithoutRef } from 'react';
 import { highlight } from 'sugar-high';
 
 type HeadingProps = ComponentPropsWithoutRef<'h1'>;
