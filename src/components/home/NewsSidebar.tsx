@@ -1,12 +1,21 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { getBlogPosts } from '@/lib/blogs';
+import { BlogPost } from '@/lib/blogs';
 
 import { NewsArticle } from './NewsArticle';
 
 export function NewsSidebar() {
   const t = useTranslations('Home');
-  const blogPosts = getBlogPosts();
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+
+  useEffect(() => {
+    fetch('/api/blogs')
+      .then((res) => res.json())
+      .then(setBlogPosts);
+  }, []);
 
   return (
     <aside className="lg:border-r lg:border-b-0 border-b border-secondary lg:pr-4 pb-6 lg:pb-0 space-y-6 w-full lg:max-w-[300px]">

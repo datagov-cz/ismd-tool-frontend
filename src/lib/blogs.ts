@@ -11,20 +11,20 @@ export interface BlogPost {
 
 export function getBlogPosts(): BlogPost[] {
   const blogsDir = path.join(process.cwd(), 'src/app/blogs');
-  
+
   try {
     const entries = fs.readdirSync(blogsDir, { withFileTypes: true });
-    
+
     return entries
-      .filter(entry => entry.isDirectory())
-      .map(entry => {
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
         const slug = entry.name;
         const mdxPath = path.join(blogsDir, slug, 'page.mdx');
-        
+
         if (fs.existsSync(mdxPath)) {
           const content = fs.readFileSync(mdxPath, 'utf-8');
           const title = content.match(/^# (.+)$/m)?.[1] || slug;
-          
+
           return {
             id: slug,
             title,
