@@ -26,14 +26,14 @@ export const Sidebox = ({
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/50 z-10 transition-opacity duration-300 backdrop-blur-xs ${
+        className={`fixed inset-0 z-10 transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsOpen(false)}
       />
 
       <aside
-        className={`fixed top-[72px] desktop:my-10 right-0 h-full desktop:h-[80vh] w-full desktop:w-1/2 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden ${
+        className={`fixed top-[72px] desktop:my-10 right-0 h-full desktop:h-[80vh] w-full desktop:w-1/2 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-blue border-b border-t border-l border-solid rounded-tl-md rounded-bl-md ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         ref={ref}

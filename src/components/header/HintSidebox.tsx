@@ -24,9 +24,7 @@ export const HintSidebox = () => {
 
   useEffect(() => {
     fetch('/api/hint-tree')
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then(setTree);
   }, []);
 
