@@ -14,3 +14,5 @@ package.json
 package-lock.json
 .eslintrc.json
 messages/*
+*.md
+*.mdx
