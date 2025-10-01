@@ -6,12 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint:next": "next lint",
+    "lint:next": "next lint --fix",
     "lint": "eslint .",
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write .",
     "copy:icons": "copyfiles --flat ./node_modules/@gov-design-system-ce/icons/lib/components/* ./public/assets/icons/components && copyfiles --flat ./node_modules/@gov-design-system-ce/icons/lib/complex/* ./public/assets/icons/components",
     "copy:fonts": "copyfiles --flat ./node_modules/@gov-design-system-ce/fonts/lib/* ./src/fonts",
-    "generate:api": "orval --config ./orval.config.cjs"
+    "generate:api": "orval --config ./orval.config.cjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@gov-design-system-ce/react": "^2.4.2",
@@ -43,8 +45,22 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
     "orval": "^7.11.2",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
