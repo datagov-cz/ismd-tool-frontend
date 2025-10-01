@@ -5,11 +5,13 @@ Návod pro složitější statistické analýzy a modelování.
 ## Korelační analýza
 
 ### Pearsonova korelace
+
 - Lineární vztahy mezi proměnnými
 - Hodnoty od -1 do 1
 - Interpretace síly vztahu
 
 ### Spearmanová korelace
+
 - Monotónní vztahy
 - Neparametrická alternativa
 - Robustní vůči odlehlým hodnotám
@@ -17,11 +19,13 @@ Návod pro složitější statistické analýzy a modelování.
 ## Regresní analýza
 
 ### Lineární regrese
+
 - Jednoduchá lineární regrese
 - Vícenásobná regrese
 - Hodnocení kvality modelu (R²)
 
 ### Logistická regrese
+
 - Binární výstupy
 - Pravděpodobnostní interpretace
 - Odds ratio
@@ -29,11 +33,13 @@ Návod pro složitější statistické analýzy a modelování.
 ## Testování hypotéz
 
 ### T-testy
+
 - Jednovýběrový t-test
 - Dvouvýběrový t-test
 - Párový t-test
 
 ### ANOVA
+
 - Analýza rozptylu
 - Porovnání více skupin
 - Post-hoc testy
@@ -41,11 +47,13 @@ Návod pro složitější statistické analýzy a modelování.
 ## Časové řady
 
 ### Trendová analýza
+
 - Identifikace trendů
 - Sezónní komponenty
 - Dekompozice řad
 
 ### Predikce
+
 - Exponenciální vyhlazování
 - ARIMA modely
 - Hodnocení přesnosti

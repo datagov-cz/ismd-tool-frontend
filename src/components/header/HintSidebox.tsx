@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { GovIcon } from '@gov-design-system-ce/react/dist/gov-icon';
 import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 
@@ -29,7 +30,7 @@ export const HintSidebox = () => {
   }, []);
 
   const handleFileClick = (path: string) => {
-    setSelectedFile(path);
+    setSelectedFile(path.split('/').pop()?.split('.')?.at(0) || path);
 
     fetch(`/api/hint-file?filePath=${encodeURIComponent(path)}`)
       .then((res) => res.json())
@@ -56,7 +57,12 @@ export const HintSidebox = () => {
             onClick={() => toggleFolder(node.path)}
             className="cursor-pointer font-bold"
           >
-            {isExpanded ? '📂' : '📁'} {node.name}
+            {isExpanded ? (
+              <GovIcon name="chevron-down" />
+            ) : (
+              <GovIcon name="chevron-right" />
+            )}{' '}
+            {node.name}
           </div>
           {isExpanded &&
             node.children?.map((child) => (
