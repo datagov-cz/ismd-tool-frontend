@@ -1,8 +1,15 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript", "eslint:recommended"],
-  "plugins": ["@typescript-eslint", "simple-import-sort"],
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "simple-import-sort", "unused-imports"],
   "rules": {
     "no-unused-vars": "warn",
+    "no-console": "warn",
     "simple-import-sort/imports": [
       "error",
       {

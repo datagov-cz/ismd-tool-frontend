@@ -17,7 +17,9 @@
   --color-page-background: #f6f6f6;
   --color-border-grey: #e7e7e7;
   --breakpoint-desktop: 1200px;
+  --breakpoint-full-hd: 1920px;
   --spacing-desktop: 1200px;
+  --spacing-full-hd: 1920px;
   --color-blue-hover: #1e5086;
   --color-blue-outlined-hover: #c5dbf2;
   --color-button-solid-disabled: #d1d1d1;
@@ -93,6 +95,10 @@ html[data-theme='dark'] {
 
 html[data-theme='light'] {
   color-scheme: light;
+}
+
+.gov-button {
+  @apply cursor-pointer;
 }
 
 @layer {

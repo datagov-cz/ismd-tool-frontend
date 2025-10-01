@@ -1,6 +1,6 @@
-import { ComponentPropsWithoutRef } from 'react';
 import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
+import { ComponentPropsWithoutRef } from 'react';
 import { highlight } from 'sugar-high';
 
 type HeadingProps = ComponentPropsWithoutRef<'h1'>;
@@ -110,7 +110,9 @@ const components = {
   ),
 };
 
-export function useMDXComponents(userComponents?: MDXComponents): MDXComponents {
+export function useMDXComponents(
+  userComponents?: MDXComponents,
+): MDXComponents {
   return {
     ...components,
     ...userComponents,
