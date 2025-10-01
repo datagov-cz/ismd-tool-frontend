@@ -1,16 +1,10 @@
 'use client';
 
-import {
-  GovButton,
-  GovFormControl,
-  GovFormGroup,
-  GovFormInput,
-  GovFormSearch,
-  GovIcon,
-} from '@gov-design-system-ce/react';
+import { GovButton } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { useUserStore } from '@/store/userStore';
+import { Searchbar } from '../shared/Searchbar';
 
 export const MainControls = () => {
   const t = useTranslations('Home');
@@ -27,19 +21,10 @@ export const MainControls = () => {
         </GovButton>
       </div>
       {/* TODO: Replace with custom search: search is not triggering any event */}
-      <GovFormControl className="w-full">
-        <GovFormGroup>
-          <GovFormSearch>
-            <GovFormInput
-              slot="input"
-              placeholder={t('MainControls.SearchPlaceholder')}
-            />
-            <GovButton slot="button">
-              <GovIcon name="search" slot="icon-start" />
-            </GovButton>
-          </GovFormSearch>
-        </GovFormGroup>
-      </GovFormControl>
+      <Searchbar
+        placeholder={t('MainControls.SearchPlaceholder')}
+        hasSearchIcon
+      />
       {user && (
         <div className="flex gap-4 flex-wrap justify-center">
           <GovButton type="solid" size="m" color="primary">

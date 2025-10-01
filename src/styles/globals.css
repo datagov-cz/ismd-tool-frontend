@@ -2,8 +2,9 @@
 @import '../fonts/roboto.css';
 
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, [data-theme='dark'], [data-theme='dark'] *));
 
 @theme {
   --color-blue: #1d3c5d;
@@ -95,6 +96,11 @@ html[data-theme='dark'] {
 
 html[data-theme='light'] {
   color-scheme: light;
+}
+
+gov-form-search:focus-within,
+.gov-form-search:focus-within {
+  outline: none;
 }
 
 .gov-button {

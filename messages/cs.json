@@ -1,6 +1,7 @@
 {
   "Header": {
     "LogoTitle": "Informační systém pro modelování dat",
+    "LogoTitleMobile": "ISMD",
     "Nav": {
       "Link1": "Nápověda",
       "Dropdown": {
@@ -19,7 +20,14 @@
       },
       "Logout": "Odhlásit"
     },
-    "MenuButtonAria": "Otevřít navigaci"
+    "MenuButtonAria": "Otevřít navigaci",
+    "Hintbox": {
+      "Title": "Nápověda",
+      "CloseAria": "Zavřít nápovědu",
+      "FileExplorer": "Procházet soubory",
+      "SelectFile": "Vyberte soubor pro zobrazení jeho obsahu",
+      "SearchPlaceholder": "Hledat v nápovědě..."
+    }
   },
   "Footer": {
     "LinkColumn": {
@@ -76,7 +84,8 @@
       "ShowLess": "Zobrazit méně rozpracovaných slovníků"
     },
     "News": {
-      "Title": "Co je nového"
+      "Title": "Co je nového",
+      "ToDetailButton": "Více"
     }
   },
   "DictionaryDetail": {
@@ -102,5 +111,8 @@
         "Delete": "Smazat"
       }
     }
+  },
+  "Shared": {
+    "CloseAria": "Zavřít"
   }
 }
