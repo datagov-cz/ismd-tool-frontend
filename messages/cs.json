@@ -1,5 +1,9 @@
 {
   "Header": {
+    "ThemeSwitchAria": {
+      "ToLight": "Přepnout na světlý režim",
+      "ToDark": "Přepnout na tmavý režim"
+    },
     "LogoTitle": "Informační systém pro modelování dat",
     "LogoTitleMobile": "ISMD",
     "Nav": {
@@ -90,7 +94,11 @@
   },
   "DictionaryDetail": {
     "Sidebar": {
-      "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy..."
+      "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
+      "DictTerms": "pojmy slovníku",
+      "AllResults": "všechny výsledky",
+      "DraftDictsHeadline": "Z rozpracovaných slovníků",
+      "PublishedDictsHeadline": "Z publikovaných slovníků"
     },
     "Main": {
       "DictionaryStatus": {
@@ -104,6 +112,7 @@
       },
       "ControlPanel": {
         "GetLink": "Získání odkazu",
+        "LinkCopied": "Odkaz zkopírován",
         "Comments": "Komentáře",
         "ValidationPassed": "Validace proběhla úspěšně",
         "ValidationFailed": "Validace neprošla",

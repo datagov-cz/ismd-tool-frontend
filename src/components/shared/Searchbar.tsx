@@ -23,11 +23,9 @@ export const Searchbar = ({
       <GovFormGroup onChange={() => console.log('asdad')}>
         <GovFormSearch size={size} onChange={(e) => console.log(e.target)}>
           <GovFormInput slot="input" placeholder={placeholder} size={size} />
-          {hasSearchIcon && (
-            <GovButton slot="button">
-              <GovIcon name="search" slot="icon-start" />
-            </GovButton>
-          )}
+          <GovButton slot="button" className={hasSearchIcon ? '' : 'hidden'}>
+            <GovIcon name="search" slot="icon-start" />
+          </GovButton>
         </GovFormSearch>
       </GovFormGroup>
     </GovFormControl>
