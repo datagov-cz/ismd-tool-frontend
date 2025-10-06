@@ -100,6 +100,11 @@
       "DraftDictsHeadline": "Z rozpracovaných slovníků",
       "PublishedDictsHeadline": "Z publikovaných slovníků"
     },
+    "CommentSidebox": {
+      "Title": "Komentáře",
+      "TextareaPlaceholder": "Napište komentář...",
+      "SendButtonAria": "Odeslat komentář"
+    },
     "Main": {
       "DictionaryStatus": {
         "Draft": "Rozpracovaný slovník",

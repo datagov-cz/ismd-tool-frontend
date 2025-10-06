@@ -1,6 +1,7 @@
 import { GovButton } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
 import { Searchbox } from '@/components/shared/Searchbox';
@@ -76,6 +77,7 @@ const DictionaryDetail = () => {
         </GridContainer>
         <ControlPanel />
       </div>
+      <CommentSidebox />
     </>
   );
 };

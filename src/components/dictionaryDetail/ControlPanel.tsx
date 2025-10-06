@@ -3,10 +3,14 @@
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
+import { useCommentBoxStore } from '@/store/commentBoxStore';
+
 import { ControlPanelButton } from './ControlPanelButton';
 
 export const ControlPanel = () => {
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+
+  const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
   const handleCopyLink = async () => {
     console.log('copy link');
@@ -21,7 +25,11 @@ export const ControlPanel = () => {
         ariaLabel={t('GetLink')}
         onClick={() => handleCopyLink()}
       />
-      <ControlPanelButton iconName="message" ariaLabel={t('Comments')} />
+      <ControlPanelButton
+        iconName="message"
+        ariaLabel={t('Comments')}
+        onClick={() => setIsCommentBoxOpen(true)}
+      />
       <ControlPanelButton
         iconName="checkmark"
         ariaLabel={t('ValidationPassed')}
