@@ -103,7 +103,9 @@
     "CommentSidebox": {
       "Title": "Komentáře",
       "TextareaPlaceholder": "Napište komentář...",
-      "SendButtonAria": "Odeslat komentář"
+      "SendButtonAria": "Odeslat komentář",
+      "ErrorSendingComment": "Chyba při odesílání komentáře",
+      "MessageRequired": "Zpráva je povinná"
     },
     "Main": {
       "DictionaryStatus": {
