@@ -104,7 +104,8 @@ gov-form-search:focus-within,
   outline: none;
 }
 
-.gov-button {
+.gov-button,
+button {
   @apply cursor-pointer;
 }
 

@@ -70,12 +70,13 @@ export const CommentSidebox = () => {
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="space-y-4 overflow-y-auto">
         {comments.map(({ id, ...comment }) => (
-          <CommentItem key={id} {...comment} />
+          // TODO: use real user
+          <CommentItem key={id} {...comment} user="John Doe" />
         ))}
         <div ref={commentsEndRef} />
       </div>
       <form
-        className={`relative w-full border rounded-md ${errors.message ? 'border-red-500' : 'border-blue'}`}
+        className={`relative w-full border rounded-md ${errors.message ? 'border-red-500' : 'border-blue dark:border-white/60'}`}
         onSubmit={handleSubmit(onSubmit)}
       >
         <label htmlFor="comment" className="hidden">
@@ -93,7 +94,7 @@ export const CommentSidebox = () => {
           </p>
         )}
         <button
-          className="absolute right-4 bottom-2 text-sm outline-1 outline-blue font-medium cursor-pointer hover:bg-blue/20 p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+          className="absolute right-4 bottom-2 text-sm outline-1 outline-blue dark:outline-white/60 font-medium cursor-pointer hover:bg-blue-hover p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={t('SendButtonAria')}
           type="submit"
           disabled={isSubmitting || !!errors.message}
