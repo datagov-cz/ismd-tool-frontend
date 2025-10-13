@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react/dist/gov-icon';
+import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 

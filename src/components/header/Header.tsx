@@ -45,18 +45,20 @@ export const Header = () => {
               <GovIcon name="home" slot="icon-start" size="l" />
             </Link>
             <div className="flex items-center gap-2">
-              <GovIcon
-                className="cursor-pointer"
-                name="chevron-left"
-                size="l"
-                onClick={() => router.back()}
-              />
-              <GovIcon
-                className="cursor-pointer"
-                name="chevron-right"
-                size="l"
-                onClick={() => router.forward()}
-              />
+              <button onClick={() => router.back()}>
+                <GovIcon
+                  className="cursor-pointer"
+                  name="chevron-left"
+                  size="l"
+                />
+              </button>
+              <button onClick={() => router.forward()}>
+                <GovIcon
+                  className="cursor-pointer"
+                  name="chevron-right"
+                  size="l"
+                />
+              </button>
             </div>
             <div className="flex items-center gap-2">
               <GovIcon name="undo" size="l" />
@@ -76,7 +78,7 @@ export const Header = () => {
               aria-label={t('MenuButtonAria')}
               color="primary"
               className="desktop:!hidden"
-              onGovClick={handleToggleMenu}
+              onClick={handleToggleMenu}
             >
               <GovIcon slot="icon-start" name="list" />
             </GovButton>

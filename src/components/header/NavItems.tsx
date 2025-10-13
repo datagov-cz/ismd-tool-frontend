@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
 import { useUserStore } from '@/store/userStore';
+import { ButtonLink } from '../shared/ButtonLink';
 
 import { NavItem } from './NavItem';
 
@@ -23,13 +24,13 @@ export const NavItems = () => {
           color="primary"
           size="m"
           type="base"
-          onGovClick={() => setIsHintboxOpen(true)}
+          onClick={() => setIsHintboxOpen(true)}
         >
           {t('Nav.Link1')}
         </GovButton>
         <GovDropdown
           position="left"
-          onGovChange={(e) => setIsDropdownOpen(e.detail.open)}
+          onChange={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <GovButton
             color="primary"
@@ -48,13 +49,9 @@ export const NavItems = () => {
 
           <ul slot="list">
             <li>
-              <GovButton
-                color="neutral"
-                size="m"
-                type="base"
+              <ButtonLink
                 href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
                 target="_blank"
-                expanded
               >
                 {t('Nav.Dropdown.Link1')}
                 <GovIcon
@@ -64,16 +61,12 @@ export const NavItems = () => {
                   size="l"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
-              </GovButton>
+              </ButtonLink>
             </li>
             <li>
-              <GovButton
-                color="neutral"
-                size="m"
-                type="base"
+              <ButtonLink
                 href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
                 target="_blank"
-                expanded
               >
                 {t('Nav.Dropdown.Link2')}
                 <GovIcon
@@ -83,7 +76,7 @@ export const NavItems = () => {
                   size="l"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
-              </GovButton>
+              </ButtonLink>
             </li>
           </ul>
         </GovDropdown>
@@ -97,7 +90,7 @@ export const NavItems = () => {
       <NavItem href="">{t('NavLogged.Link2')}</NavItem>
       <GovDropdown
         position="left"
-        onGovChange={(e) => setIsDropdownOpen(e.detail.open)}
+        onChange={() => setIsDropdownOpen(!isDropdownOpen)}
       >
         <GovButton
           color="primary"
@@ -116,13 +109,9 @@ export const NavItems = () => {
 
         <ul slot="list">
           <li>
-            <GovButton
-              color="neutral"
-              size="m"
-              type="base"
+            <ButtonLink
               href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
               target="_blank"
-              expanded
             >
               {t('NavLogged.Dropdown.Link1')}
               <GovIcon
@@ -132,16 +121,12 @@ export const NavItems = () => {
                 size="l"
                 className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
               />
-            </GovButton>
+            </ButtonLink>
           </li>
           <li>
-            <GovButton
-              color="neutral"
-              size="m"
-              type="base"
+            <ButtonLink
               href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
               target="_blank"
-              expanded
             >
               {t('NavLogged.Dropdown.Link2')}
               <GovIcon
@@ -151,7 +136,7 @@ export const NavItems = () => {
                 size="l"
                 className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
               />
-            </GovButton>
+            </ButtonLink>
           </li>
         </ul>
       </GovDropdown>

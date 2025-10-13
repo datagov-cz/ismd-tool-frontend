@@ -94,7 +94,7 @@ export const CommentSidebox = () => {
           </p>
         )}
         <button
-          className="absolute right-4 bottom-2 text-sm outline-1 outline-blue dark:outline-white/60 font-medium cursor-pointer hover:bg-blue-hover p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+          className="absolute right-4 bottom-2 text-sm outline-1 outline-blue dark:outline-white/60 font-medium cursor-pointer hover:bg-blue/20 dark:hover:bg-blue-hover p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={t('SendButtonAria')}
           type="submit"
           disabled={isSubmitting || !!errors.message}
