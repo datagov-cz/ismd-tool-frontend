@@ -1,3 +1,5 @@
+'use client';
+
 import { GovButton } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 

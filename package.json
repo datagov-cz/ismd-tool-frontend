@@ -16,7 +16,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@gov-design-system-ce/react": "^3.4.0",
+    "@gov-design-system-ce/react": "^2.4.2",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",

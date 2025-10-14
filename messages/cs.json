@@ -65,6 +65,8 @@
     "MainControls": {
       "OpenDictFromFile": "Otevřít slovník ze souboru...",
       "CreateNewDict": "Vytvořit nový slovník...",
+      "CreateNewDictError": "Chyba při vytváření nového slovníku",
+      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
       "SearchPlaceholder": "Hledat pojmy a slovníky...",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",

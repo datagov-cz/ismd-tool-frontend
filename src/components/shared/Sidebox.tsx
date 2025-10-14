@@ -51,7 +51,7 @@ export const Sidebox = ({
         <div className="flex items-center justify-between flex-shrink-0">
           {title && <h2 className="text-lg font-bold">{title}</h2>}
           <GovButton
-            onClick={() => setIsOpen(false)}
+            onGovClick={() => setIsOpen(false)}
             aria-label={closeAriaLabel ?? t('CloseAria')}
             className="absolute top-2 right-2"
           >

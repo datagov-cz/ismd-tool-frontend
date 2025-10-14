@@ -13,9 +13,13 @@ export const ControlPanel = () => {
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
   const handleCopyLink = async () => {
-    console.log('copy link');
-    await navigator.clipboard.writeText(window.location.href);
-    toast(t('LinkCopied'));
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast(t('LinkCopied'));
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+      toast(t('LinkCopyFailed'));
+    }
   };
 
   return (

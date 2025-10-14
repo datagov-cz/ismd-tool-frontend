@@ -24,11 +24,12 @@ export const NavItems = () => {
           color="primary"
           size="m"
           type="base"
-          onClick={() => setIsHintboxOpen(true)}
+          onGovClick={() => setIsHintboxOpen(true)}
         >
           {t('Nav.Link1')}
         </GovButton>
         <GovDropdown
+          id="nav-dropdown-guest"
           position="left"
           onChange={() => setIsDropdownOpen(!isDropdownOpen)}
         >
@@ -52,8 +53,8 @@ export const NavItems = () => {
               <ButtonLink
                 href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
                 target="_blank"
+                className="border-none justify-start"
               >
-                {t('Nav.Dropdown.Link1')}
                 <GovIcon
                   type="components"
                   name="bug"
@@ -61,14 +62,15 @@ export const NavItems = () => {
                   size="l"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
+                {t('Nav.Dropdown.Link1')}
               </ButtonLink>
             </li>
             <li>
               <ButtonLink
                 href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
                 target="_blank"
+                className="border-none justify-start"
               >
-                {t('Nav.Dropdown.Link2')}
                 <GovIcon
                   type="components"
                   name="flag"
@@ -76,6 +78,7 @@ export const NavItems = () => {
                   size="l"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
+                {t('Nav.Dropdown.Link2')}
               </ButtonLink>
             </li>
           </ul>
@@ -89,6 +92,7 @@ export const NavItems = () => {
       <NavItem href="">{t('NavLogged.Link1')}</NavItem>
       <NavItem href="">{t('NavLogged.Link2')}</NavItem>
       <GovDropdown
+        id="nav-dropdown-user"
         position="left"
         onChange={() => setIsDropdownOpen(!isDropdownOpen)}
       >

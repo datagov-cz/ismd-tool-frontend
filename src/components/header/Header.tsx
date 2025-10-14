@@ -78,7 +78,7 @@ export const Header = () => {
               aria-label={t('MenuButtonAria')}
               color="primary"
               className="desktop:!hidden"
-              onClick={handleToggleMenu}
+              onGovClick={handleToggleMenu}
             >
               <GovIcon slot="icon-start" name="list" />
             </GovButton>

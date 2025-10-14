@@ -52,7 +52,7 @@ export const Footer = () => {
             type="solid"
             size="m"
             className="bg-white cursor-pointer"
-            onClick={scrollTop}
+            onGovClick={scrollTop}
           >
             <GovIcon name="arrow-up" />
           </GovButton>
