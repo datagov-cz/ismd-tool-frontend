@@ -107,7 +107,13 @@
       "TextareaPlaceholder": "Napište komentář...",
       "SendButtonAria": "Odeslat komentář",
       "ErrorSendingComment": "Chyba při odesílání komentáře",
-      "MessageRequired": "Zpráva je povinná"
+      "MessageRequired": "Zpráva je povinná",
+      "DeleteCommentConfirmModal": {
+        "Title": "Smazat komentář",
+        "Description": "Opravdu chcete smazat komentář?",
+        "ConfirmButton": "Potvrdit",
+        "CancelButton": "Zrušit"
+      }
     },
     "Main": {
       "DictionaryStatus": {

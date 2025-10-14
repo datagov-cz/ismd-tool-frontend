@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
+
+import { ConfirmationModal } from '../shared/ConfirmationModal';
 
 interface Props {
   dateTime: Date;
@@ -8,12 +12,19 @@ interface Props {
 }
 
 export const CommentItem = ({ dateTime, text, author, user }: Props) => {
+  const t = useTranslations('DictionaryDetail.CommentSidebox');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
   const handleDelete = () => {
     if (user !== author) {
       return;
     }
+    setShowConfirmModal(true);
+  };
 
+  const confirmDelete = () => {
     console.log('Delete comment');
+    setShowConfirmModal(false);
   };
 
   return (
@@ -30,6 +41,16 @@ export const CommentItem = ({ dateTime, text, author, user }: Props) => {
         </button>
       </div>
       <p className="mt-1 text-sm whitespace-pre-wrap line-clamp-3">{text}</p>
+
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={confirmDelete}
+        cancelBtnText={t('DeleteCommentConfirmModal.CancelButton')}
+        confirmBtnText={t('DeleteCommentConfirmModal.ConfirmButton')}
+      >
+        {t('DeleteCommentConfirmModal.Description')}
+      </ConfirmationModal>
     </div>
   );
 };
