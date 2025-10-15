@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 interface Props {
@@ -20,6 +21,7 @@ export const Sidebox = ({
   children,
 }: Props) => {
   const ref = useOutsideClick(() => setIsOpen(false));
+  useEscapeKey(() => setIsOpen(false));
 
   const t = useTranslations('Shared');
 

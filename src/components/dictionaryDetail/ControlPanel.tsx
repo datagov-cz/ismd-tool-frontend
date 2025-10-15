@@ -1,5 +1,6 @@
 'use client';
 
+import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -7,7 +8,14 @@ import { useCommentBoxStore } from '@/store/commentBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
 
-export const ControlPanel = () => {
+type ValidationResult = 'valid' | 'invalid';
+
+interface Props {
+  validationResult?: ValidationResult;
+  isDraft?: boolean;
+}
+
+export const ControlPanel = ({ validationResult, isDraft }: Props) => {
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
@@ -34,12 +42,24 @@ export const ControlPanel = () => {
         ariaLabel={t('Comments')}
         onClick={() => setIsCommentBoxOpen(true)}
       />
-      <ControlPanelButton
-        iconName="checkmark"
-        ariaLabel={t('ValidationPassed')}
-      />
+      {validationResult === 'valid' && (
+        <GovIcon
+          name="checkmark"
+          size="xl"
+          aria-label={t('ValidationPassed')}
+        />
+      )}
+      {validationResult === 'invalid' && (
+        <GovIcon
+          name="crossmark"
+          size="xl"
+          aria-label={t('ValidationFailed')}
+        />
+      )}
       <ControlPanelButton iconName="download" ariaLabel={t('Download')} />
-      <ControlPanelButton iconName="trash" ariaLabel={t('Delete')} />
+      {isDraft && (
+        <ControlPanelButton iconName="trash" ariaLabel={t('Delete')} />
+      )}
     </div>
   );
 };
