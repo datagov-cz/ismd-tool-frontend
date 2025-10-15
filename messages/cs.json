@@ -132,7 +132,8 @@
         "ValidationPassed": "Validace proběhla úspěšně",
         "ValidationFailed": "Validace neprošla",
         "Download": "Stáhnout",
-        "Delete": "Smazat"
+        "Delete": "Smazat",
+        "Add": "Přidat"
       }
     }
   },

@@ -60,6 +60,11 @@ export const ControlPanel = ({ validationResult, isDraft }: Props) => {
       {isDraft && (
         <ControlPanelButton iconName="trash" ariaLabel={t('Delete')} />
       )}
+      <ControlPanelButton
+        iconName="plus"
+        ariaLabel={t('Add')}
+        className="mt-12"
+      />
     </div>
   );
 };
