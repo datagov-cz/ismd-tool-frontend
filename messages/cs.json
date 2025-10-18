@@ -15,6 +15,10 @@
       }
     },
     "NavLogged": {
+      "OnlineIndicator": {
+        "Online": "Připojeno",
+        "Offline": "Odpojeno"
+      },
       "Link1": "Nastavení",
       "Link2": "Nápověda",
       "Dropdown": {
