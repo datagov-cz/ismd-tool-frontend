@@ -23,7 +23,6 @@ export const CommentItem = ({ dateTime, text, author, user }: Props) => {
   };
 
   const confirmDelete = () => {
-    console.log('Delete comment');
     setShowConfirmModal(false);
   };
 

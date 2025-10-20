@@ -45,8 +45,6 @@ export const CommentSidebox = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log('Send comment:', data.message);
-
       setComments([
         ...comments,
         {
