@@ -27,7 +27,7 @@ export const CommentItem = ({ dateTime, text, author, user }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-y-2 p-2">
+    <div className="flex flex-col gap-y-2 p-2 [&:not(:last-child))]:border-b-[1px] border-secondary">
       <div className="flex justify-between items-center">
         <div className="text-sm font-medium">
           {new Date(dateTime).toLocaleDateString(undefined, {

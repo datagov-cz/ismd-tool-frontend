@@ -32,10 +32,12 @@ export const CommentSidebox = () => {
   });
 
   const [comments, setComments] = useState(tempComments);
-  const commentsEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = containerRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
   }, [comments]);
 
   // TODO: Get detail's comments from API
@@ -66,12 +68,11 @@ export const CommentSidebox = () => {
 
   return (
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className="space-y-4 overflow-y-auto">
+      <div ref={containerRef} className="space-y-4 overflow-y-auto">
         {comments.map(({ id, ...comment }) => (
-          // TODO: use real user
+          // TODO: use real user data
           <CommentItem key={id} {...comment} user="John Doe" />
         ))}
-        <div ref={commentsEndRef} />
       </div>
       <form
         className={`relative w-full border rounded-md ${errors.message ? 'border-red-500' : 'border-blue dark:border-white/60'}`}
