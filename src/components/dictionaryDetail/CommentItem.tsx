@@ -23,15 +23,20 @@ export const CommentItem = ({ dateTime, text, author, user }: Props) => {
   };
 
   const confirmDelete = () => {
-    console.log('Delete comment');
     setShowConfirmModal(false);
   };
 
   return (
-    <div className="flex flex-col gap-y-2 p-2">
+    <div className="flex flex-col gap-y-2 p-2 [&:not(:last-child))]:border-b-[1px] border-secondary">
       <div className="flex justify-between items-center">
         <div className="text-sm font-medium">
-          {new Date(dateTime).toLocaleDateString()}
+          {new Date(dateTime).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })}
         </div>
         <button
           className={`outline-blue dark:outline-white/60 flex items-center justify-center p-1 outline-1 rounded-md hover:bg-blue/20 dark:hover:bg-blue-hover transition-colors duration-200 mr-2 ${author !== user ? 'hidden' : ''}`}
