@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
 import { useUserStore } from '@/store/userStore';
+import { ButtonLink } from '../shared/ButtonLink';
 
 import { NavItem } from './NavItem';
 
@@ -28,8 +29,9 @@ export const NavItems = () => {
           {t('Nav.Link1')}
         </GovButton>
         <GovDropdown
+          id="nav-dropdown-guest"
           position="left"
-          onGovChange={(e) => setIsDropdownOpen(e.detail.open)}
+          onChange={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <GovButton
             color="primary"
@@ -48,15 +50,11 @@ export const NavItems = () => {
 
           <ul slot="list">
             <li>
-              <GovButton
-                color="neutral"
-                size="m"
-                type="base"
+              <ButtonLink
                 href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
                 target="_blank"
-                expanded
+                className="border-none justify-start"
               >
-                {t('Nav.Dropdown.Link1')}
                 <GovIcon
                   type="components"
                   name="bug"
@@ -64,18 +62,15 @@ export const NavItems = () => {
                   size="l"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
-              </GovButton>
+                {t('Nav.Dropdown.Link1')}
+              </ButtonLink>
             </li>
             <li>
-              <GovButton
-                color="neutral"
-                size="m"
-                type="base"
+              <ButtonLink
                 href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
                 target="_blank"
-                expanded
+                className="border-none justify-start"
               >
-                {t('Nav.Dropdown.Link2')}
                 <GovIcon
                   type="components"
                   name="flag"
@@ -83,7 +78,8 @@ export const NavItems = () => {
                   size="l"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
-              </GovButton>
+                {t('Nav.Dropdown.Link2')}
+              </ButtonLink>
             </li>
           </ul>
         </GovDropdown>
@@ -96,8 +92,9 @@ export const NavItems = () => {
       <NavItem href="">{t('NavLogged.Link1')}</NavItem>
       <NavItem href="">{t('NavLogged.Link2')}</NavItem>
       <GovDropdown
+        id="nav-dropdown-user"
         position="left"
-        onGovChange={(e) => setIsDropdownOpen(e.detail.open)}
+        onChange={() => setIsDropdownOpen(!isDropdownOpen)}
       >
         <GovButton
           color="primary"
@@ -116,13 +113,9 @@ export const NavItems = () => {
 
         <ul slot="list">
           <li>
-            <GovButton
-              color="neutral"
-              size="m"
-              type="base"
+            <ButtonLink
               href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
               target="_blank"
-              expanded
             >
               {t('NavLogged.Dropdown.Link1')}
               <GovIcon
@@ -132,16 +125,12 @@ export const NavItems = () => {
                 size="l"
                 className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
               />
-            </GovButton>
+            </ButtonLink>
           </li>
           <li>
-            <GovButton
-              color="neutral"
-              size="m"
-              type="base"
+            <ButtonLink
               href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
               target="_blank"
-              expanded
             >
               {t('NavLogged.Dropdown.Link2')}
               <GovIcon
@@ -151,7 +140,7 @@ export const NavItems = () => {
                 size="l"
                 className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
               />
-            </GovButton>
+            </ButtonLink>
           </li>
         </ul>
       </GovDropdown>

@@ -50,3 +50,66 @@ export const tempDraftDictionaries = [
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
   },
 ];
+
+export const tempComments = [
+  {
+    id: 1,
+    text: 'This is a comment',
+    author: 'John Doe',
+    dateTime: new Date('2023-10-01T10:00:00'),
+  },
+  {
+    id: 2,
+    text: 'This is a comment',
+    author: 'John Doe',
+    dateTime: new Date('2023-10-01T12:00:00'),
+  },
+  {
+    id: 3,
+    text: 'This is a comment',
+    author: 'Ana Smith',
+    dateTime: new Date('2023-10-01T14:00:00'),
+  },
+  {
+    id: 4,
+    text: 'This is a comment',
+    author: 'John Doe',
+    dateTime: new Date('2023-10-01T16:00:00'),
+  },
+  {
+    id: 5,
+    text: 'This is a comment',
+    author: 'Peter Johnson',
+    dateTime: new Date('2023-10-01T18:00:00'),
+  },
+  {
+    id: 6,
+    text: 'This is a comment',
+    author: 'Catherine Lee',
+    dateTime: new Date('2023-10-01T20:00:00'),
+  },
+  {
+    id: 7,
+    text: 'This is a comment',
+    author: 'Catherine Lee',
+    dateTime: new Date('2023-10-01T22:00:00'),
+  },
+  {
+    id: 8,
+    text: 'This is a comment',
+    author: 'John Doe',
+    dateTime: new Date('2023-10-01T24:00:00'),
+  },
+  {
+    id: 9,
+    text: 'This is a comment',
+    author: 'John Doe',
+    dateTime: new Date('2023-10-01T26:00:00'),
+  },
+  {
+    id: 10,
+    text: 'This is a comment',
+    author: 'John Doe',
+    dateTime: new Date('2023-10-01T28:00:00'),
+  },
+];

@@ -1,7 +1,8 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 interface Props {
@@ -20,8 +21,19 @@ export const Sidebox = ({
   children,
 }: Props) => {
   const ref = useOutsideClick(() => setIsOpen(false));
+  useEscapeKey(() => setIsOpen(false));
 
   const t = useTranslations('Shared');
+
+  // TODO: check if we need this from the business perspective
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('overflow-y-hidden');
+    } else {
+      document.body.classList.remove('overflow-y-hidden');
+    }
+    return () => document.body.classList.remove('overflow-y-hidden');
+  }, [isOpen]);
 
   return (
     <>
@@ -33,12 +45,12 @@ export const Sidebox = ({
       />
 
       <aside
-        className={`fixed top-[72px] desktop:my-10 right-0 h-full desktop:h-[80vh] w-full desktop:w-1/2 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-blue border-b border-t border-l border-solid rounded-tl-md rounded-bl-md ${
+        className={`fixed top-[72px] desktop:my-10 right-0 h-full desktop:h-[80vh] w-full desktop:w-1/2 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-blue border-b border-t border-l border-solid rounded-tl-md rounded-bl-md flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         ref={ref}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-shrink-0">
           {title && <h2 className="text-lg font-bold">{title}</h2>}
           <GovButton
             onGovClick={() => setIsOpen(false)}
@@ -53,7 +65,9 @@ export const Sidebox = ({
             />
           </GovButton>
         </div>
-        <div className="mt-4 overflow-hidden">{children}</div>
+        <div className="mt-4 flex-1 overflow-hidden flex flex-col">
+          {children}
+        </div>
       </aside>
     </>
   );

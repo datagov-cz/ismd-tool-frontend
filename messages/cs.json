@@ -1,5 +1,9 @@
 {
   "Header": {
+    "ThemeSwitchAria": {
+      "ToLight": "Přepnout na světlý režim",
+      "ToDark": "Přepnout na tmavý režim"
+    },
     "LogoTitle": "Informační systém pro modelování dat",
     "LogoTitleMobile": "ISMD",
     "Nav": {
@@ -61,6 +65,8 @@
     "MainControls": {
       "OpenDictFromFile": "Otevřít slovník ze souboru...",
       "CreateNewDict": "Vytvořit nový slovník...",
+      "CreateNewDictError": "Chyba při vytváření nového slovníku",
+      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
       "SearchPlaceholder": "Hledat pojmy a slovníky...",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
@@ -86,6 +92,49 @@
     "News": {
       "Title": "Co je nového",
       "ToDetailButton": "Více"
+    }
+  },
+  "DictionaryDetail": {
+    "Sidebar": {
+      "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
+      "DictTerms": "pojmy slovníku",
+      "AllResults": "všechny výsledky",
+      "DraftDictsHeadline": "Z rozpracovaných slovníků",
+      "PublishedDictsHeadline": "Z publikovaných slovníků"
+    },
+    "CommentSidebox": {
+      "Title": "Komentáře",
+      "TextareaPlaceholder": "Napište komentář...",
+      "SendButtonAria": "Odeslat komentář",
+      "ErrorSendingComment": "Chyba při odesílání komentáře",
+      "MessageRequired": "Zpráva je povinná",
+      "DeleteCommentConfirmModal": {
+        "Title": "Smazat komentář",
+        "Description": "Opravdu chcete smazat komentář?",
+        "ConfirmButton": "Potvrdit",
+        "CancelButton": "Zrušit"
+      }
+    },
+    "Main": {
+      "DictionaryStatus": {
+        "Draft": "Rozpracovaný slovník",
+        "Published": "Publikovaný slovník"
+      },
+      "Sections": {
+        "Description": "Popis",
+        "RelatedResources": "Související zdroje",
+        "Terms": "Pojmy"
+      },
+      "ControlPanel": {
+        "GetLink": "Získání odkazu",
+        "LinkCopied": "Odkaz zkopírován",
+        "Comments": "Komentáře",
+        "ValidationPassed": "Validace proběhla úspěšně",
+        "ValidationFailed": "Validace neprošla",
+        "Download": "Stáhnout",
+        "Delete": "Smazat",
+        "Add": "Přidat"
+      }
     }
   },
   "Shared": {

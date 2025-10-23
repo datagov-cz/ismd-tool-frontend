@@ -1,10 +1,12 @@
-@import '@gov-design-system-ce/styles/lib/tokens.css';
+@import '@gov-design-system-ce/styles/tokens.css';
 /* General settings. */
-/* @import '@gov-design-system-ce/styles/lib/styles.css'; */
+/* @import '@gov-design-system-ce/styles/styles.css'; */
 /* Styles for basic layout and containers. */
-/* @import '@gov-design-system-ce/styles/lib/layout.css'; */
+@import '@gov-design-system-ce/styles/layout.css';
 /* Styles of individual components. */
-@import '@gov-design-system-ce/styles/lib/components.css';
+@import '@gov-design-system-ce/styles/components.css';
+/* Styles of animations. */
+@import '@gov-design-system-ce/styles/animations.css';
 
 gov-button[type='link'],
 gov-button[type='link'] .element,

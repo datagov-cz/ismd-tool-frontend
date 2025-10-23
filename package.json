@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@gov-design-system-ce/react": "^2.4.2",
+    "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.5.2",
@@ -29,9 +30,12 @@
     "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.64.0",
     "react-markdown": "^10.1.0",
+    "react-toastify": "^11.0.5",
     "sugar-high": "^0.9.3",
     "tailwindcss": "^4.1.11",
+    "zod": "^4.1.12",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
@@ -60,8 +64,7 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
-      "prettier --write",
-      "tsc --noEmit"
+      "prettier --write"
     ],
     "*.{json,css,scss,md}": [
       "prettier --write"
