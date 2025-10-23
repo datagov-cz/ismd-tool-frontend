@@ -10,7 +10,7 @@ type UserStoreActions = {
 };
 
 const initialState: UserStoreType = {
-  user: null,
+  user: {},
 };
 
 export const useUserStore = create<UserStoreType & UserStoreActions>()(

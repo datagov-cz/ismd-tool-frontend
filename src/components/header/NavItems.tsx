@@ -7,6 +7,7 @@ import { useUserStore } from '@/store/userStore';
 import { ButtonLink } from '../shared/ButtonLink';
 
 import { NavItem } from './NavItem';
+import { OnlineIndicator } from './OnlineIndicator';
 
 export const NavItems = () => {
   const t = useTranslations('Header');
@@ -89,6 +90,7 @@ export const NavItems = () => {
 
   return (
     <>
+      <OnlineIndicator />
       <NavItem href="">{t('NavLogged.Link1')}</NavItem>
       <NavItem href="">{t('NavLogged.Link2')}</NavItem>
       <GovDropdown
