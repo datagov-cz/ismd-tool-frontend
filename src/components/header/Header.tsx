@@ -66,7 +66,7 @@ export const Header = () => {
             </div>
           </div>
           <nav className="ml-auto">
-            <ul className="hidden gap-x-4 px-3 flex-col lg:flex-row flex-wrap items-center desktop:flex">
+            <ul className="hidden gap-x-4 px-3 flex-col desktop:flex-row flex-wrap items-center desktop:flex">
               <NavItems />
             </ul>
           </nav>
