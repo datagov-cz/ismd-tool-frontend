@@ -1,13 +1,10 @@
 'use client';
 
-import { GovButton } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
-import { Searchbox } from '@/components/shared/Searchbox';
-import { SidebarContainer } from '@/components/shared/SidebarContainer';
 
 const DictionaryDetail = () => {
   const t = useTranslations('DictionaryDetail');
@@ -16,34 +13,6 @@ const DictionaryDetail = () => {
 
   return (
     <>
-      <SidebarContainer>
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <Searchbox
-              placeholder={t('Sidebar.SearchbarPlaceholder')}
-              id="search-diagrams"
-            />
-            <div className="flex gap-2 flex-wrap">
-              <GovButton type="solid" size="s" color="primary" slot="button">
-                {t('Sidebar.DictTerms')}
-              </GovButton>
-              <GovButton type="solid" size="s" color="primary" slot="button">
-                {t('Sidebar.AllResults')}
-              </GovButton>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-medium text-lg">
-              {t('Sidebar.DraftDictsHeadline')}
-            </h3>
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-medium text-lg">
-              {t('Sidebar.PublishedDictsHeadline')}
-            </h3>
-          </div>
-        </div>
-      </SidebarContainer>
       <div className="w-full pl-2 pr-8 space-y-6 relative">
         <GridContainer>
           <div className="space-y-2 col-span-4 col-start-2">

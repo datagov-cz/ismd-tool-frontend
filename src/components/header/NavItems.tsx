@@ -92,7 +92,14 @@ export const NavItems = () => {
     <>
       <OnlineIndicator />
       <NavItem href="">{t('NavLogged.Link1')}</NavItem>
-      <NavItem href="">{t('NavLogged.Link2')}</NavItem>
+      <GovButton
+        color="primary"
+        size="m"
+        type="base"
+        onGovClick={() => setIsHintboxOpen(true)}
+      >
+        {t('NavLogged.Link2')}
+      </GovButton>
       <GovDropdown
         id="nav-dropdown-user"
         position="left"
@@ -118,6 +125,7 @@ export const NavItems = () => {
             <ButtonLink
               href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
               target="_blank"
+              className="border-none justify-start"
             >
               {t('NavLogged.Dropdown.Link1')}
               <GovIcon
@@ -133,6 +141,7 @@ export const NavItems = () => {
             <ButtonLink
               href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
               target="_blank"
+              className="border-none justify-start"
             >
               {t('NavLogged.Dropdown.Link2')}
               <GovIcon
