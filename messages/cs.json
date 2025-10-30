@@ -143,5 +143,24 @@
   },
   "Shared": {
     "CloseAria": "Zavřít"
+  },
+  "CreateOntology": {
+    "Form": {
+      "Title": "Vytvořit nový slovník",
+      "NamespaceLabel": "Prostor názvů",
+      "NamespacePlaceholder": "Zadejte prostor názvů...",
+      "NameLabel": "Název",
+      "NamePlaceholder": "Zadejte název slovníku...",
+      "DescriptionLabel": "Popis",
+      "DescriptionPlaceholder": "Zadejte popis slovníku...",
+      "CreateButton": "Vytvořit slovník",
+      "CreatingButton": "Vytváří se...",
+      "SubmitButton": "Vytvořit"
+    },
+    "FormSchema": {
+      "NamespaceRequired": "Prostor názvů je povinný",
+      "NameRequired": "Název je povinný",
+      "DescriptionRequired": "Popis je povinný"
+    }
   }
 }
