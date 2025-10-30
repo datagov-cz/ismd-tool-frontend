@@ -10,27 +10,6 @@ export const MainControls = () => {
   const t = useTranslations('Home');
   const user = useUserStore((state) => state.user);
 
-  // const { mutate, isPending } = useCreateOntology();
-
-  // TODO: change placeholder values
-  // const handleCreateOntology = () => {
-  //   mutate(
-  //     {
-  //       userId: 'test',
-  //       ontology: { namespace: 'test', name: 'test', description: 'test' },
-  //     },
-  //     {
-  //       onSuccess: () => {
-  //         toast(t('MainControls.CreateNewDictSuccess'));
-  //       },
-  //       onError: (error) => {
-  //         console.error('Failed to create ontology:', error);
-  //         toast(t('MainControls.CreateNewDictError'));
-  //       },
-  //     },
-  //   );
-  // };
-
   return (
     <div className="space-y-4">
       <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">

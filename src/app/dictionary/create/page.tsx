@@ -1,13 +1,16 @@
 'use client';
 
 import { useEffect } from 'react';
-import { GovButton } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
+import { useCreateOntology } from '@/api/generated';
+import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
+import { OntologyType } from '@/lib/appTypes';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 import { useUserStore } from '@/store/userStore';
 
@@ -20,8 +23,12 @@ const CreateDictionary = () => {
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
     resolver: zodResolver(createOntologySchema(t)),
-    defaultValues: {},
+    defaultValues: {
+      namespace: 'http://example.org/test#',
+    },
   });
+
+  const { mutate, isPending } = useCreateOntology();
 
   const {
     handleSubmit,
@@ -29,7 +36,33 @@ const CreateDictionary = () => {
   } = form;
 
   const onSubmit = (data: OntologySchemaType) => {
-    console.log(data);
+    const payload: OntologyType = {
+      namespace: data.namespace,
+      nameModel: {
+        name: data.name,
+        languageTag: 'en',
+      },
+      descriptionModel: {
+        description: data.description,
+        languageTag: 'en',
+      },
+    };
+
+    mutate(
+      {
+        userId: 'test',
+        ontology: payload,
+      },
+      {
+        onSuccess: () => {
+          toast(t('Form.CreateNewDictSuccess'));
+        },
+        onError: (error) => {
+          console.error('Failed to create ontology:', error);
+          toast(t('Form.CreateNewDictError'));
+        },
+      },
+    );
   };
 
   // TODO: Replace with proper auth guard. Use redirect in a server component.
@@ -52,15 +85,19 @@ const CreateDictionary = () => {
             label={t('Form.NameLabel')}
             placeholder={t('Form.NamePlaceholder')}
           />
-          <GovButton
-            type="solid"
-            size="m"
+          <Input
+            name="description"
+            label={t('Form.DescriptionLabel')}
+            placeholder={t('Form.DescriptionPlaceholder')}
+          />
+          <Button
+            styleType="solid"
             color="primary"
-            slot="button"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isPending}
+            type="submit"
           >
             {t('Form.SubmitButton')}
-          </GovButton>
+          </Button>
         </form>
       </FormProvider>
     </div>
