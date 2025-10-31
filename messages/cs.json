@@ -69,6 +69,7 @@
     "MainControls": {
       "OpenDictFromFile": "Otevřít slovník ze souboru...",
       "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "CreateNewDict": "Vytvořit nový slovník...",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
         "PublishedDictionaries": "Publikované slovníky",
@@ -148,6 +149,7 @@
       "NamespacePlaceholder": "Zadejte prostor názvů...",
       "NameLabel": "Název",
       "NamePlaceholder": "Zadejte název slovníku...",
+      "LanguageTagLabel": "Jazykový tag",
       "DescriptionLabel": "Popis",
       "DescriptionPlaceholder": "Zadejte popis slovníku...",
       "CreateButton": "Vytvořit slovník",
@@ -160,7 +162,8 @@
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",
       "NameRequired": "Název je povinný",
-      "DescriptionRequired": "Popis je povinný"
+      "DescriptionRequired": "Popis je povinný",
+      "LanguageTagRequired": "Jazykový tag je povinný"
     }
   }
 }

@@ -10,8 +10,9 @@ export type CommentSchemaType = z.infer<ReturnType<typeof createCommentSchema>>;
 export const createOntologySchema = (t: (key: string) => string) =>
   z.object({
     namespace: z.string().min(1, t('FormSchema.NamespaceRequired')),
-    name: z.string(t('FormSchema.NameRequired')),
-    description: z.string(t('FormSchema.DescriptionRequired')),
+    name: z.string().min(1, t('FormSchema.NameRequired')),
+    description: z.string().min(1, t('FormSchema.DescriptionRequired')),
+    languageTag: z.string().min(1, t('FormSchema.LanguageTagRequired')),
   });
 
 export type OntologySchemaType = z.infer<

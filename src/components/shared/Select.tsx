@@ -1,21 +1,22 @@
-import { InputHTMLAttributes } from 'react';
+import { SelectHTMLAttributes } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { ErrorText } from './ErrorText';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   name: string;
+  options: string[];
 }
 
-export const Input = ({ label, placeholder, name }: Props) => {
+export const Select = ({ label, name, options }: Props) => {
   const {
     control,
     formState: { errors },
   } = useFormContext();
 
   return (
-    <div className="w-full space-y-0.5">
+    <div className="relative w-full space-y-0.5">
       <Controller
         control={control}
         name={name}
@@ -30,14 +31,18 @@ export const Input = ({ label, placeholder, name }: Props) => {
             <div
               className={`bg-white dark:bg-dark-primary border rounded-lg focus-within:outline-2 focus-within:outline-status-focus hover:bg-field-hover dark:hover:bg-dark-field-hover ${errors[name] ? 'border-status-error-700 dark:border-status-error-200' : 'border-gray-border dark:border-dark-border'}`}
             >
-              <input
+              <select
                 id={field.name}
-                placeholder={placeholder}
                 value={field.value ?? ''}
                 onChange={field.onChange}
-                type="text"
-                className="w-full appearance-none overflow-hidden rounded-lg text-ellipsis whitespace-nowrap border-none bg-transparent text-left outline-none py-2 px-3"
-              />
+                className="w-full appearance-none overflow-hidden text-ellipsis whitespace-nowrap border-none bg-transparent text-left outline-none py-2 px-3"
+              >
+                {options.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}

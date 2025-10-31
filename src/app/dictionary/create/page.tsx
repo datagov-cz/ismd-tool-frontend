@@ -10,7 +10,9 @@ import { toast } from 'react-toastify';
 import { useCreateOntology } from '@/api/generated';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
+import { Select } from '@/components/shared/Select';
 import { OntologyType } from '@/lib/appTypes';
+import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 import { useUserStore } from '@/store/userStore';
 
@@ -24,7 +26,10 @@ const CreateDictionary = () => {
     mode: 'onChange',
     resolver: zodResolver(createOntologySchema(t)),
     defaultValues: {
-      namespace: 'http://example.org/test#',
+      namespace: NAMESPACE,
+      languageTag: LANG_TAGS[0],
+      name: '',
+      description: '',
     },
   });
 
@@ -40,11 +45,11 @@ const CreateDictionary = () => {
       namespace: data.namespace,
       nameModel: {
         name: data.name,
-        languageTag: 'en',
+        languageTag: data.languageTag,
       },
       descriptionModel: {
         description: data.description,
-        languageTag: 'en',
+        languageTag: data.languageTag,
       },
     };
 
@@ -80,16 +85,28 @@ const CreateDictionary = () => {
     <div className="w-full">
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-10">
-          <Input
-            name="name"
-            label={t('Form.NameLabel')}
-            placeholder={t('Form.NamePlaceholder')}
-          />
-          <Input
-            name="description"
-            label={t('Form.DescriptionLabel')}
-            placeholder={t('Form.DescriptionPlaceholder')}
-          />
+          <div className="w-full space-y-4">
+            <Input
+              name="namespace"
+              label={t('Form.NamespaceLabel')}
+              placeholder={t('Form.NamespacePlaceholder')}
+            />
+            <Select
+              options={LANG_TAGS}
+              label={t('Form.LanguageTagLabel')}
+              name="languageTag"
+            />
+            <Input
+              name="name"
+              label={t('Form.NameLabel')}
+              placeholder={t('Form.NamePlaceholder')}
+            />
+            <Input
+              name="description"
+              label={t('Form.DescriptionLabel')}
+              placeholder={t('Form.DescriptionPlaceholder')}
+            />
+          </div>
           <Button
             styleType="solid"
             color="primary"
