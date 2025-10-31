@@ -1,14 +1,14 @@
-import { InputHTMLAttributes } from 'react';
+import { TextareaHTMLAttributes } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { ErrorText } from './ErrorText';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   name: string;
 }
 
-export const Input = ({
+export const TextArea = ({
   label,
   placeholder,
   name,
@@ -36,14 +36,13 @@ export const Input = ({
             <div
               className={`bg-white dark:bg-dark-primary border rounded-lg focus-within:outline-2 focus-within:outline-status-focus hover:bg-field-hover dark:hover:bg-dark-field-hover ${errors[name] ? 'border-status-error-700 dark:border-status-error-200' : 'border-gray-border dark:border-dark-border'}`}
             >
-              <input
+              <textarea
                 {...props}
                 id={field.name}
                 placeholder={placeholder}
                 value={field.value ?? ''}
                 onChange={field.onChange}
-                type="text"
-                className="w-full appearance-none overflow-hidden rounded-lg text-ellipsis whitespace-nowrap border-none bg-transparent text-left outline-none py-2 px-3"
+                className="w-full appearance-none overflow-hidden rounded-lg border-none bg-transparent text-left outline-none py-2 px-3 resize-vertical min-h-20"
               />
             </div>
           </div>

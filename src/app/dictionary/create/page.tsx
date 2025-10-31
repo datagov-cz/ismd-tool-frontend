@@ -11,6 +11,7 @@ import { useCreateOntology } from '@/api/generated';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
 import { Select } from '@/components/shared/Select';
+import { TextArea } from '@/components/shared/Textarea';
 import { OntologyType } from '@/lib/appTypes';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
@@ -59,8 +60,11 @@ const CreateDictionary = () => {
         ontology: payload,
       },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
           toast(t('Form.CreateNewDictSuccess'));
+          if (response?.id) {
+            router.push(`/dictionary/${response.id}`);
+          }
         },
         onError: (error) => {
           console.error('Failed to create ontology:', error);
@@ -91,20 +95,21 @@ const CreateDictionary = () => {
               label={t('Form.NamespaceLabel')}
               placeholder={t('Form.NamespacePlaceholder')}
             />
-            <Select
-              options={LANG_TAGS}
-              label={t('Form.LanguageTagLabel')}
-              name="languageTag"
-            />
             <Input
               name="name"
               label={t('Form.NameLabel')}
               placeholder={t('Form.NamePlaceholder')}
             />
-            <Input
+            <TextArea
               name="description"
               label={t('Form.DescriptionLabel')}
               placeholder={t('Form.DescriptionPlaceholder')}
+            />
+            <Select
+              options={LANG_TAGS}
+              label={t('Form.LanguageTagLabel')}
+              name="languageTag"
+              className="max-w-24"
             />
           </div>
           <Button
