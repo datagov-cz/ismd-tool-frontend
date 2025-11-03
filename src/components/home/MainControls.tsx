@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { useCreateOntology } from '@/api/generated';
 import { useUserStore } from '@/store/userStore';
 import { Searchbar } from '../shared/Searchbar';
+import { UploadFlow } from '../uploadFlow/UploadFlow';
 
 export const MainControls = () => {
   const t = useTranslations('Home');
@@ -18,8 +19,12 @@ export const MainControls = () => {
   const handleCreateOntology = () => {
     mutate(
       {
-        userId: 'test',
-        ontology: { namespace: 'test', name: 'test', description: 'test' },
+        data: {
+          namespace: 'test',
+          nameModel: { languageTag: 'cs', name: 'test' },
+          descriptionModel: { languageTag: 'cs', description: 'test' },
+        },
+        params: { userId: 'test' },
       },
       {
         onSuccess: () => {
@@ -36,9 +41,7 @@ export const MainControls = () => {
   return (
     <div className="space-y-4">
       <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">
-        <GovButton type="solid" size="m" color="primary" slot="button">
-          {t('MainControls.OpenDictFromFile')}
-        </GovButton>
+        <UploadFlow />
         <GovButton
           type="solid"
           size="m"
