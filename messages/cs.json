@@ -166,5 +166,8 @@
       "ViewOntology": "Zobrazit slovník",
       "CloseDialog": "Zavřít"
     }
+  },
+  "Errors": {
+    "UnknownError": "Neznámý error"
   }
 }
