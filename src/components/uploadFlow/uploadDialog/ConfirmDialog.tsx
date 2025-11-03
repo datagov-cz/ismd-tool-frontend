@@ -1,16 +1,17 @@
 import { GovButton, GovDialog } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+interface ConfirmDialogProps {
+  open: boolean;
+  onClose: () => void;
+  handleUnsavedClose: () => void;
+}
+
 export const ConfirmDialog = ({
   open,
   onClose,
   handleUnsavedClose,
-}: {
-  title: string;
-  open: boolean;
-  onClose: () => void;
-  handleUnsavedClose: () => void;
-}) => {
+}: ConfirmDialogProps) => {
   const t = useTranslations('UploadOntology');
 
   return (

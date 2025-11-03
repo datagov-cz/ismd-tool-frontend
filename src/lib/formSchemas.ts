@@ -6,3 +6,6 @@ export const createCommentSchema = (t: (key: string) => string) =>
   });
 
 export type CommentSchemaType = z.infer<ReturnType<typeof createCommentSchema>>;
+
+export const uploadOntologySchema = () =>
+  z.object({ file: z.instanceof(Blob).optional() });

@@ -4,11 +4,11 @@ import { useTranslations } from 'next-intl';
 
 import { OntologyMetadataModel } from '@/api/generated';
 
-export type SuccessDialogProps = {
+interface SuccessDialogProps {
   open: boolean;
   onClose: () => void;
   ontologyData: OntologyMetadataModel;
-};
+}
 
 export const SuccessDialog = ({
   open,

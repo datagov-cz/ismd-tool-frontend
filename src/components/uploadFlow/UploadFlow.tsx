@@ -5,13 +5,18 @@ import { useTranslations } from 'next-intl';
 import { OntologyMetadataModel } from '@/api/generated';
 
 import { SuccessDialog } from './successDialog/SuccessDialog';
-import { UploadDialog } from './uploadDialog/UploadDIalog';
+import { UploadDialog } from './uploadDialog/UploadDialog';
 
 export const UploadFlow = () => {
   const [open, setOpen] = useState(false);
   const [successData, setSuccessData] = useState<OntologyMetadataModel>();
 
   const t = useTranslations('Home');
+
+  const handleCloseSuccess = () => {
+    setOpen(false);
+    setSuccessData(undefined);
+  };
 
   return (
     <>
@@ -27,10 +32,7 @@ export const UploadFlow = () => {
       <UploadDialog open={open} setOpen={setOpen} setSuccess={setSuccessData} />
       <SuccessDialog
         open={!!successData}
-        onClose={() => {
-          setOpen(false);
-          setSuccessData(undefined);
-        }}
+        onClose={handleCloseSuccess}
         ontologyData={successData || {}}
       />
     </>

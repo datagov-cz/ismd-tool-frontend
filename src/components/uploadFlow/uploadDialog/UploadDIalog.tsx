@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { GovButton, GovDialog } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -9,17 +9,17 @@ import {
   UploadFromFileBody,
   useUploadFromFile,
 } from '@/api/generated';
+import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { ConfirmDialog } from './ConfirmDialog';
 import { FileController } from './FileController';
-import { uploadOntologySchema } from './uploadOntologySchema';
 
-export type UploadDialogProps = {
+interface UploadDialogProps {
   open: boolean;
   setOpen: (value: boolean) => void;
   setSuccess: (value: OntologyMetadataModel) => void;
-};
+}
 
 export const UploadDialog = ({
   open,
@@ -79,7 +79,7 @@ export const UploadDialog = ({
   };
 
   return (
-    <Fragment>
+    <>
       <GovDialog
         open={open}
         onGovClose={() => handleClose()}
@@ -123,8 +123,7 @@ export const UploadDialog = ({
           reset();
           setOpen(false);
         }}
-        title={t('ConfirmCancelDialog.Title')}
       />
-    </Fragment>
+    </>
   );
 };
