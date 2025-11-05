@@ -68,10 +68,8 @@
   "Home": {
     "MainControls": {
       "OpenDictFromFile": "Otevřít slovník ze souboru...",
-      "CreateNewDict": "Vytvořit nový slovník...",
-      "CreateNewDictError": "Chyba při vytváření nového slovníku",
-      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
       "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "CreateNewDict": "Vytvořit nový slovník...",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
         "PublishedDictionaries": "Publikované slovníky",
@@ -169,5 +167,29 @@
   },
   "Errors": {
     "UnknownError": "Neznámý error"
+  },
+  "CreateOntology": {
+    "Form": {
+      "Title": "Vytvořit nový slovník",
+      "NamespaceLabel": "Prostor názvů",
+      "NamespacePlaceholder": "Zadejte prostor názvů...",
+      "NameLabel": "Název",
+      "NamePlaceholder": "Zadejte název slovníku...",
+      "LanguageTagLabel": "Jazykový tag",
+      "DescriptionLabel": "Popis",
+      "DescriptionPlaceholder": "Zadejte popis slovníku...",
+      "CreateButton": "Vytvořit slovník",
+      "CreatingButton": "Vytváří se...",
+      "SubmitButton": "Vytvořit",
+      "CreateNewDict": "Vytvořit nový slovník...",
+      "CreateNewDictError": "Chyba při vytváření nového slovníku",
+      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen"
+    },
+    "FormSchema": {
+      "NamespaceRequired": "Prostor názvů je povinný",
+      "NameRequired": "Název je povinný",
+      "DescriptionRequired": "Popis je povinný",
+      "LanguageTagRequired": "Jazykový tag je povinný"
+    }
   }
 }

@@ -113,3 +113,6 @@ export const tempComments = [
     dateTime: new Date('2023-10-01T28:00:00'),
   },
 ];
+
+export const NAMESPACE = 'https://slovník.gov.cz/';
+export const LANG_TAGS = ['cs', 'en', 'sk'];
