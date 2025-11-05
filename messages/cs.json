@@ -143,5 +143,16 @@
   },
   "Shared": {
     "CloseAria": "Zavřít"
+  },
+  "DownloadDialog": {
+    "Title": "Vyberte formát souboru",
+    "Success": "Úspěšně stažený sobor",
+    "Error": "Soubor se nepodařilo stáhnout"
+  },
+  "DeleteDialog": {
+    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Name": "Název",
+    "No": "Ne",
+    "Yes": "Ano"
   }
 }
