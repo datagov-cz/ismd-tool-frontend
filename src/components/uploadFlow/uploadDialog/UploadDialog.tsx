@@ -9,6 +9,7 @@ import {
   UploadFromFileBody,
   useUploadFromFile,
 } from '@/api/generated';
+import { ErrorText } from '@/components/shared/ErrorText';
 import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
@@ -98,9 +99,7 @@ export const UploadDialog = ({
             form={form}
             translationNamespace="UploadOntology"
           />
-          {submitError && (
-            <p className="text-red-600 text-sm mt-1">{String(submitError)}</p>
-          )}
+          {submitError && <ErrorText text={submitError} />}
           <div className="gap-2 flex justify-end w-full">
             <GovButton
               type="outlined"

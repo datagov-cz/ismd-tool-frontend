@@ -15,7 +15,7 @@ export const SuccessDialog = ({
   onClose,
   ontologyData,
 }: SuccessDialogProps) => {
-  const { id, graphName } = ontologyData;
+  const { id, graphName, slug } = ontologyData;
   const t = useTranslations('UploadOntology');
 
   return (
@@ -49,7 +49,7 @@ export const SuccessDialog = ({
         >
           {t('SuccessDialog.CloseDialog')}
         </GovButton>
-        <GovButton type="solid" color="primary" href={`/dictionary/${id}`}>
+        <GovButton type="solid" color="primary" href={`/dictionary/${slug}`}>
           {t('SuccessDialog.ViewOntology')}
         </GovButton>
       </div>

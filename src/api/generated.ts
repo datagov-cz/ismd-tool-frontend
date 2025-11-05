@@ -50,6 +50,7 @@ export const OntologyMetadataModelOntologyLevel = {
 
 export interface OntologyMetadataModel {
   id?: number;
+  slug?: string;
   graphName?: string;
   user?: UserModel;
   isPublished?: boolean;
@@ -214,6 +215,7 @@ export const ConceptMetadataModelConceptType = {
 
 export interface ConceptMetadataModel {
   id?: number;
+  slug?: string;
   conceptType?: ConceptMetadataModelConceptType;
   conceptIri?: string;
   graphName?: string;
@@ -320,25 +322,15 @@ export type RelationshipConceptEditModelAllOf = {
 export type RelationshipConceptEditModel = ConceptEditModel &
   RelationshipConceptEditModelAllOf;
 
-export type ConceptDetailModelNázev = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelNázev = { [key: string]: string };
 
-export type ConceptDetailModelAlternativníNázev = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelAlternativníNázev = { [key: string]: string };
 
-export type ConceptDetailModelDefinice = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelDefinice = { [key: string]: string };
 
-export type ConceptDetailModelPopis = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelPopis = { [key: string]: string };
 
-export type ConceptDetailModelEkvivalentníPojemItem = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelEkvivalentníPojemItem = { [key: string]: string };
 
 export interface ConceptDetailModel {
   iri?: string;
@@ -367,6 +359,11 @@ export interface ConceptDetailModel {
   'ustanovení-neverejnost'?: string[];
 }
 
+export interface GetOntologyDto {
+  ontologyMetadata?: OntologyMetadataModel;
+  ontologyDetail?: OntologyDetailModel;
+}
+
 export type OntologyDetailModelNázev = { [key: string]: string };
 
 export type OntologyDetailModelPopis = { [key: string]: string };
@@ -380,6 +377,23 @@ export interface OntologyDetailModel {
   'časový-okamžik-vytvoření'?: string;
   'časový-okamžik-poslední-změny'?: string;
   pojmy?: ConceptDetailModel[];
+}
+
+export interface ApiResponseDtoListOntologyMetadataModel {
+  data?: OntologyMetadataModel[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface GetConceptDto {
+  conceptMetadata?: ConceptMetadataModel;
+  conceptDetail?: ConceptDetailModel;
+}
+
+export interface ApiResponseDtoListConceptMetadataModel {
+  data?: ConceptMetadataModel[];
+  message?: string;
+  success?: boolean;
 }
 
 export type ApiResponseDtoVoidData = { [key: string]: unknown };
@@ -427,6 +441,16 @@ export type EditConceptBody =
 
 export type DownloadFileParams = {
   format: string;
+};
+
+export type GetOntologyListParams = {
+  userId?: string;
+  isPublished?: boolean;
+};
+
+export type GetConceptListParams = {
+  userId?: string;
+  isPublished?: boolean;
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -940,6 +964,167 @@ export const useEditConcept = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient);
 };
 
+export const getOntologyDetail = (
+  slug: string,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<GetOntologyDto>(
+    { url: `/api/ontology/${slug}/detail`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getGetOntologyDetailQueryKey = (slug?: string) => {
+  return [`/api/ontology/${slug}/detail`] as const;
+};
+
+export const getGetOntologyDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOntologyDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetOntologyDetailQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getOntologyDetail>>
+  > = ({ signal }) => getOntologyDetail(slug, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getOntologyDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetOntologyDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOntologyDetail>>
+>;
+export type GetOntologyDetailQueryError = unknown;
+
+export function useGetOntologyDetail<
+  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOntologyDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOntologyDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getOntologyDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOntologyDetail<
+  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOntologyDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOntologyDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getOntologyDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOntologyDetail<
+  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOntologyDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetOntologyDetail<
+  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOntologyDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetOntologyDetailQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 export const downloadFile = (
   ontologyId: number,
   params: DownloadFileParams,
@@ -1100,30 +1285,30 @@ export function useDownloadFile<
   return query;
 }
 
-export const getOntologyDetail = (
-  ontologyId: number,
+export const getOntologyList = (
+  params?: GetOntologyListParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<OntologyDetailModel>(
-    { url: `/api/ontology/${ontologyId}/detail`, method: 'GET', signal },
+  return axiosInstance<ApiResponseDtoListOntologyMetadataModel>(
+    { url: `/api/ontology/list`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getGetOntologyDetailQueryKey = (ontologyId?: number) => {
-  return [`/api/ontology/${ontologyId}/detail`] as const;
+export const getGetOntologyListQueryKey = (params?: GetOntologyListParams) => {
+  return [`/api/ontology/list`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetOntologyDetailQueryOptions = <
-  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+export const getGetOntologyListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOntologyList>>,
   TError = unknown,
 >(
-  ontologyId: number,
+  params?: GetOntologyListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getOntologyDetail>>,
+        Awaited<ReturnType<typeof getOntologyList>>,
         TError,
         TData
       >
@@ -1133,48 +1318,42 @@ export const getGetOntologyDetailQueryOptions = <
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =
-    queryOptions?.queryKey ?? getGetOntologyDetailQueryKey(ontologyId);
+  const queryKey = queryOptions?.queryKey ?? getGetOntologyListQueryKey(params);
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getOntologyDetail>>
-  > = ({ signal }) => getOntologyDetail(ontologyId, requestOptions, signal);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getOntologyList>>> = ({
+    signal,
+  }) => getOntologyList(params, requestOptions, signal);
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!ontologyId,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getOntologyDetail>>,
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getOntologyList>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetOntologyDetailQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getOntologyDetail>>
+export type GetOntologyListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOntologyList>>
 >;
-export type GetOntologyDetailQueryError = unknown;
+export type GetOntologyListQueryError = unknown;
 
-export function useGetOntologyDetail<
-  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+export function useGetOntologyList<
+  TData = Awaited<ReturnType<typeof getOntologyList>>,
   TError = unknown,
 >(
-  ontologyId: number,
+  params: undefined | GetOntologyListParams,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getOntologyDetail>>,
+        Awaited<ReturnType<typeof getOntologyList>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getOntologyDetail>>,
+          Awaited<ReturnType<typeof getOntologyList>>,
           TError,
-          Awaited<ReturnType<typeof getOntologyDetail>>
+          Awaited<ReturnType<typeof getOntologyList>>
         >,
         'initialData'
       >;
@@ -1184,24 +1363,24 @@ export function useGetOntologyDetail<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetOntologyDetail<
-  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+export function useGetOntologyList<
+  TData = Awaited<ReturnType<typeof getOntologyList>>,
   TError = unknown,
 >(
-  ontologyId: number,
+  params?: GetOntologyListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getOntologyDetail>>,
+        Awaited<ReturnType<typeof getOntologyList>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getOntologyDetail>>,
+          Awaited<ReturnType<typeof getOntologyList>>,
           TError,
-          Awaited<ReturnType<typeof getOntologyDetail>>
+          Awaited<ReturnType<typeof getOntologyList>>
         >,
         'initialData'
       >;
@@ -1211,15 +1390,15 @@ export function useGetOntologyDetail<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetOntologyDetail<
-  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+export function useGetOntologyList<
+  TData = Awaited<ReturnType<typeof getOntologyList>>,
   TError = unknown,
 >(
-  ontologyId: number,
+  params?: GetOntologyListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getOntologyDetail>>,
+        Awaited<ReturnType<typeof getOntologyList>>,
         TError,
         TData
       >
@@ -1231,15 +1410,15 @@ export function useGetOntologyDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useGetOntologyDetail<
-  TData = Awaited<ReturnType<typeof getOntologyDetail>>,
+export function useGetOntologyList<
+  TData = Awaited<ReturnType<typeof getOntologyList>>,
   TError = unknown,
 >(
-  ontologyId: number,
+  params?: GetOntologyListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof getOntologyDetail>>,
+        Awaited<ReturnType<typeof getOntologyList>>,
         TError,
         TData
       >
@@ -1250,7 +1429,304 @@ export function useGetOntologyDetail<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetOntologyDetailQueryOptions(ontologyId, options);
+  const queryOptions = getGetOntologyListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getConceptDetail = (
+  slug: string,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<GetConceptDto>(
+    { url: `/api/concept/${slug}/detail`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getGetConceptDetailQueryKey = (slug?: string) => {
+  return [`/api/concept/${slug}/detail`] as const;
+};
+
+export const getGetConceptDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getConceptDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetConceptDetailQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getConceptDetail>>
+  > = ({ signal }) => getConceptDetail(slug, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getConceptDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetConceptDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getConceptDetail>>
+>;
+export type GetConceptDetailQueryError = unknown;
+
+export function useGetConceptDetail<
+  TData = Awaited<ReturnType<typeof getConceptDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptDetail<
+  TData = Awaited<ReturnType<typeof getConceptDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptDetail<
+  TData = Awaited<ReturnType<typeof getConceptDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetConceptDetail<
+  TData = Awaited<ReturnType<typeof getConceptDetail>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetConceptDetailQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getConceptList = (
+  params?: GetConceptListParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListConceptMetadataModel>(
+    { url: `/api/concept/list`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetConceptListQueryKey = (params?: GetConceptListParams) => {
+  return [`/api/concept/list`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetConceptListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getConceptList>>,
+  TError = unknown,
+>(
+  params?: GetConceptListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetConceptListQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getConceptList>>> = ({
+    signal,
+  }) => getConceptList(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getConceptList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetConceptListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getConceptList>>
+>;
+export type GetConceptListQueryError = unknown;
+
+export function useGetConceptList<
+  TData = Awaited<ReturnType<typeof getConceptList>>,
+  TError = unknown,
+>(
+  params: undefined | GetConceptListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptList>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptList<
+  TData = Awaited<ReturnType<typeof getConceptList>>,
+  TError = unknown,
+>(
+  params?: GetConceptListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptList>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptList<
+  TData = Awaited<ReturnType<typeof getConceptList>>,
+  TError = unknown,
+>(
+  params?: GetConceptListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useGetConceptList<
+  TData = Awaited<ReturnType<typeof getConceptList>>,
+  TError = unknown,
+>(
+  params?: GetConceptListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetConceptListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

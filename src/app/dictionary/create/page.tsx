@@ -56,14 +56,18 @@ const CreateDictionary = () => {
 
     mutate(
       {
-        userId: 'test',
-        ontology: payload,
+        params: {
+          userId: 'test',
+        },
+        data: {
+          ...payload,
+        },
       },
       {
         onSuccess: (response) => {
           toast(t('Form.CreateNewDictSuccess'));
-          if (response?.id) {
-            router.push(`/dictionary/${response.id}`);
+          if (response.data?.slug) {
+            router.push(`/dictionary/${response.data?.slug}`);
           }
         },
         onError: (error) => {
