@@ -16,7 +16,13 @@ export const MainControls = () => {
         <GovButton type="solid" size="m" color="primary" slot="button">
           {t('MainControls.OpenDictFromFile')}
         </GovButton>
-        <GovButton type="solid" size="m" color="primary" slot="button">
+        <GovButton
+          type="solid"
+          size="m"
+          color="primary"
+          slot="button"
+          href="/dictionary/create"
+        >
           {t('MainControls.CreateNewDict')}
         </GovButton>
       </div>

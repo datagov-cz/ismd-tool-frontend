@@ -7,8 +7,14 @@ export type FileNode = {
 
 export type OntologyType = {
   namespace: string;
-  name: string;
-  description: string;
+  nameModel: {
+    languageTag: string;
+    name: string;
+  };
+  descriptionModel: {
+    languageTag: string;
+    description: string;
+  };
 };
 
 export type ConceptType = {
