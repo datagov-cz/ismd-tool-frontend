@@ -29,7 +29,7 @@ const DictionaryDetail = ({ params }: { params: { slug: string } }) => {
       );
     };
 
-    if (ontologyDetail && ontologyMetadata)
+    if (ontologyDetail && ontologyMetadata) {
       return (
         <>
           <SidebarContainer>
@@ -70,53 +70,58 @@ const DictionaryDetail = ({ params }: { params: { slug: string } }) => {
               </div>
             </div>
           </SidebarContainer>
-          <div className="w-full pl-2 pr-8 space-y-6 relative">
-            <GridContainer>
-              <div className="space-y-2 col-span-4 col-start-2">
-                <h1 className="text-xl lg:text-3xl font-bold">
-                  {ontologyDetail.název?.cs}
-                </h1>
-                <p className="text-sm text-dark-secondary">
-                  {ontologyMetadata?.isPublished
-                    ? t('Main.DictionaryStatus.Published')
-                    : t('Main.DictionaryStatus.Draft')}
-                </p>
-              </div>
-            </GridContainer>
-            {ontologyDetail.popis?.cs && (
+          <div className="w-full relative flex">
+            <div className="w-full pl-2 pr-8 space-y-6 relative">
+              <GridContainer>
+                <div className="space-y-2 col-span-4 col-start-2">
+                  <h1 className="text-xl lg:text-3xl font-bold">
+                    {ontologyDetail.název?.cs}
+                  </h1>
+                  <p className="text-sm text-dark-secondary">
+                    {ontologyMetadata?.isPublished
+                      ? t('Main.DictionaryStatus.Published')
+                      : t('Main.DictionaryStatus.Draft')}
+                  </p>
+                </div>
+              </GridContainer>
+              {ontologyDetail.popis?.cs && (
+                <GridContainer>
+                  <p className="font-medium text-xl">
+                    {t('Main.Sections.Description')}
+                  </p>
+                  <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
+                </GridContainer>
+              )}
               <GridContainer>
                 <p className="font-medium text-xl">
-                  {t('Main.Sections.Description')}
+                  {t('Main.Sections.Terms')}
                 </p>
-                <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
+                <div className="col-span-4">
+                  {sortedParentTerms?.map((item, index) => (
+                    <Term
+                      data={item}
+                      subterms={getRelatedTerms(item)}
+                      key={item.iri || index}
+                    />
+                  ))}
+                </div>
               </GridContainer>
-            )}
-            <GridContainer>
-              <p className="font-medium text-xl">{t('Main.Sections.Terms')}</p>
-              <div className="col-span-4">
-                {sortedParentTerms?.map((item, index) => (
-                  <Term
-                    data={item}
-                    subterms={getRelatedTerms(item)}
-                    key={item.iri || index}
-                  />
-                ))}
-              </div>
-            </GridContainer>
+            </div>
             <ControlPanel
               ontologyID={ontologyMetadata?.id || 0}
               isPublished={ontologyMetadata.isPublished || false}
               name={ontologyDetail.název?.cs || ''}
               validationReport={ontologyMetadata.validationReport}
             />
+            <CommentSidebox
+              ontologyIRI={ontologyDetail.iri}
+              comments={ontologyMetadata.comments}
+              refetch={() => ontology.refetch()}
+            />
           </div>
-          <CommentSidebox
-            ontologyIRI={ontologyDetail.iri}
-            comments={ontologyMetadata.comments}
-            refetch={() => ontology.refetch()}
-          />
         </>
       );
+    }
   }
 };
 

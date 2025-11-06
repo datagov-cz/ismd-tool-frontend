@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -42,7 +41,7 @@ export const ControlPanel = ({
   };
 
   return (
-    <div className="absolute right-0 top-0 flex flex-col gap-4">
+    <div className="sticky right-0 top-10 flex flex-col gap-2 h-fit">
       <ControlPanelButton
         iconName="link"
         ariaLabel={t('GetLink')}
@@ -53,19 +52,14 @@ export const ControlPanel = ({
         ariaLabel={t('Comments')}
         onClick={() => setIsCommentBoxOpen(true)}
       />
-      {validationReport?.valid ? (
-        <GovIcon
-          name="checkmark"
-          size="xl"
-          aria-label={t('ValidationPassed')}
-        />
-      ) : (
-        <GovIcon
-          name="crossmark"
-          size="xl"
-          aria-label={t('ValidationFailed')}
-        />
-      )}
+      <ControlPanelButton
+        iconName={validationReport?.valid ? 'checkmark' : 'crossmark'}
+        ariaLabel={
+          validationReport?.valid
+            ? t('ValidationPassed')
+            : t('ValidationFailed')
+        }
+      />
       <ControlPanelButton
         iconName="download"
         ariaLabel={t('Download')}

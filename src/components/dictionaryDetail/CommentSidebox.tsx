@@ -85,44 +85,52 @@ export const CommentSidebox = ({
 
   return (
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div ref={containerRef} className="space-y-4 overflow-y-auto">
-        {comments?.map(({ id, ...comment }) => (
-          // TODO: use real user data
-          <CommentItem key={id} {...comment} loggedUser="John Doe" />
-        ))}
-      </div>
-      <form
-        className={clsx(
-          'relative w-full border rounded-md',
-          errors.comment
-            ? 'border-red-500'
-            : 'border-blue dark:border-white/60',
-        )}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <label htmlFor="comment" className="hidden">
-          {t('TextareaPlaceholder')}
-        </label>
-        <textarea
-          id="comment"
-          className="size-full px-3 py-2"
-          placeholder={t('TextareaPlaceholder')}
-          {...register('comment')}
-        />
-        {errors.comment && (
-          <p className="text-red-500 text-sm absolute bottom-1 left-3">
-            {errors.comment.message}
-          </p>
-        )}
-        <button
-          className="absolute right-4 bottom-2 text-sm outline-1 outline-blue dark:outline-white/60 font-medium cursor-pointer hover:bg-blue/20 dark:hover:bg-blue-hover p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label={t('SendButtonAria')}
-          type="submit"
-          disabled={isSubmitting || !!errors.comment}
+      <div className="mt-4 flex-1 overflow-hidden flex flex-col h-full justify-between">
+        <div ref={containerRef} className="space-y-4 overflow-y-auto">
+          {comments?.map(({ id, ...comment }) => (
+            // TODO: use real user data
+            <CommentItem
+              key={id}
+              {...comment}
+              id={id}
+              loggedUser="test"
+              refetch={() => refetch()}
+            />
+          ))}
+        </div>
+        <form
+          className={clsx(
+            'relative w-full border rounded-md',
+            errors.comment
+              ? 'border-red-500'
+              : 'border-blue dark:border-white/60',
+          )}
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <GovIcon name="send" size="l" />
-        </button>
-      </form>
+          <label htmlFor="comment" className="hidden">
+            {t('TextareaPlaceholder')}
+          </label>
+          <textarea
+            id="comment"
+            className="size-full px-3 py-2"
+            placeholder={t('TextareaPlaceholder')}
+            {...register('comment')}
+          />
+          {errors.comment && (
+            <p className="text-red-500 text-sm absolute bottom-1 left-3">
+              {errors.comment.message}
+            </p>
+          )}
+          <button
+            className="absolute right-4 bottom-2 text-sm outline-1 outline-blue dark:outline-white/60 font-medium cursor-pointer hover:bg-blue/20 dark:hover:bg-blue-hover p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label={t('SendButtonAria')}
+            type="submit"
+            disabled={isSubmitting || !!errors.comment}
+          >
+            <GovIcon name="send" size="l" />
+          </button>
+        </form>
+      </div>
     </Sidebox>
   );
 };

@@ -112,6 +112,7 @@
       "SendButtonAria": "Odeslat komentář",
       "ErrorSendingComment": "Chyba při odesílání komentáře",
       "MessageRequired": "Zpráva je povinná",
+      "DeleteSuccess": "Komentář odstraněn",
       "DeleteCommentConfirmModal": {
         "Title": "Smazat komentář",
         "Description": "Opravdu chcete smazat komentář?",

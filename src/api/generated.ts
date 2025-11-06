@@ -33,6 +33,7 @@ export interface CommentModel {
   comment?: string;
   ontologyIRI?: string;
   conceptIRI?: string;
+  postedTime?: string;
 }
 
 export type OntologyMetadataModelOntologyLevel =
@@ -1114,11 +1115,14 @@ export function useGetOntologyDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetOntologyDetailQueryOptions(slug, options);
+
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
     TError
   > & { queryKey: DataTag<QueryKey, TData, TError> };
+
   query.queryKey = queryOptions.queryKey;
+
   return query;
 }
 
