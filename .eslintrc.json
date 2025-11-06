@@ -10,6 +10,7 @@
   "rules": {
     "no-unused-vars": "warn",
     "no-console": "warn",
+    "no-redeclare": "warn",
     "simple-import-sort/imports": [
       "error",
       {

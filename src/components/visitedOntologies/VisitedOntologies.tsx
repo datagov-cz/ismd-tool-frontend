@@ -1,0 +1,87 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
+
+import { useGetOntologyList } from '@/api/generated';
+import { DraftDictionaryCard } from '../draftDictionaries/DraftDictionaryCard';
+
+export const VisitedOntologies = () => {
+  const t = useTranslations('Home');
+  const user = { id: 'test' };
+
+  const [visitedSlugs, setVisitedSlugs] = useState<string[]>([]);
+  const [isShowAll, setIsShowAll] = useState(false);
+
+  useEffect(() => {
+    const key = `dictionarySlugs_${user.id}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+
+      const decodedSlugs = parsed.map((slug: string) => {
+        try {
+          return decodeURIComponent(slug);
+        } catch {
+          return slug;
+        }
+      });
+
+      setVisitedSlugs(decodedSlugs);
+    }
+  }, []);
+
+  const getOntologies = useGetOntologyList({
+    slugs: visitedSlugs,
+  });
+
+  const visitedOntologies = getOntologies.data?.data?.sort(
+    (a, b) =>
+      visitedSlugs.indexOf(a.slug || '') - visitedSlugs.indexOf(b.slug || ''),
+  );
+
+  useEffect(() => {
+    getOntologies.refetch();
+  }, [visitedSlugs]);
+
+  return (
+    <div className="space-y-5 pb-10 mt-8">
+      <h2 className="font-medium text-xl">{t('LastVisited.Title')}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {visitedOntologies
+          ?.slice(0, isShowAll ? undefined : 3)
+          .map(
+            ({ id, name, slug }) =>
+              name && (
+                <DraftDictionaryCard
+                  key={id || slug}
+                  title={name}
+                  link={`/dictionary/${slug}`}
+                  text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium, totam ab commodi ut veniam similique laboriosam enim odit quaerat cupiditate?"
+                />
+              ),
+          )}
+      </div>
+
+      {visitedOntologies && visitedOntologies.length > 3 && (
+        <button
+          type="button"
+          onClick={() => setIsShowAll(!isShowAll)}
+          className="flex items-center gap-3 ml-auto cursor-pointer text-blue-primary hover:underline"
+        >
+          {t(
+            isShowAll
+              ? 'DraftDictionariesSection.ShowLess'
+              : 'DraftDictionariesSection.ShowMore',
+          )}
+          <GovIcon
+            name="chevron-up"
+            slot="icon-end"
+            className={`${isShowAll ? '' : 'rotate-180'} transition-transform duration-200`}
+          />
+        </button>
+      )}
+    </div>
+  );
+};

@@ -1,15 +1,36 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
 
-const DictionaryDetail = () => {
+const DictionaryDetail = ({ params }: { params: { slug: string } }) => {
   const t = useTranslations('DictionaryDetail');
 
   const isDraft = true; // TODO: get real status from API
+  const user = { id: 'test' };
+
+  const { slug } = params;
+
+  useEffect(() => {
+    if (slug) {
+      const storageKey = `dictionarySlugs_${user.id}`;
+      const stored = localStorage.getItem(storageKey);
+
+      let slugs: string[] = stored ? JSON.parse(stored) : [];
+
+      slugs = [slug, ...slugs.filter((s) => s !== slug)];
+
+      if (slugs.length > 6) {
+        slugs = slugs.slice(0, 6);
+      }
+
+      localStorage.setItem(storageKey, JSON.stringify(slugs));
+    }
+  }, [slug, user?.id]);
 
   return (
     <>

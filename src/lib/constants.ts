@@ -18,39 +18,6 @@ export const tempArticles = [
   },
 ];
 
-export const tempDraftDictionaries = [
-  {
-    id: 1,
-    title: 'Slovník 360/2023',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
-  },
-  {
-    id: 2,
-    title: 'Slovník 361/2023',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
-  },
-  {
-    id: 3,
-    title: 'Slovník 362/2023',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
-  },
-  {
-    id: 4,
-    title: 'Slovník 363/2023',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
-  },
-  {
-    id: 5,
-    title: 'Slovník 364/2023',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
-  },
-  {
-    id: 6,
-    title: 'Slovník 365/2023',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fringilla at massa nec luctus. Vestibulum mi est, varius et imperdiet vitae, fermentum eget ante.',
-  },
-];
-
 export const tempComments = [
   {
     id: 1,
