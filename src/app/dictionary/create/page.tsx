@@ -65,7 +65,7 @@ const CreateDictionary = () => {
         onSuccess: (response) => {
           toast(t('Form.CreateNewDictSuccess'));
           if (response.data?.slug) {
-            router.push(`/dictionary/${response.data.slug}`);
+            router.push(`/dictionary/${response.data?.slug}`);
           }
         },
         onError: (error) => {

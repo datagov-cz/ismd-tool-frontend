@@ -1,21 +1,31 @@
 'use client';
 
-import { GovIcon } from '@gov-design-system-ce/react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
+import { ValidationReportDto } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
-
-type ValidationResult = 'valid' | 'invalid';
+import { DeleteDialog } from './DeleteDialog';
+import { DownloadDialog } from './DownloadDialog';
 
 interface Props {
-  validationResult?: ValidationResult;
-  isDraft?: boolean;
+  validationReport?: ValidationReportDto;
+  isPublished: boolean;
+  ontologyID: number;
+  name: string;
 }
 
-export const ControlPanel = ({ validationResult, isDraft }: Props) => {
+export const ControlPanel = ({
+  validationReport,
+  isPublished,
+  ontologyID,
+  name,
+}: Props) => {
+  const [openDownload, setOpenDownload] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
@@ -23,15 +33,15 @@ export const ControlPanel = ({ validationResult, isDraft }: Props) => {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast(t('LinkCopied'));
+      toast(t('LinkCopied'), { type: 'success' });
     } catch (error) {
       console.error('Failed to copy link:', error);
-      toast(t('LinkCopyFailed'));
+      toast(t('LinkCopyFailed'), { type: 'error' });
     }
   };
 
   return (
-    <div className="absolute right-0 top-0 flex flex-col gap-4">
+    <div className="sticky right-0 top-10 flex flex-col gap-2 h-fit">
       <ControlPanelButton
         iconName="link"
         ariaLabel={t('GetLink')}
@@ -42,28 +52,41 @@ export const ControlPanel = ({ validationResult, isDraft }: Props) => {
         ariaLabel={t('Comments')}
         onClick={() => setIsCommentBoxOpen(true)}
       />
-      {validationResult === 'valid' && (
-        <GovIcon
-          name="checkmark"
-          size="xl"
-          aria-label={t('ValidationPassed')}
+      <ControlPanelButton
+        iconName={validationReport?.valid ? 'checkmark' : 'crossmark'}
+        ariaLabel={
+          validationReport?.valid
+            ? t('ValidationPassed')
+            : t('ValidationFailed')
+        }
+      />
+      <ControlPanelButton
+        iconName="download"
+        ariaLabel={t('Download')}
+        onClick={() => setOpenDownload(true)}
+      />
+      {!isPublished && (
+        <ControlPanelButton
+          iconName="trash"
+          ariaLabel={t('Delete')}
+          onClick={() => setOpenDelete(true)}
         />
-      )}
-      {validationResult === 'invalid' && (
-        <GovIcon
-          name="crossmark"
-          size="xl"
-          aria-label={t('ValidationFailed')}
-        />
-      )}
-      <ControlPanelButton iconName="download" ariaLabel={t('Download')} />
-      {isDraft && (
-        <ControlPanelButton iconName="trash" ariaLabel={t('Delete')} />
       )}
       <ControlPanelButton
         iconName="plus"
         ariaLabel={t('Add')}
         className="mt-12"
+      />
+      <DeleteDialog
+        open={openDelete}
+        ontologyID={ontologyID}
+        onClose={() => setOpenDelete(false)}
+        ontologyName={name}
+      />
+      <DownloadDialog
+        ontologyID={ontologyID}
+        open={openDownload}
+        onClose={() => setOpenDownload(false)}
       />
     </div>
   );
