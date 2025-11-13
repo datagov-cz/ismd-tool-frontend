@@ -25,14 +25,14 @@ export const DraftDictionariesSection = () => {
         {ontologies.data?.data
           ?.slice(0, isShowAll ? undefined : 3)
           .map(
-            ({ id, name, slug }) =>
+            ({ id, name, slug, popis }) =>
               id &&
               name && (
                 <DraftDictionaryCard
                   key={id}
                   title={name}
                   link={`/dictionary/${slug}`}
-                  text="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium, totam ab commodi ut veniam similique laboriosam enim odit quaerat cupiditate?"
+                  text={popis || ''}
                 />
               ),
           )}

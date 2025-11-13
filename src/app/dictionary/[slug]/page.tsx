@@ -72,14 +72,14 @@ const DictionaryDetail = ({ params }: Props) => {
                   </p>
                 </div>
               </GridContainer>
-              {ontologyDetail.popis?.cs && (
-                <GridContainer>
-                  <p className="font-medium text-xl">
-                    {t('Main.Sections.Description')}
-                  </p>
+              <GridContainer>
+                <p className="font-medium text-xl">
+                  {t('Main.Sections.Description')}
+                </p>
+                {ontologyDetail.popis?.cs && (
                   <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
-                </GridContainer>
-              )}
+                )}
+              </GridContainer>
               <GridContainer>
                 <p className="font-medium text-xl">
                   {t('Main.Sections.Terms')}

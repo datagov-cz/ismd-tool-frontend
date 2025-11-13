@@ -32,9 +32,12 @@ export const VisitedOntologies = () => {
     }
   }, []);
 
-  const getOntologies = useGetOntologyList({
-    slugs: visitedSlugs,
-  });
+  const getOntologies = useGetOntologyList(
+    {
+      slugs: visitedSlugs,
+    },
+    { query: { enabled: visitedSlugs.length === 0 } },
+  );
 
   const visitedOntologies = getOntologies.data?.data?.sort(
     (a, b) =>
@@ -52,13 +55,13 @@ export const VisitedOntologies = () => {
         {visitedOntologies
           ?.slice(0, isShowAll ? undefined : 3)
           .map(
-            ({ id, name, slug }) =>
+            ({ id, name, slug, popis }) =>
               name && (
                 <DraftDictionaryCard
                   key={id || slug}
                   title={name}
                   link={`/dictionary/${slug}`}
-                  text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium, totam ab commodi ut veniam similique laboriosam enim odit quaerat cupiditate?"
+                  text={popis || ''}
                 />
               ),
           )}

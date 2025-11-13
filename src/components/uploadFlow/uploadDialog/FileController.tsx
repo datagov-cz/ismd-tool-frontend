@@ -22,7 +22,7 @@ type FileControllerProps<TForm extends FieldValues> = {
 };
 
 const DEFAULT_ACCEPTED_FILE_TYPES =
-  '.jsonld,application/ld+json,.ttl,text/turtle,.json, ';
+  '.jsonld,application/ld+json,.ttl,text/turtle,.json,.json-ld, ';
 
 export const FileController = ({
   form,
