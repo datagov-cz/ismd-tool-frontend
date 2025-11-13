@@ -149,7 +149,7 @@ export interface ConceptCreateModel {
   namespace?: string;
   nameModel: NameModel;
   identifier?: string;
-  altNameModel?: AltNameModel;
+  altNameModel?: AltNameModel[];
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
   definingNonLegalSource?: string;
@@ -279,7 +279,7 @@ export interface ConceptEditModel {
   namespace?: string;
   nameModel?: NameModel;
   identifier?: string;
-  altNameModel?: AltNameModel;
+  altNameModel?: AltNameModel[];
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
   definingNonLegalSource?: string;
