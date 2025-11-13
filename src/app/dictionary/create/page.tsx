@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -15,10 +16,9 @@ import { TextArea } from '@/components/shared/Textarea';
 import { OntologyType } from '@/lib/appTypes';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
-import { useUserStore } from '@/store/userStore';
 
 const CreateDictionary = () => {
-  const user = useUserStore((state) => state.user);
+  const { data: session } = useSession();
   const router = useRouter();
 
   const t = useTranslations('CreateOntology');
@@ -76,12 +76,12 @@ const CreateDictionary = () => {
 
   // TODO: Replace with proper auth guard. Use redirect in a server component.
   useEffect(() => {
-    if (!user) {
+    if (!session) {
       router.push('/');
     }
-  }, [user, router]);
+  }, [session, router]);
 
-  if (!user) {
+  if (!session) {
     return null;
   }
 

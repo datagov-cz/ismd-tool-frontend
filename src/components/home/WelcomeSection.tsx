@@ -1,4 +1,5 @@
 import { GovButton } from '@gov-design-system-ce/react';
+import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 export const WelcomeSection = () => {
@@ -9,7 +10,13 @@ export const WelcomeSection = () => {
       <p className="text-center text-xl lg:text-2xl">
         {t('WelcomeSection.Description')}
       </p>
-      <GovButton type="solid" size="l" color="primary" slot="button">
+      <GovButton
+        type="solid"
+        size="l"
+        color="primary"
+        slot="button"
+        onGovClick={() => signIn('keycloak', { prompt: 'login' })}
+      >
         {t('LoginButton')}
       </GovButton>
       <h2 className="text-2xl lg:text-3xl font-bold">

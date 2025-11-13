@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
-import { useUserStore } from '@/store/userStore';
+import { Button } from '../shared/Button';
 import { ButtonLink } from '../shared/ButtonLink';
 
 import { NavItem } from './NavItem';
@@ -14,11 +15,11 @@ export const NavItems = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const user = useUserStore((state) => state.user);
+  const { data: session } = useSession();
 
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
 
-  if (!user) {
+  if (!session) {
     return (
       <>
         <GovButton
@@ -155,7 +156,7 @@ export const NavItems = () => {
           </li>
         </ul>
       </GovDropdown>
-      <NavItem href="">{t('NavLogged.Logout')}</NavItem>
+      <Button onClick={() => signOut()}>{t('NavLogged.Logout')}</Button>
     </>
   );
 };

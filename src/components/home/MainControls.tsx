@@ -1,14 +1,14 @@
 'use client';
 
 import { GovButton } from '@gov-design-system-ce/react';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
-import { useUserStore } from '@/store/userStore';
 import { Searchbar } from '../shared/Searchbar';
 
 export const MainControls = () => {
   const t = useTranslations('Home');
-  const user = useUserStore((state) => state.user);
+  const { data: session } = useSession();
 
   return (
     <div className="space-y-4">
@@ -31,7 +31,7 @@ export const MainControls = () => {
         placeholder={t('MainControls.SearchPlaceholder')}
         hasSearchIcon
       />
-      {user && (
+      {session && (
         <div className="flex gap-4 flex-wrap justify-center">
           <GovButton type="solid" size="m" color="primary">
             {t('MainControls.Logged.DraftDictionaries')}
