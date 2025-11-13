@@ -122,6 +122,7 @@ export const UploadDialog = ({
         handleUnsavedClose={() => {
           reset();
           setOpen(false);
+          setConfirmDialog(false);
         }}
       />
     </>

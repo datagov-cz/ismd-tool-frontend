@@ -110,6 +110,7 @@
       "SendButtonAria": "Odeslat komentář",
       "ErrorSendingComment": "Chyba při odesílání komentáře",
       "MessageRequired": "Zpráva je povinná",
+      "DeleteSuccess": "Komentář odstraněn",
       "DeleteCommentConfirmModal": {
         "Title": "Smazat komentář",
         "Description": "Opravdu chcete smazat komentář?",
@@ -141,6 +142,17 @@
   },
   "Shared": {
     "CloseAria": "Zavřít"
+  },
+  "DownloadDialog": {
+    "Title": "Vyberte formát souboru",
+    "Success": "Úspěšně stažený sobor",
+    "Error": "Soubor se nepodařilo stáhnout"
+  },
+  "DeleteDialog": {
+    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Name": "Název",
+    "No": "Ne",
+    "Yes": "Ano"
   },
   "UploadOntology": {
     "Dialog": {

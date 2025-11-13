@@ -33,6 +33,7 @@ export interface CommentModel {
   comment?: string;
   ontologyIRI?: string;
   conceptIRI?: string;
+  postedTime?: string;
 }
 
 export type OntologyMetadataModelOntologyLevel =
