@@ -21,12 +21,6 @@ import type {
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { axiosInstance } from '../axios-instance';
-export interface ApiResponseDtoOntologyMetadataModel {
-  data?: OntologyMetadataModel;
-  message?: string;
-  success?: boolean;
-}
-
 export interface CommentModel {
   id?: number;
   userId?: string;
@@ -95,6 +89,26 @@ export interface ValidationResult {
   focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+}
+
+export interface ApiResponseDtoValidationReport {
+  data?: ValidationReport;
+  message?: string;
+  success?: boolean;
+}
+
+export interface ValidationReport {
+  id?: number;
+  timestamp?: string;
+  valid?: boolean;
+  results?: ValidationResult[];
+  ontologyId?: number;
+}
+
+export interface ApiResponseDtoOntologyMetadataModel {
+  data?: OntologyMetadataModel;
+  message?: string;
+  success?: boolean;
 }
 
 export interface DescriptionModel {
@@ -407,6 +421,10 @@ export interface ApiResponseDtoVoid {
   success?: boolean;
 }
 
+export type ValidateOntologyBody = {
+  ontologyMetadata: OntologyMetadataModel;
+};
+
 export type UploadFromFileParams = {
   providedName?: string;
   userId: string;
@@ -458,6 +476,89 @@ export type GetConceptListParams = {
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+export const validateOntology = (
+  validateOntologyBody: ValidateOntologyBody,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoValidationReport>(
+    {
+      url: `/api/ontology/validate`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: validateOntologyBody,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getValidateOntologyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof validateOntology>>,
+    TError,
+    { data: ValidateOntologyBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof validateOntology>>,
+  TError,
+  { data: ValidateOntologyBody },
+  TContext
+> => {
+  const mutationKey = ['validateOntology'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof validateOntology>>,
+    { data: ValidateOntologyBody }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return validateOntology(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ValidateOntologyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof validateOntology>>
+>;
+export type ValidateOntologyMutationBody = ValidateOntologyBody;
+export type ValidateOntologyMutationError = unknown;
+
+export const useValidateOntology = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof validateOntology>>,
+      TError,
+      { data: ValidateOntologyBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof validateOntology>>,
+  TError,
+  { data: ValidateOntologyBody },
+  TContext
+> => {
+  const mutationOptions = getValidateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 
 export const uploadFromFile = (
   uploadFromFileBody: UploadFromFileBody,
