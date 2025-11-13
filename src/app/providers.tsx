@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
 
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
@@ -23,8 +24,10 @@ export default function Providers({
     <ThemeProvider>
       <Environment variables={environmentVariables}>
         <QueryClientProvider client={queryClient}>
-          <ToastWrapper />
-          {children}
+          <SessionProvider>
+            <ToastWrapper />
+            {children}
+          </SessionProvider>
         </QueryClientProvider>
       </Environment>
     </ThemeProvider>

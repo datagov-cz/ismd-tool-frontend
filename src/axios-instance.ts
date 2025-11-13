@@ -1,7 +1,18 @@
 import Axios, { AxiosRequestConfig } from 'axios';
+import { getSession } from 'next-auth/react';
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_BE_URL,
+});
+
+AXIOS_INSTANCE.interceptors.request.use(async (config) => {
+  if (typeof window !== 'undefined') {
+    const session = await getSession();
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    }
+  }
+  return config;
 });
 
 export const axiosInstance = <T>(
