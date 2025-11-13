@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -16,10 +17,10 @@ import { CommentItem } from './CommentItem';
 export const CommentSidebox = () => {
   const t = useTranslations('DictionaryDetail.CommentSidebox');
 
+  const { data: session } = useSession();
+
   const isOpen = useCommentBoxStore((state) => state.isOpen);
   const setIsOpen = useCommentBoxStore((state) => state.setIsOpen);
-
-  // const user = useUserStore((state) => state.user);
 
   const {
     register,
@@ -70,8 +71,11 @@ export const CommentSidebox = () => {
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div ref={containerRef} className="space-y-4 overflow-y-auto">
         {comments.map(({ id, ...comment }) => (
-          // TODO: use real user data
-          <CommentItem key={id} {...comment} user="John Doe" />
+          <CommentItem
+            key={id}
+            {...comment}
+            user={session?.user?.name || 'John Doe'}
+          />
         ))}
       </div>
       <form
