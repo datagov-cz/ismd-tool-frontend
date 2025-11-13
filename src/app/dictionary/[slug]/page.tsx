@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
@@ -17,6 +18,28 @@ interface Props {
 const DictionaryDetail = ({ params }: Props) => {
   const t = useTranslations('DictionaryDetail');
   const ontology = useGetOntologyDetail(params.slug);
+
+  // TODO: add real user
+  const user = { id: 'test' };
+
+  const { slug } = params;
+
+  useEffect(() => {
+    if (slug) {
+      const storageKey = `dictionarySlugs_${user.id}`;
+      const stored = localStorage.getItem(storageKey);
+
+      let slugs: string[] = stored ? JSON.parse(stored) : [];
+
+      slugs = [slug, ...slugs.filter((s) => s !== slug)];
+
+      if (slugs.length > 6) {
+        slugs = slugs.slice(0, 6);
+      }
+
+      localStorage.setItem(storageKey, JSON.stringify(slugs));
+    }
+  }, [slug, user?.id]);
 
   if (ontology.data) {
     const { ontologyMetadata, ontologyDetail } = ontology.data;
@@ -49,14 +72,14 @@ const DictionaryDetail = ({ params }: Props) => {
                   </p>
                 </div>
               </GridContainer>
-              {ontologyDetail.popis?.cs && (
-                <GridContainer>
-                  <p className="font-medium text-xl">
-                    {t('Main.Sections.Description')}
-                  </p>
+              <GridContainer>
+                <p className="font-medium text-xl">
+                  {t('Main.Sections.Description')}
+                </p>
+                {ontologyDetail.popis?.cs && (
                   <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
-                </GridContainer>
-              )}
+                )}
+              </GridContainer>
               <GridContainer>
                 <p className="font-medium text-xl">
                   {t('Main.Sections.Terms')}

@@ -59,9 +59,7 @@ const CreateDictionary = () => {
         params: {
           userId: 'test',
         },
-        data: {
-          ...payload,
-        },
+        data: payload,
       },
       {
         onSuccess: (response) => {

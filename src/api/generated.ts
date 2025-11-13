@@ -53,11 +53,13 @@ export interface OntologyMetadataModel {
   id?: number;
   slug?: string;
   graphName?: string;
+  name?: string;
   user?: UserModel;
   isPublished?: boolean;
   validationReport?: ValidationReportDto;
   ontologyLevel?: OntologyMetadataModelOntologyLevel;
   comments?: CommentModel[];
+  popis?: string;
 }
 
 export interface UserModel {
@@ -147,7 +149,7 @@ export interface ConceptCreateModel {
   namespace?: string;
   nameModel: NameModel;
   identifier?: string;
-  altNameModel?: AltNameModel;
+  altNameModel?: AltNameModel[];
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
   definingNonLegalSource?: string;
@@ -277,7 +279,7 @@ export interface ConceptEditModel {
   namespace?: string;
   nameModel?: NameModel;
   identifier?: string;
-  altNameModel?: AltNameModel;
+  altNameModel?: AltNameModel[];
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
   definingNonLegalSource?: string;
@@ -447,6 +449,7 @@ export type DownloadFileParams = {
 export type GetOntologyListParams = {
   userId?: string;
   isPublished?: boolean;
+  slugs?: string[];
 };
 
 export type GetConceptListParams = {

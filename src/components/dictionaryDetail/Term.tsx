@@ -33,7 +33,7 @@ export const Term = ({ data, subterms }: TermProps) => {
         className="relative"
       >
         {capitalizedName}
-        {hover && (
+        {(data.definice?.cs || data.popis?.cs) && hover && (
           <Tooltip message={data.definice?.cs || data.popis?.cs || ''} />
         )}
       </GovChip>
