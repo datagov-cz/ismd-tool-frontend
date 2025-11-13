@@ -9,6 +9,9 @@ export const createCommentSchema = (t: (key: string) => string) =>
 
 export type CommentSchemaType = z.infer<ReturnType<typeof createCommentSchema>>;
 
+export const uploadOntologySchema = () =>
+  z.object({ file: z.instanceof(Blob).optional() });
+
 export const createOntologySchema = (t: (key: string) => string) =>
   z.object({
     namespace: z.string().min(1, t('FormSchema.NamespaceRequired')),
