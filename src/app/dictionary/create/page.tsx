@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import { useCreateOntology } from '@/api/generated';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
-import { Select } from '@/components/shared/Select';
 import { TextArea } from '@/components/shared/Textarea';
 import { OntologyType } from '@/lib/appTypes';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
@@ -46,11 +45,11 @@ const CreateDictionary = () => {
       namespace: data.namespace,
       nameModel: {
         name: data.name,
-        languageTag: data.languageTag,
+        languageTag: 'cs',
       },
       descriptionModel: {
         description: data.description,
-        languageTag: data.languageTag,
+        languageTag: 'cs',
       },
     };
 
@@ -106,12 +105,6 @@ const CreateDictionary = () => {
               name="description"
               label={t('Form.DescriptionLabel')}
               placeholder={t('Form.DescriptionPlaceholder')}
-            />
-            <Select
-              options={LANG_TAGS}
-              label={t('Form.LanguageTagLabel')}
-              name="languageTag"
-              className="max-w-24"
             />
           </div>
           <Button
