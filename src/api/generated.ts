@@ -54,6 +54,8 @@ export interface OntologyMetadataModel {
   ontologyLevel?: OntologyMetadataModelOntologyLevel;
   comments?: CommentModel[];
   popis?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserModel {
@@ -101,8 +103,8 @@ export interface ValidationReport {
   id?: number;
   timestamp?: string;
   valid?: boolean;
-  results?: ValidationResult[];
   ontologyId?: number;
+  results?: ValidationResult[];
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
@@ -242,6 +244,8 @@ export interface ConceptMetadataModel {
   inTezaurus?: string;
   validationReport?: ValidationReportDto;
   comments?: CommentModel[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CommentCreateModel {
@@ -379,6 +383,7 @@ export interface ConceptDetailModel {
 export interface GetOntologyDto {
   ontologyMetadata?: OntologyMetadataModel;
   ontologyDetail?: OntologyDetailModel;
+  conceptMetadataModelList?: ConceptMetadataModel[];
 }
 
 export type OntologyDetailModelNázev = { [key: string]: string };

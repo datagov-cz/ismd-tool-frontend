@@ -5,19 +5,26 @@ import clsx from 'clsx';
 import { ConceptDetailModel } from '@/api/generated';
 
 export type TermProps = {
-  data: ConceptDetailModel;
-  subterms?: ConceptDetailModel[];
+  data: {
+    název?: ConceptDetailModel['název'];
+    definice?: ConceptDetailModel['definice'];
+    popis?: ConceptDetailModel['popis'];
+    iri?: ConceptDetailModel['iri'];
+  };
+  subterms?: TermProps[];
+  slug: string;
 };
 
-export const Term = ({ data, subterms }: TermProps) => {
+export const Term = ({ data, subterms, slug }: TermProps) => {
   const [hover, setHover] = useState(false);
   const name = data.název?.cs;
   const capitalizedName = name && name.charAt(0).toUpperCase() + name.slice(1);
 
   return (
-    <div
+    <a
+      href={`/concept/${slug}`}
       className={clsx(
-        'relative w-fit group',
+        'relative w-fit group block',
         !subterms && 'pl-4 not-last:border-l-2 not-last:border-blue-primary/30',
       )}
     >
@@ -30,7 +37,7 @@ export const Term = ({ data, subterms }: TermProps) => {
         type="outlined"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        className="relative"
+        className="relative cursor-pointer [&_span]:cursor-pointer!"
       >
         {capitalizedName}
         {(data.definice?.cs || data.popis?.cs) && hover && (
@@ -39,11 +46,18 @@ export const Term = ({ data, subterms }: TermProps) => {
       </GovChip>
       <div className="pl-6 pt-2">
         {subterms &&
-          subterms.map((item, index) => (
-            <Term key={data.iri || index} data={item} />
-          ))}
+          subterms.map(
+            (item, index) =>
+              item.data.iri && (
+                <Term
+                  key={data.iri || index}
+                  data={item.data}
+                  slug={item.slug}
+                />
+              ),
+          )}
       </div>
-    </div>
+    </a>
   );
 };
 

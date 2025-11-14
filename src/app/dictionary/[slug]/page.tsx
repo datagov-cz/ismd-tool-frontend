@@ -7,7 +7,7 @@ import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
-import { Term } from '@/components/dictionaryDetail/Term';
+import { Term, TermProps } from '@/components/dictionaryDetail/Term';
 
 interface Props {
   params: {
@@ -48,11 +48,23 @@ const DictionaryDetail = ({ params }: Props) => {
       .filter((item) => !item['definiční-obor'])
       .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
 
-    const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
-      return ontologyDetail?.pojmy?.filter(
-        (item) =>
-          item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
-      );
+    const getRelatedTerms = (
+      parentTerm: ConceptDetailModel,
+    ): TermProps[] | undefined => {
+      return ontologyDetail?.pojmy
+        ?.filter(
+          (item) =>
+            item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
+        )
+        .map((item) => ({
+          data: {
+            název: item.název,
+            definice: item.definice,
+            popis: item.popis,
+            iri: item.iri,
+          },
+          slug: ontologyMetadata?.slug + '-' + item.iri?.split('pojem/')[1],
+        }));
     };
 
     if (ontologyDetail && ontologyMetadata) {
@@ -85,13 +97,21 @@ const DictionaryDetail = ({ params }: Props) => {
                   {t('Main.Sections.Terms')}
                 </p>
                 <div className="col-span-4">
-                  {sortedParentTerms?.map((item, index) => (
-                    <Term
-                      data={item}
-                      subterms={getRelatedTerms(item)}
-                      key={item.iri || index}
-                    />
-                  ))}
+                  {sortedParentTerms?.map(
+                    (item, index) =>
+                      item.iri && (
+                        <Term
+                          data={item}
+                          subterms={getRelatedTerms(item)}
+                          key={item.iri || index}
+                          slug={
+                            ontologyMetadata.slug +
+                            '-' +
+                            item.iri?.split('pojem/')[1]
+                          }
+                        />
+                      ),
+                  )}
                 </div>
               </GridContainer>
             </div>

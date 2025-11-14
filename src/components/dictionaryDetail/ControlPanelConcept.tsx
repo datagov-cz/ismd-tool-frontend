@@ -4,27 +4,22 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { ValidationReportDto } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
 import { DeleteDialog } from './DeleteDialog';
-import { DownloadDialog } from './DownloadDialog';
 
 interface Props {
-  validationReport?: ValidationReportDto;
   isPublished: boolean;
-  ontologyID: number;
+  conceptID: number;
   name: string;
 }
 
-export const ControlPanel = ({
-  validationReport,
+export const ControlPanelConcept = ({
   isPublished,
-  ontologyID,
+  conceptID,
   name,
 }: Props) => {
-  const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
@@ -52,43 +47,20 @@ export const ControlPanel = ({
         ariaLabel={t('Comments')}
         onClick={() => setIsCommentBoxOpen(true)}
       />
-      <ControlPanelButton
-        iconName={validationReport?.valid ? 'checkmark' : 'crossmark'}
-        ariaLabel={
-          validationReport?.valid
-            ? t('ValidationPassed')
-            : t('ValidationFailed')
-        }
-      />
-      <ControlPanelButton
-        iconName="download"
-        ariaLabel={t('Download')}
-        onClick={() => setOpenDownload(true)}
-      />
       {!isPublished && (
         <ControlPanelButton
           iconName="trash"
+          danger
           ariaLabel={t('Delete')}
           onClick={() => setOpenDelete(true)}
-          danger
         />
       )}
-      <ControlPanelButton
-        iconName="plus"
-        ariaLabel={t('Add')}
-        className="mt-12"
-      />
       <DeleteDialog
         open={openDelete}
-        id={ontologyID}
+        id={conceptID}
         onClose={() => setOpenDelete(false)}
         name={name}
-        type="ONTOLOGY"
-      />
-      <DownloadDialog
-        ontologyID={ontologyID}
-        open={openDownload}
-        onClose={() => setOpenDownload(false)}
+        type="CONCEPT"
       />
     </div>
   );

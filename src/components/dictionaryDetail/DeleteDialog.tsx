@@ -3,24 +3,40 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { useDeleteOntology } from '@/api/generated';
+import { useDeleteConcept, useDeleteOntology } from '@/api/generated';
 
 interface DeleteDialogProps {
   open: boolean;
   onClose: () => void;
-  ontologyID: number;
-  ontologyName: string;
+  id: number;
+  name: string;
+  type: 'ONTOLOGY' | 'CONCEPT';
 }
 
 export const DeleteDialog = ({
   open,
   onClose,
-  ontologyID,
-  ontologyName,
+  id,
+  name,
+  type,
 }: DeleteDialogProps) => {
   const t = useTranslations('DeleteDialog');
   const router = useRouter();
-  const deleteMutation = useDeleteOntology({
+  const ontologyMutation = useDeleteOntology({
+    mutation: {
+      onSuccess: (data) => {
+        toast(data.message, { type: 'success' });
+        onClose();
+        router.push('/');
+      },
+      onError: (error) => {
+        console.error(error);
+        toast(String(error), { type: 'error' });
+      },
+    },
+  });
+
+  const conceptMutation = useDeleteConcept({
     mutation: {
       onSuccess: (data) => {
         toast(data.message, { type: 'success' });
@@ -35,14 +51,18 @@ export const DeleteDialog = ({
   });
 
   const handleDelete = () => {
-    deleteMutation.mutate({ ontologyId: ontologyID });
+    if (type === 'ONTOLOGY') {
+      ontologyMutation.mutate({ ontologyId: id });
+    } else {
+      conceptMutation.mutate({ conceptId: id });
+    }
   };
 
   return (
     <GovDialog labelTag="h2" onGovClose={() => onClose()} open={open}>
       <h2 slot="title">{t('Title')}</h2>
       <p>
-        <span>{t('Name')}:</span> {ontologyName}
+        <span>{t('Name')}:</span> {name}
       </p>
 
       <div className="w-full flex gap-2 justify-end">
