@@ -7,6 +7,7 @@ import '../styles/globals.css';
 
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { getSession } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
 
@@ -35,6 +36,7 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const locale = await getLocale();
+  const session = await getSession();
 
   const variables: EnvironmentVariables = {
     ...loadEnvVariables(),
@@ -44,7 +46,7 @@ export default async function RootLayout({
     <html lang={locale}>
       <NextIntlClientProvider>
         <body>
-          <Providers environmentVariables={variables}>
+          <Providers environmentVariables={variables} session={session}>
             <Header />
             {children}
           </Providers>
