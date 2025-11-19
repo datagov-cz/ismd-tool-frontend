@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -9,6 +10,7 @@ import { useIsOnline } from '@/hooks/useIsOnline';
 export const OnlineIndicator = () => {
   const t = useTranslations('Header.NavLogged');
   const isOnline = useIsOnline();
+  const pathname = usePathname();
 
   const [autoVisible, setAutoVisible] = useState(false);
 
@@ -23,6 +25,10 @@ export const OnlineIndicator = () => {
       window.clearTimeout(timer);
     };
   }, [isOnline]);
+
+  useEffect(() => {
+    setAutoVisible(false);
+  }, [pathname]);
 
   const title = isOnline
     ? t('OnlineIndicator.Online')
