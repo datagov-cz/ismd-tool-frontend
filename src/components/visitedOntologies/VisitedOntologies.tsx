@@ -1,35 +1,64 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { useGetOntologyList } from '@/api/generated';
+import { DraftDictionaryCard } from '../draftDictionaries/DraftDictionaryCard';
 
-import { DraftDictionaryCard } from './DraftDictionaryCard';
-
-export const DraftDictionariesSection = () => {
+export const VisitedOntologies = () => {
   const t = useTranslations('Home');
+  const user = { id: 'test' };
 
-  //TODO: add real user
-  const ontologies = useGetOntologyList({ userId: 'test' });
-
+  const [visitedSlugs, setVisitedSlugs] = useState<string[]>([]);
   const [isShowAll, setIsShowAll] = useState(false);
 
+  useEffect(() => {
+    const key = `dictionarySlugs_${user.id}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+
+      const decodedSlugs = parsed.map((slug: string) => {
+        try {
+          return decodeURIComponent(slug);
+        } catch {
+          return slug;
+        }
+      });
+
+      setVisitedSlugs(decodedSlugs);
+    }
+  }, []);
+
+  const getOntologies = useGetOntologyList(
+    {
+      slugs: visitedSlugs,
+    },
+    { query: { enabled: visitedSlugs.length === 0 } },
+  );
+
+  const visitedOntologies = getOntologies.data?.data?.sort(
+    (a, b) =>
+      visitedSlugs.indexOf(a.slug || '') - visitedSlugs.indexOf(b.slug || ''),
+  );
+
+  useEffect(() => {
+    getOntologies.refetch();
+  }, [visitedSlugs]);
+
   return (
-    <div className="space-y-5 pb-10">
-      <h2 className="font-medium text-xl">
-        {t('DraftDictionariesSection.Title')}
-      </h2>
+    <div className="space-y-5 pb-10 mt-8">
+      <h2 className="font-medium text-xl">{t('LastVisited.Title')}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {ontologies.data?.data
+        {visitedOntologies
           ?.slice(0, isShowAll ? undefined : 3)
           .map(
             ({ id, name, slug, popis }) =>
-              id &&
               name && (
                 <DraftDictionaryCard
-                  key={id}
+                  key={id || slug}
                   title={name}
                   link={`/dictionary/${slug}`}
                   text={popis || ''}
@@ -37,7 +66,8 @@ export const DraftDictionariesSection = () => {
               ),
           )}
       </div>
-      {ontologies?.data?.data && ontologies.data.data.length > 3 && (
+
+      {visitedOntologies && visitedOntologies.length > 3 && (
         <button
           type="button"
           onClick={() => setIsShowAll(!isShowAll)}

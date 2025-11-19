@@ -110,6 +110,7 @@
       "SendButtonAria": "Odeslat komentář",
       "ErrorSendingComment": "Chyba při odesílání komentáře",
       "MessageRequired": "Zpráva je povinná",
+      "DeleteSuccess": "Komentář odstraněn",
       "DeleteCommentConfirmModal": {
         "Title": "Smazat komentář",
         "Description": "Opravdu chcete smazat komentář?",
@@ -142,15 +143,52 @@
   "Shared": {
     "CloseAria": "Zavřít"
   },
+  "DownloadDialog": {
+    "Title": "Vyberte formát souboru",
+    "Success": "Úspěšně stažený sobor",
+    "Error": "Soubor se nepodařilo stáhnout"
+  },
+  "DeleteDialog": {
+    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Name": "Název",
+    "No": "Ne",
+    "Yes": "Ano"
+  },
+  "UploadOntology": {
+    "Dialog": {
+      "Title": "Otevřít slovník ze souboru",
+      "FileInputLabel": "Vyberte soubor",
+      "CancelButton": "Zrušit",
+      "SubmitButton": "Vytvořit"
+    },
+    "FileUpload": {
+      "Drag": "Přetáhnětě soubor nebo",
+      "Upload": "Nahrát ze zařízení"
+    },
+    "ConfirmCancelDialog": {
+      "Title": "Máte neuložené změny, chcete ukončit vytváření slovníku?",
+      "NoButton": "Ne",
+      "YesButton": "Ano"
+    },
+    "SuccessDialog": {
+      "Title": "Úspěšně jste vytvořili slovní ze souboru",
+      "GraphName": "Název slovníku",
+      "ViewOntology": "Zobrazit slovník",
+      "CloseDialog": "Zavřít"
+    }
+  },
+  "Errors": {
+    "UnknownError": "Neznámý error"
+  },
   "CreateOntology": {
     "Form": {
       "Title": "Vytvořit nový slovník",
       "NamespaceLabel": "Prostor názvů",
       "NamespacePlaceholder": "Zadejte prostor názvů...",
-      "NameLabel": "Název",
+      "NameLabel": "Název (Čeština)",
       "NamePlaceholder": "Zadejte název slovníku...",
       "LanguageTagLabel": "Jazykový tag",
-      "DescriptionLabel": "Popis",
+      "DescriptionLabel": "Popis (Čeština)",
       "DescriptionPlaceholder": "Zadejte popis slovníku...",
       "CreateButton": "Vytvořit slovník",
       "CreatingButton": "Vytváří se...",
