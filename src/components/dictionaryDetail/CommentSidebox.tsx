@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
-import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -26,6 +25,7 @@ interface CommentSideboxProps {
   conceptIRI?: string;
   comments?: CommentModel[];
   refetch: () => void;
+  userId: string;
 }
 
 export const CommentSidebox = ({
@@ -33,10 +33,9 @@ export const CommentSidebox = ({
   conceptIRI,
   comments,
   refetch,
+  userId,
 }: CommentSideboxProps) => {
   const t = useTranslations('DictionaryDetail.CommentSidebox');
-
-  const { data: session } = useSession();
 
   const isOpen = useCommentBoxStore((state) => state.isOpen);
   const setIsOpen = useCommentBoxStore((state) => state.setIsOpen);
@@ -94,7 +93,7 @@ export const CommentSidebox = ({
               key={id}
               {...comment}
               id={id}
-              loggedUser={session?.user?.name || 'Anonymous'}
+              loggedUser={userId || 'Anonymous'}
               refetch={() => refetch()}
             />
           ))}

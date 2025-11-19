@@ -1,15 +1,18 @@
 'use client';
 
 import { GovButton } from '@gov-design-system-ce/react';
-import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
 import { Searchbar } from '../shared/Searchbar';
 import { UploadFlow } from '../uploadFlow/UploadFlow';
 
-export const MainControls = () => {
+interface Props {
+  session: Session | null;
+}
+
+export const MainControls = ({ session }: Props) => {
   const t = useTranslations('Home');
-  const { data: session } = useSession();
 
   return (
     <div className="space-y-4">
