@@ -1,7 +1,3 @@
-import { getServerSession } from 'next-auth';
-
-import { authOptions } from '@/lib/auth';
-
 import { DictionaryContent } from './dictionary-content';
 
 interface Props {
@@ -12,10 +8,8 @@ interface Props {
 
 const DictionaryDetail = async ({ params }: Props) => {
   const { slug } = params;
-  const session = await getServerSession(authOptions);
-
-  console.log('DictDetail session: ', session);
-
+  // const session = await getServerSession(authOptions);
+  // TODO: use the session to obtain userId when available
   return <DictionaryContent userId="test" slug={slug} />;
 };
 

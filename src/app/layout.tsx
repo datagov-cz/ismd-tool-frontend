@@ -7,13 +7,14 @@ import '../styles/globals.css';
 
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
 
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import { Footer } from '@/components/footer/Footer';
 import { Header } from '@/components/header/Header';
+import { authOptions } from '@/lib/auth';
 
 import Providers from './providers';
 
@@ -36,7 +37,7 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const locale = await getLocale();
-  const session = await getSession();
+  const session = await getServerSession(authOptions);
 
   const variables: EnvironmentVariables = {
     ...loadEnvVariables(),
@@ -47,7 +48,7 @@ export default async function RootLayout({
       <NextIntlClientProvider>
         <body>
           <Providers environmentVariables={variables} session={session}>
-            <Header />
+            <Header session={session} />
             {children}
           </Providers>
           <Footer />

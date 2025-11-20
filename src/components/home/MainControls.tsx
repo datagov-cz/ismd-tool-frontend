@@ -16,18 +16,20 @@ export const MainControls = ({ session }: Props) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">
-        <UploadFlow />
-        <GovButton
-          type="solid"
-          size="m"
-          color="primary"
-          slot="button"
-          href="/dictionary/create"
-        >
-          {t('MainControls.CreateNewDict')}
-        </GovButton>
-      </div>
+      {session && (
+        <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">
+          <UploadFlow />
+          <GovButton
+            type="solid"
+            size="m"
+            color="primary"
+            slot="button"
+            href="/dictionary/create"
+          >
+            {t('MainControls.CreateNewDict')}
+          </GovButton>
+        </div>
+      )}
       {/* TODO: Replace with custom search: search is not triggering any event */}
       <Searchbar
         placeholder={t('MainControls.SearchPlaceholder')}

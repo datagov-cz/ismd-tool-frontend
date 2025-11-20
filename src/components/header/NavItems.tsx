@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
-import { signOut, useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
+import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
@@ -10,12 +11,14 @@ import { ButtonLink } from '../shared/ButtonLink';
 import { NavItem } from './NavItem';
 import { OnlineIndicator } from './OnlineIndicator';
 
-export const NavItems = () => {
+interface Props {
+  session: Session | null;
+}
+
+export const NavItems = ({ session }: Props) => {
   const t = useTranslations('Header');
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const { data: session } = useSession();
 
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
 
