@@ -25,6 +25,7 @@ interface CommentSideboxProps {
   conceptIRI?: string;
   comments?: CommentModel[];
   refetch: () => void;
+  userId: string;
 }
 
 export const CommentSidebox = ({
@@ -32,13 +33,12 @@ export const CommentSidebox = ({
   conceptIRI,
   comments,
   refetch,
+  userId,
 }: CommentSideboxProps) => {
   const t = useTranslations('DictionaryDetail.CommentSidebox');
 
   const isOpen = useCommentBoxStore((state) => state.isOpen);
   const setIsOpen = useCommentBoxStore((state) => state.setIsOpen);
-
-  // const user = useUserStore((state) => state.user);
 
   const {
     register,
@@ -93,7 +93,7 @@ export const CommentSidebox = ({
               key={id}
               {...comment}
               id={id}
-              loggedUser="test"
+              loggedUser={userId || 'Anonymous'}
               refetch={() => refetch()}
             />
           ))}

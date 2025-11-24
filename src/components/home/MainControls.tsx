@@ -1,36 +1,41 @@
 'use client';
 
 import { GovButton } from '@gov-design-system-ce/react';
+import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
-import { useUserStore } from '@/store/userStore';
 import { Searchbar } from '../shared/Searchbar';
 import { UploadFlow } from '../uploadFlow/UploadFlow';
 
-export const MainControls = () => {
+interface Props {
+  session: Session | null;
+}
+
+export const MainControls = ({ session }: Props) => {
   const t = useTranslations('Home');
-  const user = useUserStore((state) => state.user);
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">
-        <UploadFlow />
-        <GovButton
-          type="solid"
-          size="m"
-          color="primary"
-          slot="button"
-          href="/dictionary/create"
-        >
-          {t('MainControls.CreateNewDict')}
-        </GovButton>
-      </div>
+      {session && (
+        <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">
+          <UploadFlow />
+          <GovButton
+            type="solid"
+            size="m"
+            color="primary"
+            slot="button"
+            href="/dictionary/create"
+          >
+            {t('MainControls.CreateNewDict')}
+          </GovButton>
+        </div>
+      )}
       {/* TODO: Replace with custom search: search is not triggering any event */}
       <Searchbar
         placeholder={t('MainControls.SearchPlaceholder')}
         hasSearchIcon
       />
-      {user && (
+      {session && (
         <div className="flex gap-4 flex-wrap justify-center">
           <GovButton type="solid" size="m" color="primary">
             {t('MainControls.Logged.DraftDictionaries')}

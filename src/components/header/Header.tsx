@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
 import { ThemeSwitch } from '../shared/ThemeSwitch';
@@ -11,7 +12,11 @@ import { ThemeSwitch } from '../shared/ThemeSwitch';
 import { HintSidebox } from './HintSidebox';
 import { NavItems } from './NavItems';
 
-export const Header = () => {
+interface Props {
+  session: Session | null;
+}
+
+export const Header = ({ session }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations('Header');
 
@@ -67,7 +72,7 @@ export const Header = () => {
           </div>
           <nav className="ml-auto">
             <ul className="hidden gap-x-4 px-3 flex-col desktop:flex-row flex-wrap items-center desktop:flex">
-              <NavItems />
+              <NavItems session={session} />
             </ul>
           </nav>
           <ul className="flex gap-x-4 items-center">
@@ -100,7 +105,7 @@ export const Header = () => {
       >
         <nav>
           <ul className="flex flex-col p-4 gap-3">
-            <NavItems />
+            <NavItems session={session} />
           </ul>
         </nav>
       </aside>
