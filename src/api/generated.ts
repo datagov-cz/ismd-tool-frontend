@@ -30,19 +30,6 @@ export interface CommentModel {
   postedTime?: string;
 }
 
-export type OntologyMetadataModelOntologyLevel =
-  (typeof OntologyMetadataModelOntologyLevel)[keyof typeof OntologyMetadataModelOntologyLevel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const OntologyMetadataModelOntologyLevel = {
-  SUBJEKTY_OBJEKTY: 'SUBJEKTY_OBJEKTY',
-  VLASTNOSTI: 'VLASTNOSTI',
-  VZTAHY: 'VZTAHY',
-  RPP: 'RPP',
-  DIAGRAM: 'DIAGRAM',
-  USTANOVENI_360_2023: 'USTANOVENI_360_2023',
-} as const;
-
 export interface OntologyMetadataModel {
   id?: number;
   slug?: string;
@@ -50,22 +37,27 @@ export interface OntologyMetadataModel {
   name?: string;
   user?: UserModel;
   isPublished?: boolean;
-  validationReport?: ValidationReportDto;
-  ontologyLevel?: OntologyMetadataModelOntologyLevel;
   comments?: CommentModel[];
   popis?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserModel {
   userId?: string;
 }
 
-export interface ValidationReportDto {
+export interface ApiResponseDtoValidationReport {
+  data?: ValidationReport;
+  message?: string;
+  success?: boolean;
+}
+
+export interface ValidationReport {
   id?: number;
-  results?: ValidationResult[];
   timestamp?: string;
-  ontologyId?: number;
-  valid?: boolean;
+  ontologyIri?: string;
+  results?: ValidationResult[];
 }
 
 export type ValidationResultSeverity =
@@ -91,20 +83,6 @@ export interface ValidationResult {
   info?: boolean;
 }
 
-export interface ApiResponseDtoValidationReport {
-  data?: ValidationReport;
-  message?: string;
-  success?: boolean;
-}
-
-export interface ValidationReport {
-  id?: number;
-  timestamp?: string;
-  valid?: boolean;
-  results?: ValidationResult[];
-  ontologyId?: number;
-}
-
 export interface ApiResponseDtoOntologyMetadataModel {
   data?: OntologyMetadataModel;
   message?: string;
@@ -125,6 +103,65 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
+}
+
+export interface ValidationReportDto {
+  results?: ValidationResult[];
+  timestamp?: string;
+  ontologyIri?: string;
+  id?: number;
+}
+
+export interface ApiResponseDtoCatalogRecordDto {
+  data?: CatalogRecordDto;
+  message?: string;
+  success?: boolean;
+}
+
+export type CatalogRecordDtoPopis = { [key: string]: string };
+
+export type CatalogRecordDtoNázev = { [key: string]: string };
+
+export type CatalogRecordDtoKlíčovéSlovo = { [key: string]: string[] };
+
+export type CatalogRecordDtoKontaktníBod = {
+  [key: string]: { [key: string]: unknown };
+};
+
+export interface CatalogRecordDto {
+  iri?: string;
+  typ?: string;
+  popis?: CatalogRecordDtoPopis;
+  specifikace?: string[];
+  distribuce?: DistribuceDto[];
+  '@context'?: string;
+  název?: CatalogRecordDtoNázev;
+  prvek_rúian?: string[];
+  geografické_území?: string[];
+  prostorové_pokrytí?: string[];
+  klíčové_slovo?: CatalogRecordDtoKlíčovéSlovo;
+  periodicita_aktualizace?: string;
+  téma?: string[];
+  koncept_euroVoc?: string[];
+  kontaktní_bod?: CatalogRecordDtoKontaktníBod;
+}
+
+export interface DistribuceDto {
+  typ?: string;
+  podmínky_užití?: PodminkyUzitiDto;
+  soubor_ke_stažení?: string;
+  přístupové_url?: string;
+  typ_média?: string;
+  formát?: string;
+  schéma?: string;
+}
+
+export interface PodminkyUzitiDto {
+  typ?: string;
+  autorské_dílo?: string;
+  databáze_jako_autorské_dílo?: string;
+  databáze_chráněná_zvláštními_právy?: string;
+  osobní_údaje?: string;
 }
 
 export interface AltNameModel {
@@ -166,11 +203,11 @@ export interface ConceptCreateModel {
   altNameModel?: AltNameModel[];
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
-  definingNonLegalSource?: string;
-  definingLegalSource?: string;
-  relatedNonLegalSource?: string;
-  relatedLegalSource?: string;
-  exactMatch?: string;
+  definingNonLegalSource?: string[];
+  definingLegalSource?: string[];
+  relatedNonLegalSource?: string[];
+  relatedLegalSource?: string[];
+  exactMatch?: string[];
   inTezaurus?: string;
   conceptTypeEnum?: ConceptCreateModelConceptTypeEnum;
 }
@@ -240,8 +277,9 @@ export interface ConceptMetadataModel {
   user?: UserModel;
   isPublished?: boolean;
   inTezaurus?: string;
-  validationReport?: ValidationReportDto;
   comments?: CommentModel[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CommentCreateModel {
@@ -296,11 +334,11 @@ export interface ConceptEditModel {
   altNameModel?: AltNameModel[];
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
-  definingNonLegalSource?: string;
-  definingLegalSource?: string;
-  relatedNonLegalSource?: string;
-  relatedLegalSource?: string;
-  exactMatch?: string;
+  definingNonLegalSource?: string[];
+  definingLegalSource?: string[];
+  relatedNonLegalSource?: string[];
+  relatedLegalSource?: string[];
+  exactMatch?: string[];
   inTezaurus?: string;
   conceptTypeEnum?: ConceptEditModelConceptTypeEnum;
 }
@@ -341,7 +379,7 @@ export type RelationshipConceptEditModel = ConceptEditModel &
 
 export type ConceptDetailModelNázev = { [key: string]: string };
 
-export type ConceptDetailModelAlternativníNázev = { [key: string]: string };
+export type ConceptDetailModelAlternativníNázev = { [key: string]: string[] };
 
 export type ConceptDetailModelDefinice = { [key: string]: string };
 
@@ -349,14 +387,24 @@ export type ConceptDetailModelPopis = { [key: string]: string };
 
 export type ConceptDetailModelEkvivalentníPojemItem = { [key: string]: string };
 
+export type ConceptDetailModelDefinujícíNelegislativníZdrojItem = {
+  [key: string]: string;
+};
+
+export type ConceptDetailModelSouvisejícíNelegislativníZdrojItem = {
+  [key: string]: string;
+};
+
 export interface ConceptDetailModel {
+  conceptProperties?: ConceptPropertiesModel[];
+  conceptRelationships?: ConceptRelationshipsModel[];
   iri?: string;
   typ?: string[];
   název?: ConceptDetailModelNázev;
   'alternativní-název'?: ConceptDetailModelAlternativníNázev;
   definice?: ConceptDetailModelDefinice;
   popis?: ConceptDetailModelPopis;
-  identifikátor?: string[];
+  identifikátor?: string;
   'ekvivalentní-pojem'?: ConceptDetailModelEkvivalentníPojemItem[];
   'definiční-obor'?: string;
   'obor-hodnot'?: string;
@@ -365,8 +413,8 @@ export interface ConceptDetailModel {
   'nadřazená-vlastnost'?: string[];
   'definující-ustanovení-právního-předpisu'?: string[];
   'související-ustanovení-právního-předpisu'?: string[];
-  'definující-nelegislativní-zdroj'?: string[];
-  'související-nelegislativní-zdroj'?: string[];
+  'definující-nelegislativní-zdroj'?: ConceptDetailModelDefinujícíNelegislativníZdrojItem[];
+  'související-nelegislativní-zdroj'?: ConceptDetailModelSouvisejícíNelegislativníZdrojItem[];
   'způsob-sdílení-údajů'?: string[];
   'způsob-získání-údajů'?: string;
   'typ-obsahu-údajů'?: string;
@@ -376,9 +424,20 @@ export interface ConceptDetailModel {
   'ustanovení-neverejnost'?: string[];
 }
 
+export interface ConceptPropertiesModel {
+  name?: string;
+  slug?: string;
+}
+
+export interface ConceptRelationshipsModel {
+  name?: string;
+  slug?: string;
+}
+
 export interface GetOntologyDto {
   ontologyMetadata?: OntologyMetadataModel;
   ontologyDetail?: OntologyDetailModel;
+  conceptMetadataModelList?: ConceptMetadataModel[];
 }
 
 export type OntologyDetailModelNázev = { [key: string]: string };
@@ -436,6 +495,11 @@ export type UploadFromFileBody = {
 
 export type CreateOntologyParams = {
   userId: string;
+};
+
+export type RequestCatalogRecordBody = {
+  ontologyMetadata: OntologyMetadataModel;
+  validationReport: ValidationReportDto;
 };
 
 export type CreateConceptParams = {
@@ -731,6 +795,89 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+export const requestCatalogRecord = (
+  requestCatalogRecordBody: RequestCatalogRecordBody,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoCatalogRecordDto>(
+    {
+      url: `/api/ontology/catalog-record`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: requestCatalogRecordBody,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getRequestCatalogRecordMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof requestCatalogRecord>>,
+    TError,
+    { data: RequestCatalogRecordBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof requestCatalogRecord>>,
+  TError,
+  { data: RequestCatalogRecordBody },
+  TContext
+> => {
+  const mutationKey = ['requestCatalogRecord'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof requestCatalogRecord>>,
+    { data: RequestCatalogRecordBody }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return requestCatalogRecord(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RequestCatalogRecordMutationResult = NonNullable<
+  Awaited<ReturnType<typeof requestCatalogRecord>>
+>;
+export type RequestCatalogRecordMutationBody = RequestCatalogRecordBody;
+export type RequestCatalogRecordMutationError = unknown;
+
+export const useRequestCatalogRecord = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof requestCatalogRecord>>,
+      TError,
+      { data: RequestCatalogRecordBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof requestCatalogRecord>>,
+  TError,
+  { data: RequestCatalogRecordBody },
+  TContext
+> => {
+  const mutationOptions = getRequestCatalogRecordMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

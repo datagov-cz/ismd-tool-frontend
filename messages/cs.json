@@ -97,6 +97,9 @@
     }
   },
   "DictionaryDetail": {
+    "CreateConcept": {
+      "Title": "Nový pojem"
+    },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
       "DictTerms": "pojmy slovníku",

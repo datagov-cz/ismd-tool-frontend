@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 import { ValidationReportDto } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
+import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
 import { DeleteDialog } from './DeleteDialog';
@@ -29,6 +30,9 @@ export const ControlPanel = ({
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
+  const setIsConceptBoxOpen = useCreateConceptBoxStore(
+    (state) => state.setIsOpen,
+  );
 
   const handleCopyLink = async () => {
     try {
@@ -76,6 +80,7 @@ export const ControlPanel = ({
         iconName="plus"
         ariaLabel={t('Add')}
         className="mt-12"
+        onClick={() => setIsConceptBoxOpen(true)}
       />
       <DeleteDialog
         open={openDelete}
