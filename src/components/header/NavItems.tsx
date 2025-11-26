@@ -8,7 +8,6 @@ import { useHintboxStore } from '@/store/hintboxStore';
 import { Button } from '../shared/Button';
 import { ButtonLink } from '../shared/ButtonLink';
 
-import { NavItem } from './NavItem';
 import { OnlineIndicator } from './OnlineIndicator';
 
 interface Props {
@@ -95,14 +94,13 @@ export const NavItems = ({ session }: Props) => {
   return (
     <>
       <OnlineIndicator />
-      <NavItem href="">{t('NavLogged.Link1')}</NavItem>
       <GovButton
         color="primary"
         size="m"
         type="base"
         onGovClick={() => setIsHintboxOpen(true)}
       >
-        {t('NavLogged.Link2')}
+        {t('NavLogged.Link1')}
       </GovButton>
       <GovDropdown
         id="nav-dropdown-user"

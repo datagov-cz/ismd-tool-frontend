@@ -19,8 +19,7 @@
         "Online": "Připojeno",
         "Offline": "Odpojeno"
       },
-      "Link1": "Nastavení",
-      "Link2": "Nápověda",
+      "Link1": "Nápověda",
       "Dropdown": {
         "Label": "Zpětná vazba",
         "Link1": "Nahlásit chybu",
