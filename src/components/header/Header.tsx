@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 
 import { ThemeSwitch } from '../shared/ThemeSwitch';
 
-import { HintSidebox } from './HintSidebox';
+import { HintSidebox } from './hintSidebox/HintSidebox';
 import { NavItems } from './NavItems';
 
 interface Props {
