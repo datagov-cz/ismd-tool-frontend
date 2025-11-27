@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
+import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
@@ -94,7 +95,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               ontologyID={ontologyMetadata?.id || 0}
               isPublished={ontologyMetadata.isPublished || false}
               name={ontologyDetail.název?.cs || ''}
-              validationReport={ontologyMetadata.validationReport}
+              // validationReport={ontologyMetadata.validationReport}
             />
             <CommentSidebox
               ontologyIRI={ontologyDetail.iri}
@@ -102,6 +103,13 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               refetch={() => ontology.refetch()}
               userId={userId}
             />
+            {ontologyDetail.iri && (
+              <CreateConceptSideBox
+                slug={slug}
+                namespace={ontologyDetail.iri}
+                concepts={ontologyDetail.pojmy}
+              />
+            )}
           </div>
         </>
       );
