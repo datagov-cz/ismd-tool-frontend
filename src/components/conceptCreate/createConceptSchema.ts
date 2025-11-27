@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const nameModelSchema = z.object({
   languageTag: z.string().optional(),
-  name: z.string().optional(),
+  name: z.string().trim().min(1, 'Název musí mít aspoň jeden znak'),
 });
 
 const altNameModelSchema = z.object({

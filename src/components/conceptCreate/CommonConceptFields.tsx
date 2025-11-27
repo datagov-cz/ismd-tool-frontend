@@ -50,6 +50,7 @@ export const CommonConceptFields = ({
         errors={errors}
         control={control}
         form={form}
+        required
       />
 
       {altFields.map((fields, index) => (

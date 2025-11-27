@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   GovButton,
   GovFormControl,
@@ -55,27 +55,29 @@ export const CreateConceptSideBox = ({
   const lastSlashIndex = namespace.lastIndexOf('/');
   const baseUrl = namespace.substring(0, lastSlashIndex);
 
+  const defaultValues = {
+    conceptTypeEnum: conceptType,
+    conceptType: conceptType,
+    ontologyGraphName: namespace,
+    namespace: baseUrl,
+    altNameModel: [{ altName: '', languageTag: 'cs' }],
+    nameModel: { name: '', languageTag: 'cs' },
+    definingLegalSource: [{ value: '' }],
+    definingNonLegalSource: [{ value: '' }],
+    relatedLegalSource: [{ value: '' }],
+    relatedNonLegalSource: [{ value: '' }],
+    exactMatch: [{ value: '' }],
+    domain: '',
+    range: '',
+    sharingMethod: '',
+    acquisitionMethod: '',
+    contentType: '',
+    type: '',
+  };
+
   const form = useForm<CreateConceptFormData>({
     resolver: zodResolver(createConceptSchema),
-    defaultValues: {
-      conceptTypeEnum: conceptType,
-      conceptType: conceptType,
-      ontologyGraphName: namespace,
-      namespace: baseUrl,
-      altNameModel: [{ altName: '', languageTag: 'cs' }],
-      nameModel: { name: '', languageTag: 'cs' },
-      definingLegalSource: [{ value: '' }],
-      definingNonLegalSource: [{ value: '' }],
-      relatedLegalSource: [{ value: '' }],
-      relatedNonLegalSource: [{ value: '' }],
-      exactMatch: [{ value: '' }],
-      domain: '',
-      range: '',
-      sharingMethod: '',
-      acquisitionMethod: '',
-      contentType: '',
-      type: '',
-    },
+    defaultValues: defaultValues,
   });
 
   const {
@@ -96,25 +98,7 @@ export const CreateConceptSideBox = ({
           type: 'success',
         });
         invalidator.invalidateOntology(slug);
-        reset({
-          conceptTypeEnum: conceptType,
-          conceptType: conceptType,
-          ontologyGraphName: namespace,
-          namespace: baseUrl,
-          altNameModel: [{ altName: '', languageTag: 'cs' }],
-          nameModel: { name: '', languageTag: 'cs' },
-          definingLegalSource: [{ value: '' }],
-          definingNonLegalSource: [{ value: '' }],
-          relatedLegalSource: [{ value: '' }],
-          relatedNonLegalSource: [{ value: '' }],
-          exactMatch: [{ value: '' }],
-          domain: '',
-          range: '',
-          sharingMethod: '',
-          acquisitionMethod: '',
-          contentType: '',
-          type: '',
-        });
+        reset(defaultValues);
         setIsOpen(false);
       },
       onError: (error) => {
@@ -122,6 +106,15 @@ export const CreateConceptSideBox = ({
       },
     },
   });
+
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      toast.error('Prosím opravte chyby ve formuláři.', {
+        position: 'bottom-right',
+      });
+    }
+  }, [errors]);
 
   const onSubmit = (data: CreateConceptFormData) => {
     postConceptMutation.mutate({

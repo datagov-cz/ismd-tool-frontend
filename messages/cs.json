@@ -232,7 +232,7 @@
         "AcquisitionMethod": "Způsob získání údajů",
         "SharingMethod": "Způsob sdílení údajů",
         "IsPublic": "Je veřejný",
-        "PrivacyProvision": "Ustanovení neverejnost",
+        "PrivacyProvision": "Ustanovení neveřejnosti",
         "IsInPPDF": "Je v PPDF"
       },
       "Options": {
