@@ -4,6 +4,7 @@ import {
   GovFormLabel,
   GovFormSelect,
 } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 
@@ -20,29 +21,65 @@ export const RelationshipConceptFields = ({
   form,
   concepts,
 }: RelationshipConceptFieldsProps) => {
+  const t = useTranslations('CreateConcept.RelationshipConceptFields');
+
   return (
     <>
       <GovFormControl>
-        <GovFormLabel size="m">Domain</GovFormLabel>
-        <GovFormSelect {...register('domain')}>
+        <GovFormLabel size="m" required>
+          {t('Labels.Domain')}
+        </GovFormLabel>
+        <GovFormSelect
+          {...register('domain')}
+          invalid={'domain' in errors && !!errors.domain}
+        >
+          <option label="" value="" />
           {concepts?.map((item, index) => (
-            <option key={index} label={item.název?.cs || ''} value={item.iri} />
+            <option
+              key={index}
+              label={item.název?.cs || t('Options.Undefined')}
+              value={item.iri}
+            />
           ))}
         </GovFormSelect>
+        {'domain' in errors && errors.domain && (
+          <span className="text-red-600 text-sm">{errors.domain.message}</span>
+        )}
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Range</GovFormLabel>
-        <GovFormSelect {...register('range')}>
+        <GovFormLabel size="m" required>
+          {t('Labels.Range')}
+        </GovFormLabel>
+        <GovFormSelect
+          {...register('range')}
+          invalid={'range' in errors && !!errors.range}
+        >
+          <option label="" value="" />
           {concepts?.map((item, index) => (
-            <option key={index} label={item.název?.cs || ''} value={item.iri} />
+            <option
+              key={index}
+              label={item.název?.cs || t('Options.Undefined')}
+              value={item.iri}
+            />
           ))}
         </GovFormSelect>
+        {'range' in errors && errors.range && (
+          <span className="text-red-600 text-sm">{errors.range.message}</span>
+        )}
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Super Relation</GovFormLabel>
-        <GovFormInput {...register('superRelation')} />
+        <GovFormLabel size="m">{t('Labels.SuperRelation')}</GovFormLabel>
+        <GovFormInput
+          {...register('superRelation')}
+          invalid={'superRelation' in errors && !!errors.superRelation}
+        />
+        {'superRelation' in errors && errors.superRelation && (
+          <span className="text-red-600 text-sm">
+            {errors.superRelation.message}
+          </span>
+        )}
       </GovFormControl>
 
       <CommonConceptFields

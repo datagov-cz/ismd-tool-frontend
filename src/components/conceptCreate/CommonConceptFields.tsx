@@ -6,6 +6,7 @@ import {
   GovFormLabel,
   GovFormSelect,
 } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 import {
   Control,
   FieldErrors,
@@ -15,6 +16,7 @@ import {
 } from 'react-hook-form';
 
 import { CreateConceptFormData } from './createConceptSchema';
+import { ArrayInput } from './inputs/ArrayInput';
 import { TextWithLanguageInput } from './inputs/TextWithLanguage';
 
 export interface CommonFieldsProps {
@@ -30,7 +32,8 @@ export const CommonConceptFields = ({
   control,
   form,
 }: CommonFieldsProps) => {
-  const { fields } = useFieldArray({
+  const t = useTranslations('CreateConcept.CommonConceptFields');
+  const { fields: altFields } = useFieldArray({
     control: form.control,
     name: 'altNameModel',
   });
@@ -38,23 +41,26 @@ export const CommonConceptFields = ({
   return (
     <>
       <TextWithLanguageInput
-        textInput={{ label: 'Název', name: 'nameModel.name' }}
-        languageInput={{ label: 'Jazyk', name: 'nameModel.languageTag' }}
+        textInput={{ label: t('Labels.Name'), name: 'nameModel.name' }}
+        languageInput={{
+          label: t('Labels.Language'),
+          name: 'nameModel.languageTag',
+        }}
         register={register}
         errors={errors}
         control={control}
         form={form}
       />
 
-      {fields.map((fields, index) => (
+      {altFields.map((fields, index) => (
         <TextWithLanguageInput
           key={fields.id}
           textInput={{
-            label: 'Alternativní název',
+            label: t('Labels.AlternativeName'),
             name: `altNameModel.${index}.altName`,
           }}
           languageInput={{
-            label: 'Jazyk',
+            label: t('Labels.Language'),
             name: `altNameModel.${index}.languageTag`,
           }}
           register={register}
@@ -66,7 +72,7 @@ export const CommonConceptFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m" required>
-          Slovník
+          {t('Labels.Dictionary')}
         </GovFormLabel>
         <GovFormInput
           {...register('ontologyGraphName')}
@@ -80,23 +86,29 @@ export const CommonConceptFields = ({
       </GovFormControl>
 
       <GovFormControl className="w-full">
-        <GovFormLabel size="m">Concept Type</GovFormLabel>
-        <GovFormInput {...register('conceptType')} />
-      </GovFormControl>
-
-      <GovFormControl className="w-full">
-        <GovFormLabel size="m">Namespace</GovFormLabel>
-        <GovFormInput {...register('namespace')} />
+        <GovFormLabel size="m">{t('Labels.Namespace')}</GovFormLabel>
+        <GovFormInput {...register('namespace')} invalid={!!errors.namespace} />
+        {errors.namespace && (
+          <span className="text-red-600 text-sm">
+            {errors.namespace.message}
+          </span>
+        )}
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Identifikátor</GovFormLabel>
-        <GovFormInput {...register('identifier')} />
+        <GovFormLabel size="m">{t('Labels.Identifier')}</GovFormLabel>
+        <GovFormInput {...register('identifier')} disabled />
       </GovFormControl>
 
       <TextWithLanguageInput
-        textInput={{ label: 'Popis', name: 'descriptionModel.description' }}
-        languageInput={{ label: 'Jazyk', name: 'descriptionModel.languageTag' }}
+        textInput={{
+          label: t('Labels.Description'),
+          name: 'descriptionModel.description',
+        }}
+        languageInput={{
+          label: t('Labels.Language'),
+          name: 'descriptionModel.languageTag',
+        }}
         register={register}
         errors={errors}
         control={control}
@@ -104,65 +116,172 @@ export const CommonConceptFields = ({
       />
 
       <TextWithLanguageInput
-        textInput={{ label: 'Definice', name: 'definitionModel.definition' }}
-        languageInput={{ label: 'Jazyk', name: 'definitionModel.languageTag' }}
+        textInput={{
+          label: t('Labels.Definition'),
+          name: 'definitionModel.definition',
+        }}
+        languageInput={{
+          label: t('Labels.Language'),
+          name: 'definitionModel.languageTag',
+        }}
         register={register}
         errors={errors}
         control={control}
         form={form}
       />
 
+      <ArrayInput
+        form={form}
+        register={register}
+        name="definingLegalSource"
+        label={t('Labels.DefiningLegalSource')}
+        errors={errors}
+      />
+      <ArrayInput
+        form={form}
+        register={register}
+        name="definingNonLegalSource"
+        label={t('Labels.DefiningNonLegalSource')}
+        errors={errors}
+      />
+      <ArrayInput
+        form={form}
+        register={register}
+        name="relatedLegalSource"
+        label={t('Labels.RelatedLegalSource')}
+        errors={errors}
+      />
+      <ArrayInput
+        form={form}
+        register={register}
+        name="relatedNonLegalSource"
+        label={t('Labels.RelatedNonLegalSource')}
+        errors={errors}
+      />
+      <ArrayInput
+        form={form}
+        register={register}
+        name="exactMatch"
+        label={t('Labels.ExactMatch')}
+        errors={errors}
+      />
+
       <GovFormControl>
-        <GovFormLabel size="m">V Tezaurus</GovFormLabel>
+        <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
         <GovFormSelect {...register('inTezaurus')}>
-          <option value="ano" label="Ano" />
-          <option value="ne" label="Ne" />
+          <option value="ano" label={t('Options.Yes')} />
+          <option value="ne" label={t('Options.No')} />
         </GovFormSelect>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Agenda Code</GovFormLabel>
-        <GovFormInput {...register('agendaCode')} />
+        <GovFormLabel size="m">{t('Labels.AgendaCode')}</GovFormLabel>
+        <GovFormInput
+          {...register('agendaCode')}
+          invalid={!!errors.agendaCode}
+        />
+        {errors.agendaCode && (
+          <span className="text-red-600 text-sm">
+            {errors.agendaCode.message}
+          </span>
+        )}
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Agenda System Code</GovFormLabel>
-        <GovFormInput {...register('agendaSystemCode')} />
+        <GovFormLabel size="m">{t('Labels.AgendaSystemCode')}</GovFormLabel>
+        <GovFormInput
+          {...register('agendaSystemCode')}
+          invalid={!!errors.agendaSystemCode}
+        />
+        {errors.agendaSystemCode && (
+          <span className="text-red-600 text-sm">
+            {errors.agendaSystemCode.message}
+          </span>
+        )}
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Content Type</GovFormLabel>
-        <GovFormInput {...register('contentType')} />
+        <GovFormLabel size="m">{t('Labels.ContentType')}</GovFormLabel>
+        <GovFormSelect {...register('contentType')}>
+          <option value="" label="" />
+          <option
+            value="identifikační"
+            label={t('Options.ContentType.Identification')}
+          />
+          <option
+            value="evidenční"
+            label={t('Options.ContentType.Registration')}
+          />
+          <option
+            value="statistické"
+            label={t('Options.ContentType.Statistical')}
+          />
+        </GovFormSelect>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Acquisition Method</GovFormLabel>
-        <GovFormInput {...register('acquisitionMethod')} />
+        <GovFormLabel size="m">{t('Labels.AcquisitionMethod')}</GovFormLabel>
+        <GovFormSelect {...register('acquisitionMethod')}>
+          <option value="" label="" />
+          <option
+            value="jiných agend"
+            label={t('Options.AcquisitionMethod.FromOtherAgendas')}
+          />
+          <option value="vlastní" label={t('Options.AcquisitionMethod.Own')} />
+          <option
+            value="provozní"
+            label={t('Options.AcquisitionMethod.Operational')}
+          />
+        </GovFormSelect>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Je veřejný</GovFormLabel>
+        <GovFormLabel size="m">{t('Labels.SharingMethod')}</GovFormLabel>
+        <GovFormSelect {...register('sharingMethod')}>
+          <option value="" label="" />
+          <option
+            value="veřejně přístupné"
+            label={t('Options.SharingMethod.PubliclyAccessible')}
+          />
+          <option
+            value="poskytované na žádost"
+            label={t('Options.SharingMethod.ProvidedOnRequest')}
+          />
+          <option
+            value="zpřístupňované pro výkon agendy"
+            label={t('Options.SharingMethod.AccessibleForAgendaExecution')}
+          />
+        </GovFormSelect>
+      </GovFormControl>
+
+      <GovFormControl>
+        <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
         <GovFormSelect {...register('isPublic')}>
-          <option value="ano" label="Ano" />
-          <option value="ne" label="Ne" />
+          <option value="ano" label={t('Options.Yes')} />
+          <option value="ne" label={t('Options.No')} />
         </GovFormSelect>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m">Sharing Method</GovFormLabel>
-        <GovFormInput {...register('sharingMethod')} />
-      </GovFormControl>
-
-      <GovFormControl>
-        <GovFormLabel size="m">Privacy Provision</GovFormLabel>
-        <GovFormInput {...register('privacyProvision')} />
+        <GovFormLabel size="m" required={form.watch('isPublic') === 'ano'}>
+          {t('Labels.PrivacyProvision')}
+        </GovFormLabel>
+        <GovFormInput
+          {...register('privacyProvision')}
+          invalid={!!errors.privacyProvision}
+        />
+        {errors.privacyProvision && (
+          <span className="text-red-600 text-sm">
+            {errors.privacyProvision.message}
+          </span>
+        )}
       </GovFormControl>
 
       <GovFormControl className="flex flex-row">
         <div className="flex gap-2 items-center">
           <input type="checkbox" {...register('isInPPDF')} className="w-fit" />
           <GovFormLabel size="m" className="w-fit mb-0!">
-            Je v PPDF
+            {t('Labels.IsInPPDF')}
           </GovFormLabel>
         </div>
       </GovFormControl>

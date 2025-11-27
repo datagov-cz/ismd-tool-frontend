@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import {
   GovButton,
+  GovFormControl,
   GovFormLabel,
   GovFormSelect,
 } from '@gov-design-system-ce/react';
@@ -17,6 +18,7 @@ import {
   ConceptEditModelConceptTypeEnum,
   useCreateConcept,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { Sidebox } from '../shared/Sidebox';
@@ -32,28 +34,47 @@ import { RelationshipConceptFields } from './RelationshipConceptFields';
 interface CreateConceptProps {
   namespace: string;
   concepts?: ConceptDetailModel[];
+  slug: string;
 }
 
 export const CreateConceptSideBox = ({
   namespace,
   concepts,
+  slug,
 }: CreateConceptProps) => {
   const t = useTranslations('DictionaryDetail.CreateConcept');
 
   const isOpen = useCreateConceptBoxStore((state) => state.isOpen);
   const setIsOpen = useCreateConceptBoxStore((state) => state.setIsOpen);
 
+  const invalidator = useQueryInvalidator();
+
   const [conceptType, setConceptType] =
     useState<ConceptEditModelConceptTypeEnum>('TRIDA');
+
+  const lastSlashIndex = namespace.lastIndexOf('/');
+  const baseUrl = namespace.substring(0, lastSlashIndex);
 
   const form = useForm<CreateConceptFormData>({
     resolver: zodResolver(createConceptSchema),
     defaultValues: {
       conceptTypeEnum: conceptType,
+      conceptType: conceptType,
       ontologyGraphName: namespace,
-      namespace: namespace,
+      namespace: baseUrl,
       altNameModel: [{ altName: '', languageTag: 'cs' }],
       nameModel: { name: '', languageTag: 'cs' },
+      definingLegalSource: [{ value: '' }],
+      definingNonLegalSource: [{ value: '' }],
+      relatedLegalSource: [{ value: '' }],
+      relatedNonLegalSource: [{ value: '' }],
+      exactMatch: [{ value: '' }],
+      domain: '',
+      range: '',
+      sharingMethod: '',
+      acquisitionMethod: '',
+      contentType: '',
+      type: '',
     },
   });
 
@@ -74,7 +95,26 @@ export const CreateConceptSideBox = ({
         toast(data.message || 'Concept created successfully', {
           type: 'success',
         });
-        reset();
+        invalidator.invalidateOntology(slug);
+        reset({
+          conceptTypeEnum: conceptType,
+          conceptType: conceptType,
+          ontologyGraphName: namespace,
+          namespace: baseUrl,
+          altNameModel: [{ altName: '', languageTag: 'cs' }],
+          nameModel: { name: '', languageTag: 'cs' },
+          definingLegalSource: [{ value: '' }],
+          definingNonLegalSource: [{ value: '' }],
+          relatedLegalSource: [{ value: '' }],
+          relatedNonLegalSource: [{ value: '' }],
+          exactMatch: [{ value: '' }],
+          domain: '',
+          range: '',
+          sharingMethod: '',
+          acquisitionMethod: '',
+          contentType: '',
+          type: '',
+        });
         setIsOpen(false);
       },
       onError: (error) => {
@@ -85,7 +125,23 @@ export const CreateConceptSideBox = ({
 
   const onSubmit = (data: CreateConceptFormData) => {
     postConceptMutation.mutate({
-      data: data,
+      data: {
+        ...data,
+        conceptType: data.conceptTypeEnum,
+        definingLegalSource: data.definingLegalSource?.map(
+          (item) => item.value || '',
+        ),
+        definingNonLegalSource: data.definingNonLegalSource?.map(
+          (item) => item.value || '',
+        ),
+        relatedLegalSource: data.relatedLegalSource?.map(
+          (item) => item.value || '',
+        ),
+        relatedNonLegalSource: data.relatedNonLegalSource?.map(
+          (item) => item.value || '',
+        ),
+        exactMatch: data.exactMatch?.map((item) => item.value || ''),
+      },
       params: {
         userId: 'test',
       },
@@ -100,15 +156,16 @@ export const CreateConceptSideBox = ({
             className={clsx('relative w-full rounded-md space-y-4')}
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div>
+            <GovFormControl>
               <GovFormLabel size="m">Typ pojmu</GovFormLabel>
               <GovFormSelect
                 {...register('conceptTypeEnum')}
-                onGovChange={(e) =>
+                onGovChange={(e) => {
                   setConceptType(
                     e.target.value as ConceptEditModelConceptTypeEnum,
-                  )
-                }
+                  );
+                  form.setValue('conceptType', e.target.value);
+                }}
               >
                 <option
                   value={ConceptEditModelConceptTypeEnum.TRIDA}
@@ -128,7 +185,7 @@ export const CreateConceptSideBox = ({
                   {errors.conceptTypeEnum.message}
                 </span>
               )}
-            </div>
+            </GovFormControl>
 
             {conceptType === 'TRIDA' && (
               <ClassCreateFields
@@ -164,7 +221,7 @@ export const CreateConceptSideBox = ({
               color="primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+              {t('Save')}
             </GovButton>
           </form>
         </div>

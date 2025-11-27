@@ -107,6 +107,7 @@ const DictionaryDetail = ({ params }: Props) => {
             />
             {ontologyDetail.iri && (
               <CreateConceptSideBox
+                slug={slug}
                 namespace={ontologyDetail.iri}
                 concepts={ontologyDetail.pojmy}
               />

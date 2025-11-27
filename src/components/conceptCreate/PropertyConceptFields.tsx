@@ -4,6 +4,7 @@ import {
   GovFormLabel,
   GovFormSelect,
 } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 
@@ -20,30 +21,49 @@ export const PropertyCreateFields = ({
   form,
   concepts,
 }: PropertyCreateFieldsProps) => {
+  const t = useTranslations('CreateConcept.PropertyCreateFields');
+
   return (
     <>
       <GovFormControl>
-        <GovFormLabel size="m">Data Type</GovFormLabel>
-        <GovFormInput {...register('dataType')} />
-      </GovFormControl>
-
-      <GovFormControl>
-        <GovFormLabel size="m">Domain</GovFormLabel>
-        <GovFormSelect {...register('domain')}>
-          {concepts?.map((item, index) => (
-            <option key={index} label={item.název?.cs || ''} value={item.iri} />
-          ))}
-        </GovFormSelect>
-      </GovFormControl>
-
-      <GovFormControl>
-        <GovFormLabel size="m">Super Property</GovFormLabel>
-        <GovFormSelect {...register('superProperty')}>
+        <GovFormLabel size="m" required>
+          {t('Labels.Domain')}
+        </GovFormLabel>
+        <GovFormSelect
+          {...register('domain')}
+          defaultValue={''}
+          invalid={'domain' in errors && !!errors.domain}
+        >
           <option label={''} value={''} />
           {concepts?.map((item, index) => (
-            <option key={index} label={item.název?.cs || ''} value={item.iri} />
+            <option
+              key={index}
+              label={item.název?.cs || t('Options.Undefined')}
+              value={item.iri}
+            />
           ))}
         </GovFormSelect>
+        {'domain' in errors && errors.domain && (
+          <span className="text-red-600 text-sm">{errors.domain.message}</span>
+        )}
+      </GovFormControl>
+
+      <GovFormControl>
+        <GovFormLabel size="m">{t('Labels.SuperProperty')}</GovFormLabel>
+        <GovFormInput
+          {...register('superProperty')}
+          invalid={'superProperty' in errors && !!errors.superProperty}
+        />
+        {'superProperty' in errors && errors.superProperty && (
+          <span className="text-red-600 text-sm">
+            {errors.superProperty.message}
+          </span>
+        )}
+      </GovFormControl>
+
+      <GovFormControl>
+        <GovFormLabel size="m">{t('Labels.DataType')}</GovFormLabel>
+        <GovFormInput {...register('dataType')} />
       </GovFormControl>
 
       <CommonConceptFields
