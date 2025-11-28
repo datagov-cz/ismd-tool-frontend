@@ -97,6 +97,10 @@
     }
   },
   "DictionaryDetail": {
+    "CreateConcept": {
+      "Title": "Nový pojem",
+      "Save": "Uložit"
+    },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
       "DictTerms": "pojmy slovníku",
@@ -214,6 +218,86 @@
       "NameRequired": "Název je povinný",
       "DescriptionRequired": "Popis je povinný",
       "LanguageTagRequired": "Jazykový tag je povinný"
+    }
+  },
+  "CreateConcept": {
+    "Save": "Uložit",
+    "CommonConceptFields": {
+      "Labels": {
+        "Name": "Název",
+        "Language": "Jazyk",
+        "AlternativeName": "Alternativní název",
+        "Dictionary": "Slovník",
+        "Namespace": "Adresa lokalního katalogu dat",
+        "Identifier": "Identifikátor",
+        "Description": "Popis",
+        "Definition": "Definice",
+        "DefiningLegalSource": "Definující ustanovení právního předpisu",
+        "DefiningNonLegalSource": "Definující nelegislativní zdroj",
+        "RelatedLegalSource": "Související ustanovení právního předpisu",
+        "RelatedNonLegalSource": "Související nelegislativní zdroj",
+        "ExactMatch": "Ekvivalentní pojem",
+        "InThesaurus": "V Tezaurus",
+        "AgendaCode": "Agenda",
+        "AgendaSystemCode": "Agendový informační systém",
+        "ContentType": "Typ obsahu údajů",
+        "AcquisitionMethod": "Způsob získání údajů",
+        "SharingMethod": "Způsob sdílení údajů",
+        "IsPublic": "Je veřejný",
+        "PrivacyProvision": "Ustanovení neveřejnosti",
+        "IsInPPDF": "Je v PPDF"
+      },
+      "Options": {
+        "Yes": "Ano",
+        "No": "Ne",
+        "ContentType": {
+          "Identification": "Identifikační",
+          "Registration": "Evidenční",
+          "Statistical": "Statistické"
+        },
+        "AcquisitionMethod": {
+          "FromOtherAgendas": "Jiných agend",
+          "Own": "Vlastní",
+          "Operational": "Provozní"
+        },
+        "SharingMethod": {
+          "PubliclyAccessible": "Veřejně přístupné",
+          "ProvidedOnRequest": "Poskytované na žádost",
+          "AccessibleForAgendaExecution": "Zpřístupňované pro výkon agendy"
+        }
+      }
+    },
+    "ClassCreateFields": {
+      "Labels": {
+        "ClassType": "Typ třídy",
+        "BroaderClass": "Nadřazená třída"
+      },
+      "Options": {
+        "ClassType": {
+          "SubjectOfLawType": "Typ subjektu práva",
+          "ObjectOfLawType": "Typ objektu práva"
+        }
+      }
+    },
+    "PropertyCreateFields": {
+      "Labels": {
+        "Domain": "Definiční obor",
+        "SuperProperty": "Nadřazená vlastnost",
+        "DataType": "Obor hodnot"
+      },
+      "Options": {
+        "Undefined": "undefined"
+      }
+    },
+    "RelationshipConceptFields": {
+      "Labels": {
+        "Domain": "Definiční obor",
+        "Range": "Obor hodnot",
+        "SuperRelation": "Nadřazený vztah"
+      },
+      "Options": {
+        "Undefined": "undefined"
+      }
     }
   }
 }

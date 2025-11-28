@@ -10,6 +10,7 @@ import {
   ValidationReportDto,
 } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
+import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
 import { useValidationBoxStore } from '@/store/validationBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
@@ -40,6 +41,9 @@ export const ControlPanel = ({
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
   const setIsValidationBoxOpen = useValidationBoxStore(
+    (state) => state.setIsOpen,
+  );
+  const setIsConceptBoxOpen = useCreateConceptBoxStore(
     (state) => state.setIsOpen,
   );
 
@@ -105,6 +109,7 @@ export const ControlPanel = ({
         iconName="plus"
         ariaLabel={t('Add')}
         className="mt-12"
+        onClick={() => setIsConceptBoxOpen(true)}
       />
       <DeleteDialog
         open={openDelete}
