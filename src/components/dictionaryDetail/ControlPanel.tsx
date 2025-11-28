@@ -4,22 +4,23 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { ValidationReportDto } from '@/api/generated';
+// import { ValidationReportDto } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
+import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
 import { DeleteDialog } from './DeleteDialog';
 import { DownloadDialog } from './DownloadDialog';
 
 interface Props {
-  validationReport?: ValidationReportDto;
+  // validationReport?: ValidationReportDto;
   isPublished: boolean;
   ontologyID: number;
   name: string;
 }
 
 export const ControlPanel = ({
-  validationReport,
+  // validationReport,
   isPublished,
   ontologyID,
   name,
@@ -29,6 +30,9 @@ export const ControlPanel = ({
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
+  const setIsConceptBoxOpen = useCreateConceptBoxStore(
+    (state) => state.setIsOpen,
+  );
 
   const handleCopyLink = async () => {
     try {
@@ -52,14 +56,15 @@ export const ControlPanel = ({
         ariaLabel={t('Comments')}
         onClick={() => setIsCommentBoxOpen(true)}
       />
-      <ControlPanelButton
-        iconName={validationReport?.valid ? 'checkmark' : 'crossmark'}
+      {/* TODO: Add validation report */}
+      {/* <ControlPanelButton
+        iconName={validationReport ? 'checkmark' : 'crossmark'}
         ariaLabel={
           validationReport?.valid
             ? t('ValidationPassed')
             : t('ValidationFailed')
         }
-      />
+      /> */}
       <ControlPanelButton
         iconName="download"
         ariaLabel={t('Download')}
@@ -76,6 +81,7 @@ export const ControlPanel = ({
         iconName="plus"
         ariaLabel={t('Add')}
         className="mt-12"
+        onClick={() => setIsConceptBoxOpen(true)}
       />
       <DeleteDialog
         open={openDelete}

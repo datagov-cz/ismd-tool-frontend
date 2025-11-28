@@ -6,11 +6,10 @@ import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
-import { useCreateOntology } from '@/api/generated';
+import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
 import { TextArea } from '@/components/shared/Textarea';
-import { OntologyType } from '@/lib/appTypes';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 
@@ -36,15 +35,13 @@ export const CreateForm = () => {
   } = form;
 
   const onSubmit = (data: OntologySchemaType) => {
-    const payload: OntologyType = {
+    const payload: OntologyCreateModel = {
       namespace: data.namespace,
       nameModel: {
-        name: data.name,
-        languageTag: 'cs',
+        name: { cs: data.name },
       },
       descriptionModel: {
-        description: data.description,
-        languageTag: 'cs',
+        description: { cs: data.description },
       },
     };
 
