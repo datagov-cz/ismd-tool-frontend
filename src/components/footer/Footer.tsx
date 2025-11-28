@@ -11,7 +11,7 @@ export const Footer = () => {
   const t = useTranslations('Footer');
 
   return (
-    <footer className="bg-blue py-12 text-white mt-auto">
+    <footer className="bg-blue py-12 text-white mt-auto z-[-10]">
       <section className="max-w-desktop px-5 mx-auto space-y-12">
         <div className="flex justify-between">
           <ul className="flex justify-between w-full flex-wrap flex-col md:flex-row gap-y-10 md:pr-28">

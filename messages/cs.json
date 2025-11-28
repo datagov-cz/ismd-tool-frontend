@@ -104,6 +104,17 @@
       "DraftDictsHeadline": "Z rozpracovaných slovníků",
       "PublishedDictsHeadline": "Z publikovaných slovníků"
     },
+    "ValidationSidebox": {
+      "Title": "Výsledky kontroly",
+      "DateOfControl": "Datum kontroly: ",
+      "DownloadSuccess": "Stahování reportu proběhlo úspěšně",
+      "DownloadError": "Report se nepodařilo stáhnout",
+      "Download": "Stáhnout nekompletní katalogizační záznam",
+      "Revalidate": "Znovu zkontrolovat",
+      "ERROR": "Chyba",
+      "WARNING": "Varování",
+      "INFO": "Informace"
+    },
     "CommentSidebox": {
       "Title": "Komentáře",
       "TextareaPlaceholder": "Napište komentář...",
@@ -132,6 +143,7 @@
         "GetLink": "Získání odkazu",
         "LinkCopied": "Odkaz zkopírován",
         "Comments": "Komentáře",
+        "Validation": "Validace",
         "ValidationPassed": "Validace proběhla úspěšně",
         "ValidationFailed": "Validace neprošla",
         "Download": "Stáhnout",
