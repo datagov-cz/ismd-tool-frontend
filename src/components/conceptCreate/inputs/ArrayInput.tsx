@@ -14,16 +14,18 @@ import {
 
 import { CreateConceptFormData } from '../createConceptSchema';
 
+type ArrayInputName =
+  | 'definingNonLegalSource'
+  | 'definingLegalSource'
+  | 'relatedNonLegalSource'
+  | 'relatedLegalSource'
+  | 'exactMatch';
+
 interface ArrayInputProps {
   register: UseFormRegister<CreateConceptFormData>;
   errors: FieldErrors<CreateConceptFormData>;
   form: UseFormReturn<CreateConceptFormData, unknown, unknown>;
-  name:
-    | 'definingNonLegalSource'
-    | 'definingLegalSource'
-    | 'relatedNonLegalSource'
-    | 'relatedLegalSource'
-    | 'exactMatch';
+  name: ArrayInputName;
   label: string;
 }
 
@@ -50,7 +52,14 @@ export const ArrayInput = ({
             <div className="w-full">
               {index === 0 && <GovFormLabel size="m">{label}</GovFormLabel>}
               <div className="flex gap-2 w-full">
-                <GovFormInput {...register(`${name}.${index}.value`)} />
+                <div className="flex flex-col w-full">
+                  <GovFormInput {...register(`${name}.${index}.value`)} />
+                  {errors[name]?.[index]?.value && (
+                    <span className="text-red-600 text-sm mt-1">
+                      {errors[name][index].value.message}
+                    </span>
+                  )}
+                </div>
                 {fields.length > 1 && (
                   <GovButton
                     nativeType="button"
@@ -63,11 +72,6 @@ export const ArrayInput = ({
                 )}
               </div>
             </div>
-            {errors[name] && (
-              <span className="text-red-600 text-sm">
-                {errors[name].message}
-              </span>
-            )}
           </GovFormControl>
         ))}
       </div>

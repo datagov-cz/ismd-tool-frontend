@@ -5,19 +5,9 @@ const nameModelSchema = z.object({
   name: z.string().trim().min(1, 'Název musí mít aspoň jeden znak'),
 });
 
-const altNameModelSchema = z.object({
+const languageSchema = z.object({
   languageTag: z.string().optional(),
-  altName: z.string().optional(),
-});
-
-const descriptionModelSchema = z.object({
-  languageTag: z.string().optional(),
-  description: z.string().optional(),
-});
-
-const definitionModelSchema = z.object({
-  languageTag: z.string().optional(),
-  definition: z.string().optional(),
+  name: z.string().optional(),
 });
 
 const INVALID_IRI_KEYWORDS = ['text', 'invalid', 'n/a', 'tbd', 'todo'];
@@ -107,9 +97,9 @@ const baseConceptSchema = z.object({
   namespace: z.url().optional(),
   nameModel: nameModelSchema,
   identifier: z.string().optional(),
-  altNameModel: z.array(altNameModelSchema).optional(),
-  descriptionModel: descriptionModelSchema.optional(),
-  definitionModel: definitionModelSchema.optional(),
+  altNameModel: z.array(languageSchema).optional(),
+  descriptionModel: z.array(languageSchema).optional(),
+  definitionModel: z.array(languageSchema).optional(),
   definingNonLegalSource: z.array(sourceValueSchema).optional(),
   definingLegalSource: z.array(eliSourceSchema).optional(),
   relatedNonLegalSource: z.array(sourceValueSchema).optional(),
@@ -156,7 +146,7 @@ const baseConceptSchema = z.object({
           'Hodnota musí být číslo (123) nebo URL ve formátu https://.../isvs/123',
       },
     ),
-  sharingMethod: z.string().optional(),
+  sharingMethod: z.array(sourceValueSchema).optional(),
   acquisitionMethod: z.string().optional(),
   privacyProvision: z.string().optional(),
   contentType: z.string().optional(),

@@ -1,10 +1,12 @@
 'use client';
 
 import {
+  GovButton,
   GovFormControl,
   GovFormInput,
   GovFormLabel,
   GovFormSelect,
+  GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import {
@@ -17,6 +19,7 @@ import {
 
 import { CreateConceptFormData } from './createConceptSchema';
 import { ArrayInput } from './inputs/ArrayInput';
+import { ArrayInputLanguage } from './inputs/ArrayInputLanguage';
 import { TextWithLanguageInput } from './inputs/TextWithLanguage';
 
 export interface CommonFieldsProps {
@@ -33,9 +36,14 @@ export const CommonConceptFields = ({
   form,
 }: CommonFieldsProps) => {
   const t = useTranslations('CreateConcept.CommonConceptFields');
-  const { fields: altFields } = useFieldArray({
-    control: form.control,
-    name: 'altNameModel',
+
+  const {
+    fields: sharingMethodFields,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: 'sharingMethod',
   });
 
   return (
@@ -48,28 +56,15 @@ export const CommonConceptFields = ({
         }}
         register={register}
         errors={errors}
-        control={control}
-        form={form}
-        required
       />
 
-      {altFields.map((fields, index) => (
-        <TextWithLanguageInput
-          key={fields.id}
-          textInput={{
-            label: t('Labels.AlternativeName'),
-            name: `altNameModel.${index}.altName`,
-          }}
-          languageInput={{
-            label: t('Labels.Language'),
-            name: `altNameModel.${index}.languageTag`,
-          }}
-          register={register}
-          errors={errors}
-          control={control}
-          form={form}
-        />
-      ))}
+      <ArrayInputLanguage
+        name="altNameModel"
+        register={register}
+        errors={errors}
+        form={form}
+        label={t('Labels.AlternativeName')}
+      />
 
       <GovFormControl>
         <GovFormLabel size="m" required>
@@ -101,34 +96,20 @@ export const CommonConceptFields = ({
         <GovFormInput {...register('identifier')} disabled />
       </GovFormControl>
 
-      <TextWithLanguageInput
-        textInput={{
-          label: t('Labels.Description'),
-          name: 'descriptionModel.description',
-        }}
-        languageInput={{
-          label: t('Labels.Language'),
-          name: 'descriptionModel.languageTag',
-        }}
+      <ArrayInputLanguage
+        name="descriptionModel"
         register={register}
         errors={errors}
-        control={control}
         form={form}
+        label={t('Labels.Description')}
       />
 
-      <TextWithLanguageInput
-        textInput={{
-          label: t('Labels.Definition'),
-          name: 'definitionModel.definition',
-        }}
-        languageInput={{
-          label: t('Labels.Language'),
-          name: 'definitionModel.languageTag',
-        }}
+      <ArrayInputLanguage
+        name="definitionModel"
         register={register}
         errors={errors}
-        control={control}
         form={form}
+        label={t('Labels.Definition')}
       />
 
       <ArrayInput
@@ -238,21 +219,59 @@ export const CommonConceptFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.SharingMethod')}</GovFormLabel>
-        <GovFormSelect {...register('sharingMethod')}>
-          <option value="" label="" />
-          <option
-            value="veřejně přístupné"
-            label={t('Options.SharingMethod.PubliclyAccessible')}
-          />
-          <option
-            value="poskytované na žádost"
-            label={t('Options.SharingMethod.ProvidedOnRequest')}
-          />
-          <option
-            value="zpřístupňované pro výkon agendy"
-            label={t('Options.SharingMethod.AccessibleForAgendaExecution')}
-          />
-        </GovFormSelect>
+        <div className="space-y-2 flex items-end gap-3">
+          <div className="flex w-full flex-col gap-2">
+            {sharingMethodFields.map((field, index) => (
+              <div key={field.id} className="flex gap-2 items-start">
+                <GovFormSelect
+                  {...register(`sharingMethod.${index}.value` as const)}
+                  className="flex-1"
+                >
+                  <option value="" label="" />
+                  <option
+                    value="veřejně přístupné"
+                    label={t('Options.SharingMethod.PubliclyAccessible')}
+                  />
+                  <option
+                    value="poskytované na žádost"
+                    label={t('Options.SharingMethod.ProvidedOnRequest')}
+                  />
+                  <option
+                    value="zpřístupňované pro výkon agendy"
+                    label={t(
+                      'Options.SharingMethod.AccessibleForAgendaExecution',
+                    )}
+                  />
+                </GovFormSelect>
+                {sharingMethodFields.length > 1 && (
+                  <GovButton
+                    nativeType="button"
+                    color="error"
+                    type="solid"
+                    className="mt-2"
+                    onGovClick={() => remove(index)}
+                  >
+                    <GovIcon name="trash" size="l" className="text-white" />
+                  </GovButton>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <GovButton
+            nativeType="button"
+            type="outlined"
+            color="primary"
+            onGovClick={() => append({ value: '' })}
+          >
+            +
+          </GovButton>
+        </div>
+        {errors.sharingMethod && (
+          <span className="text-red-600 text-sm">
+            {errors.sharingMethod.message}
+          </span>
+        )}
       </GovFormControl>
 
       <GovFormControl>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   GovButton,
   GovFormControl,
@@ -14,8 +14,10 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import {
+  AltNameModelAltName,
   ConceptDetailModel,
   ConceptEditModelConceptTypeEnum,
+  CreateConceptBody,
   useCreateConcept,
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
@@ -37,47 +39,70 @@ interface CreateConceptProps {
   slug: string;
 }
 
+const CONCEPT_TYPE_OPTIONS = [
+  { value: ConceptEditModelConceptTypeEnum.TRIDA, label: 'Třída' },
+  { value: ConceptEditModelConceptTypeEnum.VLASTNOST, label: 'Vlastnost' },
+  { value: ConceptEditModelConceptTypeEnum.VZTAH, label: 'Vztah' },
+] as const;
+
+const transformLanguageData = (
+  items: Array<{ name?: string; languageTag?: string }> | undefined,
+) => {
+  if (!items?.length) return undefined;
+
+  return items.reduce((acc, item) => {
+    if (item.languageTag && item.name) {
+      acc[item.languageTag] = item.name;
+    }
+    return acc;
+  }, {} as AltNameModelAltName);
+};
+
+const getBaseUrl = (namespace: string) => {
+  const lastSlashIndex = namespace.lastIndexOf('/');
+  return namespace.substring(0, lastSlashIndex);
+};
+
+const createDefaultValues = (
+  namespace: string,
+  conceptType: ConceptEditModelConceptTypeEnum,
+): CreateConceptFormData => ({
+  conceptTypeEnum: conceptType,
+  conceptType: conceptType,
+  ontologyGraphName: namespace,
+  namespace: getBaseUrl(namespace),
+  altNameModel: [{ name: '', languageTag: 'cs' }],
+  descriptionModel: [{ name: '', languageTag: 'cs' }],
+  definitionModel: [{ name: '', languageTag: 'cs' }],
+  nameModel: { name: '', languageTag: 'cs' },
+  definingLegalSource: [{ value: '' }],
+  definingNonLegalSource: [{ value: '' }],
+  relatedLegalSource: [{ value: '' }],
+  relatedNonLegalSource: [{ value: '' }],
+  exactMatch: [{ value: '' }],
+  domain: '',
+  range: '',
+  // sharingMethod: [{ value: '' }],
+  acquisitionMethod: '',
+  contentType: '',
+  type: '',
+});
+
 export const CreateConceptSideBox = ({
   namespace,
   concepts,
   slug,
 }: CreateConceptProps) => {
   const t = useTranslations('DictionaryDetail.CreateConcept');
+  const tError = useTranslations('Errors');
 
-  const isOpen = useCreateConceptBoxStore((state) => state.isOpen);
-  const setIsOpen = useCreateConceptBoxStore((state) => state.setIsOpen);
-
+  const { isOpen, setIsOpen } = useCreateConceptBoxStore();
   const invalidator = useQueryInvalidator();
-
-  const [conceptType, setConceptType] =
-    useState<ConceptEditModelConceptTypeEnum>('TRIDA');
-
-  const lastSlashIndex = namespace.lastIndexOf('/');
-  const baseUrl = namespace.substring(0, lastSlashIndex);
-
-  const defaultValues = {
-    conceptTypeEnum: conceptType,
-    conceptType: conceptType,
-    ontologyGraphName: namespace,
-    namespace: baseUrl,
-    altNameModel: [{ altName: '', languageTag: 'cs' }],
-    nameModel: { name: '', languageTag: 'cs' },
-    definingLegalSource: [{ value: '' }],
-    definingNonLegalSource: [{ value: '' }],
-    relatedLegalSource: [{ value: '' }],
-    relatedNonLegalSource: [{ value: '' }],
-    exactMatch: [{ value: '' }],
-    domain: '',
-    range: '',
-    sharingMethod: '',
-    acquisitionMethod: '',
-    contentType: '',
-    type: '',
-  };
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const form = useForm<CreateConceptFormData>({
     resolver: zodResolver(createConceptSchema),
-    defaultValues: defaultValues,
+    defaultValues: createDefaultValues(namespace, 'TRIDA'),
   });
 
   const {
@@ -85,27 +110,12 @@ export const CreateConceptSideBox = ({
     handleSubmit,
     reset,
     control,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = form;
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const tError = useTranslations('Errors');
-
-  const postConceptMutation = useCreateConcept({
-    mutation: {
-      onSuccess: (data) => {
-        toast(data.message || 'Concept created successfully', {
-          type: 'success',
-        });
-        invalidator.invalidateOntology(slug);
-        reset(defaultValues);
-        setIsOpen(false);
-      },
-      onError: (error) => {
-        toast(getErrorMessage(error, tError), { type: 'error' });
-      },
-    },
-  });
+  const conceptType = watch('conceptTypeEnum');
 
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
@@ -116,35 +126,96 @@ export const CreateConceptSideBox = ({
     }
   }, [errors]);
 
+  const postConceptMutation = useCreateConcept({
+    mutation: {
+      onSuccess: (data) => {
+        toast(data.message || 'Concept created successfully', {
+          type: 'success',
+        });
+        invalidator.invalidateOntology(slug);
+        reset(createDefaultValues(namespace, 'TRIDA'));
+        setIsOpen(false);
+      },
+      onError: (error) => {
+        toast(getErrorMessage(error, tError), { type: 'error' });
+      },
+    },
+  });
+
+  const handleConceptTypeChange = (value: string) => {
+    setValue('conceptType', value);
+  };
+
+  const transformFormData = (
+    data: CreateConceptFormData,
+  ): CreateConceptBody => {
+    return {
+      ...data,
+      nameModel: {
+        name: { cs: data.nameModel.name },
+      },
+      sharingMethod: data.sharingMethod?.map((item) => item.value || ''),
+      definitionModel: data.definitionModel?.length
+        ? { definition: transformLanguageData(data.definitionModel) }
+        : undefined,
+      descriptionModel: data.descriptionModel?.length
+        ? { description: transformLanguageData(data.descriptionModel) }
+        : undefined,
+      altNameModel: data.altNameModel?.length
+        ? { altName: transformLanguageData(data.altNameModel) }
+        : undefined,
+      conceptType: data.conceptTypeEnum,
+      definingLegalSource: data.definingLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      definingNonLegalSource: data.definingNonLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      relatedLegalSource: data.relatedLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      relatedNonLegalSource: data.relatedNonLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      exactMatch: data.exactMatch?.map((item) => item.value || ''),
+    };
+  };
+
   const onSubmit = (data: CreateConceptFormData) => {
     postConceptMutation.mutate({
-      data: {
-        ...data,
-        conceptType: data.conceptTypeEnum,
-        definingLegalSource: data.definingLegalSource?.map(
-          (item) => item.value || '',
-        ),
-        definingNonLegalSource: data.definingNonLegalSource?.map(
-          (item) => item.value || '',
-        ),
-        relatedLegalSource: data.relatedLegalSource?.map(
-          (item) => item.value || '',
-        ),
-        relatedNonLegalSource: data.relatedNonLegalSource?.map(
-          (item) => item.value || '',
-        ),
-        exactMatch: data.exactMatch?.map((item) => item.value || ''),
-      },
+      data: transformFormData(data),
       params: {
         userId: 'test',
       },
     });
   };
 
+  const renderConceptFields = () => {
+    const commonProps = {
+      register,
+      errors,
+      control,
+      form,
+    };
+
+    switch (conceptType) {
+      case 'TRIDA':
+        return <ClassCreateFields {...commonProps} />;
+      case 'VLASTNOST':
+        return <PropertyCreateFields {...commonProps} concepts={concepts} />;
+      case 'VZTAH':
+        return (
+          <RelationshipConceptFields {...commonProps} concepts={concepts} />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="mt-4 flex-1 overflow-hidden flex flex-col h-full px-5 overflow-y-auto">
-        <div ref={containerRef} className="space-y-4 ">
+        <div ref={containerRef} className="space-y-4">
           <form
             className={clsx('relative w-full rounded-md space-y-4')}
             onSubmit={handleSubmit(onSubmit)}
@@ -153,25 +224,11 @@ export const CreateConceptSideBox = ({
               <GovFormLabel size="m">Typ pojmu</GovFormLabel>
               <GovFormSelect
                 {...register('conceptTypeEnum')}
-                onGovChange={(e) => {
-                  setConceptType(
-                    e.target.value as ConceptEditModelConceptTypeEnum,
-                  );
-                  form.setValue('conceptType', e.target.value);
-                }}
+                onGovChange={(e) => handleConceptTypeChange(e.target.value)}
               >
-                <option
-                  value={ConceptEditModelConceptTypeEnum.TRIDA}
-                  label="Třída"
-                />
-                <option
-                  value={ConceptEditModelConceptTypeEnum.VLASTNOST}
-                  label="Vlastnost"
-                />
-                <option
-                  value={ConceptEditModelConceptTypeEnum.VZTAH}
-                  label="Vztah"
-                />
+                {CONCEPT_TYPE_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value} label={label} />
+                ))}
               </GovFormSelect>
               {errors.conceptTypeEnum && (
                 <span className="text-red-600 text-sm">
@@ -180,32 +237,7 @@ export const CreateConceptSideBox = ({
               )}
             </GovFormControl>
 
-            {conceptType === 'TRIDA' && (
-              <ClassCreateFields
-                register={register}
-                errors={errors}
-                control={control}
-                form={form}
-              />
-            )}
-            {conceptType === 'VLASTNOST' && (
-              <PropertyCreateFields
-                register={register}
-                errors={errors}
-                control={control}
-                form={form}
-                concepts={concepts}
-              />
-            )}
-            {conceptType === 'VZTAH' && (
-              <RelationshipConceptFields
-                register={register}
-                errors={errors}
-                control={control}
-                form={form}
-                concepts={concepts}
-              />
-            )}
+            {renderConceptFields()}
 
             <GovButton
               aria-label={t('SendButtonAria')}

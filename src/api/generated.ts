@@ -30,6 +30,31 @@ export interface CommentModel {
   postedTime?: string;
 }
 
+export type ConceptMetadataModelConceptType =
+  (typeof ConceptMetadataModelConceptType)[keyof typeof ConceptMetadataModelConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ConceptMetadataModelConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+} as const;
+
+export interface ConceptMetadataModel {
+  id?: number;
+  slug?: string;
+  conceptType?: ConceptMetadataModelConceptType;
+  conceptIri?: string;
+  graphName?: string;
+  conceptName?: string;
+  user?: UserModel;
+  isPublished?: boolean;
+  inTezaurus?: string;
+  comments?: CommentModel[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface OntologyMetadataModel {
   id?: number;
   slug?: string;
@@ -39,6 +64,7 @@ export interface OntologyMetadataModel {
   isPublished?: boolean;
   comments?: CommentModel[];
   popis?: string;
+  concepts?: ConceptMetadataModel[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -56,8 +82,8 @@ export interface ApiResponseDtoValidationReport {
 export interface ValidationReport {
   id?: number;
   timestamp?: string;
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
 }
 
 export type ValidationResultSeverity =
@@ -89,20 +115,27 @@ export interface ApiResponseDtoOntologyMetadataModel {
   success?: boolean;
 }
 
+export type DescriptionModelDescription = { [key: string]: string };
+
 export interface DescriptionModel {
-  languageTag?: string;
-  description?: string;
+  description?: DescriptionModelDescription;
 }
 
+export type NameModelName = { [key: string]: string };
+
 export interface NameModel {
-  languageTag?: string;
-  name?: string;
+  name?: NameModelName;
 }
 
 export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
+}
+
+export interface CatalogRequestDto {
+  ontologyMetadata?: OntologyMetadataModel;
+  validationReport?: ValidationReportDto;
 }
 
 export interface ValidationReportDto {
@@ -164,9 +197,10 @@ export interface PodminkyUzitiDto {
   osobní_údaje?: string;
 }
 
+export type AltNameModelAltName = { [key: string]: string };
+
 export interface AltNameModel {
-  languageTag?: string;
-  altName?: string;
+  altName?: AltNameModelAltName;
 }
 
 export type ClassConceptModelAllOf = {
@@ -175,7 +209,7 @@ export type ClassConceptModelAllOf = {
   agendaSystemCode?: string;
   contentType?: string;
   acquisitionMethod?: string;
-  sharingMethod?: string;
+  sharingMethod?: string[];
   isInPPDF?: boolean;
   isPublic?: string;
   privacyProvision?: string;
@@ -200,7 +234,7 @@ export interface ConceptCreateModel {
   namespace?: string;
   nameModel: NameModel;
   identifier?: string;
-  altNameModel?: AltNameModel[];
+  altNameModel?: AltNameModel;
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
   definingNonLegalSource?: string[];
@@ -212,9 +246,10 @@ export interface ConceptCreateModel {
   conceptTypeEnum?: ConceptCreateModelConceptTypeEnum;
 }
 
+export type DefinitionModelDefinition = { [key: string]: string };
+
 export interface DefinitionModel {
-  languageTag?: string;
-  definition?: string;
+  definition?: DefinitionModelDefinition;
 }
 
 export type PropertyConceptModelAllOf = {
@@ -226,7 +261,7 @@ export type PropertyConceptModelAllOf = {
   agendaSystemCode?: string;
   isPublic?: string;
   privacyProvision?: string;
-  sharingMethod?: string;
+  sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
 };
@@ -242,7 +277,7 @@ export type RelationshipConceptModelAllOf = {
   agendaSystemCode?: string;
   contentType?: string;
   acquisitionMethod?: string;
-  sharingMethod?: string;
+  sharingMethod?: string[];
   isInPPDF?: boolean;
   isPublic?: string;
   privacyProvision?: string;
@@ -255,31 +290,6 @@ export interface ApiResponseDtoConceptMetadataModel {
   data?: ConceptMetadataModel;
   message?: string;
   success?: boolean;
-}
-
-export type ConceptMetadataModelConceptType =
-  (typeof ConceptMetadataModelConceptType)[keyof typeof ConceptMetadataModelConceptType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ConceptMetadataModelConceptType = {
-  TRIDA: 'TRIDA',
-  VLASTNOST: 'VLASTNOST',
-  VZTAH: 'VZTAH',
-} as const;
-
-export interface ConceptMetadataModel {
-  id?: number;
-  slug?: string;
-  conceptType?: ConceptMetadataModelConceptType;
-  conceptIri?: string;
-  graphName?: string;
-  conceptName?: string;
-  user?: UserModel;
-  isPublished?: boolean;
-  inTezaurus?: string;
-  comments?: CommentModel[];
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface CommentCreateModel {
@@ -306,7 +316,7 @@ export type ClassConceptEditModelAllOf = {
   agendaSystemCode?: string;
   contentType?: string;
   acquisitionMethod?: string;
-  sharingMethod?: string;
+  sharingMethod?: string[];
   isPublic?: string;
   privacyProvision?: string;
   broaderConcept?: string;
@@ -331,7 +341,7 @@ export interface ConceptEditModel {
   namespace?: string;
   nameModel?: NameModel;
   identifier?: string;
-  altNameModel?: AltNameModel[];
+  altNameModel?: AltNameModel;
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
   definingNonLegalSource?: string[];
@@ -352,7 +362,7 @@ export type PropertyConceptEditModelAllOf = {
   agendaSystemCode?: string;
   isPublic?: string;
   privacyProvision?: string;
-  sharingMethod?: string;
+  sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
 };
@@ -369,7 +379,7 @@ export type RelationshipConceptEditModelAllOf = {
   agendaSystemCode?: string;
   isPublic?: string;
   privacyProvision?: string;
-  sharingMethod?: string;
+  sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
 };
@@ -379,7 +389,9 @@ export type RelationshipConceptEditModel = ConceptEditModel &
 
 export type ConceptDetailModelNázev = { [key: string]: string };
 
-export type ConceptDetailModelAlternativníNázev = { [key: string]: string[] };
+export type ConceptDetailModelAlternativníNázev = {
+  [key: string]: { [key: string]: unknown };
+};
 
 export type ConceptDetailModelDefinice = { [key: string]: string };
 
@@ -388,11 +400,11 @@ export type ConceptDetailModelPopis = { [key: string]: string };
 export type ConceptDetailModelEkvivalentníPojemItem = { [key: string]: string };
 
 export type ConceptDetailModelDefinujícíNelegislativníZdrojItem = {
-  [key: string]: string;
+  [key: string]: { [key: string]: unknown };
 };
 
 export type ConceptDetailModelSouvisejícíNelegislativníZdrojItem = {
-  [key: string]: string;
+  [key: string]: { [key: string]: unknown };
 };
 
 export interface ConceptDetailModel {
@@ -421,7 +433,7 @@ export interface ConceptDetailModel {
   'je-ppdf'?: boolean;
   ais?: string;
   agenda?: string;
-  'ustanovení-neverejnost'?: string[];
+  'ustanovení-neverejnost'?: string;
 }
 
 export interface ConceptPropertiesModel {
@@ -480,10 +492,6 @@ export interface ApiResponseDtoVoid {
   success?: boolean;
 }
 
-export type ValidateOntologyBody = {
-  ontologyMetadata: OntologyMetadataModel;
-};
-
 export type UploadFromFileParams = {
   providedName?: string;
   userId: string;
@@ -495,11 +503,6 @@ export type UploadFromFileBody = {
 
 export type CreateOntologyParams = {
   userId: string;
-};
-
-export type RequestCatalogRecordBody = {
-  ontologyMetadata: OntologyMetadataModel;
-  validationReport: ValidationReportDto;
 };
 
 export type CreateConceptParams = {
@@ -542,7 +545,7 @@ export type GetConceptListParams = {
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const validateOntology = (
-  validateOntologyBody: ValidateOntologyBody,
+  ontologyMetadataModel: OntologyMetadataModel,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -551,7 +554,7 @@ export const validateOntology = (
       url: `/api/ontology/validate`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: validateOntologyBody,
+      data: ontologyMetadataModel,
       signal,
     },
     options,
@@ -565,14 +568,14 @@ export const getValidateOntologyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof validateOntology>>,
     TError,
-    { data: ValidateOntologyBody },
+    { data: OntologyMetadataModel },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof validateOntology>>,
   TError,
-  { data: ValidateOntologyBody },
+  { data: OntologyMetadataModel },
   TContext
 > => {
   const mutationKey = ['validateOntology'];
@@ -586,7 +589,7 @@ export const getValidateOntologyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof validateOntology>>,
-    { data: ValidateOntologyBody }
+    { data: OntologyMetadataModel }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -599,7 +602,7 @@ export const getValidateOntologyMutationOptions = <
 export type ValidateOntologyMutationResult = NonNullable<
   Awaited<ReturnType<typeof validateOntology>>
 >;
-export type ValidateOntologyMutationBody = ValidateOntologyBody;
+export type ValidateOntologyMutationBody = OntologyMetadataModel;
 export type ValidateOntologyMutationError = unknown;
 
 export const useValidateOntology = <TError = unknown, TContext = unknown>(
@@ -607,7 +610,7 @@ export const useValidateOntology = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof validateOntology>>,
       TError,
-      { data: ValidateOntologyBody },
+      { data: OntologyMetadataModel },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -616,7 +619,7 @@ export const useValidateOntology = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof validateOntology>>,
   TError,
-  { data: ValidateOntologyBody },
+  { data: OntologyMetadataModel },
   TContext
 > => {
   const mutationOptions = getValidateOntologyMutationOptions(options);
@@ -800,7 +803,7 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
 };
 
 export const requestCatalogRecord = (
-  requestCatalogRecordBody: RequestCatalogRecordBody,
+  catalogRequestDto: CatalogRequestDto,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -809,7 +812,7 @@ export const requestCatalogRecord = (
       url: `/api/ontology/catalog-record`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: requestCatalogRecordBody,
+      data: catalogRequestDto,
       signal,
     },
     options,
@@ -823,14 +826,14 @@ export const getRequestCatalogRecordMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof requestCatalogRecord>>,
     TError,
-    { data: RequestCatalogRecordBody },
+    { data: CatalogRequestDto },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof requestCatalogRecord>>,
   TError,
-  { data: RequestCatalogRecordBody },
+  { data: CatalogRequestDto },
   TContext
 > => {
   const mutationKey = ['requestCatalogRecord'];
@@ -844,7 +847,7 @@ export const getRequestCatalogRecordMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof requestCatalogRecord>>,
-    { data: RequestCatalogRecordBody }
+    { data: CatalogRequestDto }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -857,7 +860,7 @@ export const getRequestCatalogRecordMutationOptions = <
 export type RequestCatalogRecordMutationResult = NonNullable<
   Awaited<ReturnType<typeof requestCatalogRecord>>
 >;
-export type RequestCatalogRecordMutationBody = RequestCatalogRecordBody;
+export type RequestCatalogRecordMutationBody = CatalogRequestDto;
 export type RequestCatalogRecordMutationError = unknown;
 
 export const useRequestCatalogRecord = <TError = unknown, TContext = unknown>(
@@ -865,7 +868,7 @@ export const useRequestCatalogRecord = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof requestCatalogRecord>>,
       TError,
-      { data: RequestCatalogRecordBody },
+      { data: CatalogRequestDto },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -874,7 +877,7 @@ export const useRequestCatalogRecord = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof requestCatalogRecord>>,
   TError,
-  { data: RequestCatalogRecordBody },
+  { data: CatalogRequestDto },
   TContext
 > => {
   const mutationOptions = getRequestCatalogRecordMutationOptions(options);

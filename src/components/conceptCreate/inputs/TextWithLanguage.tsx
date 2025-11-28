@@ -4,12 +4,11 @@ import {
   GovFormLabel,
   GovFormSelect,
 } from '@gov-design-system-ce/react';
-import { get, Path } from 'react-hook-form';
+import { FieldErrors, get, Path, UseFormRegister } from 'react-hook-form';
 
-import { CommonFieldsProps } from '../CommonConceptFields';
 import { CreateConceptFormData } from '../createConceptSchema';
 
-interface TextWithLanguageInputProps extends CommonFieldsProps {
+interface TextWithLanguageInputProps {
   textInput: {
     label: string;
     name: Path<CreateConceptFormData>;
@@ -19,6 +18,8 @@ interface TextWithLanguageInputProps extends CommonFieldsProps {
     name: Path<CreateConceptFormData>;
   };
   required?: boolean;
+  register: UseFormRegister<CreateConceptFormData>;
+  errors: FieldErrors<CreateConceptFormData>;
 }
 
 export const TextWithLanguageInput = ({
@@ -31,7 +32,7 @@ export const TextWithLanguageInput = ({
   const fieldError = get(errors, textInput.name);
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 w-full">
       <GovFormControl className="w-full">
         <GovFormLabel size="m">{textInput.label}</GovFormLabel>
         <GovFormInput {...register(textInput.name)} required={required} />
@@ -45,8 +46,8 @@ export const TextWithLanguageInput = ({
         <GovFormLabel size="m">{languageInput.label}</GovFormLabel>
         <GovFormSelect {...register(languageInput.name)} defaultValue="cs">
           <option value="cs" label="CS" />
-          <option value="en" label="EN" disabled />
-          <option value="sk" label="SK" disabled />
+          <option value="en" label="EN" />
+          <option value="sk" label="SK" />
         </GovFormSelect>
       </GovFormControl>
     </div>
