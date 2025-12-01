@@ -75,19 +75,19 @@ export const Header = ({ session }: Props) => {
               <NavItems session={session} />
             </ul>
           </nav>
-          <ul className="flex gap-x-4 items-center">
+          <div className="flex gap-x-4 items-center">
             <ThemeSwitch />
             <GovButton
               size="m"
               type="outlined"
               aria-label={t('MenuButtonAria')}
               color="primary"
-              className="desktop:!hidden"
+              className="desktop:hidden!"
               onGovClick={handleToggleMenu}
             >
               <GovIcon slot="icon-start" name="list" />
             </GovButton>
-          </ul>
+          </div>
         </section>
       </header>
 

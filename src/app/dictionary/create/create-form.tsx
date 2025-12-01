@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { redirect } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -13,8 +14,18 @@ import { TextArea } from '@/components/shared/Textarea';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 
+const STORAGE_KEY = 'ontology-create-form';
+
 export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
+
+  const getStoredData = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : {};
+    }
+    return {};
+  };
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
@@ -24,6 +35,7 @@ export const CreateForm = () => {
       languageTag: LANG_TAGS[0],
       name: '',
       description: '',
+      ...getStoredData(),
     },
   });
 
@@ -31,8 +43,15 @@ export const CreateForm = () => {
 
   const {
     handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = form;
+
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(watchedValues));
+  }, [watchedValues]);
 
   const onSubmit = (data: OntologySchemaType) => {
     const payload: OntologyCreateModel = {
@@ -54,6 +73,7 @@ export const CreateForm = () => {
       },
       {
         onSuccess: (response) => {
+          localStorage.removeItem(STORAGE_KEY);
           toast(t('Form.CreateNewDictSuccess'));
           if (response.data?.slug) {
             redirect(`/dictionary/${response.data?.slug}`);
