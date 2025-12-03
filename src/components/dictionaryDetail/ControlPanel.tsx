@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 // import { ValidationReportDto } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
+import { useEditOntologyBoxStore } from '@/store/editOntologyBoxStore';
 
 import { ControlPanelButton } from './ControlPanelButton';
 import { DeleteDialog } from './DeleteDialog';
@@ -33,6 +34,7 @@ export const ControlPanel = ({
   const setIsConceptBoxOpen = useCreateConceptBoxStore(
     (state) => state.setIsOpen,
   );
+  const setIsEditBoxOpen = useEditOntologyBoxStore((state) => state.setIsOpen);
 
   const handleCopyLink = async () => {
     try {
@@ -46,6 +48,12 @@ export const ControlPanel = ({
 
   return (
     <div className="sticky right-0 top-10 flex flex-col gap-2 h-fit">
+      <ControlPanelButton
+        iconName="gear"
+        ariaLabel={t('GetLink')}
+        onClick={() => setIsEditBoxOpen(true)}
+        className="mb-10"
+      />
       <ControlPanelButton
         iconName="link"
         ariaLabel={t('GetLink')}

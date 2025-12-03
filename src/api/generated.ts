@@ -305,7 +305,6 @@ export interface ApiResponseDtoCommentModel {
 }
 
 export interface OntologyEditModel {
-  ontologyIRI?: string;
   nameModel?: NameModel;
   descriptionModel?: DescriptionModel;
 }
@@ -1056,12 +1055,13 @@ export const usePostComment = <TError = unknown, TContext = unknown>(
 };
 
 export const editOntology = (
+  ontologyId: number,
   ontologyEditModel: OntologyEditModel,
   options?: SecondParameter<typeof axiosInstance>,
 ) => {
   return axiosInstance<ApiResponseDtoOntologyMetadataModel>(
     {
-      url: `/api/ontology/edit`,
+      url: `/api/ontology/${ontologyId}/edit`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       data: ontologyEditModel,
@@ -1077,14 +1077,14 @@ export const getEditOntologyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof editOntology>>,
     TError,
-    { data: OntologyEditModel },
+    { ontologyId: number; data: OntologyEditModel },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof editOntology>>,
   TError,
-  { data: OntologyEditModel },
+  { ontologyId: number; data: OntologyEditModel },
   TContext
 > => {
   const mutationKey = ['editOntology'];
@@ -1098,11 +1098,11 @@ export const getEditOntologyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof editOntology>>,
-    { data: OntologyEditModel }
+    { ontologyId: number; data: OntologyEditModel }
   > = (props) => {
-    const { data } = props ?? {};
+    const { ontologyId, data } = props ?? {};
 
-    return editOntology(data, requestOptions);
+    return editOntology(ontologyId, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -1119,7 +1119,7 @@ export const useEditOntology = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof editOntology>>,
       TError,
-      { data: OntologyEditModel },
+      { ontologyId: number; data: OntologyEditModel },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -1128,7 +1128,7 @@ export const useEditOntology = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof editOntology>>,
   TError,
-  { data: OntologyEditModel },
+  { ontologyId: number; data: OntologyEditModel },
   TContext
 > => {
   const mutationOptions = getEditOntologyMutationOptions(options);

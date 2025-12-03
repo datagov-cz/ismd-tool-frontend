@@ -48,7 +48,7 @@ export const CommonConceptFields = ({
 
   return (
     <>
-      <TextWithLanguageInput
+      <TextWithLanguageInput<CreateConceptFormData>
         textInput={{ label: t('Labels.Name'), name: 'nameModel.name' }}
         languageInput={{
           label: t('Labels.Language'),
@@ -58,7 +58,7 @@ export const CommonConceptFields = ({
         errors={errors}
       />
 
-      <ArrayInputLanguage
+      <ArrayInputLanguage<CreateConceptFormData>
         name="altNameModel"
         register={register}
         errors={errors}
@@ -96,7 +96,7 @@ export const CommonConceptFields = ({
         <GovFormInput {...register('identifier')} disabled />
       </GovFormControl>
 
-      <ArrayInputLanguage
+      <ArrayInputLanguage<CreateConceptFormData>
         name="descriptionModel"
         register={register}
         errors={errors}
@@ -104,7 +104,7 @@ export const CommonConceptFields = ({
         label={t('Labels.Description')}
       />
 
-      <ArrayInputLanguage
+      <ArrayInputLanguage<CreateConceptFormData>
         name="definitionModel"
         register={register}
         errors={errors}

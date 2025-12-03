@@ -6,9 +6,10 @@ export function useQueryInvalidator() {
   const queryClient = useQueryClient();
 
   return {
-    invalidateOntology: (slug: string) =>
-      queryClient.invalidateQueries({
+    invalidateOntology: async (slug: string) => {
+      return await queryClient.invalidateQueries({
         queryKey: getGetOntologyDetailQueryKey(slug),
-      }),
+      });
+    },
   };
 }

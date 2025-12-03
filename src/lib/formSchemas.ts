@@ -23,3 +23,15 @@ export const createOntologySchema = (t: (key: string) => string) =>
 export type OntologySchemaType = z.infer<
   ReturnType<typeof createOntologySchema>
 >;
+
+const languageSchema = z.object({
+  languageTag: z.string().optional(),
+  name: z.string().optional(),
+});
+
+export const ontologyEditModelSchema = z.object({
+  nameModel: z.string().optional(),
+  descriptionModel: z.array(languageSchema).optional(),
+});
+
+export type OntologyEditModel = z.infer<typeof ontologyEditModelSchema>;

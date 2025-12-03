@@ -4,31 +4,35 @@ import {
   GovFormLabel,
   GovFormSelect,
 } from '@gov-design-system-ce/react';
-import { FieldErrors, get, Path, UseFormRegister } from 'react-hook-form';
+import {
+  FieldErrors,
+  FieldValues,
+  get,
+  Path,
+  UseFormRegister,
+} from 'react-hook-form';
 
-import { CreateConceptFormData } from '../createConceptSchema';
-
-interface TextWithLanguageInputProps {
+interface TextWithLanguageInputProps<T extends FieldValues> {
   textInput: {
     label: string;
-    name: Path<CreateConceptFormData>;
+    name: Path<T>;
   };
   languageInput: {
     label: string;
-    name: Path<CreateConceptFormData>;
+    name: Path<T>;
   };
   required?: boolean;
-  register: UseFormRegister<CreateConceptFormData>;
-  errors: FieldErrors<CreateConceptFormData>;
+  register: UseFormRegister<T>;
+  errors: FieldErrors<T>;
 }
 
-export const TextWithLanguageInput = ({
+export const TextWithLanguageInput = <T extends FieldValues>({
   register,
   textInput,
   languageInput,
   errors,
   required = false,
-}: TextWithLanguageInputProps) => {
+}: TextWithLanguageInputProps<T>) => {
   const fieldError = get(errors, textInput.name);
 
   return (

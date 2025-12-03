@@ -45,7 +45,7 @@ const CONCEPT_TYPE_OPTIONS = [
   { value: ConceptEditModelConceptTypeEnum.VZTAH, label: 'Vztah' },
 ] as const;
 
-const transformLanguageData = (
+export const transformLanguageData = (
   items: Array<{ name?: string; languageTag?: string }> | undefined,
 ) => {
   if (!items?.length) return undefined;
@@ -82,7 +82,6 @@ const createDefaultValues = (
   exactMatch: [{ value: '' }],
   domain: '',
   range: '',
-  // sharingMethod: [{ value: '' }],
   acquisitionMethod: '',
   contentType: '',
   type: '',
@@ -128,11 +127,11 @@ export const CreateConceptSideBox = ({
 
   const postConceptMutation = useCreateConcept({
     mutation: {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
+        await invalidator.invalidateOntology(slug);
         toast(data.message || 'Concept created successfully', {
           type: 'success',
         });
-        invalidator.invalidateOntology(slug);
         reset(createDefaultValues(namespace, 'TRIDA'));
         setIsOpen(false);
       },
