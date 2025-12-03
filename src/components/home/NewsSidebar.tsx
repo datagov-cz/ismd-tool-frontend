@@ -22,15 +22,16 @@ export function NewsSidebar() {
     <SidebarContainer>
       <h3 className="font-medium text-lg lg:text-xl">{t('News.Title')}</h3>
       <div className="space-y-4 lg:space-y-6">
-        {blogPosts.map((article) => (
-          <NewsArticle
-            key={article.id}
-            date={article.date}
-            title={article.title}
-            description={article.description}
-            href={article.href}
-          />
-        ))}
+        {blogPosts.length > 0 &&
+          blogPosts.map((article) => (
+            <NewsArticle
+              key={article.id}
+              date={article.date}
+              title={article.title}
+              description={article.description}
+              href={article.href}
+            />
+          ))}
       </div>
     </SidebarContainer>
   );
