@@ -43,15 +43,16 @@ export const CreateForm = () => {
 
   const {
     handleSubmit,
-    watch,
+    getValues,
     formState: { isSubmitting },
   } = form;
 
-  const watchedValues = watch();
-
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(watchedValues));
-  }, [watchedValues]);
+    const subscription = form.watch(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getValues()));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, getValues]);
 
   const onSubmit = (data: OntologySchemaType) => {
     const payload: OntologyCreateModel = {
