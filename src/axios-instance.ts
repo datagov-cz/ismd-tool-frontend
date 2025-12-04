@@ -15,6 +15,17 @@ AXIOS_INSTANCE.interceptors.request.use(async (config) => {
   return config;
 });
 
+AXIOS_INSTANCE.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (!navigator.onLine) {
+      error.isOffline = true;
+      error.message = 'Jste offline. Zkuste to znovu, až budete online.';
+    }
+    return Promise.reject(error);
+  },
+);
+
 export const axiosInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
@@ -25,6 +36,7 @@ export const axiosInstance = <T>(
     ...options,
     paramsSerializer: { indexes: null },
     cancelToken: source.token,
+    timeout: 10000,
   }).then(({ data }) => data);
 
   // @ts-expect-error -> cancel does not exist on Promise type

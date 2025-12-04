@@ -32,20 +32,43 @@ export const VisitedOntologies = () => {
     }
   }, []);
 
+  const [cachedOntologies, setCachedOntologies] = useState([]);
+
+  useEffect(() => {
+    const cached = localStorage.getItem('cached-visited-ontologies');
+    if (cached) {
+      setCachedOntologies(JSON.parse(cached));
+    }
+  }, []);
+
   const getOntologies = useGetOntologyList(
     {
       slugs: visitedSlugs,
     },
-    { query: { enabled: visitedSlugs.length === 0 } },
+    { query: { enabled: visitedSlugs.length > 0 } },
   );
 
-  const visitedOntologies = getOntologies.data?.data?.sort(
+  useEffect(() => {
+    if (getOntologies.data?.data) {
+      setCachedOntologies(getOntologies.data.data);
+      localStorage.setItem(
+        'cached-visited-ontologies',
+        JSON.stringify(getOntologies.data.data),
+      );
+    }
+  }, [getOntologies.data]);
+
+  const visitedOntologies = (
+    getOntologies.data?.data || cachedOntologies
+  )?.sort(
     (a, b) =>
       visitedSlugs.indexOf(a.slug || '') - visitedSlugs.indexOf(b.slug || ''),
   );
 
   useEffect(() => {
-    getOntologies.refetch();
+    if (visitedSlugs.length > 0) {
+      getOntologies.refetch();
+    }
   }, [visitedSlugs]);
 
   return (
