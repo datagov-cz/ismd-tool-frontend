@@ -24,17 +24,40 @@ export const HintSidebox = () => {
   const t = useTranslations('Header.Hintbox');
 
   useEffect(() => {
+    const cachedTree = localStorage.getItem('cached-hint-tree');
+    if (cachedTree) {
+      setTree(JSON.parse(cachedTree));
+    }
+
     fetch('/api/hint-tree')
       .then((res) => res.json())
-      .then(setTree);
+      .then((data) => {
+        setTree(data);
+        localStorage.setItem('cached-hint-tree', JSON.stringify(data));
+      })
+      .catch(() => {
+        if (cachedTree) setTree(JSON.parse(cachedTree));
+      });
   }, []);
 
   const handleFileClick = (path: string) => {
     setSelectedFile(path.split('/').pop()?.split('.')?.at(0) || path);
 
+    const cacheKey = `cached-hint-file-${path}`;
+    const cachedContent = localStorage.getItem(cacheKey);
+    if (cachedContent) {
+      setFileContent(cachedContent);
+    }
+
     fetch(`/api/hint-file?filePath=${encodeURIComponent(path)}`)
       .then((res) => res.json())
-      .then((data) => setFileContent(data.content));
+      .then((data) => {
+        setFileContent(data.content);
+        localStorage.setItem(cacheKey, data.content);
+      })
+      .catch(() => {
+        if (cachedContent) setFileContent(cachedContent);
+      });
   };
 
   const toggleFolder = (folderPath: string) => {
