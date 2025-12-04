@@ -37,7 +37,7 @@ export const Header = ({ session }: Props) => {
               <GovIcon
                 name="logo-lion"
                 slot="icon-start"
-                className="!size-10"
+                className="size-10!"
               />
               <span className="hidden desktop:inline-block">
                 {t('LogoTitle')}
