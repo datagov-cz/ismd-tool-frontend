@@ -11,13 +11,16 @@ import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
 import { TextArea } from '@/components/shared/Textarea';
+import { useIsOnline } from '@/hooks/useIsOnline';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
+import { db, type OntologyDraft } from '@/lib/db';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 
 const STORAGE_KEY = 'ontology-create-form';
 
 export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
+  const isOnline = useIsOnline();
 
   const getStoredData = () => {
     if (typeof window !== 'undefined') {
@@ -54,24 +57,77 @@ export const CreateForm = () => {
     return () => subscription.unsubscribe();
   }, [form, getValues]);
 
-  const onSubmit = (data: OntologySchemaType) => {
+  useEffect(() => {
+    if (isOnline) {
+      syncOfflineData();
+    }
+  }, [isOnline]);
+
+  const syncOfflineData = async () => {
+    try {
+      const drafts = await db.ontologyDrafts.toArray();
+      for (const draft of drafts) {
+        const payload: OntologyCreateModel = {
+          namespace: draft.namespace,
+          nameModel: { name: { cs: draft.name } },
+          descriptionModel: { description: { cs: draft.description } },
+        };
+
+        mutate(
+          { params: { userId: 'test' }, data: payload },
+          {
+            onSuccess: async () => {
+              await db.ontologyDrafts.delete(draft.id!);
+              toast(t('Form.CreateNewDictSuccess'));
+            },
+            onError: () => {
+              toast(t('Form.CreateNewDictError'));
+            },
+          },
+        );
+      }
+    } catch (error) {
+      console.error('Sync failed:', error);
+    }
+  };
+
+  const onSubmit = async (data: OntologySchemaType) => {
+    if (!isOnline) {
+      console.log('Is offline, submitting', isOnline);
+      try {
+        const draft: OntologyDraft = {
+          namespace: data.namespace,
+          name: data.name,
+          description: data.description,
+          languageTag: data.languageTag,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        console.log('draft: ', draft);
+
+        await db.ontologyDrafts.add(draft);
+        localStorage.removeItem(STORAGE_KEY);
+        toast(
+          t('Form.SavedOffline') || 'Saved offline. Will sync when online.',
+        );
+        form.reset();
+        return;
+      } catch (error) {
+        console.error('Failed to save offline:', error);
+        toast(t('Form.CreateNewDictError'));
+        return;
+      }
+    }
+
     const payload: OntologyCreateModel = {
       namespace: data.namespace,
-      nameModel: {
-        name: { cs: data.name },
-      },
-      descriptionModel: {
-        description: { cs: data.description },
-      },
+      nameModel: { name: { cs: data.name } },
+      descriptionModel: { description: { cs: data.description } },
     };
 
     mutate(
-      {
-        params: {
-          userId: 'test',
-        },
-        data: payload,
-      },
+      { params: { userId: 'test' }, data: payload },
       {
         onSuccess: (response) => {
           localStorage.removeItem(STORAGE_KEY);
