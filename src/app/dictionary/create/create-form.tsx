@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -21,6 +21,8 @@ const STORAGE_KEY = 'ontology-create-form';
 export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
   const isOnline = useIsOnline();
+
+  const router = useRouter();
 
   const getStoredData = () => {
     if (typeof window !== 'undefined') {
@@ -80,7 +82,8 @@ export const CreateForm = () => {
               await db.ontologyDrafts.delete(draft.id!);
               toast(t('Form.CreateNewDictSuccess'));
             },
-            onError: () => {
+            onError: (e) => {
+              console.log('CreateNewDict: ', e);
               toast(t('Form.CreateNewDictError'));
             },
           },
@@ -131,7 +134,7 @@ export const CreateForm = () => {
           localStorage.removeItem(STORAGE_KEY);
           toast(t('Form.CreateNewDictSuccess'));
           if (response.data?.slug) {
-            redirect(`/dictionary/${response.data?.slug}`);
+            router.push(`/dictionary/${response.data?.slug}`);
           }
         },
         onError: (error) => {
