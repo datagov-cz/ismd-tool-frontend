@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import { useGetOntologyList } from '@/api/generated';
+import {
+  type OntologyMetadataModel,
+  useGetOntologyList,
+} from '@/api/generated';
 import { DraftDictionaryCard } from '../draftDictionaries/DraftDictionaryCard';
 
 export const VisitedOntologies = () => {
@@ -13,6 +16,9 @@ export const VisitedOntologies = () => {
 
   const [visitedSlugs, setVisitedSlugs] = useState<string[]>([]);
   const [isShowAll, setIsShowAll] = useState(false);
+  const [cachedOntologies, setCachedOntologies] = useState<
+    OntologyMetadataModel[]
+  >([]);
 
   useEffect(() => {
     const key = `dictionarySlugs_${user.id}`;
@@ -32,8 +38,6 @@ export const VisitedOntologies = () => {
     }
   }, []);
 
-  const [cachedOntologies, setCachedOntologies] = useState([]);
-
   useEffect(() => {
     const cached = localStorage.getItem('cached-visited-ontologies');
     if (cached) {
@@ -49,14 +53,12 @@ export const VisitedOntologies = () => {
   );
 
   useEffect(() => {
-    if (getOntologies.data?.data) {
-      setCachedOntologies(getOntologies.data.data);
-      localStorage.setItem(
-        'cached-visited-ontologies',
-        JSON.stringify(getOntologies.data.data),
-      );
-    }
-  }, [getOntologies.data]);
+    const newData = getOntologies.data?.data;
+    if (!newData || newData === cachedOntologies) return;
+
+    setCachedOntologies(newData);
+    localStorage.setItem('cached-visited-ontologies', JSON.stringify(newData));
+  }, [getOntologies, cachedOntologies]);
 
   const visitedOntologies = (
     getOntologies.data?.data || cachedOntologies

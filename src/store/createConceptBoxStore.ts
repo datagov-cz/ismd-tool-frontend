@@ -5,7 +5,7 @@ type CreateConceptBoxStoreType = {
 };
 
 type CreateConceptBoxStoreActions = {
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (_isOpen: boolean) => void;
 };
 
 const initialState: CreateConceptBoxStoreType = {

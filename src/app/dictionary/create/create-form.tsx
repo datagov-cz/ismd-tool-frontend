@@ -93,7 +93,6 @@ export const CreateForm = () => {
 
   const onSubmit = async (data: OntologySchemaType) => {
     if (!isOnline) {
-      console.log('Is offline, submitting', isOnline);
       try {
         const draft: OntologyDraft = {
           namespace: data.namespace,
@@ -104,14 +103,13 @@ export const CreateForm = () => {
           updatedAt: new Date(),
         };
 
-        console.log('draft: ', draft);
-
         await db.ontologyDrafts.add(draft);
+
+        form.reset();
         localStorage.removeItem(STORAGE_KEY);
         toast(
           t('Form.SavedOffline') || 'Saved offline. Will sync when online.',
         );
-        form.reset();
         return;
       } catch (error) {
         console.error('Failed to save offline:', error);

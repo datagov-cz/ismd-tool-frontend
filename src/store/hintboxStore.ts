@@ -5,7 +5,7 @@ type HintboxStoreType = {
 };
 
 type HintboxStoreActions = {
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (_isOpen: boolean) => void;
 };
 
 const initialState: HintboxStoreType = {

@@ -18,8 +18,8 @@ import { FileController } from './FileController';
 
 interface UploadDialogProps {
   open: boolean;
-  setOpen: (value: boolean) => void;
-  setSuccess: (value: OntologyMetadataModel) => void;
+  setOpen: (_value: boolean) => void;
+  setSuccess: (_value: OntologyMetadataModel) => void;
 }
 
 export const UploadDialog = ({

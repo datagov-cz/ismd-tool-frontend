@@ -24,7 +24,18 @@ const eslintConfig = defineConfig([
       'react-hooks': reactHooks,
     },
     rules: {
-      'no-unused-vars': 'warn',
+      'no-unused-vars': [
+        'error',
+        {
+          args: 'all',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
       'no-console': 'warn',
       'no-redeclare': 'warn',
       'unused-imports/no-unused-imports': 'error',

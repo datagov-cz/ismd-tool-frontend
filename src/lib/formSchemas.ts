@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const createCommentSchema = (t: (key: string) => string) =>
+export const createCommentSchema = (t: (_key: string) => string) =>
   z.object({
     comment: z.string().min(1, t('MessageRequired')).optional(),
     ontologyIRI: z.string().min(1, t('MessageRequired')).optional(),
@@ -12,7 +12,7 @@ export type CommentSchemaType = z.infer<ReturnType<typeof createCommentSchema>>;
 export const uploadOntologySchema = () =>
   z.object({ file: z.instanceof(Blob).optional() });
 
-export const createOntologySchema = (t: (key: string) => string) =>
+export const createOntologySchema = (t: (_key: string) => string) =>
   z.object({
     namespace: z.string().min(1, t('FormSchema.NamespaceRequired')),
     name: z.string().min(1, t('FormSchema.NameRequired')),

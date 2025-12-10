@@ -198,7 +198,8 @@
       "SubmitButton": "Vytvořit",
       "CreateNewDict": "Vytvořit nový slovník...",
       "CreateNewDictError": "Chyba při vytváření nového slovníku",
-      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen"
+      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
+      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení."
     },
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",
