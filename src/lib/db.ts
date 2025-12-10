@@ -24,15 +24,23 @@ interface ConceptDraft {
   updatedAt: Date;
 }
 
+interface UploadFromFileDraft {
+  id?: number;
+  file: Blob | undefined;
+  createdAt: Date;
+}
+
 const db = new Dexie('ISMDOfflineDB') as Dexie & {
   ontologyDrafts: EntityTable<OntologyDraft, 'id'>;
   conceptDrafts: EntityTable<ConceptDraft, 'id'>;
+  uploadFileDrafts: EntityTable<UploadFromFileDraft, 'id'>;
 };
 
 db.version(1).stores({
   ontologyDrafts: '++id, namespace, createdAt',
   conceptDrafts: '++id, ontologyNamespace, conceptType, createdAt',
+  uploadFileDrafts: '++id, file, createdAt',
 });
 
-export type { OntologyDraft, ConceptDraft };
 export { db };
+export type { ConceptDraft, OntologyDraft, UploadFromFileDraft };

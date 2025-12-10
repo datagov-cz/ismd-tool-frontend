@@ -82,8 +82,7 @@ export const CreateForm = () => {
               await db.ontologyDrafts.delete(draft.id!);
               toast(t('Form.CreateNewDictSuccess'));
             },
-            onError: (e) => {
-              console.log('CreateNewDict: ', e);
+            onError: () => {
               toast(t('Form.CreateNewDictError'));
             },
           },

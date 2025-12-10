@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GovButton, GovDialog } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import {
   OntologyMetadataModel,
@@ -10,6 +11,8 @@ import {
   useUploadFromFile,
 } from '@/api/generated';
 import { ErrorText } from '@/components/shared/ErrorText';
+import { useIsOnline } from '@/hooks/useIsOnline';
+import { db, type UploadFromFileDraft } from '@/lib/db';
 import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
@@ -29,6 +32,8 @@ export const UploadDialog = ({
 }: UploadDialogProps) => {
   const [confirmDialog, setConfirmDialog] = useState(false);
   const [submitError, setSubmitError] = useState<string>();
+
+  const isOnline = useIsOnline();
 
   const t = useTranslations('UploadOntology');
   const tError = useTranslations('Errors');
@@ -58,8 +63,71 @@ export const UploadDialog = ({
     formState: { dirtyFields },
   } = form;
 
+  const syncOfflineData = async () => {
+    try {
+      const drafts = await db.uploadFileDrafts.toArray();
+      for (const draft of drafts) {
+        if (!draft.file) {
+          await db.uploadFileDrafts.delete(draft.id!);
+          toast(t('Dialog.SyncError'));
+          return;
+        }
+        mutation.mutate(
+          {
+            params: { userId: 'test' },
+            data: {
+              file: draft.file,
+            },
+          },
+          {
+            onSuccess: async () => {
+              await db.uploadFileDrafts.delete(draft.id!);
+              toast(t('Dialog.SyncSuccess'));
+            },
+            onError: async (e) => {
+              console.error('Failed to sync offline data:', e);
+              const errorMessage = getErrorMessage(e, tError);
+
+              if (errorMessage) {
+                await db.uploadFileDrafts.delete(draft.id!);
+                toast(t('Dialog.DuplicateIRIRemoved'));
+              } else {
+                toast(t('Dialog.SyncError'));
+              }
+            },
+          },
+        );
+      }
+    } catch (error) {
+      console.error('Sync failed:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isOnline) {
+      syncOfflineData();
+    }
+  }, [isOnline]);
+
   // TODO: add logged in user functionality
-  const onSubmit = (data: UploadFromFileBody) => {
+  const onSubmit = async (data: UploadFromFileBody) => {
+    if (!isOnline) {
+      try {
+        const filePayload: UploadFromFileDraft = {
+          file: data.file,
+          createdAt: new Date(),
+        };
+
+        await db.uploadFileDrafts.add(filePayload);
+        form.reset();
+        toast(t('Dialog.OfflineUploadSuccess'));
+      } catch (error) {
+        console.error('Failed to save offline:', error);
+        toast(t('Dialog.OfflineUploadError'));
+        return;
+      }
+    }
+
     mutation.mutate({
       params: {
         userId: 'test',

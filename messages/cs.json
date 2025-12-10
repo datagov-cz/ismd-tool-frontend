@@ -162,7 +162,12 @@
       "Title": "Otevřít slovník ze souboru",
       "FileInputLabel": "Vyberte soubor",
       "CancelButton": "Zrušit",
-      "SubmitButton": "Vytvořit"
+      "SubmitButton": "Vytvořit",
+      "OfflineUploadSuccess": "Slovník byl úspěšně vytvořen offline. Pro uložení do Národního katalogu dat se musíte obnovit vaše spojení.",
+      "OfflineUploadError": "Chyba při vytváření slovníku offline",
+      "SyncSuccess": "Slovník byl úspěšně vytvořen a synchronizován s Národním katalogem dat",
+      "SyncError": "Chyba při synchronizaci slovníku s Národním katalogem dat",
+      "DuplicateIRIRemoved": "Duplicitní IRI soubory byly odstraněny z lokální databáze"
     },
     "FileUpload": {
       "Drag": "Přetáhnětě soubor nebo",
