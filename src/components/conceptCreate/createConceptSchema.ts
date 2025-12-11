@@ -111,8 +111,8 @@ const baseConceptSchema = z.object({
       }),
     )
     .optional(),
-  inTezaurus: z.string().optional(),
-  isPublic: z.string().optional(),
+  inTezaurus: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
   isInPPDF: z.boolean().optional(),
   agendaCode: z
     .string()
@@ -154,21 +154,21 @@ const baseConceptSchema = z.object({
 
 const classConceptSchema = baseConceptSchema.extend({
   type: z.string().optional(),
-  broaderConcept: iriSchema.optional(),
+  broaderConcept: z.array(z.object({ value: iriSchema.optional() })),
   conceptTypeEnum: z.literal('TRIDA'),
 });
 
 const propertyConceptSchema = baseConceptSchema.extend({
   dataType: z.string().optional(),
   domain: z.string(),
-  superProperty: iriSchema.optional(),
+  superProperty: z.array(z.object({ value: iriSchema.optional() })),
   conceptTypeEnum: z.literal('VLASTNOST'),
 });
 
 const relationshipConceptSchema = baseConceptSchema.extend({
   domain: z.string('Domain is required'),
   range: z.string(),
-  superRelation: iriSchema.optional(),
+  superRelation: z.array(z.object({ value: iriSchema.optional() })),
   conceptTypeEnum: z.literal('VZTAH'),
 });
 

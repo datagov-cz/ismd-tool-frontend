@@ -5,9 +5,9 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { useCommentBoxStore } from '@/store/commentBoxStore';
-
-import { ControlPanelButton } from './ControlPanelButton';
-import { DeleteDialog } from './DeleteDialog';
+import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
+import { ControlPanelButton } from '../dictionaryDetail/ControlPanelButton';
+import { DeleteDialog } from '../dictionaryDetail/DeleteDialog';
 
 interface Props {
   isPublished: boolean;
@@ -24,6 +24,9 @@ export const ControlPanelConcept = ({
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
+  const setIsConceptBoxOpen = useCreateConceptBoxStore(
+    (state) => state.setIsOpen,
+  );
 
   const handleCopyLink = async () => {
     try {
@@ -37,6 +40,12 @@ export const ControlPanelConcept = ({
 
   return (
     <div className="sticky right-0 top-10 flex flex-col gap-2 h-fit">
+      <ControlPanelButton
+        iconName="gear"
+        ariaLabel={t('GetLink')}
+        onClick={() => setIsConceptBoxOpen(true)}
+        className="mb-10"
+      />
       <ControlPanelButton
         iconName="link"
         ariaLabel={t('GetLink')}

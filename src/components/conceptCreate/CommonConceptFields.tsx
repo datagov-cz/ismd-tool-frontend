@@ -46,6 +46,8 @@ export const CommonConceptFields = ({
     name: 'sharingMethod',
   });
 
+  console.log(form.getValues(), 'test');
+
   return (
     <>
       <TextWithLanguageInput<CreateConceptFormData>
@@ -148,12 +150,17 @@ export const CommonConceptFields = ({
         errors={errors}
       />
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
-        <GovFormSelect {...register('inTezaurus')}>
-          <option value="ano" label={t('Options.Yes')} />
-          <option value="ne" label={t('Options.No')} />
-        </GovFormSelect>
+      <GovFormControl className="flex flex-row">
+        <div className="flex gap-2 items-center">
+          <input
+            type="checkbox"
+            {...register('inTezaurus')}
+            className="w-fit"
+          />
+          <GovFormLabel size="m" className="w-fit mb-0!">
+            {t('Labels.InThesaurus')}
+          </GovFormLabel>
+        </div>
       </GovFormControl>
 
       <GovFormControl>
@@ -184,7 +191,10 @@ export const CommonConceptFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.ContentType')}</GovFormLabel>
-        <GovFormSelect {...register('contentType')}>
+        <GovFormSelect
+          {...register('contentType')}
+          // defaultValue={form.getValues('conceptType')}
+        >
           <option value="" label="" />
           <option
             value="identifikační"
@@ -274,16 +284,17 @@ export const CommonConceptFields = ({
         )}
       </GovFormControl>
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
-        <GovFormSelect {...register('isPublic')}>
-          <option value="ano" label={t('Options.Yes')} />
-          <option value="ne" label={t('Options.No')} />
-        </GovFormSelect>
+      <GovFormControl className="flex flex-row">
+        <div className="flex gap-2 items-center">
+          <input type="checkbox" {...register('isPublic')} className="w-fit" />
+          <GovFormLabel size="m" className="w-fit mb-0!">
+            {t('Labels.IsPublic')}
+          </GovFormLabel>
+        </div>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m" required={form.watch('isPublic') === 'ano'}>
+        <GovFormLabel size="m" required={form.watch('isPublic')}>
           {t('Labels.PrivacyProvision')}
         </GovFormLabel>
         <GovFormInput

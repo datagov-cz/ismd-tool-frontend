@@ -1,6 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 
-import { getGetOntologyDetailQueryKey } from '@/api/generated';
+import {
+  getGetConceptDetailQueryKey,
+  getGetOntologyDetailQueryKey,
+} from '@/api/generated';
 
 export function useQueryInvalidator() {
   const queryClient = useQueryClient();
@@ -9,6 +12,11 @@ export function useQueryInvalidator() {
     invalidateOntology: async (slug: string) => {
       return await queryClient.invalidateQueries({
         queryKey: getGetOntologyDetailQueryKey(slug),
+      });
+    },
+    invalidateConcept: async (slug: string) => {
+      return await queryClient.invalidateQueries({
+        queryKey: getGetConceptDetailQueryKey(encodeURIComponent(slug)),
       });
     },
   };

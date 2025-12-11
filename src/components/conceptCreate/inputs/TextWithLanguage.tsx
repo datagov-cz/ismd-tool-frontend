@@ -37,7 +37,7 @@ export const TextWithLanguageInput = <T extends FieldValues>({
 
   return (
     <div className="flex gap-2 w-full">
-      <GovFormControl className="w-full">
+      <GovFormControl className="w-full" key={textInput.name}>
         <GovFormLabel size="m">{textInput.label}</GovFormLabel>
         <GovFormInput {...register(textInput.name)} required={required} />
 

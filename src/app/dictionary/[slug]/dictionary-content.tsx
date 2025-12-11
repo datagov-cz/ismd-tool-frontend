@@ -43,16 +43,30 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
   }, [slug, userId]);
 
   if (ontology.data) {
-    const { ontologyMetadata, ontologyDetail } = ontology.data;
+    const { ontologyMetadata, ontologyDetail, conceptMetadataModelList } =
+      ontology.data;
     const sortedParentTerms = ontologyDetail?.pojmy
       ?.filter((item) => item.název)
       .filter((item) => !item['definiční-obor'])
       .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
 
     const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
-      return ontologyDetail?.pojmy?.filter(
-        (item) =>
-          item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
+      return (
+        ontologyDetail?.pojmy
+          ?.filter(
+            (item) =>
+              item['definiční-obor'] &&
+              item['definiční-obor'] === parentTerm.iri,
+          )
+          .map((item) => {
+            return {
+              data: item,
+              slug:
+                conceptMetadataModelList?.find(
+                  (meta) => meta.conceptIri === item.iri,
+                )?.slug || '',
+            };
+          }) || []
       );
     };
 
@@ -104,11 +118,16 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
                   {t('Main.Sections.Terms')}
                 </p>
                 <div className="col-span-4">
-                  {sortedParentTerms?.map((item, index) => (
+                  {sortedParentTerms?.map((concept, index) => (
                     <Term
-                      data={item}
-                      subterms={getRelatedTerms(item)}
-                      key={item.iri || index}
+                      data={concept}
+                      subterms={getRelatedTerms(concept)}
+                      key={concept.iri || index}
+                      slug={
+                        conceptMetadataModelList?.find(
+                          (item) => concept.iri === item.conceptIri,
+                        )?.slug || ''
+                      }
                     />
                   ))}
                 </div>
@@ -118,7 +137,6 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               ontologyID={ontologyMetadata?.id || 0}
               isPublished={ontologyMetadata.isPublished || false}
               name={ontologyDetail.název?.cs || ''}
-              // validationReport={ontology}
             />
             <CommentSidebox
               ontologyIRI={ontologyDetail.iri}

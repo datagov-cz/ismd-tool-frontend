@@ -49,7 +49,7 @@ export interface ConceptMetadataModel {
   conceptName?: string;
   user?: UserModel;
   isPublished?: boolean;
-  inTezaurus?: string;
+  inTezaurus?: boolean;
   comments?: CommentModel[];
   createdAt?: string;
   updatedAt?: string;
@@ -211,9 +211,9 @@ export type ClassConceptModelAllOf = {
   acquisitionMethod?: string;
   sharingMethod?: string[];
   isInPPDF?: boolean;
-  isPublic?: string;
+  isPublic?: boolean;
   privacyProvision?: string;
-  broaderConcept?: string;
+  broaderConcept?: string[];
 };
 
 export type ClassConceptModel = ConceptCreateModel & ClassConceptModelAllOf;
@@ -242,7 +242,7 @@ export interface ConceptCreateModel {
   relatedNonLegalSource?: string[];
   relatedLegalSource?: string[];
   exactMatch?: string[];
-  inTezaurus?: string;
+  inTezaurus?: boolean;
   conceptTypeEnum?: ConceptCreateModelConceptTypeEnum;
 }
 
@@ -255,11 +255,11 @@ export interface DefinitionModel {
 export type PropertyConceptModelAllOf = {
   dataType?: string;
   domain?: string;
-  superProperty?: string;
+  superProperty?: string[];
   isInPPDF?: boolean;
   agendaCode?: string;
   agendaSystemCode?: string;
-  isPublic?: string;
+  isPublic?: boolean;
   privacyProvision?: string;
   sharingMethod?: string[];
   acquisitionMethod?: string;
@@ -272,14 +272,14 @@ export type PropertyConceptModel = ConceptCreateModel &
 export type RelationshipConceptModelAllOf = {
   domain?: string;
   range?: string;
-  superRelation?: string;
+  superRelation?: string[];
   agendaCode?: string;
   agendaSystemCode?: string;
   contentType?: string;
   acquisitionMethod?: string;
   sharingMethod?: string[];
   isInPPDF?: boolean;
-  isPublic?: string;
+  isPublic?: boolean;
   privacyProvision?: string;
 };
 
@@ -316,9 +316,10 @@ export type ClassConceptEditModelAllOf = {
   contentType?: string;
   acquisitionMethod?: string;
   sharingMethod?: string[];
-  isPublic?: string;
+  isPublic?: boolean;
   privacyProvision?: string;
-  broaderConcept?: string;
+  broaderConcept?: string[];
+  isInPPDF?: boolean;
 };
 
 export type ClassConceptEditModel = ConceptEditModel &
@@ -335,7 +336,6 @@ export const ConceptEditModelConceptTypeEnum = {
 } as const;
 
 export interface ConceptEditModel {
-  conceptIRI: string;
   conceptType: string;
   namespace?: string;
   nameModel?: NameModel;
@@ -348,18 +348,18 @@ export interface ConceptEditModel {
   relatedNonLegalSource?: string[];
   relatedLegalSource?: string[];
   exactMatch?: string[];
-  inTezaurus?: string;
+  inTezaurus?: boolean;
   conceptTypeEnum?: ConceptEditModelConceptTypeEnum;
 }
 
 export type PropertyConceptEditModelAllOf = {
   dataType?: string;
   domain?: string;
-  superProperty?: string;
+  superProperty?: string[];
   isInPPDF?: boolean;
   agendaCode?: string;
   agendaSystemCode?: string;
-  isPublic?: string;
+  isPublic?: boolean;
   privacyProvision?: string;
   sharingMethod?: string[];
   acquisitionMethod?: string;
@@ -372,11 +372,11 @@ export type PropertyConceptEditModel = ConceptEditModel &
 export type RelationshipConceptEditModelAllOf = {
   domain?: string;
   range?: string;
-  superRelation?: string;
+  superRelation?: string[];
   isInPPDF?: boolean;
   agendaCode?: string;
   agendaSystemCode?: string;
-  isPublic?: string;
+  isPublic?: boolean;
   privacyProvision?: string;
   sharingMethod?: string[];
   acquisitionMethod?: string;
@@ -426,13 +426,13 @@ export interface ConceptDetailModel {
   'související-ustanovení-právního-předpisu'?: string[];
   'definující-nelegislativní-zdroj'?: ConceptDetailModelDefinujícíNelegislativníZdrojItem[];
   'související-nelegislativní-zdroj'?: ConceptDetailModelSouvisejícíNelegislativníZdrojItem[];
-  'způsob-sdílení-údajů'?: string[];
-  'způsob-získání-údajů'?: string;
-  'typ-obsahu-údajů'?: string;
+  'způsob-sdílení-údaje'?: string[];
+  'způsob-získání-údaje'?: string;
+  'typ-obsahu-údaje'?: string;
   'je-ppdf'?: boolean;
-  ais?: string;
+  'agendový-informační-systém'?: string;
   agenda?: string;
-  'ustanovení-neverejnost'?: string;
+  'ustanovení-neveřejnost'?: string;
 }
 
 export interface ConceptPropertiesModel {
@@ -1137,13 +1137,14 @@ export const useEditOntology = <TError = unknown, TContext = unknown>(
 };
 
 export const editConcept = (
+  conceptId: number,
   editConceptBody: EditConceptBody,
   params: EditConceptParams,
   options?: SecondParameter<typeof axiosInstance>,
 ) => {
   return axiosInstance<ApiResponseDtoConceptMetadataModel>(
     {
-      url: `/api/concept/edit`,
+      url: `/api/concept/${conceptId}/edit`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       data: editConceptBody,
@@ -1160,14 +1161,14 @@ export const getEditConceptMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof editConcept>>,
     TError,
-    { data: EditConceptBody; params: EditConceptParams },
+    { conceptId: number; data: EditConceptBody; params: EditConceptParams },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof editConcept>>,
   TError,
-  { data: EditConceptBody; params: EditConceptParams },
+  { conceptId: number; data: EditConceptBody; params: EditConceptParams },
   TContext
 > => {
   const mutationKey = ['editConcept'];
@@ -1181,11 +1182,11 @@ export const getEditConceptMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof editConcept>>,
-    { data: EditConceptBody; params: EditConceptParams }
+    { conceptId: number; data: EditConceptBody; params: EditConceptParams }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { conceptId, data, params } = props ?? {};
 
-    return editConcept(data, params, requestOptions);
+    return editConcept(conceptId, data, params, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -1202,7 +1203,7 @@ export const useEditConcept = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof editConcept>>,
       TError,
-      { data: EditConceptBody; params: EditConceptParams },
+      { conceptId: number; data: EditConceptBody; params: EditConceptParams },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -1211,7 +1212,7 @@ export const useEditConcept = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof editConcept>>,
   TError,
-  { data: EditConceptBody; params: EditConceptParams },
+  { conceptId: number; data: EditConceptBody; params: EditConceptParams },
   TContext
 > => {
   const mutationOptions = getEditConceptMutationOptions(options);

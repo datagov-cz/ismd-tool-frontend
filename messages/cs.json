@@ -101,12 +101,29 @@
       "AlternativeName": "Alternativní název",
       "Definition": "Definice",
       "Description": "Popis",
+      "SupersededClass": "Nadřazena třída",
       "SupersededConcepts": "Nadřazené pojmy",
+      "SupersededRelation": "Nadřazený vztah",
       "SubordinateConcepts": "Podřazené pojmy",
       "Properties": "Vlastnosti",
       "Relations": "Vztahy",
       "Resource": "Zdroj",
-      "RelatedResources": "Související zdroje"
+      "RelatedResources": "Související zdroje",
+      "RelatedNonLegalResources": "Související nelegislativní zdroj",
+      "Range": "Obor hodnot"
+    },
+    "Registry": {
+      "Title": "Registr práv a povinností",
+      "PPDF": "údaj je sdílen v PPDF",
+      "NonPublic": "údaj je neveřejný",
+      "AIS": "AIS",
+      "Agenda": "Agenda"
+    },
+    "Decree": {
+      "Title": "Vyhláška 360/2023",
+      "Aquire": "Způsob získání údaje",
+      "Share": "Způsob sdílení údaje",
+      "Type": "Typ obsahu údaje"
     }
   },
   "DictionaryDetail": {
@@ -235,7 +252,10 @@
     }
   },
   "CreateConcept": {
+    "Title": "Pojem",
     "Save": "Uložit",
+    "Success": "Úspěšně uložený pojem",
+    "Error": "Pojem se nepodařilo uložit",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
@@ -284,7 +304,7 @@
     "ClassCreateFields": {
       "Labels": {
         "ClassType": "Typ třídy",
-        "BroaderClass": "Nadřazená třída"
+        "BroaderConcept": "Nadřazená třída"
       },
       "Options": {
         "ClassType": {
@@ -297,7 +317,8 @@
       "Labels": {
         "Domain": "Definiční obor",
         "SuperProperty": "Nadřazená vlastnost",
-        "DataType": "Obor hodnot"
+        "DataType": "Obor hodnot",
+        "BroaderConcept": "Nadřazená třida"
       },
       "Options": {
         "Undefined": "undefined"

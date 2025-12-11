@@ -5,59 +5,62 @@ import clsx from 'clsx';
 import { ConceptDetailModel } from '@/api/generated';
 
 export type TermProps = {
-  data: {
-    název?: ConceptDetailModel['název'];
-    definice?: ConceptDetailModel['definice'];
-    popis?: ConceptDetailModel['popis'];
-    iri?: ConceptDetailModel['iri'];
-  };
-  subterms?: TermProps[];
-  slug: string;
+  data: ConceptDetailModel;
+  subterms?: { data: ConceptDetailModel; slug: string }[];
+  tree?: boolean;
+  slug?: string;
 };
 
-export const Term = ({ data, subterms, slug }: TermProps) => {
+export const Term = ({ data, subterms, tree, slug }: TermProps) => {
   const [hover, setHover] = useState(false);
   const name = data.název?.cs;
   const capitalizedName = name && name.charAt(0).toUpperCase() + name.slice(1);
 
   return (
-    <a
-      href={`/concept/${slug}`}
+    <div
       className={clsx(
         'relative w-fit group block',
-        !subterms && 'pl-4 not-last:border-l-2 not-last:border-blue-primary/30',
+        !subterms &&
+          tree &&
+          'pl-4 not-last:border-l-2 not-last:border-blue-primary/30',
       )}
     >
       {!subterms && (
-        <span className="absolute w-3 h-5.5 border-b-2 border-blue-primary/30 -left-0 group-last:border-l-2" />
+        <span
+          className={clsx(
+            'absolute w-3 h-5.5 border-b-2 border-blue-primary/30 -left-0',
+            tree && 'group-last:border-l-2',
+          )}
+        />
       )}
-      <GovChip
-        color="primary"
-        size="m"
-        type="outlined"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        className="relative cursor-pointer [&_span]:cursor-pointer!"
-      >
-        {capitalizedName}
-        {(data.definice?.cs || data.popis?.cs) && hover && (
-          <Tooltip message={data.definice?.cs || data.popis?.cs || ''} />
-        )}
-      </GovChip>
+      <a href={`/concept/${slug}`}>
+        <GovChip
+          color="primary"
+          size="m"
+          type="outlined"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className="relative"
+        >
+          <span className="cursor-pointer">{capitalizedName}</span>
+          {(data.definice?.cs || data.popis?.cs) && hover && (
+            <Tooltip message={data.definice?.cs || data.popis?.cs || ''} />
+          )}
+        </GovChip>
+      </a>
+
       <div className="pl-6 pt-2">
         {subterms &&
-          subterms.map(
-            (item, index) =>
-              item.data.iri && (
-                <Term
-                  key={data.iri || index}
-                  data={item.data}
-                  slug={item.slug}
-                />
-              ),
-          )}
+          subterms.map((item, index) => (
+            <Term
+              key={data.iri || index}
+              data={item.data}
+              slug={item.slug}
+              tree
+            />
+          ))}
       </div>
-    </a>
+    </div>
   );
 };
 
