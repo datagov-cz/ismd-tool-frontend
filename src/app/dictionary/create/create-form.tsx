@@ -83,7 +83,7 @@ export const CreateForm = () => {
               toast(t('Form.CreateNewDictSuccess'));
             },
             onError: () => {
-              toast(t('Form.CreateNewDictError'));
+              toast(t('Form.CreateNewDictSyncError'));
             },
           },
         );
