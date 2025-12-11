@@ -1,8 +1,8 @@
 import {
   GovButton,
   GovFormControl,
-  GovFormInput,
   GovFormLabel,
+  GovFormSelect,
   GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
@@ -70,7 +70,18 @@ export const PropertyCreateFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.DataType')}</GovFormLabel>
-        <GovFormInput {...register('dataType')} />
+        <GovFormSelect {...register('dataType')}>
+          <option value="rdfs:Literal" label="rdfs:Literal" />
+          <option value="Ano či ne" label="Ano či ne" />
+          <option value="Datum" label="Datum" />
+          <option value="Čas" label="Čas" />
+          <option value="Datum a čas" label="Datum a čas" />
+          <option value="Celé číslo" label="Celé číslo" />
+          <option value="Desetinné číslo" label="Desetinné číslo" />
+          <option value="URI, IRI, URL" label="URI, IRI, URL" />
+          <option value="Řetězec" label="Řetězec" />
+          <option value="Text" label="Text" />
+        </GovFormSelect>
       </GovFormControl>
 
       <CommonConceptFields

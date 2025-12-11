@@ -104,18 +104,20 @@
       "SupersededClass": "Nadřazena třída",
       "SupersededConcepts": "Nadřazené pojmy",
       "SupersededRelation": "Nadřazený vztah",
+      "SupersededProperty": "Nadřazená vlastnost",
       "SubordinateConcepts": "Podřazené pojmy",
       "Properties": "Vlastnosti",
       "Relations": "Vztahy",
-      "Resource": "Zdroj",
-      "RelatedResources": "Související zdroje",
+      "Resource": "Definující ustanovení právního předpisu",
+      "RelatedResources": "Související ustanovení právního předpisu",
+      "NonLegalResources": "Definující nelegislativní zdroj",
       "RelatedNonLegalResources": "Související nelegislativní zdroj",
       "Range": "Obor hodnot"
     },
     "Registry": {
       "Title": "Registr práv a povinností",
       "PPDF": "údaj je sdílen v PPDF",
-      "NonPublic": "údaj je neveřejný",
+      "NonPublic": "údaj je veřejný",
       "AIS": "AIS",
       "Agenda": "Agenda"
     },

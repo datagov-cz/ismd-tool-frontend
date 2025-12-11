@@ -70,17 +70,27 @@ export const conceptDataFormatter = (data: GetConceptDto): PartialConcept => {
       ),
       contentType: formatSharingMethodsFormate(detail['typ-obsahu-údaje']),
       isInPPDF: detail['je-ppdf'],
-      agendaCode: detail['agendový-informační-systém'],
-      agendaSystemCode: detail.agenda,
+      isPublic: detail['typ']?.includes('Veřejný údaj'),
+      agendaSystemCode: detail['agendový-informační-systém'],
+      agendaCode: detail.agenda,
       privacyProvision: detail['ustanovení-neveřejnost'],
       broaderConcept: formatRelatedConcepts(detail['nadřazená-třída']),
       domain: detail['definiční-obor'],
       range: detail['obor-hodnot'],
+      type: detail.typ?.includes('Typ objektu práva')
+        ? 'Typ objektu práva'
+        : detail.typ?.includes('Typ subjektu práva')
+          ? 'Typ subjektu práva'
+          : '',
       superProperty: formatRelatedConcepts(detail['nadřazená-vlastnost']),
       superRelation: formatRelatedConcepts(detail['nadřazený-vztah']),
-      exactMatch: detail['ekvivalentní-pojem']?.map((item) => ({
-        value: 'id' in item ? item.id : '',
-      })),
+      exactMatch: detail['ekvivalentní-pojem']?.map((item) =>
+        'id' in item && item.id !== null
+          ? {
+              value: item.id,
+            }
+          : {},
+      ),
     };
   }
 

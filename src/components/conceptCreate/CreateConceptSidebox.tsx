@@ -14,7 +14,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import {
-  ConceptDetailModel,
   ConceptEditModelConceptTypeEnum,
   useCreateConcept,
   useEditConcept,
@@ -35,7 +34,6 @@ import { transformFormData } from './utils/transformFormData';
 
 interface CreateConceptProps {
   namespace: string;
-  concepts?: ConceptDetailModel[];
   slug: string;
   defaultData?: Partial<CreateConceptFormData>;
   action?: 'create' | 'update';

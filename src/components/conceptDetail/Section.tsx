@@ -10,7 +10,7 @@ export const Section = ({
   children: ReactNode;
 }) => (
   <GridContainer>
-    <p className="font-medium text-xl">{title}</p>
-    <div className="col-span-4">{children}</div>
+    <p className="font-medium text-xl col-span-2">{title}</p>
+    <div className="col-span-3">{children}</div>
   </GridContainer>
 );

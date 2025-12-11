@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import {
   ConceptDetailModel,
   OntologyDetailModel,
+  OntologyMetadataModel,
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
@@ -72,10 +73,12 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
 
     const transformToArrayFormat = ({
       data,
+      meta,
     }: {
       data: OntologyDetailModel;
+      meta: OntologyMetadataModel;
     }) => {
-      const nameModel = data.název?.cs;
+      const nameModel = data.název?.cs || meta?.name || '';
       const descriptionModel = data.popis
         ? Object.entries(data.popis)
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,7 +87,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               languageTag: languageTag,
               name: description as string,
             }))
-        : [{ name: '', languageTag: 'cs' }];
+        : [{ name: meta.popis || '', languageTag: 'cs' }];
       return { nameModel, descriptionModel };
     };
 
@@ -96,7 +99,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               <GridContainer>
                 <div className="space-y-2 col-span-4 col-start-2">
                   <h1 className="text-xl lg:text-3xl font-bold">
-                    {ontologyDetail.název?.cs}
+                    {ontologyMetadata.name}
                   </h1>
                   <p className="text-sm text-dark-secondary">
                     {ontologyMetadata?.isPublished
@@ -109,8 +112,10 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
                 <p className="font-medium text-xl">
                   {t('Main.Sections.Description')}
                 </p>
-                {ontologyDetail.popis?.cs && (
+                {ontologyDetail.popis?.cs ? (
                   <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
+                ) : (
+                  <p className="col-span-4">{ontologyMetadata.popis}</p>
                 )}
               </GridContainer>
               <GridContainer>
@@ -144,18 +149,23 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               refetch={() => ontology.refetch()}
               userId={userId}
             />
-            {ontologyDetail.iri && (
+            {(ontologyDetail.iri || ontologyMetadata.graphName) && (
               <CreateConceptSideBox
                 slug={slug}
-                namespace={ontologyDetail.iri}
-                concepts={ontologyDetail.pojmy}
+                namespace={
+                  ontologyDetail.iri || ontologyMetadata.graphName || ''
+                }
+                action="create"
               />
             )}
             {ontologyMetadata.id && (
               <EditSideBox
                 ontologySlug={slug}
                 ontologyID={ontologyMetadata.id}
-                defaultValues={transformToArrayFormat({ data: ontologyDetail })}
+                defaultValues={transformToArrayFormat({
+                  data: ontologyDetail,
+                  meta: ontologyMetadata,
+                })}
               />
             )}
           </div>

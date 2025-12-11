@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ConceptDetailModel, useGetConceptDetail } from '@/api/generated';
 import { conceptDataFormatter } from '@/components/conceptCreate/conceptDataFormatter';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
+import { ConceptDetailLink } from '@/components/conceptDetail/ConceptDetailLink';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ControlPanelConcept } from '@/components/conceptDetail/ControlPanelConcept';
 import { DecreeAccordion } from '@/components/conceptDetail/DecreeAccordion';
@@ -77,24 +78,25 @@ const ConceptContent = ({ slug }: Props) => {
           )}
         </Section>
 
-        <Section title={t('Sections.Resource')}>
-          <LinkList
-            items={conceptDetail['definující-ustanovení-právního-předpisu']}
-          />
-        </Section>
-
-        <Section title="Definující nelegislativní zdroj">
-          {conceptDetail['definující-nelegislativní-zdroj']
-            ?.filter((item) => 'cs' in item)
-            .map((item, index) => (
-              <p key={index}>{item['název'].cs as string}</p>
-            ))}
-        </Section>
-
         <Section title={t('Sections.Description')}>
           {conceptDetail.popis && (
             <LanguageSwitcher item={conceptDetail.popis} />
           )}
+        </Section>
+
+        <Section title={'Ekvivalentni pojem'}>
+          {conceptDetail['ekvivalentní-pojem']?.map(
+            (item) =>
+              'id' in item && (
+                <ConceptDetailLink key={item.id} href={item.id || ''} />
+              ),
+          )}
+        </Section>
+
+        <Section title={t('Sections.Resource')}>
+          <LinkList
+            items={conceptDetail['definující-ustanovení-právního-předpisu']}
+          />
         </Section>
 
         <Section title={t('Sections.RelatedResources')}>
@@ -103,40 +105,58 @@ const ConceptContent = ({ slug }: Props) => {
           />
         </Section>
 
-        <Section title={t('Sections.RelatedNonLegalResources')}>
+        <Section title={t('Sections.NonLegalResources')}>
           {conceptDetail['definující-nelegislativní-zdroj']?.map(
-            (item, index) => (
-              <p key={index}>{item['název'].cs as string}</p>
-            ),
+            (item, index) =>
+              'název' in item && (
+                <p key={index}>{item['název'].cs as string}</p>
+              ),
           )}
         </Section>
 
-        <Section title={t('Sections.SupersededConcepts')}>
-          <div />
+        <Section title={t('Sections.RelatedNonLegalResources')}>
+          {conceptDetail['související-nelegislativní-zdroj']?.map(
+            (item, index) =>
+              'název' in item && (
+                <p key={index}>{item['název'].cs as string}</p>
+              ),
+          )}
         </Section>
 
-        <Section title={t('Sections.Range')}>
-          {conceptDetail['obor-hodnot'] && (
+        {conceptMetadata.conceptType !== 'TRIDA' && (
+          <Section title={t('Sections.Range')}>
+            {conceptDetail['obor-hodnot'] && (
+              <ConceptDetailLink href={conceptDetail['obor-hodnot']} />
+            )}
+          </Section>
+        )}
+
+        {conceptMetadata.conceptType === 'TRIDA' && (
+          <Section title={t('Sections.SupersededClass')}>
             <SuperClassList
-              items={[conceptDetail['obor-hodnot']]}
+              items={conceptDetail['nadřazená-třída']}
               pathname={pathname}
             />
-          )}
-        </Section>
+          </Section>
+        )}
 
-        <Section title={t('Sections.SupersededClass')}>
-          <SuperClassList
-            items={conceptDetail['nadřazená-třída']}
-            pathname={pathname}
-          />
-        </Section>
+        {conceptMetadata.conceptType === 'VLASTNOST' && (
+          <Section title={t('Sections.SupersededProperty')}>
+            <SuperClassList
+              items={conceptDetail['nadřazená-vlastnost']}
+              pathname={pathname}
+            />
+          </Section>
+        )}
 
-        <Section title={t('Sections.SupersededRelation')}>
-          <SuperClassList
-            items={conceptDetail['nadřazený-vztah']}
-            pathname={pathname}
-          />
-        </Section>
+        {conceptMetadata.conceptType === 'VZTAH' && (
+          <Section title={t('Sections.SupersededRelation')}>
+            <SuperClassList
+              items={conceptDetail['nadřazený-vztah']}
+              pathname={pathname}
+            />
+          </Section>
+        )}
 
         <Section title={t('Sections.Properties')}>
           {conceptDetail.conceptProperties?.map((item) => (

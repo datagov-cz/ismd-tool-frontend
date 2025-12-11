@@ -24,6 +24,7 @@ interface TextWithLanguageInputProps<T extends FieldValues> {
   required?: boolean;
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
+  disableLanguage?: boolean;
 }
 
 export const TextWithLanguageInput = <T extends FieldValues>({
@@ -32,6 +33,7 @@ export const TextWithLanguageInput = <T extends FieldValues>({
   languageInput,
   errors,
   required = false,
+  disableLanguage = false,
 }: TextWithLanguageInputProps<T>) => {
   const fieldError = get(errors, textInput.name);
 
@@ -48,7 +50,11 @@ export const TextWithLanguageInput = <T extends FieldValues>({
 
       <GovFormControl className="min-w-20">
         <GovFormLabel size="m">{languageInput.label}</GovFormLabel>
-        <GovFormSelect {...register(languageInput.name)} defaultValue="cs">
+        <GovFormSelect
+          {...register(languageInput.name)}
+          defaultValue="cs"
+          disabled={disableLanguage}
+        >
           <option value="cs" label="CS" />
           <option value="en" label="EN" />
           <option value="sk" label="SK" />

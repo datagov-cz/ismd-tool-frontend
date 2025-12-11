@@ -29,4 +29,6 @@ export const createDefaultValues = (
   broaderConcept: [{ value: '' }],
   superRelation: [{ value: '' }],
   superProperty: [{ value: '' }],
+  dataType: '',
+  privacyProvision: '',
 });

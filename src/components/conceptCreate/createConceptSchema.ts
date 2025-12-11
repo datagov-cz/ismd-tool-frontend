@@ -148,7 +148,7 @@ const baseConceptSchema = z.object({
     ),
   sharingMethod: z.array(sourceValueSchema).optional(),
   acquisitionMethod: z.string().optional(),
-  privacyProvision: z.string().optional(),
+  privacyProvision: z.url().optional(),
   contentType: z.string().optional(),
 });
 
@@ -159,7 +159,7 @@ const classConceptSchema = baseConceptSchema.extend({
 });
 
 const propertyConceptSchema = baseConceptSchema.extend({
-  dataType: z.string().optional(),
+  dataType: z.string(),
   domain: z.string(),
   superProperty: z.array(z.object({ value: iriSchema.optional() })),
   conceptTypeEnum: z.literal('VLASTNOST'),

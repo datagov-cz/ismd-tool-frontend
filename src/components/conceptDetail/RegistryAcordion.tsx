@@ -28,7 +28,7 @@ export const RegistryAccordion = ({ conceptDetail }: Props) => {
         <AccordionItemContent title="">
           <div className="col-span-4 flex items-center">
             <GovFormCheckbox
-              checked={!!conceptDetail['ustanovení-neveřejnost']}
+              checked={conceptDetail['typ']?.includes('Veřejný údaj')}
             />
             {t('NonPublic')}
           </div>
@@ -37,7 +37,7 @@ export const RegistryAccordion = ({ conceptDetail }: Props) => {
         <AccordionItemContent title={t('AIS')}>
           <ConceptDetailLink
             label={conceptDetail['agendový-informační-systém']}
-            href={conceptDetail.agenda || ''}
+            href={conceptDetail['agendový-informační-systém'] || ''}
           />
         </AccordionItemContent>
 

@@ -46,8 +46,6 @@ export const CommonConceptFields = ({
     name: 'sharingMethod',
   });
 
-  console.log(form.getValues(), 'test');
-
   return (
     <>
       <TextWithLanguageInput<CreateConceptFormData>
@@ -58,6 +56,7 @@ export const CommonConceptFields = ({
         }}
         register={register}
         errors={errors}
+        disableLanguage
       />
 
       <ArrayInputLanguage<CreateConceptFormData>
@@ -294,10 +293,11 @@ export const CommonConceptFields = ({
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m" required={form.watch('isPublic')}>
+        <GovFormLabel size="m" required={!form.watch('isPublic')}>
           {t('Labels.PrivacyProvision')}
         </GovFormLabel>
         <GovFormInput
+          disabled={form.watch('isPublic')}
           {...register('privacyProvision')}
           invalid={!!errors.privacyProvision}
         />

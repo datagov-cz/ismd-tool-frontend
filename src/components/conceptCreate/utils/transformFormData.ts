@@ -9,7 +9,6 @@ const mapToValues = (items: Array<{ value?: string }> | undefined) => {
 };
 
 export const transformFormData = (data: CreateConceptFormData) => {
-  console.log(data, 'test');
   return {
     ...data,
     nameModel: {
