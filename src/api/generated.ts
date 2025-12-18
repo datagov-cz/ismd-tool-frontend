@@ -82,8 +82,8 @@ export interface ApiResponseDtoValidationReport {
 export interface ValidationReport {
   id?: number;
   timestamp?: string;
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
 }
 
 export type ValidationResultSeverity =
@@ -212,7 +212,7 @@ export type ClassConceptModelAllOf = {
   sharingMethod?: string[];
   isInPPDF?: boolean;
   isPublic?: boolean;
-  privacyProvision?: string;
+  privacyProvisions?: string[];
   broaderConcept?: string[];
 };
 
@@ -260,7 +260,7 @@ export type PropertyConceptModelAllOf = {
   agendaCode?: string;
   agendaSystemCode?: string;
   isPublic?: boolean;
-  privacyProvision?: string;
+  privacyProvisions?: string[];
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
@@ -280,7 +280,7 @@ export type RelationshipConceptModelAllOf = {
   sharingMethod?: string[];
   isInPPDF?: boolean;
   isPublic?: boolean;
-  privacyProvision?: string;
+  privacyProvisions?: string[];
 };
 
 export type RelationshipConceptModel = ConceptCreateModel &
@@ -317,7 +317,7 @@ export type ClassConceptEditModelAllOf = {
   acquisitionMethod?: string;
   sharingMethod?: string[];
   isPublic?: boolean;
-  privacyProvision?: string;
+  privacyProvisions?: string[];
   broaderConcept?: string[];
   isInPPDF?: boolean;
 };
@@ -360,7 +360,7 @@ export type PropertyConceptEditModelAllOf = {
   agendaCode?: string;
   agendaSystemCode?: string;
   isPublic?: boolean;
-  privacyProvision?: string;
+  privacyProvisions?: string[];
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
@@ -377,7 +377,7 @@ export type RelationshipConceptEditModelAllOf = {
   agendaCode?: string;
   agendaSystemCode?: string;
   isPublic?: boolean;
-  privacyProvision?: string;
+  privacyProvisions?: string[];
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
@@ -432,7 +432,7 @@ export interface ConceptDetailModel {
   'je-ppdf'?: boolean;
   'agendový-informační-systém'?: string;
   agenda?: string;
-  'ustanovení-neveřejnost'?: string;
+  'ustanovení-dokládající-neveřejnost-údaje'?: string[];
 }
 
 export interface ConceptPropertiesModel {
@@ -449,6 +449,7 @@ export interface GetOntologyDto {
   ontologyMetadata?: OntologyMetadataModel;
   ontologyDetail?: OntologyDetailModel;
   conceptMetadataModelList?: ConceptMetadataModel[];
+  publishedOntologyDeviationModel?: PublishedOntologyDeviationModel;
 }
 
 export type OntologyDetailModelNázev = { [key: string]: string };
@@ -466,6 +467,46 @@ export interface OntologyDetailModel {
   pojmy?: ConceptDetailModel[];
 }
 
+export interface PropertyDeviationListString {
+  localValue?: string[];
+  publishedValue?: string[];
+  different?: boolean;
+}
+
+export type PropertyDeviationMapStringStringLocalValue = {
+  [key: string]: string;
+};
+
+export type PropertyDeviationMapStringStringPublishedValue = {
+  [key: string]: string;
+};
+
+export interface PropertyDeviationMapStringString {
+  localValue?: PropertyDeviationMapStringStringLocalValue;
+  publishedValue?: PropertyDeviationMapStringStringPublishedValue;
+  different?: boolean;
+}
+
+export type PublishedOntologyDeviationModelStatus =
+  (typeof PublishedOntologyDeviationModelStatus)[keyof typeof PublishedOntologyDeviationModelStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PublishedOntologyDeviationModelStatus = {
+  NO_DEVIATION: 'NO_DEVIATION',
+  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
+  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
+  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
+  QUERY_ERROR: 'QUERY_ERROR',
+} as const;
+
+export interface PublishedOntologyDeviationModel {
+  status?: PublishedOntologyDeviationModelStatus;
+  errorMessage?: string;
+  typ?: PropertyDeviationListString;
+  název?: PropertyDeviationMapStringString;
+  popis?: PropertyDeviationMapStringString;
+}
+
 export interface ApiResponseDtoListOntologyMetadataModel {
   data?: OntologyMetadataModel[];
   message?: string;
@@ -475,6 +516,101 @@ export interface ApiResponseDtoListOntologyMetadataModel {
 export interface GetConceptDto {
   conceptMetadata?: ConceptMetadataModel;
   conceptDetail?: ConceptDetailModel;
+  publishedConceptDeviationModel?: PublishedConceptDeviationModel;
+}
+
+export interface PropertyDeviationBoolean {
+  localValue?: boolean;
+  publishedValue?: boolean;
+  different?: boolean;
+}
+
+export type PropertyDeviationListMapStringObjectLocalValueItem = {
+  [key: string]: { [key: string]: unknown };
+};
+
+export type PropertyDeviationListMapStringObjectPublishedValueItem = {
+  [key: string]: { [key: string]: unknown };
+};
+
+export interface PropertyDeviationListMapStringObject {
+  localValue?: PropertyDeviationListMapStringObjectLocalValueItem[];
+  publishedValue?: PropertyDeviationListMapStringObjectPublishedValueItem[];
+  different?: boolean;
+}
+
+export type PropertyDeviationListMapStringStringLocalValueItem = {
+  [key: string]: string;
+};
+
+export type PropertyDeviationListMapStringStringPublishedValueItem = {
+  [key: string]: string;
+};
+
+export interface PropertyDeviationListMapStringString {
+  localValue?: PropertyDeviationListMapStringStringLocalValueItem[];
+  publishedValue?: PropertyDeviationListMapStringStringPublishedValueItem[];
+  different?: boolean;
+}
+
+export type PropertyDeviationMapStringObjectLocalValue = {
+  [key: string]: { [key: string]: unknown };
+};
+
+export type PropertyDeviationMapStringObjectPublishedValue = {
+  [key: string]: { [key: string]: unknown };
+};
+
+export interface PropertyDeviationMapStringObject {
+  localValue?: PropertyDeviationMapStringObjectLocalValue;
+  publishedValue?: PropertyDeviationMapStringObjectPublishedValue;
+  different?: boolean;
+}
+
+export interface PropertyDeviationString {
+  localValue?: string;
+  publishedValue?: string;
+  different?: boolean;
+}
+
+export type PublishedConceptDeviationModelStatus =
+  (typeof PublishedConceptDeviationModelStatus)[keyof typeof PublishedConceptDeviationModelStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PublishedConceptDeviationModelStatus = {
+  NO_DEVIATION: 'NO_DEVIATION',
+  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
+  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
+  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
+  QUERY_ERROR: 'QUERY_ERROR',
+} as const;
+
+export interface PublishedConceptDeviationModel {
+  status?: PublishedConceptDeviationModelStatus;
+  errorMessage?: string;
+  typ?: PropertyDeviationListString;
+  název?: PropertyDeviationMapStringString;
+  'alternativní-název'?: PropertyDeviationMapStringObject;
+  definice?: PropertyDeviationMapStringString;
+  popis?: PropertyDeviationMapStringString;
+  identifikátor?: PropertyDeviationString;
+  'nadřazená-třída'?: PropertyDeviationListString;
+  'nadřazený-vztah'?: PropertyDeviationListString;
+  'nadřazená-vlastnost'?: PropertyDeviationListString;
+  'definiční-obor'?: PropertyDeviationString;
+  'obor-hodnot'?: PropertyDeviationString;
+  'ekvivalentní-pojem'?: PropertyDeviationListMapStringString;
+  'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
+  'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
+  'definující-nelegislativní-zdroj'?: PropertyDeviationListMapStringObject;
+  'související-nelegislativní-zdroj'?: PropertyDeviationListMapStringObject;
+  'způsob-sdílení-údajů'?: PropertyDeviationListString;
+  'způsob-získání-údajů'?: PropertyDeviationString;
+  'typ-obsahu-údajů'?: PropertyDeviationString;
+  'je-ppdf'?: PropertyDeviationBoolean;
+  ais?: PropertyDeviationString;
+  agenda?: PropertyDeviationString;
+  'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
 }
 
 export interface ApiResponseDtoListConceptMetadataModel {

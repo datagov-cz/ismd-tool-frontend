@@ -108,8 +108,12 @@ const ConceptContent = ({ slug }: Props) => {
         <Section title={t('Sections.NonLegalResources')}>
           {conceptDetail['definující-nelegislativní-zdroj']?.map(
             (item, index) =>
-              'název' in item && (
+              'název' in item ? (
                 <p key={index}>{item['název'].cs as string}</p>
+              ) : 'url' in item ? (
+                <ConceptDetailLink key={index} href={String(item.url) || ''} />
+              ) : (
+                ''
               ),
           )}
         </Section>
@@ -117,8 +121,12 @@ const ConceptContent = ({ slug }: Props) => {
         <Section title={t('Sections.RelatedNonLegalResources')}>
           {conceptDetail['související-nelegislativní-zdroj']?.map(
             (item, index) =>
-              'název' in item && (
+              'název' in item ? (
                 <p key={index}>{item['název'].cs as string}</p>
+              ) : 'url' in item ? (
+                <ConceptDetailLink key={index} href={String(item.url) || ''} />
+              ) : (
+                ''
               ),
           )}
         </Section>

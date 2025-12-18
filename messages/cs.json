@@ -280,7 +280,7 @@
         "AcquisitionMethod": "Způsob získání údajů",
         "SharingMethod": "Způsob sdílení údajů",
         "IsPublic": "Je veřejný",
-        "PrivacyProvision": "Ustanovení neveřejnosti",
+        "PrivacyProvision": "Ustanovení dokládající neveřejnost údaje",
         "IsInPPDF": "Je v PPDF"
       },
       "Options": {

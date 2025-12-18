@@ -292,21 +292,13 @@ export const CommonConceptFields = ({
         </div>
       </GovFormControl>
 
-      <GovFormControl>
-        <GovFormLabel size="m" required={!form.watch('isPublic')}>
-          {t('Labels.PrivacyProvision')}
-        </GovFormLabel>
-        <GovFormInput
-          disabled={form.watch('isPublic')}
-          {...register('privacyProvision')}
-          invalid={!!errors.privacyProvision}
-        />
-        {errors.privacyProvision && (
-          <span className="text-red-600 text-sm">
-            {errors.privacyProvision.message}
-          </span>
-        )}
-      </GovFormControl>
+      <ArrayInput
+        form={form}
+        register={register}
+        name="privacyProvision"
+        label={t('Labels.PrivacyProvision')}
+        errors={errors}
+      />
 
       <GovFormControl className="flex flex-row">
         <div className="flex gap-2 items-center">

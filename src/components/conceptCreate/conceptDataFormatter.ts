@@ -73,7 +73,9 @@ export const conceptDataFormatter = (data: GetConceptDto): PartialConcept => {
       isPublic: detail['typ']?.includes('Veřejný údaj'),
       agendaSystemCode: detail['agendový-informační-systém'],
       agendaCode: detail.agenda,
-      privacyProvision: detail['ustanovení-neveřejnost'],
+      privacyProvision: detail['ustanovení-dokládající-neveřejnost-údaje']?.map(
+        (item) => ({ value: item }),
+      ),
       broaderConcept: formatRelatedConcepts(detail['nadřazená-třída']),
       domain: detail['definiční-obor'],
       range: detail['obor-hodnot'],

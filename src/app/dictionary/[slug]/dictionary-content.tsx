@@ -10,6 +10,8 @@ import {
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
+import { LanguageSwitcher } from '@/components/conceptDetail/LanguageSwitcher';
+import { Section } from '@/components/conceptDetail/Section';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
@@ -48,7 +50,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
       ontology.data;
     const sortedParentTerms = ontologyDetail?.pojmy
       ?.filter((item) => item.název)
-      .filter((item) => !item['definiční-obor'])
+      ?.filter((item) => !item['definiční-obor'])
       .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
 
     const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
@@ -99,7 +101,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               <GridContainer>
                 <div className="space-y-2 col-span-4 col-start-2">
                   <h1 className="text-xl lg:text-3xl font-bold">
-                    {ontologyMetadata.name}
+                    {ontologyDetail.název?.cs || ontologyMetadata.name}
                   </h1>
                   <p className="text-sm text-dark-secondary">
                     {ontologyMetadata?.isPublished
@@ -108,16 +110,13 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
                   </p>
                 </div>
               </GridContainer>
-              <GridContainer>
-                <p className="font-medium text-xl">
-                  {t('Main.Sections.Description')}
-                </p>
-                {ontologyDetail.popis?.cs ? (
-                  <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
+              <Section title={t('Main.Sections.Description')}>
+                {ontologyDetail.popis ? (
+                  <LanguageSwitcher item={ontologyDetail.popis} />
                 ) : (
                   <p className="col-span-4">{ontologyMetadata.popis}</p>
                 )}
-              </GridContainer>
+              </Section>
               <GridContainer>
                 <p className="font-medium text-xl">
                   {t('Main.Sections.Terms')}

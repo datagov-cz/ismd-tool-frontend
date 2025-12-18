@@ -30,5 +30,6 @@ export const createDefaultValues = (
   superRelation: [{ value: '' }],
   superProperty: [{ value: '' }],
   dataType: '',
-  privacyProvision: '',
+  isPublic: false,
+  privacyProvision: [{ value: '' }],
 });

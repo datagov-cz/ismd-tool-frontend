@@ -11,6 +11,6 @@ export const Section = ({
 }) => (
   <GridContainer>
     <p className="font-medium text-xl col-span-2">{title}</p>
-    <div className="col-span-3">{children}</div>
+    <div className="col-span-3 space-y-2">{children}</div>
   </GridContainer>
 );

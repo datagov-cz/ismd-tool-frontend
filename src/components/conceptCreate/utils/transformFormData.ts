@@ -28,6 +28,7 @@ export const transformFormData = (data: CreateConceptFormData) => {
     definingLegalSource: mapToValues(data.definingLegalSource),
     definingNonLegalSource: mapToValues(data.definingNonLegalSource),
     relatedLegalSource: mapToValues(data.relatedLegalSource),
+    privacyProvision: mapToValues(data.privacyProvision),
     relatedNonLegalSource: mapToValues(data.relatedNonLegalSource),
     exactMatch: mapToValues(data.exactMatch),
     ...(data.conceptTypeEnum === 'TRIDA' && {

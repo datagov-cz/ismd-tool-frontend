@@ -9,7 +9,7 @@ export const ConceptDetailLink = ({
 }) => {
   return (
     <Link
-      className="text-blue-primary visited:text-blue-primary underline block"
+      className="text-blue-primary visited:text-blue-primary underline block hover:no-underline"
       href={href}
     >
       {label || href}

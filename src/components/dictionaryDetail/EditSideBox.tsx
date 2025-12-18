@@ -71,6 +71,7 @@ export const EditSideBox = ({
   });
 
   const onSubmit = (data: OntologyEditModel) => {
+    console.log(data, 'test');
     mutation.mutate({
       data: {
         ...data,

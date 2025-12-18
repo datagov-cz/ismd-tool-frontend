@@ -148,29 +148,68 @@ const baseConceptSchema = z.object({
     ),
   sharingMethod: z.array(sourceValueSchema).optional(),
   acquisitionMethod: z.string().optional(),
-  privacyProvision: z.url().optional(),
+  privacyProvision: z.array(eliSourceSchema).optional(),
   contentType: z.string().optional(),
 });
 
-const classConceptSchema = baseConceptSchema.extend({
-  type: z.string().optional(),
-  broaderConcept: z.array(z.object({ value: iriSchema.optional() })),
-  conceptTypeEnum: z.literal('TRIDA'),
-});
+const classConceptSchema = baseConceptSchema
+  .extend({
+    type: z.string().optional(),
+    broaderConcept: z.array(z.object({ value: iriSchema.optional() })),
+    conceptTypeEnum: z.literal('TRIDA'),
+  })
+  .refine(
+    (data) => {
+      if (data.isPublic === false) {
+        return data.privacyProvision && data.privacyProvision.length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Právní ustanovení o ochraně je povinné když je pojmu neveřejný',
+      path: ['privacyProvision'],
+    },
+  );
 
-const propertyConceptSchema = baseConceptSchema.extend({
-  dataType: z.string(),
-  domain: z.string(),
-  superProperty: z.array(z.object({ value: iriSchema.optional() })),
-  conceptTypeEnum: z.literal('VLASTNOST'),
-});
+const propertyConceptSchema = baseConceptSchema
+  .extend({
+    dataType: z.string(),
+    domain: z.string(),
+    superProperty: z.array(z.object({ value: iriSchema.optional() })),
+    conceptTypeEnum: z.literal('VLASTNOST'),
+  })
+  .refine(
+    (data) => {
+      if (data.isPublic === false) {
+        return data.privacyProvision && data.privacyProvision.length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Právní ustanovení o ochraně je povinné když je pojmu neveřejný',
+      path: ['privacyProvision'],
+    },
+  );
 
-const relationshipConceptSchema = baseConceptSchema.extend({
-  domain: z.string('Domain is required'),
-  range: z.string(),
-  superRelation: z.array(z.object({ value: iriSchema.optional() })),
-  conceptTypeEnum: z.literal('VZTAH'),
-});
+const relationshipConceptSchema = baseConceptSchema
+  .extend({
+    domain: z.string('Domain is required'),
+    range: z.string(),
+    superRelation: z.array(z.object({ value: iriSchema.optional() })),
+    conceptTypeEnum: z.literal('VZTAH'),
+  })
+  .refine(
+    (data) => {
+      if (data.isPublic === false) {
+        return data.privacyProvision && data.privacyProvision.length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Právní ustanovení o ochraně je povinné když je pojem neveřejný',
+      path: ['privacyProvision'],
+    },
+  );
 
 const baseCreateConceptSchema = z.discriminatedUnion('conceptTypeEnum', [
   classConceptSchema,

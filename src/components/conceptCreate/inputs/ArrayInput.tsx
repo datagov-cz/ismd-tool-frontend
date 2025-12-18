@@ -19,6 +19,7 @@ type ArrayInputName =
   | 'definingLegalSource'
   | 'relatedNonLegalSource'
   | 'relatedLegalSource'
+  | 'privacyProvision'
   | 'exactMatch';
 
 interface ArrayInputProps {
@@ -54,9 +55,10 @@ export const ArrayInput = ({
               <div className="flex gap-2 w-full">
                 <div className="flex flex-col w-full">
                   <GovFormInput {...register(`${name}.${index}.value`)} />
-                  {errors[name]?.[index]?.value && (
+                  {errors[name] && (
                     <span className="text-red-600 text-sm mt-1">
-                      {errors[name][index].value.message}
+                      {errors[name]?.root?.message ||
+                        errors[name][index]?.value?.message}
                     </span>
                   )}
                 </div>

@@ -79,7 +79,6 @@ export const CreateConceptSideBox = ({
   const {
     register,
     handleSubmit,
-    reset,
     control,
     setValue,
     formState: { errors, isSubmitting },
@@ -102,7 +101,6 @@ export const CreateConceptSideBox = ({
       toast(t('Success'), {
         type: 'success',
       });
-      reset(createDefaultValues(namespace, 'TRIDA'));
       setIsOpen(false);
     },
     onError: () => {

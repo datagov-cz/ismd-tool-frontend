@@ -14,7 +14,6 @@ type Props = {
 
 export const DecreeAccordion = ({ conceptDetail }: Props) => {
   const t = useTranslations('ConceptDetail.Decree');
-  if (conceptDetail.typ?.includes('Třída')) return null;
 
   return (
     <GovAccordionItem>

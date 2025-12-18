@@ -17,17 +17,19 @@ export const LanguageSwitcher = ({
     <div className="flex justify-between w-full gap-4">
       <p>{String(item[language])}</p>
       <div className="flex gap-0.5">
-        {Object.keys(item).map((item) => (
-          <GovButton
-            color="primary"
-            key={item}
-            type={item === language ? 'solid' : 'outlined'}
-            size="xs"
-            onGovClick={() => setLanguage(item)}
-          >
-            {item}
-          </GovButton>
-        ))}
+        {Object.keys(item)
+          .sort()
+          .map((item) => (
+            <GovButton
+              color="primary"
+              key={item}
+              type={item === language ? 'solid' : 'outlined'}
+              size="xs"
+              onGovClick={() => setLanguage(item)}
+            >
+              {item}
+            </GovButton>
+          ))}
       </div>
     </div>
   );
