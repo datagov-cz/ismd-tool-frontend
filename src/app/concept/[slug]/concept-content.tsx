@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ConceptDetailModel, useGetConceptDetail } from '@/api/generated';
 import { conceptDataFormatter } from '@/components/conceptCreate/conceptDataFormatter';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
+import { AddPropertyRelation } from '@/components/conceptDetail/AddPropertyRelation';
 import { ConceptDetailLink } from '@/components/conceptDetail/ConceptDetailLink';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ControlPanelConcept } from '@/components/conceptDetail/ControlPanelConcept';
@@ -16,7 +17,6 @@ import { RegistryAccordion } from '@/components/conceptDetail/RegistryAcordion';
 import { Section } from '@/components/conceptDetail/Section';
 import { SuperClassList } from '@/components/conceptDetail/SuperClassList';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
-import { Term } from '@/components/dictionaryDetail/Term';
 
 interface Props {
   slug: string;
@@ -140,12 +140,32 @@ const ConceptContent = ({ slug }: Props) => {
         )}
 
         {conceptMetadata.conceptType === 'TRIDA' && (
-          <Section title={t('Sections.SupersededClass')}>
-            <SuperClassList
-              items={conceptDetail['nadřazená-třída']}
-              pathname={pathname}
+          <>
+            <Section title={t('Sections.SupersededClass')}>
+              <SuperClassList
+                items={conceptDetail['nadřazená-třída']}
+                pathname={pathname}
+              />
+            </Section>
+
+            <AddPropertyRelation
+              concepts={conceptDetail.conceptProperties || []}
+              conceptIRI={conceptDetail.iri || ''}
+              type="VLASTNOST"
+              title={t('Sections.Properties')}
+              ontologyIRI={conceptMetadata.graphName || ''}
+              conceptSlug={conceptMetadata.slug || ''}
             />
-          </Section>
+
+            <AddPropertyRelation
+              concepts={conceptDetail.conceptRelationships || []}
+              conceptIRI={conceptDetail.iri || ''}
+              type="VZTAH"
+              title={t('Sections.Relations')}
+              ontologyIRI={conceptMetadata.graphName || ''}
+              conceptSlug={conceptMetadata.slug || ''}
+            />
+          </>
         )}
 
         {conceptMetadata.conceptType === 'VLASTNOST' && (
@@ -165,28 +185,6 @@ const ConceptContent = ({ slug }: Props) => {
             />
           </Section>
         )}
-
-        <Section title={t('Sections.Properties')}>
-          {conceptDetail.conceptProperties?.map((item) => (
-            <Term
-              key={item.slug}
-              slug={item.slug || ''}
-              tree={false}
-              data={{ název: { cs: item.name || '' } }}
-            />
-          ))}
-        </Section>
-
-        <Section title={t('Sections.Relations')}>
-          {conceptDetail.conceptRelationships?.map((item) => (
-            <Term
-              key={item.slug}
-              tree={false}
-              slug={item.slug}
-              data={{ název: { cs: item.name || '' } }}
-            />
-          ))}
-        </Section>
 
         <div className="w-full pt-10">
           <GovAccordion noBorder={false}>
@@ -216,6 +214,7 @@ const ConceptContent = ({ slug }: Props) => {
           defaultData={conceptDataFormatter(concept.data)}
           action="update"
           conceptId={conceptMetadata.id}
+          sideboxId="update"
         />
       )}
     </div>

@@ -24,9 +24,7 @@ export const ControlPanelConcept = ({
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
-  const setIsConceptBoxOpen = useCreateConceptBoxStore(
-    (state) => state.setIsOpen,
-  );
+  const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId); // Changed
 
   const handleCopyLink = async () => {
     try {
@@ -43,7 +41,7 @@ export const ControlPanelConcept = ({
       <ControlPanelButton
         iconName="gear"
         ariaLabel={t('GetLink')}
-        onClick={() => setIsConceptBoxOpen(true)}
+        onClick={() => setOpenBoxId('update')}
         className="mb-10"
       />
       <ControlPanelButton

@@ -38,6 +38,7 @@ interface CreateConceptProps {
   defaultData?: Partial<CreateConceptFormData>;
   action?: 'create' | 'update';
   conceptId?: number;
+  sideboxId: string;
 }
 
 const CONCEPT_TYPE_OPTIONS = [
@@ -52,10 +53,15 @@ export const CreateConceptSideBox = ({
   defaultData,
   action = 'create',
   conceptId,
+  sideboxId,
 }: CreateConceptProps) => {
   const t = useTranslations('CreateConcept');
 
-  const { isOpen, setIsOpen } = useCreateConceptBoxStore();
+  const isOpen = useCreateConceptBoxStore((state) => state.isOpen(sideboxId));
+  const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
+
+  const setIsOpen = (open: boolean) => setOpenBoxId(open ? sideboxId : null);
+
   const invalidator = useQueryInvalidator();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [typeConcept, setTypeConcept] = useState<string>(
@@ -95,9 +101,8 @@ export const CreateConceptSideBox = ({
 
   const mutationOptions = {
     onSuccess: async () => {
-      await (action === 'create'
-        ? invalidator.invalidateOntology(slug)
-        : invalidator.invalidateConcept(slug));
+      await invalidator.invalidateOntology(slug);
+      await invalidator.invalidateConcept(slug);
       toast(t('Success'), {
         type: 'success',
       });

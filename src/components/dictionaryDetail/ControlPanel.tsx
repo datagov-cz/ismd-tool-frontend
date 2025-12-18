@@ -31,9 +31,8 @@ export const ControlPanel = ({
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
-  const setIsConceptBoxOpen = useCreateConceptBoxStore(
-    (state) => state.setIsOpen,
-  );
+  const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
+
   const setIsEditBoxOpen = useEditOntologyBoxStore((state) => state.setIsOpen);
 
   const handleCopyLink = async () => {
@@ -90,7 +89,7 @@ export const ControlPanel = ({
         iconName="plus"
         ariaLabel={t('Add')}
         className="mt-12"
-        onClick={() => setIsConceptBoxOpen(true)}
+        onClick={() => setOpenBoxId('create')}
       />
       <DeleteDialog
         open={openDelete}

@@ -155,6 +155,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
                   ontologyDetail.iri || ontologyMetadata.graphName || ''
                 }
                 action="create"
+                sideboxId="create"
               />
             )}
             {ontologyMetadata.id && (
