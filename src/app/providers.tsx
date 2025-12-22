@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
@@ -22,6 +22,17 @@ export default function Providers({
   session: Session | null;
 }) {
   const queryClient = getQueryClient();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((_registration) => {})
+        .catch((error) => {
+          console.error('SW Registration failed:', error);
+        });
+    }
+  }, []);
 
   return (
     <ThemeProvider>

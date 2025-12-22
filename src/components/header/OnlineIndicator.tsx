@@ -44,12 +44,12 @@ export const OnlineIndicator = () => {
           className={`${isOnline ? 'text-green' : 'text-gray'} transition-colors duration-150`}
         />
         <div
-          className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[1px] rotate-45 dark:bg-white bg-dark-border h-full transition-opacity duration-300 ${isOnline ? 'opacity-0' : 'opacity-100'}`}
+          className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-px rotate-45 dark:bg-white bg-dark-border h-full transition-opacity duration-300 ${isOnline ? 'opacity-0' : 'opacity-100'}`}
         />
       </div>
       <span
         role="tooltip"
-        className={`pointer-events-none desktop:absolute desktop:left-1/2 desktop:-translate-x-1/2 desktop:-bottom-6 z-[2] w-max h-max max-w-xs rounded bg-blue text-white text-xs py-1 px-2 transition-opacity duration-150 ${
+        className={`pointer-events-none desktop:absolute desktop:left-1/2 desktop:-translate-x-1/2 desktop:-bottom-6 z-2 w-max h-max max-w-xs rounded bg-blue text-white text-xs py-1 px-2 transition-opacity duration-150 ${
           autoVisible
             ? 'opacity-100'
             : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100'

@@ -11,7 +11,7 @@ interface Props {
   placeholder: string;
   hasSearchIcon?: boolean;
   size?: 's' | 'm' | 'l';
-  onChange?: (value: string) => void;
+  onChange?: (_value: string) => void;
 }
 
 type GovInputEventType = CustomEvent<{ value: string }>;

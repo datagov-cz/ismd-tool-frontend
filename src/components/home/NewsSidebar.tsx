@@ -13,9 +13,20 @@ export function NewsSidebar() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
+    const cached = localStorage.getItem('cached-blogs');
+    if (cached) {
+      setBlogPosts(JSON.parse(cached));
+    }
+
     fetch('/api/blogs')
       .then((res) => res.json())
-      .then(setBlogPosts);
+      .then((data) => {
+        setBlogPosts(data);
+        localStorage.setItem('cached-blogs', JSON.stringify(data));
+      })
+      .catch(() => {
+        if (cached) setBlogPosts(JSON.parse(cached));
+      });
   }, []);
 
   return (

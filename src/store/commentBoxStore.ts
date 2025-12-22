@@ -5,7 +5,7 @@ type CommentBoxStoreType = {
 };
 
 type CommentBoxStoreActions = {
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (_isOpen: boolean) => void;
 };
 
 const initialState: CommentBoxStoreType = {
