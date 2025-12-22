@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { Session } from 'next-auth';
-import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
+import { useKeycloakLogout } from '@/hooks/useKeycloakLogout';
 import { useHintboxStore } from '@/store/hintboxStore';
 import { Button } from '../shared/Button';
 import { ButtonLink } from '../shared/ButtonLink';
@@ -20,6 +20,7 @@ export const NavItems = ({ session }: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
+  const logout = useKeycloakLogout();
 
   if (!session) {
     return (
@@ -157,7 +158,7 @@ export const NavItems = ({ session }: Props) => {
           </li>
         </ul>
       </GovDropdown>
-      <Button onClick={() => signOut()}>{t('NavLogged.Logout')}</Button>
+      <Button onClick={logout}>{t('NavLogged.Logout')}</Button>
     </>
   );
 };
