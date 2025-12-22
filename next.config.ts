@@ -1,12 +1,9 @@
 import createMDX from '@next/mdx';
+import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
-  publicRuntimeConfig: {
-    backendUrl: process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:8080',
-  },
   experimental: {
     mdxRs: true,
   },
