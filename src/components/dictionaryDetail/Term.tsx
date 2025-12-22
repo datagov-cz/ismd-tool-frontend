@@ -40,7 +40,7 @@ export const Term = ({ data, subterms }: TermProps) => {
       <div className="pl-6 pt-2">
         {subterms &&
           subterms.map((item, index) => (
-            <Term key={data.iri || index} data={item} />
+            <Term key={`${item.iri}-${index}`} data={item} />
           ))}
       </div>
     </div>

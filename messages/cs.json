@@ -98,7 +98,8 @@
   "DictionaryDetail": {
     "CreateConcept": {
       "Title": "Nový pojem",
-      "Save": "Uložit"
+      "Save": "Uložit",
+      "SendButtonAria": "Uložit nový pojem"
     },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
