@@ -42,3 +42,9 @@ export type ConceptType = {
   isPublic: string;
   broaderConcept: string;
 };
+
+export type SearchMatchType = {
+  path: string;
+  name: string;
+  snippet?: string;
+};

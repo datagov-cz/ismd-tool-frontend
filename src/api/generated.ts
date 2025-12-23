@@ -33,7 +33,6 @@ export interface CommentModel {
 export type ConceptMetadataModelConceptType =
   (typeof ConceptMetadataModelConceptType)[keyof typeof ConceptMetadataModelConceptType];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ConceptMetadataModelConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
@@ -89,7 +88,6 @@ export interface ValidationReport {
 export type ValidationResultSeverity =
   (typeof ValidationResultSeverity)[keyof typeof ValidationResultSeverity];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ValidationResultSeverity = {
   ERROR: 'ERROR',
   WARNING: 'WARNING',
@@ -221,7 +219,6 @@ export type ClassConceptModel = ConceptCreateModel & ClassConceptModelAllOf;
 export type ConceptCreateModelConceptTypeEnum =
   (typeof ConceptCreateModelConceptTypeEnum)[keyof typeof ConceptCreateModelConceptTypeEnum];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ConceptCreateModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
@@ -328,7 +325,6 @@ export type ClassConceptEditModel = ConceptEditModel &
 export type ConceptEditModelConceptTypeEnum =
   (typeof ConceptEditModelConceptTypeEnum)[keyof typeof ConceptEditModelConceptTypeEnum];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ConceptEditModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',

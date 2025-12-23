@@ -19,7 +19,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -27,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-i18next.config.js",
-    "orval.config.cjs"
+    "orval.config.cjs",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

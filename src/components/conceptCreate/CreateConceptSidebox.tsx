@@ -32,6 +32,8 @@ import { RelationshipConceptFields } from './RelationshipConceptFields';
 import { createDefaultValues } from './utils/createDefaultValues';
 import { transformFormData } from './utils/transformFormData';
 
+const STORAGE_KEY = 'concept-create-form';
+
 interface CreateConceptProps {
   namespace: string;
   slug: string;
@@ -68,9 +70,20 @@ export const CreateConceptSideBox = ({
     defaultData?.conceptTypeEnum || 'TRIDA',
   );
 
+  const getStoredData = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : {};
+    }
+    return {};
+  };
+
   const form = useForm<CreateConceptFormData>({
     resolver: zodResolver(createConceptSchema),
-    defaultValues: createDefaultValues(namespace, 'TRIDA'),
+    defaultValues: {
+      ...createDefaultValues(namespace, 'TRIDA'),
+      ...getStoredData(),
+    },
     values: defaultData
       ? ({
           ...createDefaultValues(
@@ -78,6 +91,7 @@ export const CreateConceptSideBox = ({
             defaultData.conceptTypeEnum || 'TRIDA',
           ),
           ...defaultData,
+          ...getStoredData(),
         } as CreateConceptFormData)
       : undefined,
   });
@@ -87,6 +101,7 @@ export const CreateConceptSideBox = ({
     handleSubmit,
     control,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = form;
 
@@ -101,6 +116,7 @@ export const CreateConceptSideBox = ({
 
   const mutationOptions = {
     onSuccess: async () => {
+      localStorage.removeItem(STORAGE_KEY);
       await invalidator.invalidateOntology(slug);
       await invalidator.invalidateConcept(slug);
       toast(t('Success'), {
@@ -112,6 +128,13 @@ export const CreateConceptSideBox = ({
       toast(t('Error'), { type: 'error' });
     },
   };
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getValues()));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, getValues]);
 
   const createMutation = useCreateConcept({ mutation: mutationOptions });
   const updateMutation = useEditConcept({ mutation: mutationOptions });

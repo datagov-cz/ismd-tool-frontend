@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 
 import { ThemeSwitch } from '../shared/ThemeSwitch';
 
-import { HintSidebox } from './HintSidebox';
+import { HintSidebox } from './hintSidebox/HintSidebox';
 import { NavItems } from './NavItems';
 
 interface Props {
@@ -37,7 +37,7 @@ export const Header = ({ session }: Props) => {
               <GovIcon
                 name="logo-lion"
                 slot="icon-start"
-                className="!size-10"
+                className="size-10!"
               />
               <span className="hidden desktop:inline-block">
                 {t('LogoTitle')}
@@ -75,19 +75,19 @@ export const Header = ({ session }: Props) => {
               <NavItems session={session} />
             </ul>
           </nav>
-          <ul className="flex gap-x-4 items-center">
+          <div className="flex gap-x-4 items-center">
             <ThemeSwitch />
             <GovButton
               size="m"
               type="outlined"
               aria-label={t('MenuButtonAria')}
               color="primary"
-              className="desktop:!hidden"
+              className="desktop:hidden!"
               onGovClick={handleToggleMenu}
             >
               <GovIcon slot="icon-start" name="list" />
             </GovButton>
-          </ul>
+          </div>
         </section>
       </header>
 
