@@ -11,7 +11,6 @@ import {
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { LanguageSwitcher } from '@/components/conceptDetail/LanguageSwitcher';
-import { Section } from '@/components/conceptDetail/Section';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
@@ -110,13 +109,18 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
                   </p>
                 </div>
               </GridContainer>
-              <Section title={t('Main.Sections.Description')}>
+              <GridContainer>
+                <p className="font-medium text-xl">
+                  {t('Main.Sections.Description')}
+                </p>
                 {ontologyDetail.popis ? (
-                  <LanguageSwitcher item={ontologyDetail.popis} />
+                  <div className="col-span-4">
+                    <LanguageSwitcher item={ontologyDetail.popis} />
+                  </div>
                 ) : (
                   <p className="col-span-4">{ontologyMetadata.popis}</p>
                 )}
-              </Section>
+              </GridContainer>
               <GridContainer>
                 <p className="font-medium text-xl">
                   {t('Main.Sections.Terms')}
