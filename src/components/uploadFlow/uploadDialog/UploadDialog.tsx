@@ -74,7 +74,6 @@ export const UploadDialog = ({
         }
         mutation.mutate(
           {
-            params: { userId: 'test' },
             data: {
               file: draft.file,
             },
@@ -129,9 +128,6 @@ export const UploadDialog = ({
     }
 
     mutation.mutate({
-      params: {
-        userId: 'test',
-      },
       data: {
         file: data.file,
       },
