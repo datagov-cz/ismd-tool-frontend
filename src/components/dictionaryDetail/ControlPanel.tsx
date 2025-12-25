@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 // import { ValidationReportDto } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
+import { useUserInfo } from '../contexts/UserProvider';
 
 import { ControlPanelButton } from './ControlPanelButton';
 import { DeleteDialog } from './DeleteDialog';
@@ -17,6 +18,7 @@ interface Props {
   isPublished: boolean;
   ontologyID: number;
   name: string;
+  ownerId?: string;
 }
 
 export const ControlPanel = ({
@@ -24,10 +26,15 @@ export const ControlPanel = ({
   isPublished,
   ontologyID,
   name,
+  ownerId,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+
+  const { userInfo } = useUserInfo();
+  const isUserAdmin = userInfo?.roles?.includes('admin');
+  const isUserOwner = ownerId && userInfo?.userId === ownerId;
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
   const setIsConceptBoxOpen = useCreateConceptBoxStore(
@@ -70,19 +77,22 @@ export const ControlPanel = ({
         ariaLabel={t('Download')}
         onClick={() => setOpenDownload(true)}
       />
-      {!isPublished && (
+      {/* TODO: ask about this logic. Most likely creator of the ontology should be able to update it. */}
+      {!isPublished && (isUserAdmin || isUserOwner) && (
         <ControlPanelButton
           iconName="trash"
           ariaLabel={t('Delete')}
           onClick={() => setOpenDelete(true)}
         />
       )}
-      <ControlPanelButton
-        iconName="plus"
-        ariaLabel={t('Add')}
-        className="mt-12"
-        onClick={() => setIsConceptBoxOpen(true)}
-      />
+      {(isUserAdmin || isUserOwner) && (
+        <ControlPanelButton
+          iconName="plus"
+          ariaLabel={t('Add')}
+          className="mt-12"
+          onClick={() => setIsConceptBoxOpen(true)}
+        />
+      )}
       <DeleteDialog
         open={openDelete}
         ontologyID={ontologyID}

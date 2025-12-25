@@ -95,6 +95,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               ontologyID={ontologyMetadata?.id || 0}
               isPublished={ontologyMetadata.isPublished || false}
               name={ontologyDetail.název?.cs || ''}
+              ownerId={ontologyMetadata.user?.userId}
               // validationReport={ontology}
             />
             <CommentSidebox
