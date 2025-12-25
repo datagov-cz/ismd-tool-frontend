@@ -8,6 +8,7 @@ import { SessionProvider } from 'next-auth/react';
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
 import { ThemeProvider } from '@/components/contexts/ThemeProvider';
+import { UserInfoProvider } from '@/components/contexts/UserProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 
 import { getQueryClient } from './get-query-client';
@@ -39,8 +40,10 @@ export default function Providers({
       <Environment variables={environmentVariables}>
         <QueryClientProvider client={queryClient}>
           <SessionProvider session={session}>
-            <ToastWrapper />
-            {children}
+            <UserInfoProvider>
+              <ToastWrapper />
+              {children}
+            </UserInfoProvider>
           </SessionProvider>
         </QueryClientProvider>
       </Environment>
