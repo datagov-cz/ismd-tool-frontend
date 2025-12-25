@@ -111,8 +111,8 @@ const baseConceptSchema = z.object({
       }),
     )
     .optional(),
-  inTezaurus: z.string().optional(),
-  isPublic: z.string().optional(),
+  inTezaurus: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
   isInPPDF: z.boolean().optional(),
   agendaCode: z
     .string()

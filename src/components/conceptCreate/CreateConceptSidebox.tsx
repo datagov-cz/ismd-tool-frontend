@@ -205,10 +205,8 @@ export const CreateConceptSideBox = ({
 
   const onSubmit = (data: CreateConceptFormData) => {
     postConceptMutation.mutate({
+      slug: slug,
       data: transformFormData(data),
-      params: {
-        userId: 'test',
-      },
     });
   };
 

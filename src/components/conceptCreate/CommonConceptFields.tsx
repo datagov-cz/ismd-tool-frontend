@@ -150,9 +150,13 @@ export const CommonConceptFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
-        <GovFormSelect {...register('inTezaurus')}>
-          <option value="ano" label={t('Options.Yes')} />
-          <option value="ne" label={t('Options.No')} />
+        <GovFormSelect
+          {...register('inTezaurus', {
+            setValueAs: (v) => v === 'true',
+          })}
+        >
+          <option value="true" label={t('Options.Yes')} />
+          <option value="false" label={t('Options.No')} />
         </GovFormSelect>
       </GovFormControl>
 
@@ -276,14 +280,18 @@ export const CommonConceptFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
-        <GovFormSelect {...register('isPublic')}>
-          <option value="ano" label={t('Options.Yes')} />
-          <option value="ne" label={t('Options.No')} />
+        <GovFormSelect
+          {...register('isPublic', {
+            setValueAs: (v) => v === 'true',
+          })}
+        >
+          <option value="true" label={t('Options.Yes')} />
+          <option value="false" label={t('Options.No')} />
         </GovFormSelect>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m" required={form.watch('isPublic') === 'ano'}>
+        <GovFormLabel size="m" required={form.watch('isPublic') === true}>
           {t('Labels.PrivacyProvision')}
         </GovFormLabel>
         <GovFormInput
