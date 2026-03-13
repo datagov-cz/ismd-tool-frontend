@@ -28,6 +28,7 @@ const loadEnvVariables = () => {
   // define any variables to be loaded on the node server to be passed to the client
   return {
     NEXT_PUBLIC_BE_URL: process.env.NEXT_PUBLIC_BE_URL ?? undefined,
+    NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH ?? undefined,
     environment: process.env.environment ?? 'development',
   };
 };
