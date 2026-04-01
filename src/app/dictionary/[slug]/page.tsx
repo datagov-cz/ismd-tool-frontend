@@ -8,9 +8,7 @@ interface Props {
 
 const DictionaryDetail = async ({ params }: Props) => {
   const { slug } = await params;
-  // const session = await getServerSession(authOptions);
-  // TODO: use the session to obtain userId when available
-  return <DictionaryContent userId="test" slug={slug} />;
+  return <DictionaryContent slug={slug} />;
 };
 
 export default DictionaryDetail;
