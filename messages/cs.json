@@ -19,8 +19,7 @@
         "Online": "Připojeno",
         "Offline": "Odpojeno"
       },
-      "Link1": "Nastavení",
-      "Link2": "Nápověda",
+      "Link1": "Nápověda",
       "Dropdown": {
         "Label": "Zpětná vazba",
         "Link1": "Nahlásit chybu",
@@ -174,7 +173,12 @@
       "Title": "Otevřít slovník ze souboru",
       "FileInputLabel": "Vyberte soubor",
       "CancelButton": "Zrušit",
-      "SubmitButton": "Vytvořit"
+      "SubmitButton": "Vytvořit",
+      "OfflineUploadSuccess": "Slovník byl úspěšně vytvořen offline. Pro uložení do Národního katalogu dat se musíte obnovit vaše spojení.",
+      "OfflineUploadError": "Chyba při vytváření slovníku offline",
+      "SyncSuccess": "Slovník byl úspěšně vytvořen a synchronizován s Národním katalogem dat",
+      "SyncError": "Chyba při synchronizaci slovníku s Národním katalogem dat. Zkuste se znova přihlásit.",
+      "DuplicateIRIRemoved": "Duplicitní IRI soubory byly odstraněny z lokální databáze"
     },
     "FileUpload": {
       "Drag": "Přetáhnětě soubor nebo",
@@ -210,7 +214,9 @@
       "SubmitButton": "Vytvořit",
       "CreateNewDict": "Vytvořit nový slovník...",
       "CreateNewDictError": "Chyba při vytváření nového slovníku",
-      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen"
+      "CreateNewDictSyncError": "Chyba při syncrhonizaci slovníku, zkuste se znova přihlásit",
+      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
+      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení."
     },
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",

@@ -4,6 +4,7 @@ import { GovButton } from '@gov-design-system-ce/react';
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
+import { ButtonLink } from '../shared/ButtonLink';
 import { Searchbar } from '../shared/Searchbar';
 import { UploadFlow } from '../uploadFlow/UploadFlow';
 
@@ -19,7 +20,7 @@ export const MainControls = ({ session }: Props) => {
       {session && (
         <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-[780px]">
           <UploadFlow />
-          <GovButton
+          <ButtonLink
             type="solid"
             size="m"
             color="primary"
@@ -27,7 +28,7 @@ export const MainControls = ({ session }: Props) => {
             href="/dictionary/create"
           >
             {t('MainControls.CreateNewDict')}
-          </GovButton>
+          </ButtonLink>
         </div>
       )}
       {/* TODO: Replace with custom search: search is not triggering any event */}

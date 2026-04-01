@@ -33,6 +33,8 @@ import {
 import { PropertyCreateFields } from './PropertyConceptFields';
 import { RelationshipConceptFields } from './RelationshipConceptFields';
 
+const STORAGE_KEY = 'concept-create-form';
+
 interface CreateConceptProps {
   namespace: string;
   concepts?: ConceptDetailModel[];
@@ -99,9 +101,20 @@ export const CreateConceptSideBox = ({
   const invalidator = useQueryInvalidator();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const getStoredData = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : {};
+    }
+    return {};
+  };
+
   const form = useForm<CreateConceptFormData>({
     resolver: zodResolver(createConceptSchema),
-    defaultValues: createDefaultValues(namespace, 'TRIDA'),
+    defaultValues: {
+      ...createDefaultValues(namespace, 'TRIDA'),
+      ...getStoredData(),
+    },
   });
 
   const {
@@ -111,6 +124,7 @@ export const CreateConceptSideBox = ({
     control,
     watch,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = form;
 
@@ -125,10 +139,18 @@ export const CreateConceptSideBox = ({
     }
   }, [errors]);
 
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getValues()));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, getValues]);
+
   const postConceptMutation = useCreateConcept({
     mutation: {
       onSuccess: async (data) => {
         await invalidator.invalidateOntology(slug);
+        localStorage.removeItem(STORAGE_KEY);
         toast(data.message || 'Concept created successfully', {
           type: 'success',
         });

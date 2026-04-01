@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 
 export const getErrorMessage = (
   error: unknown,
-  t: (key: string) => string,
+  t: (_key: string) => string,
 ): string => {
   let message: string | undefined;
 

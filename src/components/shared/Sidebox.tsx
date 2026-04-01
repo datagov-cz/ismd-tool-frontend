@@ -9,7 +9,7 @@ import { useOutsideClick } from '@/hooks/useOutsideClick';
 interface Props {
   title?: string;
   isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+  setIsOpen: (_open: boolean) => void;
   closeAriaLabel?: string;
   children: ReactNode;
   size?: 's' | 'm' | 'l';

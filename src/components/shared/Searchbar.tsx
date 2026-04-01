@@ -11,18 +11,29 @@ interface Props {
   placeholder: string;
   hasSearchIcon?: boolean;
   size?: 's' | 'm' | 'l';
+  onChange?: (_value: string) => void;
 }
+
+type GovInputEventType = CustomEvent<{ value: string }>;
 
 export const Searchbar = ({
   placeholder,
   hasSearchIcon,
   size = 'm',
+  onChange,
 }: Props) => {
   return (
     <GovFormControl className="w-full">
-      <GovFormGroup onChange={() => console.log('asdad')}>
-        <GovFormSearch size={size} onChange={(e) => console.log(e.target)}>
-          <GovFormInput slot="input" placeholder={placeholder} size={size} />
+      <GovFormGroup>
+        <GovFormSearch size={size}>
+          <GovFormInput
+            slot="input"
+            placeholder={placeholder}
+            size={size}
+            onGovInput={(e: GovInputEventType) => {
+              onChange?.(e.detail.value ?? '');
+            }}
+          />
           <GovButton slot="button" className={hasSearchIcon ? '' : 'hidden'}>
             <GovIcon name="search" slot="icon-start" />
           </GovButton>
