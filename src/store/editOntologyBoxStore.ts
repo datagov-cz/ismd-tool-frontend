@@ -5,7 +5,7 @@ type EditOntologyBoxType = {
 };
 
 type EditOntologyBoxTypeActions = {
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (_isOpen: boolean) => void;
 };
 
 const initialState: EditOntologyBoxType = {
