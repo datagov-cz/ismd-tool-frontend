@@ -1,3 +1,4 @@
+import { LITERAL_URL_PREFIX, RESOURCE_URL_PREFIX } from '@/lib/constants';
 import { Term } from '../dictionaryDetail/Term';
 
 export const SuperClassList = ({
@@ -10,16 +11,14 @@ export const SuperClassList = ({
   if (!items || items.length === 0) return null;
 
   const filteredItems = items.filter(
-    (item) =>
-      item !== 'http://www.w3.org/2000/01/rdf-schema#Resource' &&
-      item !== 'http://www.w3.org/2000/01/rdf-schema#Literal',
+    (item) => item !== RESOURCE_URL_PREFIX && item !== LITERAL_URL_PREFIX,
   );
 
   return (
     <>
       {filteredItems.map((item, index) => (
         <Term
-          key={index}
+          key={item + index}
           slug={`${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`}
           tree={false}
           data={{

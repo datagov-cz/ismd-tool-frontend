@@ -5,10 +5,8 @@ type CreateConceptBoxStoreType = {
 };
 
 type CreateConceptBoxStoreActions = {
-  // eslint-disable-next-line no-unused-vars
-  setOpenBoxId: (id: string | null) => void;
-  // eslint-disable-next-line no-unused-vars
-  isOpen: (id: string) => boolean;
+  setOpenBoxId: (_id: string | null) => void;
+  isOpen: (_id: string) => boolean;
 };
 
 const initialState: CreateConceptBoxStoreType = {

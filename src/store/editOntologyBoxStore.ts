@@ -5,8 +5,7 @@ type EditOntologyBoxType = {
 };
 
 type EditOntologyBoxTypeActions = {
-  // eslint-disable-next-line no-unused-vars
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (_isOpen: boolean) => void;
 };
 
 const initialState: EditOntologyBoxType = {

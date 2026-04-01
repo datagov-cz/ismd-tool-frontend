@@ -2,13 +2,13 @@
 import { useState } from 'react';
 import { GovButton } from '@gov-design-system-ce/react';
 
-export const LanguageSwitcher = ({
-  item,
-}: {
+interface LanguageSwitcherProps {
   item: {
     [key: string]: unknown;
   };
-}) => {
+}
+
+export const LanguageSwitcher = ({ item }: LanguageSwitcherProps) => {
   const [language, setLanguage] = useState(
     Object.keys(item).includes('cs') ? 'cs' : Object.keys(item)[0],
   );

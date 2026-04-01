@@ -4,6 +4,7 @@ import {
   ConceptDetailModelPopis,
   GetConceptDto,
 } from '@/api/generated';
+import { RESOURCE_URL_PREFIX } from '@/lib/constants';
 
 import { CreateConceptFormData } from './createConceptSchema';
 import { getBaseUrl } from './utils/getBaseUrl';
@@ -102,9 +103,7 @@ export const conceptDataFormatter = (data: GetConceptDto): PartialConcept => {
 export const formatRelatedConcepts = (data: string[] | undefined) => {
   return data && data?.length > 0
     ? data
-        .filter(
-          (item) => item !== 'http://www.w3.org/2000/01/rdf-schema#Resource',
-        )
+        .filter((item) => item !== RESOURCE_URL_PREFIX)
         .map((item) => ({
           value: item,
         }))
@@ -113,8 +112,11 @@ export const formatRelatedConcepts = (data: string[] | undefined) => {
 
 export const formatSharingMethodsFormate = (item?: string) => {
   if (!item) return;
-  const lastPart = item.split('/položky/')[1].replace(/-/g, ' ');
-  return lastPart;
+
+  const parts = item.split('/položky/');
+  if (parts.length < 2) return;
+
+  return parts[1].replace(/-/g, ' ');
 };
 
 export const formatLanguageData = (

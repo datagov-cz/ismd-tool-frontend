@@ -185,34 +185,28 @@ export const CreateConceptSideBox = ({
 
             {typeConcept === 'TRIDA' && (
               <ClassCreateFields
-                {...{
-                  register,
-                  errors,
-                  control,
-                  form,
-                }}
+                register={register}
+                errors={errors}
+                control={control}
+                form={form}
               />
             )}
 
             {typeConcept === 'VLASTNOST' && (
               <PropertyCreateFields
-                {...{
-                  register,
-                  errors,
-                  control,
-                  form,
-                }}
+                register={register}
+                errors={errors}
+                control={control}
+                form={form}
               />
             )}
 
             {typeConcept === 'VZTAH' && (
               <RelationshipConceptFields
-                {...{
-                  register,
-                  errors,
-                  control,
-                  form,
-                }}
+                register={register}
+                errors={errors}
+                control={control}
+                form={form}
               />
             )}
 

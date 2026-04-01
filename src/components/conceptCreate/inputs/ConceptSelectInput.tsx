@@ -47,7 +47,7 @@ export const ConceptSelectInput = <T extends FieldValues>({
         <option value="" label=" " />
         {filteredConcepts?.map((item, index) => (
           <option
-            key={index}
+            key={index + item.conceptName}
             label={item.conceptName}
             value={item.conceptIri || ''}
           />

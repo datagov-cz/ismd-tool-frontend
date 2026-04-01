@@ -111,7 +111,10 @@ const ConceptContent = ({ slug }: Props) => {
               'název' in item ? (
                 <p key={index}>{item['název'].cs as string}</p>
               ) : 'url' in item ? (
-                <ConceptDetailLink key={index} href={String(item.url) || ''} />
+                <ConceptDetailLink
+                  key={String(item.url)}
+                  href={String(item.url) || ''}
+                />
               ) : (
                 ''
               ),
@@ -124,7 +127,10 @@ const ConceptContent = ({ slug }: Props) => {
               'název' in item ? (
                 <p key={index}>{item['název'].cs as string}</p>
               ) : 'url' in item ? (
-                <ConceptDetailLink key={index} href={String(item.url) || ''} />
+                <ConceptDetailLink
+                  key={String(item.url)}
+                  href={String(item.url) || ''}
+                />
               ) : (
                 ''
               ),
