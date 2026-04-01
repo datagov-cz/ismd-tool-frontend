@@ -7,25 +7,59 @@ on:
         description: 'Branch name (main or dev)'
         required: true
         type: string
+      version:
+        description: 'Version to use (from Git tag), leave empty to auto-detect'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0  # Fetch all history to get tags
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
-      - name: Get package.json version
-        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+      - name: Get version
+        run: |
+          # If version provided via input, use it
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+            echo "Using provided version: $VERSION"
+          else
+            # Get base version from latest Git tag (only tags matching v[0-9]*)
+            TAG=$(git describe --tags --abbrev=0 --match "v[0-9]*" 2>/dev/null || echo "")
+            if [ -z "$TAG" ]; then
+              BASE_VERSION="0.1.0"
+              echo "No tags found, using default version: $BASE_VERSION"
+            else
+              BASE_VERSION=$(echo "$TAG" | sed 's/^v//')
+              echo "Found tag: $TAG, using version: $BASE_VERSION"
+            fi
+            
+            if [ "${{ inputs.branch }}" = "main" ]; then
+              # For main, use tag version as-is
+              VERSION="$BASE_VERSION"
+              echo "Using version from Git tag: $VERSION"
+            else
+              # For dev, use tag version + SHA (tracks latest release)
+              VERSION="${BASE_VERSION}-$(git rev-parse --short HEAD)"
+              echo "Using dev version: $VERSION (based on latest tag $BASE_VERSION)"
+            fi
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Final version: $VERSION"
       
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with: 
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -38,8 +72,8 @@ jobs:
             IMAGE_TAG=ghcr.io/${REPO_LOWER}:${VERSION}
             LATEST_TAG=ghcr.io/${REPO_LOWER}:latest
           else
-            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-            IMAGE_TAG=ghcr.io/${REPO_LOWER}-${{ inputs.branch }}:${VERSION}-${SHORT_SHA}
+            # For dev, VERSION already includes SHA (e.g., 0.1.0-abc1234)
+            IMAGE_TAG=ghcr.io/${REPO_LOWER}-${{ inputs.branch }}:${VERSION}
             LATEST_TAG=ghcr.io/${REPO_LOWER}-${{ inputs.branch }}:latest
           fi
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV

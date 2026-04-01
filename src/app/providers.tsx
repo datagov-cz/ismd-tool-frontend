@@ -9,6 +9,7 @@ import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
 import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
+import { normalizeBasePath } from '@/lib/basePath';
 
 import { getQueryClient } from './get-query-client';
 
@@ -22,15 +23,17 @@ export default function Providers({
   session: Session | null;
 }) {
   const queryClient = getQueryClient();
+  const normalizedBasePath = normalizeBasePath(
+    environmentVariables.NEXT_PUBLIC_BASE_PATH,
+  );
+  const nextAuthBasePath = `${normalizedBasePath}/api/auth`;
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((_registration) => {})
-        .catch((error) => {
-          console.error('SW Registration failed:', error);
-        });
+        .then(() => {})
+        .catch(() => {});
     }
   }, []);
 
@@ -38,7 +41,7 @@ export default function Providers({
     <ThemeProvider>
       <Environment variables={environmentVariables}>
         <QueryClientProvider client={queryClient}>
-          <SessionProvider session={session}>
+          <SessionProvider session={session} basePath={nextAuthBasePath}>
             <ToastWrapper />
             {children}
           </SessionProvider>
