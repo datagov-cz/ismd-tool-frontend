@@ -13,7 +13,8 @@
     "copy:icons": "copyfiles --flat ./node_modules/@gov-design-system-ce/icons/lib/components/* ./public/assets/icons/components && copyfiles --flat ./node_modules/@gov-design-system-ce/icons/lib/complex/* ./public/assets/icons/components",
     "copy:fonts": "copyfiles --flat ./node_modules/@gov-design-system-ce/fonts/lib/* ./src/fonts",
     "generate:api": "orval --config ./orval.config.cjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@gov-design-system-ce/react": "^2.4.2",

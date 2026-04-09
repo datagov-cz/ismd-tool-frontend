@@ -76,7 +76,7 @@ export const CreateForm = () => {
         };
 
         mutate(
-          { params: { userId: 'test' }, data: payload },
+          { data: payload },
           {
             onSuccess: async () => {
               await db.ontologyDrafts.delete(draft.id!);
@@ -127,7 +127,7 @@ export const CreateForm = () => {
     };
 
     mutate(
-      { params: { userId: 'test' }, data: payload },
+      { data: payload },
       {
         onSuccess: (response) => {
           localStorage.removeItem(STORAGE_KEY);

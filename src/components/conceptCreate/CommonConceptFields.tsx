@@ -148,12 +148,15 @@ export const CommonConceptFields = ({
         errors={errors}
       />
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
-        <GovFormSelect {...register('inTezaurus')}>
-          <option value="ano" label={t('Options.Yes')} />
-          <option value="ne" label={t('Options.No')} />
-        </GovFormSelect>
+      <GovFormControl className="flex flex-row">
+        <div className="flex gap-2 items-center">
+          <input
+            type="checkbox"
+            {...register('inTezaurus')}
+            className="w-fit"
+          />
+          <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
+        </div>
       </GovFormControl>
 
       <GovFormControl>
@@ -274,16 +277,15 @@ export const CommonConceptFields = ({
         )}
       </GovFormControl>
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
-        <GovFormSelect {...register('isPublic')}>
-          <option value="ano" label={t('Options.Yes')} />
-          <option value="ne" label={t('Options.No')} />
-        </GovFormSelect>
+      <GovFormControl className="flex flex-row">
+        <div className="flex gap-2 items-center">
+          <input type="checkbox" {...register('isPublic')} className="w-fit" />
+          <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
+        </div>
       </GovFormControl>
 
       <GovFormControl>
-        <GovFormLabel size="m" required={form.watch('isPublic') === 'ano'}>
+        <GovFormLabel size="m" required={form.watch('isPublic') === true}>
           {t('Labels.PrivacyProvision')}
         </GovFormLabel>
         <GovFormInput
