@@ -16,12 +16,12 @@ export const ThemeSwitch = () => {
       aria-label={t(
         isDark ? 'ThemeSwitchAria.ToLight' : 'ThemeSwitchAria.ToDark',
       )}
-      className="relative w-10 h-6 rounded-3xl transition-colors duration-300 outline-0 focus-visible:outline-1 cursor-pointer"
-      style={{ backgroundColor: isDark ? '#2362a2' : '#b0b0b0' }}
+      className="relative w-8 h-4.5 rounded-3xl transition-colors duration-300 outline-0 focus-visible:outline-1 cursor-pointer"
+      style={{ backgroundColor: isDark ? '#2362a2' : '#E5EEF9' }}
     >
       <div
-        className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-300 flex items-center justify-center ${
-          isDark ? 'translate-x-4' : 'translate-x-0.5'
+        className={`absolute top-px w-4 h-4 rounded-full bg-white transition-transform duration-300 flex shadow-[0px_2px_4px_0px_rgba(0,0,0,0.35)] items-center justify-center ${
+          isDark ? 'translate-x-4' : 'translate-x-px'
         }`}
       >
         <GovIcon name={isDark ? 'moon' : 'sun'} className="!size-3" />

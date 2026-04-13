@@ -51,6 +51,7 @@ export async function GET(req: Request) {
         matches.push({ path: rel, name, snippet });
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Error reading file for search:', f, e);
     }
   }

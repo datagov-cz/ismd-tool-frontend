@@ -35,6 +35,7 @@ export const DownloadDialog = ({
 
       toast.success(t('Success', { format }));
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Download failed:', error);
       toast.error(t('Error'));
     } finally {

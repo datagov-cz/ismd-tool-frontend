@@ -27,7 +27,7 @@ export const NavItems = ({ session }: Props) => {
         <GovButton
           color="primary"
           size="m"
-          type="base"
+          type="solid"
           onGovClick={() => setIsHintboxOpen(true)}
         >
           {t('Nav.Link1')}
@@ -40,7 +40,7 @@ export const NavItems = ({ session }: Props) => {
           <GovButton
             color="primary"
             size="m"
-            type="base"
+            type="solid"
             className="no-underline"
           >
             {t('Nav.Dropdown.Label')}
@@ -63,7 +63,7 @@ export const NavItems = ({ session }: Props) => {
                   type="components"
                   name="bug"
                   slot="icon-start"
-                  size="l"
+                  size="s"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
                 {t('Nav.Dropdown.Link1')}
@@ -79,7 +79,7 @@ export const NavItems = ({ session }: Props) => {
                   type="components"
                   name="flag"
                   slot="icon-start"
-                  size="l"
+                  size="s"
                   className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
                 />
                 {t('Nav.Dropdown.Link2')}

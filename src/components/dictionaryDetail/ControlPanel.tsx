@@ -41,6 +41,7 @@ export const ControlPanel = ({
       await navigator.clipboard.writeText(window.location.href);
       toast(t('LinkCopied'), { type: 'success' });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to copy link:', error);
       toast(t('LinkCopyFailed'), { type: 'error' });
     }
