@@ -1,6 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 
-import { getGetOntologyDetailQueryKey } from '@/api/generated';
+import {
+  getGetOntologyDetailQueryKey,
+  getGetOntologyListQueryKey,
+} from '@/api/generated';
 
 export function useQueryInvalidator() {
   const queryClient = useQueryClient();
@@ -11,5 +14,9 @@ export function useQueryInvalidator() {
         queryKey: getGetOntologyDetailQueryKey(slug),
       });
     },
+    invalidateOntologyList: () =>
+      queryClient.invalidateQueries({
+        queryKey: getGetOntologyListQueryKey(),
+      }),
   };
 }

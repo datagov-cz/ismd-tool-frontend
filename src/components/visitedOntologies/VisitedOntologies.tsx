@@ -6,13 +6,15 @@ import { useTranslations } from 'next-intl';
 
 import {
   type OntologyMetadataModel,
+  useGetCurrentUser,
   useGetOntologyList,
 } from '@/api/generated';
 import { DraftDictionaryCard } from '../draftDictionaries/DraftDictionaryCard';
 
 export const VisitedOntologies = () => {
   const t = useTranslations('Home');
-  const user = { id: 'test' };
+  const { data } = useGetCurrentUser();
+  const user = data?.data;
 
   const [visitedSlugs, setVisitedSlugs] = useState<string[]>([]);
   const [isShowAll, setIsShowAll] = useState(false);
@@ -21,7 +23,8 @@ export const VisitedOntologies = () => {
   >([]);
 
   useEffect(() => {
-    const key = `dictionarySlugs_${user.id}`;
+    if (!user?.userId) return;
+    const key = `dictionarySlugs_${user?.userId}`;
     const stored = localStorage.getItem(key);
     if (stored) {
       const parsed = JSON.parse(stored);
