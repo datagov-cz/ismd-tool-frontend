@@ -5,12 +5,14 @@ import { useTranslations } from 'next-intl';
 
 import {
   ConceptDetailModel,
+  OntologyDetailModel,
   useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
+import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
 import { Term } from '@/components/dictionaryDetail/Term';
 
@@ -54,6 +56,24 @@ export const DictionaryContent = ({ slug }: Props) => {
         (item) =>
           item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
       );
+    };
+
+    const transformToArrayFormat = ({
+      data,
+    }: {
+      data: OntologyDetailModel;
+    }) => {
+      const nameModel = data.název?.cs;
+      const descriptionModel = data.popis
+        ? Object.entries(data.popis)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .filter(([_, value]) => value !== undefined && value !== '')
+            .map(([languageTag, description]) => ({
+              languageTag: languageTag,
+              name: description as string,
+            }))
+        : [{ name: '', languageTag: 'cs' }];
+      return { nameModel, descriptionModel };
     };
 
     if (ontologyDetail && ontologyMetadata) {
@@ -115,6 +135,13 @@ export const DictionaryContent = ({ slug }: Props) => {
                 slug={slug}
                 namespace={ontologyDetail.iri}
                 concepts={ontologyDetail.pojmy}
+              />
+            )}
+            {ontologyMetadata.id && (
+              <EditSideBox
+                ontologySlug={slug}
+                ontologyID={ontologyMetadata.id}
+                defaultValues={transformToArrayFormat({ data: ontologyDetail })}
               />
             )}
           </div>
