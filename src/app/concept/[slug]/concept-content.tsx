@@ -85,12 +85,9 @@ const ConceptContent = ({ slug }: Props) => {
         </Section>
 
         <Section title={'Ekvivalentni pojem'}>
-          {conceptDetail['ekvivalentní-pojem']?.map(
-            (item) =>
-              'id' in item && (
-                <ConceptDetailLink key={item.id} href={item.id || ''} />
-              ),
-          )}
+          {conceptDetail['ekvivalentní-pojem']?.map((item) => (
+            <ConceptDetailLink key={item} href={item || ''} />
+          ))}
         </Section>
 
         <Section title={t('Sections.Resource')}>

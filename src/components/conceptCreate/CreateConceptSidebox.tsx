@@ -60,6 +60,7 @@ export const CreateConceptSideBox = ({
   sideboxId,
 }: CreateConceptProps) => {
   const t = useTranslations('CreateConcept');
+  const tError = useTranslations('Errors');
 
   const isOpen = useCreateConceptBoxStore((state) => state.isOpen(sideboxId));
   const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
@@ -152,7 +153,7 @@ export const CreateConceptSideBox = ({
         setIsOpen(false);
       },
       onError: (error) => {
-        toast(getErrorMessage(error, ''), { type: 'error' });
+        toast(getErrorMessage(error, tError), { type: 'error' });
       },
     },
   });

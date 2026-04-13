@@ -87,13 +87,9 @@ export const conceptDataFormatter = (data: GetConceptDto): PartialConcept => {
           : '',
       superProperty: formatRelatedConcepts(detail['nadřazená-vlastnost']),
       superRelation: formatRelatedConcepts(detail['nadřazený-vztah']),
-      exactMatch: detail['ekvivalentní-pojem']?.map((item) =>
-        'id' in item && item.id !== null
-          ? {
-              value: item.id,
-            }
-          : {},
-      ),
+      exactMatch: detail['ekvivalentní-pojem']?.map((item) => {
+        return { value: item };
+      }),
     };
   }
 
