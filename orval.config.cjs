@@ -1,6 +1,6 @@
 module.exports = {
   api: {
-    input: 'http://localhost:8081/v3/api-docs',
+    input: 'http://localhost:8081/popisujeme/v3/api-docs',
     output: {
       target: './src/api/generated.ts',
       client: 'react-query',

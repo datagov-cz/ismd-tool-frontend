@@ -19,7 +19,6 @@ import { Sidebox } from '../shared/Sidebox';
 
 import { CommentItem } from './CommentItem';
 
-//TODO: add user
 interface CommentSideboxProps {
   ontologyIRI?: string;
   conceptIRI?: string;
@@ -77,9 +76,6 @@ export const CommentSidebox = ({
   const onSubmit = (data: CommentCreateModel) => {
     postCommentMutation.mutate({
       data: data,
-      params: {
-        userId: 'test',
-      },
     });
   };
 

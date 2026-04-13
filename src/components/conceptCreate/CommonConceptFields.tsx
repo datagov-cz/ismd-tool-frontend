@@ -156,9 +156,7 @@ export const CommonConceptFields = ({
             {...register('inTezaurus')}
             className="w-fit"
           />
-          <GovFormLabel size="m" className="w-fit mb-0!">
-            {t('Labels.InThesaurus')}
-          </GovFormLabel>
+          <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
         </div>
       </GovFormControl>
 
@@ -299,6 +297,21 @@ export const CommonConceptFields = ({
         label={t('Labels.PrivacyProvision')}
         errors={errors}
       />
+
+      <GovFormControl>
+        <GovFormLabel size="m" required={form.watch('isPublic') === true}>
+          {t('Labels.PrivacyProvision')}
+        </GovFormLabel>
+        <GovFormInput
+          {...register('privacyProvision')}
+          invalid={!!errors.privacyProvision}
+        />
+        {errors.privacyProvision && (
+          <span className="text-red-600 text-sm">
+            {errors.privacyProvision.message}
+          </span>
+        )}
+      </GovFormControl>
 
       <GovFormControl className="flex flex-row">
         <div className="flex gap-2 items-center">

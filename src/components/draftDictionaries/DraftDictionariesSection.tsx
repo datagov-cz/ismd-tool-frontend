@@ -4,15 +4,20 @@ import { useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import { useGetOntologyList } from '@/api/generated';
+import { useGetCurrentUser, useGetOntologyList } from '@/api/generated';
 
 import { DraftDictionaryCard } from './DraftDictionaryCard';
 
 export const DraftDictionariesSection = () => {
   const t = useTranslations('Home');
 
-  //TODO: add real user
-  const ontologies = useGetOntologyList({ userId: 'test' });
+  const { data } = useGetCurrentUser();
+  const user = data?.data;
+
+  const ontologies = useGetOntologyList(
+    { userId: user?.userId },
+    { query: { enabled: !!user?.userId } },
+  );
 
   const [isShowAll, setIsShowAll] = useState(false);
 

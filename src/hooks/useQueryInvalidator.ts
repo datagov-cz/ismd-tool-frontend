@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   getGetConceptDetailQueryKey,
   getGetOntologyDetailQueryKey,
+  getGetOntologyListQueryKey,
 } from '@/api/generated';
 
 export function useQueryInvalidator() {
@@ -19,5 +20,9 @@ export function useQueryInvalidator() {
         queryKey: getGetConceptDetailQueryKey(encodeURIComponent(slug)),
       });
     },
+    invalidateOntologyList: () =>
+      queryClient.invalidateQueries({
+        queryKey: getGetOntologyListQueryKey(),
+      }),
   };
 }

@@ -7,6 +7,7 @@ import {
   ConceptDetailModel,
   OntologyDetailModel,
   OntologyMetadataModel,
+  useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
@@ -19,17 +20,18 @@ import { Term } from '@/components/dictionaryDetail/Term';
 
 interface Props {
   slug: string;
-  userId: string;
 }
 
-export const DictionaryContent = ({ slug, userId }: Props) => {
+export const DictionaryContent = ({ slug }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
   const ontology = useGetOntologyDetail(slug);
+  const { data } = useGetCurrentUser();
+  const user = data?.data;
 
   useEffect(() => {
-    if (slug) {
-      const storageKey = `dictionarySlugs_${userId}`;
+    if (slug && user?.userId) {
+      const storageKey = `dictionarySlugs_${user?.userId}`;
       const stored = localStorage.getItem(storageKey);
 
       let slugs: string[] = stored ? JSON.parse(stored) : [];
@@ -42,7 +44,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
 
       localStorage.setItem(storageKey, JSON.stringify(slugs));
     }
-  }, [slug, userId]);
+  }, [slug, user?.userId]);
 
   if (ontology.data) {
     const { ontologyMetadata, ontologyDetail, conceptMetadataModelList } =
@@ -146,13 +148,15 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               isPublished={ontologyMetadata.isPublished || false}
               name={ontologyDetail.název?.cs || ''}
             />
-            <CommentSidebox
-              ontologyIRI={ontologyDetail.iri}
-              comments={ontologyMetadata.comments}
-              refetch={() => ontology.refetch()}
-              userId={userId}
-            />
-            {(ontologyDetail.iri || ontologyMetadata.graphName) && (
+            {user?.userId && (
+              <CommentSidebox
+                ontologyIRI={ontologyDetail.iri}
+                comments={ontologyMetadata.comments}
+                refetch={() => ontology.refetch()}
+                userId={user.userId}
+              />
+            )}
+            {ontologyDetail.iri && (
               <CreateConceptSideBox
                 slug={slug}
                 namespace={

@@ -15,11 +15,13 @@ import { toast } from 'react-toastify';
 
 import {
   ConceptEditModelConceptTypeEnum,
+  CreateConceptBody,
   useCreateConcept,
   useEditConcept,
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { Sidebox } from '../shared/Sidebox';
 
 import { ClassCreateFields } from './ClassConceptFields';
@@ -30,7 +32,7 @@ import {
 import { PropertyCreateFields } from './PropertyConceptFields';
 import { RelationshipConceptFields } from './RelationshipConceptFields';
 import { createDefaultValues } from './utils/createDefaultValues';
-import { transformFormData } from './utils/transformFormData';
+import { transformLanguageData } from './utils/transformLanguageData';
 
 const STORAGE_KEY = 'concept-create-form';
 
@@ -136,19 +138,69 @@ export const CreateConceptSideBox = ({
     return () => subscription.unsubscribe();
   }, [form, getValues]);
 
-  const createMutation = useCreateConcept({ mutation: mutationOptions });
   const updateMutation = useEditConcept({ mutation: mutationOptions });
 
-  const onSubmit = (data: CreateConceptFormData) => {
-    const transformedData = transformFormData(data);
-    const params = { userId: 'test' };
+  const postConceptMutation = useCreateConcept({
+    mutation: {
+      onSuccess: async (data) => {
+        await invalidator.invalidateOntology(slug);
+        localStorage.removeItem(STORAGE_KEY);
+        toast(data.message || 'Concept created successfully', {
+          type: 'success',
+        });
+        form.reset(createDefaultValues(namespace, 'TRIDA'));
+        setIsOpen(false);
+      },
+      onError: (error) => {
+        toast(getErrorMessage(error, ''), { type: 'error' });
+      },
+    },
+  });
 
+  const transformFormData = (
+    data: CreateConceptFormData,
+  ): CreateConceptBody => {
+    return {
+      ...data,
+      nameModel: {
+        name: { cs: data.nameModel.name },
+      },
+      sharingMethod: data.sharingMethod?.map((item) => item.value || ''),
+      definitionModel: data.definitionModel?.length
+        ? { definition: transformLanguageData(data.definitionModel) }
+        : undefined,
+      descriptionModel: data.descriptionModel?.length
+        ? { description: transformLanguageData(data.descriptionModel) }
+        : undefined,
+      altNameModel: data.altNameModel?.length
+        ? { altName: transformLanguageData(data.altNameModel) }
+        : undefined,
+      conceptType: data.conceptTypeEnum,
+      definingLegalSource: data.definingLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      definingNonLegalSource: data.definingNonLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      relatedLegalSource: data.relatedLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      relatedNonLegalSource: data.relatedNonLegalSource?.map(
+        (item) => item.value || '',
+      ),
+      exactMatch: data.exactMatch?.map((item) => item.value || ''),
+    };
+  };
+
+  const onSubmit = (data: CreateConceptFormData) => {
     if (action === 'create') {
-      createMutation.mutate({ data: transformedData, params });
+      postConceptMutation.mutate({
+        data: transformFormData(data),
+        slug: slug,
+      });
     } else if (conceptId) {
       updateMutation.mutate({
-        data: { ...transformedData },
-        params,
+        data: { ...transformFormData(data) },
         conceptId: conceptId,
       });
     }
