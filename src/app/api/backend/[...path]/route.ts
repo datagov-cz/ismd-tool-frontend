@@ -1,0 +1,75 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+
+import { authOptions } from '@/lib/auth';
+
+const BE_URL = process.env.BE_URL;
+if (!BE_URL) {
+  throw new Error('BE_URL environment variable is required');
+}
+
+const HOP_BY_HOP = new Set([
+  'transfer-encoding',
+  'connection',
+  'keep-alive',
+  'proxy-authenticate',
+  'proxy-authorization',
+  'te',
+  'trailer',
+  'upgrade',
+]);
+
+async function handler(
+  req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
+  const { path } = await params;
+  const joined = path.join('/');
+
+  if (joined.includes('..') || /[/\\]/.test(path[0] ?? '')) {
+    return new NextResponse('Bad request', { status: 400 });
+  }
+
+  const targetUrl = `${BE_URL}/api/${joined}${req.nextUrl.search}`;
+
+  const session = await getServerSession(authOptions);
+
+  const headers = new Headers();
+  const contentType = req.headers.get('Content-Type');
+  if (contentType) {
+    headers.set('Content-Type', contentType);
+  }
+  const accept = req.headers.get('Accept');
+  if (accept) {
+    headers.set('Accept', accept);
+  }
+  if (session?.accessToken) {
+    headers.set('Authorization', `Bearer ${session.accessToken}`);
+  }
+
+  const response = await fetch(targetUrl, {
+    method: req.method,
+    headers,
+    body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+    // @ts-expect-error - duplex is required for streaming request bodies
+    duplex: 'half',
+  });
+
+  const responseHeaders = new Headers();
+  response.headers.forEach((value, key) => {
+    if (!HOP_BY_HOP.has(key.toLowerCase())) {
+      responseHeaders.set(key, value);
+    }
+  });
+
+  return new NextResponse(response.body, {
+    status: response.status,
+    headers: responseHeaders,
+  });
+}
+
+export const GET = handler;
+export const POST = handler;
+export const PUT = handler;
+export const PATCH = handler;
+export const DELETE = handler;

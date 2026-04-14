@@ -1,20 +1,12 @@
 import Axios, { AxiosRequestConfig } from 'axios';
-import { getSession } from 'next-auth/react';
 
 export const AXIOS_INSTANCE = Axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BE_URL,
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/api/backend`,
   withCredentials: false,
 });
 
-AXIOS_INSTANCE.interceptors.request.use(async (config) => {
-  if (typeof window !== 'undefined') {
-    const session = await getSession();
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`;
-    }
-  }
-  return config;
-});
+// Auth is handled server-side by the /api/backend proxy route.
+// No token attachment needed here.
 
 AXIOS_INSTANCE.interceptors.response.use(
   (response) => response,

@@ -28,10 +28,8 @@ WORKDIR /app
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
-# Default backend URL for Docker environments
-# Can be overridden at runtime with docker run -e NEXT_PUBLIC_BE_URL=...
-# (Works at runtime due to publicRuntimeConfig in next.config.mjs)
-ENV NEXT_PUBLIC_BE_URL=http://host.docker.internal:8080
+# Backend URL for proxying API requests (server-side only, safe to set at runtime)
+ENV BE_URL=http://host.docker.internal:8081/popisujeme
 
 # Copy package files
 COPY --from=build /app/package.json ./

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import { fetchApi } from '@/lib/basePath';
 import { BlogPost } from '@/lib/blogs';
 import { SidebarContainer } from '../shared/SidebarContainer';
 
@@ -18,7 +19,7 @@ export function NewsSidebar() {
       setBlogPosts(JSON.parse(cached));
     }
 
-    fetch('/api/blogs')
+    fetchApi('/api/blogs')
       .then((res) => res.json())
       .then((data) => {
         setBlogPosts(data);
