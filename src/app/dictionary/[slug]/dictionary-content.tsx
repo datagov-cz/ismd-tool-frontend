@@ -3,26 +3,33 @@
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  OntologyDetailModel,
+  useGetCurrentUser,
+  useGetOntologyDetail,
+} from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
+import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
 import { Term } from '@/components/dictionaryDetail/Term';
 
 interface Props {
   slug: string;
-  userId: string;
 }
 
-export const DictionaryContent = ({ slug, userId }: Props) => {
+export const DictionaryContent = ({ slug }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
   const ontology = useGetOntologyDetail(slug);
+  const { data } = useGetCurrentUser();
+  const user = data?.data;
 
   useEffect(() => {
-    if (slug) {
-      const storageKey = `dictionarySlugs_${userId}`;
+    if (slug && user?.userId) {
+      const storageKey = `dictionarySlugs_${user?.userId}`;
       const stored = localStorage.getItem(storageKey);
 
       let slugs: string[] = stored ? JSON.parse(stored) : [];
@@ -35,7 +42,7 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
 
       localStorage.setItem(storageKey, JSON.stringify(slugs));
     }
-  }, [slug, userId]);
+  }, [slug, user?.userId]);
 
   if (ontology.data) {
     const { ontologyMetadata, ontologyDetail } = ontology.data;
@@ -49,6 +56,24 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
         (item) =>
           item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
       );
+    };
+
+    const transformToArrayFormat = ({
+      data,
+    }: {
+      data: OntologyDetailModel;
+    }) => {
+      const nameModel = data.název?.cs;
+      const descriptionModel = data.popis
+        ? Object.entries(data.popis)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .filter(([_, value]) => value !== undefined && value !== '')
+            .map(([languageTag, description]) => ({
+              languageTag: languageTag,
+              name: description as string,
+            }))
+        : [{ name: '', languageTag: 'cs' }];
+      return { nameModel, descriptionModel };
     };
 
     if (ontologyDetail && ontologyMetadata) {
@@ -98,17 +123,26 @@ export const DictionaryContent = ({ slug, userId }: Props) => {
               ownerId={ontologyMetadata.user?.userId}
               // validationReport={ontology}
             />
-            <CommentSidebox
-              ontologyIRI={ontologyDetail.iri}
-              comments={ontologyMetadata.comments}
-              refetch={() => ontology.refetch()}
-              userId={userId}
-            />
+            {user?.userId && (
+              <CommentSidebox
+                ontologyIRI={ontologyDetail.iri}
+                comments={ontologyMetadata.comments}
+                refetch={() => ontology.refetch()}
+                userId={user.userId}
+              />
+            )}
             {ontologyDetail.iri && (
               <CreateConceptSideBox
                 slug={slug}
                 namespace={ontologyDetail.iri}
                 concepts={ontologyDetail.pojmy}
+              />
+            )}
+            {ontologyMetadata.id && (
+              <EditSideBox
+                ontologySlug={slug}
+                ontologyID={ontologyMetadata.id}
+                defaultValues={transformToArrayFormat({ data: ontologyDetail })}
               />
             )}
           </div>

@@ -101,6 +101,17 @@
       "Save": "Uložit",
       "SendButtonAria": "Uložit nový pojem"
     },
+    "EditOntology": {
+      "Title": "Upravit slovník",
+      "Save": "Uložit",
+      "Labels": {
+        "Name": "Název (Čeština)",
+        "Language": "Jazyk",
+        "Description": "Popis"
+      },
+      "SuccessMessage": "Slovník byl úspěšně upraven",
+      "ErrorMessage": "Chyba při úpravě slovníku"
+    },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
       "DictTerms": "pojmy slovníku",

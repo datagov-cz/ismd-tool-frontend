@@ -12,6 +12,7 @@ import {
 } from '@/api/generated';
 import { ErrorText } from '@/components/shared/ErrorText';
 import { useIsOnline } from '@/hooks/useIsOnline';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { db, type UploadFromFileDraft } from '@/lib/db';
 import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
@@ -35,6 +36,8 @@ export const UploadDialog = ({
 
   const isOnline = useIsOnline();
 
+  const invalidator = useQueryInvalidator();
+
   const t = useTranslations('UploadOntology');
   const tError = useTranslations('Errors');
 
@@ -44,6 +47,7 @@ export const UploadDialog = ({
         if (data.data) {
           setSubmitError(undefined);
           setSuccess(data.data);
+          invalidator.invalidateOntologyList();
           setOpen(false);
         }
       },

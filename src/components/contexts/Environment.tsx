@@ -10,6 +10,7 @@ import { AXIOS_INSTANCE } from '@/axios-instance';
 
 export type EnvironmentVariables = {
   NEXT_PUBLIC_BE_URL?: string;
+  NEXT_PUBLIC_BASE_PATH?: string;
   environment: string;
 };
 

@@ -19,7 +19,6 @@ import { Sidebox } from '../shared/Sidebox';
 
 import { CommentItem } from './CommentItem';
 
-//TODO: add user
 interface CommentSideboxProps {
   ontologyIRI?: string;
   conceptIRI?: string;

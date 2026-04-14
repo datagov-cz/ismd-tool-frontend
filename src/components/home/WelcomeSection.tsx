@@ -4,8 +4,14 @@ import { GovButton } from '@gov-design-system-ce/react';
 import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
+import { useEnvironment } from '@/components/contexts/Environment';
+import { normalizeBasePath } from '@/lib/basePath';
+
 export const WelcomeSection = () => {
   const t = useTranslations('Home');
+  const { variables } = useEnvironment();
+  const callbackBasePath = normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH);
+  const callbackUrl = callbackBasePath === '' ? '/' : callbackBasePath;
 
   return (
     <div className="max-w-[780px] mx-auto flex flex-col items-center gap-y-6">
@@ -17,7 +23,7 @@ export const WelcomeSection = () => {
         size="l"
         color="primary"
         slot="button"
-        onGovClick={() => signIn('keycloak', { prompt: 'login' })}
+        onGovClick={() => signIn('keycloak', { prompt: 'login', callbackUrl })}
       >
         {t('LoginButton')}
       </GovButton>

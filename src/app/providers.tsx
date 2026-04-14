@@ -28,10 +28,8 @@ export default function Providers({
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((_registration) => {})
-        .catch((error) => {
-          console.error('SW Registration failed:', error);
-        });
+        .then(() => {})
+        .catch(() => {});
     }
   }, []);
 

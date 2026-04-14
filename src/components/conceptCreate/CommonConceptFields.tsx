@@ -48,7 +48,7 @@ export const CommonConceptFields = ({
 
   return (
     <>
-      <TextWithLanguageInput
+      <TextWithLanguageInput<CreateConceptFormData>
         textInput={{ label: t('Labels.Name'), name: 'nameModel.name' }}
         languageInput={{
           label: t('Labels.Language'),
@@ -58,7 +58,7 @@ export const CommonConceptFields = ({
         errors={errors}
       />
 
-      <ArrayInputLanguage
+      <ArrayInputLanguage<CreateConceptFormData>
         name="altNameModel"
         register={register}
         errors={errors}
@@ -96,7 +96,7 @@ export const CommonConceptFields = ({
         <GovFormInput {...register('identifier')} disabled />
       </GovFormControl>
 
-      <ArrayInputLanguage
+      <ArrayInputLanguage<CreateConceptFormData>
         name="descriptionModel"
         register={register}
         errors={errors}
@@ -104,7 +104,7 @@ export const CommonConceptFields = ({
         label={t('Labels.Description')}
       />
 
-      <ArrayInputLanguage
+      <ArrayInputLanguage<CreateConceptFormData>
         name="definitionModel"
         register={register}
         errors={errors}
@@ -148,16 +148,15 @@ export const CommonConceptFields = ({
         errors={errors}
       />
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
-        <GovFormSelect
-          {...register('inTezaurus', {
-            setValueAs: (v) => v === 'true',
-          })}
-        >
-          <option value="true" label={t('Options.Yes')} />
-          <option value="false" label={t('Options.No')} />
-        </GovFormSelect>
+      <GovFormControl className="flex flex-row">
+        <div className="flex gap-2 items-center">
+          <input
+            type="checkbox"
+            {...register('inTezaurus')}
+            className="w-fit"
+          />
+          <GovFormLabel size="m">{t('Labels.InThesaurus')}</GovFormLabel>
+        </div>
       </GovFormControl>
 
       <GovFormControl>
@@ -278,16 +277,11 @@ export const CommonConceptFields = ({
         )}
       </GovFormControl>
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
-        <GovFormSelect
-          {...register('isPublic', {
-            setValueAs: (v) => v === 'true',
-          })}
-        >
-          <option value="true" label={t('Options.Yes')} />
-          <option value="false" label={t('Options.No')} />
-        </GovFormSelect>
+      <GovFormControl className="flex flex-row">
+        <div className="flex gap-2 items-center">
+          <input type="checkbox" {...register('isPublic')} className="w-fit" />
+          <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
+        </div>
       </GovFormControl>
 
       <GovFormControl>
