@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/react';
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_BE_URL,
+  withCredentials: false,
 });
 
 AXIOS_INSTANCE.interceptors.request.use(async (config) => {
