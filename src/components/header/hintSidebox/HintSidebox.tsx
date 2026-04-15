@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 
 import { FileNode, SearchMatchType } from '@/lib/appTypes';
+import { fetchApi } from '@/lib/basePath';
 import { useHintboxStore } from '@/store/hintboxStore';
 import { Searchbar } from '../../shared/Searchbar';
 import { Sidebox } from '../../shared/Sidebox';
@@ -34,7 +35,7 @@ export const HintSidebox = () => {
       setTree(JSON.parse(cachedTree));
     }
 
-    fetch('/api/hint-tree')
+    fetchApi('/api/hint-tree')
       .then((res) => res.json())
       .then((data) => {
         setTree(data);
@@ -53,7 +54,7 @@ export const HintSidebox = () => {
 
     const id = setTimeout(async () => {
       try {
-        const res = await fetch(
+        const res = await fetchApi(
           `/api/hint-search?q=${encodeURIComponent(searchQuery)}`,
         );
         const data: { matches: SearchMatchType[] } = await res.json();
@@ -91,7 +92,7 @@ export const HintSidebox = () => {
       setFileContent(cachedContent);
     }
 
-    fetch(`/api/hint-file?filePath=${encodeURIComponent(path)}`)
+    fetchApi(`/api/hint-file?filePath=${encodeURIComponent(path)}`)
       .then((res) => res.json())
       .then((data) => {
         setFileContent(data.content);

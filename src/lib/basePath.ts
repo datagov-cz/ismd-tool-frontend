@@ -8,3 +8,8 @@ export const normalizeBasePath = (basePath?: string): string => {
     ? withLeadingSlash.slice(0, -1)
     : withLeadingSlash;
 };
+
+const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
+
+export const fetchApi = (path: string, init?: RequestInit): Promise<Response> =>
+  fetch(`${basePath}${path}`, init);
