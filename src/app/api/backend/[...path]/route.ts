@@ -30,7 +30,7 @@ async function handler(
     return new NextResponse('Bad request', { status: 400 });
   }
 
-  const targetUrl = `${BE_URL}/api/${joined}${req.nextUrl.search}`;
+  const targetUrl = `${BE_URL}/${joined}${req.nextUrl.search}`;
 
   const session = await getServerSession(authOptions);
 
