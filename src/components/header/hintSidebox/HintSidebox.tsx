@@ -5,9 +5,8 @@ import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 
-import { useEnvironment } from '@/components/contexts/Environment';
 import { FileNode, SearchMatchType } from '@/lib/appTypes';
-import { normalizeBasePath } from '@/lib/basePath';
+import { fetchApi } from '@/lib/basePath';
 import { useHintboxStore } from '@/store/hintboxStore';
 import { Searchbar } from '../../shared/Searchbar';
 import { Sidebox } from '../../shared/Sidebox';
@@ -30,16 +29,13 @@ export const HintSidebox = () => {
 
   const t = useTranslations('Header.Hintbox');
 
-  const { variables } = useEnvironment();
-  const callbackBasePath = normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH);
-
   useEffect(() => {
     const cachedTree = localStorage.getItem('cached-hint-tree');
     if (cachedTree) {
       setTree(JSON.parse(cachedTree));
     }
 
-    fetch(`${callbackBasePath}/api/hint-tree`)
+    fetchApi('/api/hint-tree')
       .then((res) => res.json())
       .then((data) => {
         setTree(data);
@@ -58,8 +54,8 @@ export const HintSidebox = () => {
 
     const id = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `${callbackBasePath}/api/hint-search?q=${encodeURIComponent(searchQuery)}`,
+        const res = await fetchApi(
+          `/api/hint-search?q=${encodeURIComponent(searchQuery)}`,
         );
         const data: { matches: SearchMatchType[] } = await res.json();
 
@@ -96,9 +92,7 @@ export const HintSidebox = () => {
       setFileContent(cachedContent);
     }
 
-    fetch(
-      `${callbackBasePath}/api/hint-file?filePath=${encodeURIComponent(path)}`,
-    )
+    fetchApi(`/api/hint-file?filePath=${encodeURIComponent(path)}`)
       .then((res) => res.json())
       .then((data) => {
         setFileContent(data.content);
