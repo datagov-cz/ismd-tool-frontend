@@ -103,9 +103,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -214,6 +214,7 @@ export type ClassConceptModelAllOf = {
   isPublic?: boolean;
   privacyProvisions?: string[];
   broaderConcept?: string[];
+  codeListDataset?: string;
 };
 
 export type ClassConceptModel = ConceptCreateModel & ClassConceptModelAllOf;
@@ -264,6 +265,7 @@ export type PropertyConceptModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
+  codeListDataset?: string;
 };
 
 export type PropertyConceptModel = ConceptCreateModel &
@@ -281,6 +283,7 @@ export type RelationshipConceptModelAllOf = {
   isInPPDF?: boolean;
   isPublic?: boolean;
   privacyProvisions?: string[];
+  codeListDataset?: string;
 };
 
 export type RelationshipConceptModel = ConceptCreateModel &
@@ -320,6 +323,7 @@ export type ClassConceptEditModelAllOf = {
   privacyProvisions?: string[];
   broaderConcept?: string[];
   isInPPDF?: boolean;
+  codeListDataset?: string;
 };
 
 export type ClassConceptEditModel = ConceptEditModel &
@@ -364,6 +368,7 @@ export type PropertyConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
+  codeListDataset?: string;
 };
 
 export type PropertyConceptEditModel = ConceptEditModel &
@@ -381,6 +386,7 @@ export type RelationshipConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
+  codeListDataset?: string;
 };
 
 export type RelationshipConceptEditModel = ConceptEditModel &

@@ -40,7 +40,7 @@ export function NewsSlider() {
   }, []);
 
   return (
-    <div className="py-21">
+    <div className="py-21 max-w-191.5">
       <h3 className="font-medium text-lg lg:text-xl mb-3">{t('News.Title')}</h3>
       <div className="space-y-4 lg:space-y-6">
         <Carousel

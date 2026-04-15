@@ -66,9 +66,9 @@
   },
   "Home": {
     "MainControls": {
-      "OpenDictFromFile": "Otevřít slovník ze souboru...",
+      "OpenDictFromFile": "Importovat ze souboru",
       "SearchPlaceholder": "Hledat pojmy a slovníky...",
-      "CreateNewDict": "Vytvořit nový slovník...",
+      "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
         "PublishedDictionaries": "Publikované slovníky",
@@ -86,7 +86,7 @@
       "Title": "Naposledy navštívené"
     },
     "DraftDictionariesSection": {
-      "Title": "Vaše rozpracované slovníky",
+      "Title": "Rozpracované slovníky",
       "ShowMore": "Zobrazit více rozpracovaných slovníků",
       "ShowLess": "Zobrazit méně rozpracovaných slovníků"
     },

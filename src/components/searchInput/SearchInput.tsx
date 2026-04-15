@@ -1,3 +1,5 @@
+'use client';
+
 import {
   GovFormGroup,
   GovFormInput,
@@ -7,6 +9,7 @@ import {
 import { SearchTypesPopover } from './SearchTypesPopover';
 
 export const SearchInput = () => {
+  // const [searchTypes, setSearchTypes] = useState<SearchType[]>([]);
   return (
     <div className="w-full max-w-150">
       <GovFormGroup className="relative">
@@ -28,3 +31,5 @@ export const SearchInput = () => {
     </div>
   );
 };
+
+// export const SearchPopoverResults = () => {};

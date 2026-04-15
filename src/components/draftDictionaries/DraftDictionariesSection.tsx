@@ -22,15 +22,23 @@ export const DraftDictionariesSection = () => {
   const [isShowAll, setIsShowAll] = useState(false);
 
   return (
-    <div className="space-y-5 pb-10">
-      <h2 className="font-medium text-xl">
+    <div className="space-y-5 pb-10 pt-4 w-full">
+      <h2 className="font-medium text-xl flex items-center gap-2">
+        <GovIcon
+          type="components"
+          color="secondary"
+          name="journals"
+          slot="icon-start"
+          size="m"
+          className="transition-transform duration-200"
+        />
         {t('DraftDictionariesSection.Title')}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {ontologies.data?.data
           ?.slice(0, isShowAll ? undefined : 3)
           .map(
-            ({ id, name, slug, popis }) =>
+            ({ id, name, slug, popis, concepts, updatedAt }) =>
               id &&
               name && (
                 <DraftDictionaryCard
@@ -38,6 +46,8 @@ export const DraftDictionariesSection = () => {
                   title={name}
                   link={`/dictionary/${slug}`}
                   text={popis || ''}
+                  concepts={concepts?.length ?? 0}
+                  modified={updatedAt ? new Date(updatedAt) : undefined}
                 />
               ),
           )}

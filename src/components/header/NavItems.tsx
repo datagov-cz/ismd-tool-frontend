@@ -5,10 +5,7 @@ import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
-import { Button } from '../shared/Button';
 import { ButtonLink } from '../shared/ButtonLink';
-
-import { OnlineIndicator } from './OnlineIndicator';
 
 interface Props {
   session: Session | null;
@@ -93,11 +90,11 @@ export const NavItems = ({ session }: Props) => {
 
   return (
     <>
-      <OnlineIndicator />
+      {/* <OnlineIndicator /> */}
       <GovButton
         color="primary"
         size="m"
-        type="base"
+        type="solid"
         onGovClick={() => setIsHintboxOpen(true)}
       >
         {t('NavLogged.Link1')}
@@ -110,7 +107,7 @@ export const NavItems = ({ session }: Props) => {
         <GovButton
           color="primary"
           size="m"
-          type="base"
+          type="solid"
           className="no-underline"
         >
           {t('NavLogged.Dropdown.Label')}
@@ -157,7 +154,9 @@ export const NavItems = ({ session }: Props) => {
           </li>
         </ul>
       </GovDropdown>
-      <Button onClick={() => signOut()}>{t('NavLogged.Logout')}</Button>
+      <GovButton type="solid" color="primary" onGovClick={() => signOut()}>
+        {t('NavLogged.Logout')}
+      </GovButton>
     </>
   );
 };

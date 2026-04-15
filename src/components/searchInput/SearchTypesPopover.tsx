@@ -1,8 +1,10 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import { GovButton, GovIcon, GovTooltip } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 
-type SearchType = 'Pojem' | 'Diagram' | 'Slovník' | 'Rozpracovaný';
+export type SearchType = 'Pojem' | 'Diagram' | 'Slovník' | 'Rozpracovaný';
 
 type SearchTypeConfig = {
   label: SearchType;

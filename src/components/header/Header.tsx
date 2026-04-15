@@ -66,7 +66,7 @@ export const Header = ({ session }: Props) => {
 
           <nav className="ml-auto w-full">
             <ul className="hidden gap-x-3 px-3 w-full flex-col desktop:flex-row flex-nowrap items-center justify-end desktop:flex">
-              {!isHomepage && <SearchInput />}
+              {(!isHomepage || session) && <SearchInput />}
               {!isHomepage && !session && (
                 <GovButton
                   type="solid"
