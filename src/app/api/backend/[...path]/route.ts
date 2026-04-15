@@ -3,11 +3,6 @@ import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/lib/auth';
 
-const BE_URL = process.env.BE_URL;
-if (!BE_URL) {
-  throw new Error('BE_URL environment variable is required');
-}
-
 const HOP_BY_HOP = new Set([
   'transfer-encoding',
   'connection',
@@ -28,6 +23,11 @@ async function handler(
 
   if (joined.includes('..') || /[/\\]/.test(path[0] ?? '')) {
     return new NextResponse('Bad request', { status: 400 });
+  }
+
+  const BE_URL = process.env.BE_URL;
+  if (!BE_URL) {
+    return new NextResponse('BE_URL not configured', { status: 500 });
   }
 
   const targetUrl = `${BE_URL}/${joined}${req.nextUrl.search}`;
