@@ -16,7 +16,7 @@ export const MainControls = () => {
           size="m"
           color="secondary"
           slot="button"
-          href="/dictionary/create"
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
         >
           <GovIcon
             type="components"

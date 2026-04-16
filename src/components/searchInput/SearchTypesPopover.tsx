@@ -1,13 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { GovButton, GovIcon, GovTooltip } from '@gov-design-system-ce/react';
+import { useState } from 'react';
+import {
+  GovButton,
+  GovDropdown,
+  GovIcon,
+  GovTooltip,
+} from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 export type SearchType = 'Pojem' | 'Diagram' | 'Slovník' | 'Rozpracovaný';
 
 type SearchTypeConfig = {
-  label: SearchType;
+  key: SearchType;
   icon: string;
   iconType: string;
   color: 'primary' | 'secondary' | 'success' | 'neutral';
@@ -15,25 +21,25 @@ type SearchTypeConfig = {
 
 const SEARCH_TYPES: SearchTypeConfig[] = [
   {
-    label: 'Pojem',
+    key: 'Pojem',
     icon: 'card-heading',
     iconType: 'components',
     color: 'primary',
   },
   {
-    label: 'Diagram',
+    key: 'Diagram',
     icon: 'diagram-3',
     iconType: 'components',
     color: 'neutral',
   },
   {
-    label: 'Slovník',
+    key: 'Slovník',
     icon: 'journal-text',
     iconType: 'components',
     color: 'success',
   },
   {
-    label: 'Rozpracovaný',
+    key: 'Rozpracovaný',
     icon: 'journals',
     iconType: 'components',
     color: 'secondary',
@@ -41,60 +47,31 @@ const SEARCH_TYPES: SearchTypeConfig[] = [
 ];
 
 export const SearchTypesPopover = () => {
+  const t = useTranslations('SearchTypes');
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<SearchType[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
 
   const toggleType = (type: SearchType) => {
     setSelected((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+      prev.includes(type) ? prev.filter((s) => s !== type) : [...prev, type],
     );
   };
 
-  const label =
-    selected.length === 0 || selected.length === SEARCH_TYPES.length ? (
-      'Všechny typy'
-    ) : (
-      <span className="flex items-center gap-2">
-        Vybrané:
-        {SEARCH_TYPES.filter((i) => selected.includes(i.label)).map((t) => (
-          <GovTooltip
-            key={t.label}
-            position="top"
-            className="border-0! mt-1"
-            message={t.label}
-          >
-            <GovIcon type={t.iconType} name={t.icon} color={t.color} size="s" />
-          </GovTooltip>
-        ))}
-      </span>
-    );
+  const allOrNone =
+    selected.length === 0 || selected.length === SEARCH_TYPES.length;
 
   return (
-    <div
-      ref={containerRef}
-      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center z-1000"
+    <GovDropdown
+      id="search-type-dropdown"
+      position="left"
+      onChange={() => setOpen((prev) => !prev)}
+      className="absolute! top-1/2! right-0! -translate-y-1/2!"
     >
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        className="flex items-center gap-1 rounded px-2 py-1 text-xs text-gov-color-secondary-700 hover:bg-gov-color-secondary-100 transition-colors"
+      <GovButton
+        type="base"
+        color="neutral"
+        size="s"
+        className="no-underline hover:bg-transparent! font-normal!"
       >
         <GovIcon
           type="components"
@@ -103,31 +80,46 @@ export const SearchTypesPopover = () => {
           size="xs"
           className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         />
-        {label}
-      </button>
+        {allOrNone ? (
+          <span className="font-normal">{t('AllTypes')}</span>
+        ) : (
+          <span className="flex items-center gap-2 font-normal">
+            {t('Selected')}
+            {SEARCH_TYPES.filter((i) => selected.includes(i.key)).map(
+              (type) => (
+                <GovTooltip
+                  key={type.key}
+                  position="bottom"
+                  className="border-0! mt-1"
+                  message={t(`Types.${type.key}`)}
+                >
+                  <GovIcon
+                    type={type.iconType}
+                    name={type.icon}
+                    color={type.color}
+                    size="s"
+                  />
+                </GovTooltip>
+              ),
+            )}
+          </span>
+        )}
+      </GovButton>
 
-      {open && (
-        <div
-          role="listbox"
-          aria-multiselectable="true"
-          aria-label="Typ vyhledávání"
-          className="absolute right-0 top-full mt-1 z-50 flex flex-col rounded-lg border border-dark-primary/10 bg-white shadow-lg min-w-max overflow-hidden"
-        >
-          {SEARCH_TYPES.map(({ label: type, icon, iconType, color }) => {
-            const isSelected = selected.includes(type);
-            return (
+      <ul slot="list" className="p-0!">
+        {SEARCH_TYPES.map(({ key, icon, iconType, color }) => {
+          const isSelected = selected.includes(key);
+          return (
+            <li key={key}>
               <GovButton
-                key={type}
                 type="base"
-                role="option"
-                aria-selected={isSelected}
-                onGovClick={() => toggleType(type)}
-                color="primary"
+                color="neutral"
+                expanded
+                onGovClick={() => toggleType(key)}
                 className={clsx(
-                  'w-full px-3 py-2 text-sm [&_button]:justify-start! [&_button]:text-black! rounded-none! ',
+                  '[&_button]:justify-start! [&_button]:text-black! rounded-none!',
                   isSelected && 'bg-blue-outlined-hover!',
                 )}
-                expanded
               >
                 <GovIcon
                   type={iconType}
@@ -136,12 +128,12 @@ export const SearchTypesPopover = () => {
                   size="s"
                   slot="icon-start"
                 />
-                <span className="font-normal">{type}</span>
+                <span className="font-normal">{t(`Types.${key}`)}</span>
               </GovButton>
-            );
-          })}
-        </div>
-      )}
-    </div>
+            </li>
+          );
+        })}
+      </ul>
+    </GovDropdown>
   );
 };

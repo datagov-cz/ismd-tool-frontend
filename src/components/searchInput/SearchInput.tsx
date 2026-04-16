@@ -5,18 +5,17 @@ import {
   GovFormInput,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { SearchTypesPopover } from './SearchTypesPopover';
 
 export const SearchInput = () => {
-  // const [searchTypes, setSearchTypes] = useState<SearchType[]>([]);
+  const t = useTranslations('Home.MainControls');
+
   return (
     <div className="w-full max-w-150">
       <GovFormGroup className="relative">
-        <GovFormInput
-          placeholder="Hledat veřejné pojmy nebo slovníky…"
-          size="l"
-        >
+        <GovFormInput placeholder={t('SearchPlaceholder')} size="l">
           <GovIcon
             type="components"
             color="neutral"
@@ -31,5 +30,3 @@ export const SearchInput = () => {
     </div>
   );
 };
-
-// export const SearchPopoverResults = () => {};

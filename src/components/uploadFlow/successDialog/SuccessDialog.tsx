@@ -49,7 +49,11 @@ export const SuccessDialog = ({
         >
           {t('SuccessDialog.CloseDialog')}
         </GovButton>
-        <GovButton type="solid" color="primary" href={`/dictionary/${slug}`}>
+        <GovButton
+          type="solid"
+          color="primary"
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}`}
+        >
           {t('SuccessDialog.ViewOntology')}
         </GovButton>
       </div>

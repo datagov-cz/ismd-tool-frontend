@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { Session } from 'next-auth';
@@ -5,7 +7,11 @@ import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
-import { ButtonLink } from '../shared/ButtonLink';
+import { ConditionalTooltip } from '../shared/ConditionalTooltip';
+
+import { NavDropdownItem, NavDropdownList } from './NavDropdownList';
+
+const GITHUB_BASE = 'https://github.com/datagov-cz/ismd-org/issues/new';
 
 interface Props {
   session: Session | null;
@@ -13,26 +19,31 @@ interface Props {
 
 export const NavItems = ({ session }: Props) => {
   const t = useTranslations('Header');
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isFeedbackDropdownOpen, setIsFeedbackDropdownOpen] = useState(false);
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
 
-  if (!session) {
-    return (
-      <>
-        <GovButton
-          color="primary"
-          size="m"
-          type="solid"
-          onGovClick={() => setIsHintboxOpen(true)}
-        >
-          {t('Nav.Link1')}
-        </GovButton>
+  const prefix = session ? 'NavLogged' : 'Nav';
+  const feedbackItems: NavDropdownItem[] = [
+    {
+      href: `${GITHUB_BASE}?template=bug_report.yml`,
+      icon: 'bug',
+      label: t(`${prefix}.Dropdown.Link1`),
+    },
+    {
+      href: `${GITHUB_BASE}?template=feature_request.yml`,
+      icon: 'flag',
+      label: t(`${prefix}.Dropdown.Link2`),
+    },
+  ];
+
+  return (
+    <>
+      {session && (
         <GovDropdown
-          id="nav-dropdown-guest"
+          id="nav-dropdown-user"
           position="left"
-          onChange={() => setIsDropdownOpen(!isDropdownOpen)}
+          onChange={() => setIsUserDropdownOpen((prev) => !prev)}
         >
           <GovButton
             color="primary"
@@ -40,123 +51,80 @@ export const NavItems = ({ session }: Props) => {
             type="solid"
             className="no-underline"
           >
-            {t('Nav.Dropdown.Label')}
             <GovIcon
               type="components"
-              name="chevron-down"
-              slot="icon-end"
-              className={`transition-transform duration-200 ${isDropdownOpen ? '-rotate-180' : ''}`}
+              name="person"
+              size="xl"
+              slot="icon-start"
+              className={`transition-transform duration-200 ${isUserDropdownOpen ? '-rotate-180' : ''}`}
             />
+            {session.user?.name}
           </GovButton>
-
-          <ul slot="list">
-            <li>
-              <ButtonLink
-                href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
-                target="_blank"
-                className="border-none justify-start"
-              >
-                <GovIcon
-                  type="components"
-                  name="bug"
-                  slot="icon-start"
-                  size="s"
-                  className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
-                />
-                {t('Nav.Dropdown.Link1')}
-              </ButtonLink>
-            </li>
-            <li>
-              <ButtonLink
-                href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
-                target="_blank"
-                className="border-none justify-start"
-              >
-                <GovIcon
-                  type="components"
-                  name="flag"
-                  slot="icon-start"
-                  size="s"
-                  className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
-                />
-                {t('Nav.Dropdown.Link2')}
-              </ButtonLink>
-            </li>
-          </ul>
+          <NavDropdownList
+            items={[
+              {
+                icon: 'gear',
+                label: t('NavLogged.Settings'),
+                onClick: () => {},
+              },
+              {
+                icon: 'upload',
+                label: t('NavLogged.Logout'),
+                onClick: () => signOut(),
+              },
+            ]}
+          />
         </GovDropdown>
-      </>
-    );
-  }
+      )}
 
-  return (
-    <>
-      {/* <OnlineIndicator /> */}
-      <GovButton
-        color="primary"
-        size="m"
-        type="solid"
-        onGovClick={() => setIsHintboxOpen(true)}
-      >
-        {t('NavLogged.Link1')}
-      </GovButton>
-      <GovDropdown
-        id="nav-dropdown-user"
-        position="left"
-        onChange={() => setIsDropdownOpen(!isDropdownOpen)}
+      <ConditionalTooltip
+        active={!!session}
+        message={t(`${prefix}.Link1`)}
+        key={t(`${prefix}.Link1`)}
       >
         <GovButton
           color="primary"
           size="m"
           type="solid"
-          className="no-underline"
+          onGovClick={() => setIsHintboxOpen(true)}
         >
-          {t('NavLogged.Dropdown.Label')}
           <GovIcon
             type="components"
-            name="chevron-down"
-            slot="icon-end"
-            className={`transition-transform duration-200 ${isDropdownOpen ? '-rotate-180' : ''}`}
+            name="question-square"
+            slot="icon-start"
+            size="m"
           />
+          {!session && t('Nav.Link1')}
         </GovButton>
+      </ConditionalTooltip>
 
-        <ul slot="list">
-          <li>
-            <ButtonLink
-              href="https://github.com/datagov-cz/ismd-org/issues/new?template=bug_report.yml"
-              target="_blank"
-              className="border-none justify-start"
-            >
-              {t('NavLogged.Dropdown.Link1')}
-              <GovIcon
-                type="components"
-                name="bug"
-                slot="icon-start"
-                size="l"
-                className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
-              />
-            </ButtonLink>
-          </li>
-          <li>
-            <ButtonLink
-              href="https://github.com/datagov-cz/ismd-org/issues/new?template=feature_request.yml"
-              target="_blank"
-              className="border-none justify-start"
-            >
-              {t('NavLogged.Dropdown.Link2')}
-              <GovIcon
-                type="components"
-                name="flag"
-                slot="icon-start"
-                size="l"
-                className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
-              />
-            </ButtonLink>
-          </li>
-        </ul>
+      <GovDropdown
+        id="nav-dropdown-feedback-user"
+        position="left"
+        onChange={() => setIsFeedbackDropdownOpen((prev) => !prev)}
+      >
+        <ConditionalTooltip
+          active={!!session}
+          message={t('Nav.Dropdown.Label')}
+        >
+          <GovButton
+            color="primary"
+            size="m"
+            type="solid"
+            className="no-underline"
+          >
+            <GovIcon
+              type="components"
+              name="chat-dots"
+              size="m"
+              slot="icon-start"
+              className={`transition-transform duration-200 ${isFeedbackDropdownOpen ? '-rotate-180' : ''}`}
+            />
+            {!session && t('Nav.Dropdown.Label')}
+          </GovButton>
+        </ConditionalTooltip>
+        <NavDropdownList items={feedbackItems} />
       </GovDropdown>
-      <GovButton type="solid" color="primary" onGovClick={() => signOut()}>
-        {t('NavLogged.Logout')}
-      </GovButton>
     </>
   );
 };

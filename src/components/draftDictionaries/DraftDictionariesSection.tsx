@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { useGetCurrentUser, useGetOntologyList } from '@/api/generated';
-
-import { DraftDictionaryCard } from './DraftDictionaryCard';
+import { CircularLoader } from '../shared/CircularLoader';
+import { DictionaryCard } from '../shared/DictionaryCard/DictionaryCard';
 
 export const DraftDictionariesSection = () => {
   const t = useTranslations('Home');
@@ -19,7 +18,7 @@ export const DraftDictionariesSection = () => {
     { query: { enabled: !!user?.userId } },
   );
 
-  const [isShowAll, setIsShowAll] = useState(false);
+  const isLoading = ontologies.isLoading || !user?.userId;
 
   return (
     <div className="space-y-5 pb-10 pt-4 w-full">
@@ -34,42 +33,45 @@ export const DraftDictionariesSection = () => {
         />
         {t('DraftDictionariesSection.Title')}
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {ontologies.data?.data
-          ?.slice(0, isShowAll ? undefined : 3)
-          .map(
-            ({ id, name, slug, popis, concepts, updatedAt }) =>
-              id &&
-              name && (
-                <DraftDictionaryCard
-                  key={id}
-                  title={name}
-                  link={`/dictionary/${slug}`}
-                  text={popis || ''}
-                  concepts={concepts?.length ?? 0}
-                  modified={updatedAt ? new Date(updatedAt) : undefined}
-                />
-              ),
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+        {isLoading ? (
+          <CircularLoader />
+        ) : (
+          ontologies.data?.data
+            ?.slice(0, 8)
+            .map(
+              ({ id, name, slug, popis, concepts, updatedAt }) =>
+                id &&
+                name && (
+                  <DictionaryCard
+                    key={id}
+                    title={name}
+                    link={`/dictionary/${slug}`}
+                    text={popis || ''}
+                    concepts={concepts?.length ?? 0}
+                    modified={updatedAt ? new Date(updatedAt) : undefined}
+                    id={id}
+                  />
+                ),
+            )
+        )}
+      </div>
+      <div className="w-full flex items-center justify-center">
+        {!isLoading &&
+          ontologies?.data?.data &&
+          ontologies.data.data.length > 1 && (
+            <GovButton
+              type="outlined"
+              color="primary"
+              className="flex items-center gap-3 mx-auto cursor-pointer text-blue-primary hover:underline"
+              href={'/dictionaries'}
+            >
+              {t('DraftDictionariesSection.ShowAll')} (
+              {ontologies.data.data.length})
+              <GovIcon name="arrow-right" slot="icon-end" />
+            </GovButton>
           )}
       </div>
-      {ontologies?.data?.data && ontologies.data.data.length > 3 && (
-        <button
-          type="button"
-          onClick={() => setIsShowAll(!isShowAll)}
-          className="flex items-center gap-3 ml-auto cursor-pointer text-blue-primary hover:underline"
-        >
-          {t(
-            isShowAll
-              ? 'DraftDictionariesSection.ShowLess'
-              : 'DraftDictionariesSection.ShowMore',
-          )}
-          <GovIcon
-            name="chevron-up"
-            slot="icon-end"
-            className={`${isShowAll ? '' : 'rotate-180'} transition-transform duration-200`}
-          />
-        </button>
-      )}
     </div>
   );
 };

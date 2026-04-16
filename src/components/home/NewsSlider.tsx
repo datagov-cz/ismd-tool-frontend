@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { normalizeBasePath } from '@/lib/basePath';
+import { fetchApi } from '@/lib/basePath';
 import { BlogPost } from '@/lib/blogs';
-import { useEnvironment } from '../contexts/Environment';
 import {
   Carousel,
   CarouselContent,
@@ -19,8 +18,6 @@ import { NewsArticle } from './NewsArticle';
 export function NewsSlider() {
   const t = useTranslations('Home');
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const { variables } = useEnvironment();
-  const callbackBasePath = normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH);
 
   useEffect(() => {
     const cached = localStorage.getItem('cached-blogs');
@@ -28,7 +25,7 @@ export function NewsSlider() {
       setBlogPosts(JSON.parse(cached));
     }
 
-    fetch(`${callbackBasePath}/api/blogs`)
+    fetchApi(`/api/blogs`)
       .then((res) => res.json())
       .then((data) => {
         setBlogPosts(data);

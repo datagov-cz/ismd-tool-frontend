@@ -15,6 +15,7 @@ import { SearchInput } from '../searchInput/SearchInput';
 import { ThemeSwitch } from '../shared/ThemeSwitch';
 
 import { HintSidebox } from './hintSidebox/HintSidebox';
+import { LoginButton } from './LoginButton';
 import { NavItems } from './NavItems';
 
 interface Props {
@@ -28,80 +29,73 @@ export const Header = ({ session }: Props) => {
   const pathname = usePathname();
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
   const { variables } = useEnvironment();
-  const callbackBasePath = normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH);
-  const callbackUrl = callbackBasePath === '' ? '/' : callbackBasePath;
+  const callbackUrl =
+    normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH) || '/';
 
   const isHomepage = pathname === '/';
+  const showFullHeader = !isHomepage || !!session;
 
-  const handleToggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const handleCloseMenu = () => setIsMenuOpen(false);
+  const handleLogin = () =>
+    signIn('keycloak', { prompt: 'login', callbackUrl });
 
   return (
     <>
       <header className="bg-footer-separator py-3 z-50 transition-colors duration-300">
         <section className="mx-auto max-w-full-hd px-5 flex justify-between items-center gap-x-4">
-          {(!isHomepage || session) && (
-            <>
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/"
-                  className="no-underline flex items-center text-white font-medium gap-4"
-                >
-                  <Image
-                    src={`${basePath}/assets/icon-pixel.svg`}
-                    width={36}
-                    height={48}
-                    alt="lion"
-                  />
-                  <span className="hidden desktop:inline-block text-xl">
-                    ISMD
-                  </span>
-                  <span className="inline-block desktop:hidden">
-                    {t('LogoTitleMobile')}
-                  </span>
-                </Link>
-              </div>
-            </>
+          {showFullHeader && (
+            <div className="flex items-center gap-4 flex-1">
+              <Link
+                href="/"
+                className="no-underline flex items-center text-white font-medium gap-4"
+              >
+                <Image
+                  src={`${basePath}/assets/icon-pixel.svg`}
+                  width={36}
+                  height={48}
+                  alt="lion"
+                />
+                <span className="hidden desktop:inline-block text-xl">
+                  ISMD
+                </span>
+                <span className="inline-block desktop:hidden">
+                  {t('LogoTitleMobile')}
+                </span>
+              </Link>
+            </div>
           )}
 
-          <nav className="ml-auto w-full">
-            <ul className="hidden gap-x-3 px-3 w-full flex-col desktop:flex-row flex-nowrap items-center justify-end desktop:flex">
-              {(!isHomepage || session) && <SearchInput />}
-              {!isHomepage && !session && (
-                <GovButton
-                  type="solid"
-                  color="secondary"
-                  className="mx-2"
-                  size="s"
-                  onGovClick={() =>
-                    signIn('keycloak', { prompt: 'login', callbackUrl })
-                  }
-                >
-                  <GovIcon
-                    type="components"
-                    name="box-arrow-in-left"
-                    slot="icon-end"
+          {showFullHeader && (
+            <div className="flex-2 2xl:flex-1 flex justify-center">
+              <SearchInput />
+            </div>
+          )}
+
+          <div className="flex flex-1 justify-end">
+            <nav>
+              <ul className="hidden gap-x-3 px-3 w-full flex-col desktop:flex-row flex-nowrap items-center justify-end desktop:flex">
+                {!isHomepage && !session && (
+                  <LoginButton
                     size="s"
-                    className={`transition-transform duration-200`}
+                    className="mx-2"
+                    onLogin={handleLogin}
                   />
-                  Přihlásit se přes CAAIS
-                </GovButton>
-              )}
-              <NavItems session={session} />
-            </ul>
-          </nav>
-          <div className="flex gap-x-4 items-center">
-            <ThemeSwitch />
-            <GovButton
-              size="m"
-              type="outlined"
-              aria-label={t('MenuButtonAria')}
-              color="primary"
-              className="desktop:hidden!"
-              onGovClick={handleToggleMenu}
-            >
-              <GovIcon slot="icon-start" name="list" />
-            </GovButton>
+                )}
+                <NavItems session={session} />
+              </ul>
+            </nav>
+            <div className="flex gap-x-4 items-center">
+              <ThemeSwitch />
+              <GovButton
+                size="m"
+                type="outlined"
+                aria-label={t('MenuButtonAria')}
+                color="primary"
+                className="desktop:hidden!"
+                onGovClick={() => setIsMenuOpen((prev) => !prev)}
+              >
+                <GovIcon slot="icon-start" name="list" />
+              </GovButton>
+            </div>
           </div>
         </section>
 
@@ -114,28 +108,14 @@ export const Header = ({ session }: Props) => {
                 height={80}
                 alt="lion"
               />
-              <h1 className="text-3xl">
-                ISMD – Informační systém pro modelování dat
-              </h1>
+              <h1 className="text-3xl">{t('LogoTitle')}</h1>
             </div>
             <div className="flex flex-col items-center justify-center gap-y-8 p-5">
-              <GovButton
-                type="solid"
-                color="secondary"
+              <LoginButton
                 size="l"
                 className="[&>button]:px-20!"
-                onGovClick={() =>
-                  signIn('keycloak', { prompt: 'login', callbackUrl })
-                }
-              >
-                <GovIcon
-                  type="components"
-                  name="box-arrow-in-left"
-                  slot="icon-end"
-                  className={`transition-transform duration-200`}
-                />
-                Přihlásit se přes CAAIS
-              </GovButton>
+                onLogin={handleLogin}
+              />
             </div>
           </div>
         )}
@@ -144,7 +124,7 @@ export const Header = ({ session }: Props) => {
       {isMenuOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-20"
-          onClick={handleCloseMenu}
+          onClick={() => setIsMenuOpen(false)}
         />
       )}
 
@@ -159,6 +139,7 @@ export const Header = ({ session }: Props) => {
           </ul>
         </nav>
       </aside>
+
       <HintSidebox />
     </>
   );

@@ -14,7 +14,6 @@ export const ButtonLink = ({
   href,
   type = 'base',
   size = 's',
-  color = 'primary',
   className,
   children,
   ...props
@@ -27,16 +26,10 @@ export const ButtonLink = ({
 
   const typeClasses = {
     solid:
-      'text-dark-text hover:bg-blue-hover disabled:bg-button-solid-disabled dark:hover:bg-dark-blue-hover',
+      'bg-blue-primary text-dark-text hover:bg-blue-hover disabled:bg-button-solid-disabled dark:hover:bg-dark-blue-hover',
     outlined:
       'border border-blue-primary text-blue-primary hover:text-blue-hover hover:border-blue-hover hover:bg-blue-outlined-hover disabled:border-button-solid-disabled disabled:text-button-solid-disabled',
     base: '',
-  };
-
-  const colorClasses = {
-    primary:
-      'bg-blue-primary hover:bg-blue-hover disabled:bg-button-solid-disabled dark:hover:bg-dark-blue-hover',
-    secondary: 'bg-blue-secondary',
   };
 
   return (
@@ -46,7 +39,6 @@ export const ButtonLink = ({
         'px-4 flex justify-center gap-x-3 items-center whitespace-nowrap appearance-none rounded-lg font-bold cursor-pointer transition-colors duration-200',
         sizeClasses[size],
         typeClasses[type],
-        colorClasses[color],
         className,
       )}
       {...props}
