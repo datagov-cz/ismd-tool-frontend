@@ -33,7 +33,7 @@ export const Term = ({ data, subterms, tree, slug }: TermProps) => {
           )}
         />
       )}
-      <a href={`/concept/${slug}`}>
+      <a href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}`}>
         <GovChip
           color="primary"
           size="m"
