@@ -6,10 +6,12 @@ import { useTranslations } from 'next-intl';
 import {
   ConceptDetailModel,
   OntologyDetailModel,
+  OntologyMetadataModel,
   useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
+import { LanguageSwitcher } from '@/components/conceptDetail/LanguageSwitcher';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
@@ -45,25 +47,41 @@ export const DictionaryContent = ({ slug }: Props) => {
   }, [slug, user?.userId]);
 
   if (ontology.data) {
-    const { ontologyMetadata, ontologyDetail } = ontology.data;
+    const { ontologyMetadata, ontologyDetail, conceptMetadataModelList } =
+      ontology.data;
     const sortedParentTerms = ontologyDetail?.pojmy
       ?.filter((item) => item.název)
-      .filter((item) => !item['definiční-obor'])
+      ?.filter((item) => !item['definiční-obor'])
       .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
 
     const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
-      return ontologyDetail?.pojmy?.filter(
-        (item) =>
-          item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
+      return (
+        ontologyDetail?.pojmy
+          ?.filter(
+            (item) =>
+              item['definiční-obor'] &&
+              item['definiční-obor'] === parentTerm.iri,
+          )
+          .map((item) => {
+            return {
+              data: item,
+              slug:
+                conceptMetadataModelList?.find(
+                  (meta) => meta.conceptIri === item.iri,
+                )?.slug || '',
+            };
+          }) || []
       );
     };
 
     const transformToArrayFormat = ({
       data,
+      meta,
     }: {
       data: OntologyDetailModel;
+      meta: OntologyMetadataModel;
     }) => {
-      const nameModel = data.název?.cs;
+      const nameModel = data.název?.cs || meta?.name || '';
       const descriptionModel = data.popis
         ? Object.entries(data.popis)
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -72,7 +90,7 @@ export const DictionaryContent = ({ slug }: Props) => {
               languageTag: languageTag,
               name: description as string,
             }))
-        : [{ name: '', languageTag: 'cs' }];
+        : [{ name: meta.popis || '', languageTag: 'cs' }];
       return { nameModel, descriptionModel };
     };
 
@@ -84,7 +102,7 @@ export const DictionaryContent = ({ slug }: Props) => {
               <GridContainer>
                 <div className="space-y-2 col-span-4 col-start-2">
                   <h1 className="text-xl lg:text-3xl font-bold">
-                    {ontologyDetail.název?.cs}
+                    {ontologyDetail.název?.cs || ontologyMetadata.name}
                   </h1>
                   <p className="text-sm text-dark-secondary">
                     {ontologyMetadata?.isPublished
@@ -97,8 +115,12 @@ export const DictionaryContent = ({ slug }: Props) => {
                 <p className="font-medium text-xl">
                   {t('Main.Sections.Description')}
                 </p>
-                {ontologyDetail.popis?.cs && (
-                  <p className="col-span-4">{ontologyDetail.popis?.cs}</p>
+                {ontologyDetail.popis ? (
+                  <div className="col-span-4">
+                    <LanguageSwitcher item={ontologyDetail.popis} />
+                  </div>
+                ) : (
+                  <p className="col-span-4">{ontologyMetadata.popis}</p>
                 )}
               </GridContainer>
               <GridContainer>
@@ -106,11 +128,16 @@ export const DictionaryContent = ({ slug }: Props) => {
                   {t('Main.Sections.Terms')}
                 </p>
                 <div className="col-span-4">
-                  {sortedParentTerms?.map((item, index) => (
+                  {sortedParentTerms?.map((concept, index) => (
                     <Term
-                      data={item}
-                      subterms={getRelatedTerms(item)}
-                      key={item.iri || index}
+                      data={concept}
+                      subterms={getRelatedTerms(concept)}
+                      key={concept.iri || index}
+                      slug={
+                        conceptMetadataModelList?.find(
+                          (item) => concept.iri === item.conceptIri,
+                        )?.slug || ''
+                      }
                     />
                   ))}
                 </div>
@@ -120,7 +147,6 @@ export const DictionaryContent = ({ slug }: Props) => {
               ontologyID={ontologyMetadata?.id || 0}
               isPublished={ontologyMetadata.isPublished || false}
               name={ontologyDetail.název?.cs || ''}
-              // validationReport={ontology}
             />
             {user?.userId && (
               <CommentSidebox
@@ -133,15 +159,21 @@ export const DictionaryContent = ({ slug }: Props) => {
             {ontologyDetail.iri && (
               <CreateConceptSideBox
                 slug={slug}
-                namespace={ontologyDetail.iri}
-                concepts={ontologyDetail.pojmy}
+                namespace={
+                  ontologyDetail.iri || ontologyMetadata.graphName || ''
+                }
+                action="create"
+                sideboxId="create"
               />
             )}
             {ontologyMetadata.id && (
               <EditSideBox
                 ontologySlug={slug}
                 ontologyID={ontologyMetadata.id}
-                defaultValues={transformToArrayFormat({ data: ontologyDetail })}
+                defaultValues={transformToArrayFormat({
+                  data: ontologyDetail,
+                  meta: ontologyMetadata,
+                })}
               />
             )}
           </div>

@@ -13,8 +13,8 @@ import { useEditOntology } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { useEditOntologyBoxStore } from '@/store/editOntologyBoxStore';
-import { transformLanguageData } from '../conceptCreate/CreateConceptSidebox';
 import { ArrayInputLanguage } from '../conceptCreate/inputs/ArrayInputLanguage';
+import { transformLanguageData } from '../conceptCreate/utils/transformLanguageData';
 import { Sidebox } from '../shared/Sidebox';
 
 export type EditSideBoxProps = {
@@ -71,6 +71,7 @@ export const EditSideBox = ({
   });
 
   const onSubmit = (data: OntologyEditModel) => {
+    console.log(data, 'test');
     mutation.mutate({
       data: {
         ...data,

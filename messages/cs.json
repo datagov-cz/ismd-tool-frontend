@@ -95,6 +95,38 @@
       "ToDetailButton": "Více"
     }
   },
+  "ConceptDetail": {
+    "Sections": {
+      "AlternativeName": "Alternativní název",
+      "Definition": "Definice",
+      "Description": "Popis",
+      "SupersededClass": "Nadřazena třída",
+      "SupersededConcepts": "Nadřazené pojmy",
+      "SupersededRelation": "Nadřazený vztah",
+      "SupersededProperty": "Nadřazená vlastnost",
+      "SubordinateConcepts": "Podřazené pojmy",
+      "Properties": "Vlastnosti",
+      "Relations": "Vztahy",
+      "Resource": "Definující ustanovení právního předpisu",
+      "RelatedResources": "Související ustanovení právního předpisu",
+      "NonLegalResources": "Definující nelegislativní zdroj",
+      "RelatedNonLegalResources": "Související nelegislativní zdroj",
+      "Range": "Obor hodnot"
+    },
+    "Registry": {
+      "Title": "Registr práv a povinností",
+      "PPDF": "údaj je sdílen v PPDF",
+      "NonPublic": "údaj je veřejný",
+      "AIS": "AIS",
+      "Agenda": "Agenda"
+    },
+    "Decree": {
+      "Title": "Vyhláška 360/2023",
+      "Aquire": "Způsob získání údaje",
+      "Share": "Způsob sdílení údaje",
+      "Type": "Typ obsahu údaje"
+    }
+  },
   "DictionaryDetail": {
     "CreateConcept": {
       "Title": "Nový pojem",
@@ -114,6 +146,7 @@
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
       "DictTerms": "pojmy slovníku",
+      "RelatedConcepts": "pojmy navázané na tento pojem",
       "AllResults": "všechny výsledky",
       "DraftDictsHeadline": "Z rozpracovaných slovníků",
       "PublishedDictsHeadline": "Z publikovaných slovníků"
@@ -138,6 +171,7 @@
         "Published": "Publikovaný slovník"
       },
       "Sections": {
+        "Definition": "Definice",
         "Description": "Popis",
         "RelatedResources": "Související zdroje",
         "Terms": "Pojmy"
@@ -226,7 +260,10 @@
     }
   },
   "CreateConcept": {
+    "Title": "Pojem",
     "Save": "Uložit",
+    "Success": "Úspěšně uložený pojem",
+    "Error": "Pojem se nepodařilo uložit",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
@@ -249,7 +286,7 @@
         "AcquisitionMethod": "Způsob získání údajů",
         "SharingMethod": "Způsob sdílení údajů",
         "IsPublic": "Je veřejný",
-        "PrivacyProvision": "Ustanovení neveřejnosti",
+        "PrivacyProvision": "Ustanovení dokládající neveřejnost údaje",
         "IsInPPDF": "Je v PPDF"
       },
       "Options": {
@@ -275,7 +312,7 @@
     "ClassCreateFields": {
       "Labels": {
         "ClassType": "Typ třídy",
-        "BroaderClass": "Nadřazená třída"
+        "BroaderConcept": "Nadřazená třída"
       },
       "Options": {
         "ClassType": {
@@ -288,7 +325,8 @@
       "Labels": {
         "Domain": "Definiční obor",
         "SuperProperty": "Nadřazená vlastnost",
-        "DataType": "Obor hodnot"
+        "DataType": "Obor hodnot",
+        "BroaderConcept": "Nadřazená třida"
       },
       "Options": {
         "Undefined": "undefined"
