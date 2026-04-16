@@ -3,13 +3,9 @@ import React, {
   PropsWithChildren,
   ReactNode,
   useContext,
-  useEffect,
 } from 'react';
 
-import { AXIOS_INSTANCE } from '@/axios-instance';
-
 export type EnvironmentVariables = {
-  NEXT_PUBLIC_BE_URL?: string;
   NEXT_PUBLIC_BASE_PATH?: string;
   environment: string;
 };
@@ -40,13 +36,6 @@ export default function Environment({
   children,
   variables,
 }: PropsWithChildren<EnvironmentProps>): ReactNode {
-  // Update axios baseURL when variables change
-  useEffect(() => {
-    if (variables.NEXT_PUBLIC_BE_URL) {
-      AXIOS_INSTANCE.defaults.baseURL = variables.NEXT_PUBLIC_BE_URL;
-    }
-  }, [variables.NEXT_PUBLIC_BE_URL]);
-
   return (
     <EnvironmentContext.Provider value={{ variables }}>
       {children}
