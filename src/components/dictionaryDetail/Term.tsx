@@ -6,10 +6,12 @@ import { ConceptDetailModel } from '@/api/generated';
 
 export type TermProps = {
   data: ConceptDetailModel;
-  subterms?: ConceptDetailModel[];
+  subterms?: { data: ConceptDetailModel; slug: string }[];
+  tree?: boolean;
+  slug?: string;
 };
 
-export const Term = ({ data, subterms }: TermProps) => {
+export const Term = ({ data, subterms, tree, slug }: TermProps) => {
   const [hover, setHover] = useState(false);
   const name = data.název?.cs;
   const capitalizedName = name && name.charAt(0).toUpperCase() + name.slice(1);
@@ -17,30 +19,45 @@ export const Term = ({ data, subterms }: TermProps) => {
   return (
     <div
       className={clsx(
-        'relative w-fit group',
-        !subterms && 'pl-4 not-last:border-l-2 not-last:border-blue-primary/30',
+        'relative w-fit group block',
+        !subterms &&
+          tree &&
+          'pl-4 not-last:border-l-2 not-last:border-blue-primary/30',
       )}
     >
       {!subterms && (
-        <span className="absolute w-3 h-5.5 border-b-2 border-blue-primary/30 -left-0 group-last:border-l-2" />
+        <span
+          className={clsx(
+            'absolute w-3 h-5.5 border-b-2 border-blue-primary/30 -left-0',
+            tree && 'group-last:border-l-2',
+          )}
+        />
       )}
-      <GovChip
-        color="primary"
-        size="m"
-        type="outlined"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        className="relative"
-      >
-        {capitalizedName}
-        {(data.definice?.cs || data.popis?.cs) && hover && (
-          <Tooltip message={data.definice?.cs || data.popis?.cs || ''} />
-        )}
-      </GovChip>
+      <a href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}`}>
+        <GovChip
+          color="primary"
+          size="m"
+          type="outlined"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className="relative"
+        >
+          <span className="cursor-pointer">{capitalizedName}</span>
+          {(data.definice?.cs || data.popis?.cs) && hover && (
+            <Tooltip message={data.definice?.cs || data.popis?.cs || ''} />
+          )}
+        </GovChip>
+      </a>
+
       <div className="pl-6 pt-2">
         {subterms &&
           subterms.map((item, index) => (
-            <Term key={data.iri || index} data={item} />
+            <Term
+              key={data.iri || index}
+              data={item.data}
+              slug={item.slug}
+              tree
+            />
           ))}
       </div>
     </div>

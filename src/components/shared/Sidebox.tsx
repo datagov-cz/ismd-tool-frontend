@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
 import { useEscapeKey } from '@/hooks/useEscapeKey';
-import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 interface Props {
   title?: string;
@@ -23,7 +22,6 @@ export const Sidebox = ({
   children,
   size = 'l',
 }: Props) => {
-  const ref = useOutsideClick(() => setIsOpen(false));
   useEscapeKey(() => setIsOpen(false));
 
   const t = useTranslations('Shared');
@@ -56,7 +54,6 @@ export const Sidebox = ({
           size === 'm' && 'md:w-1/3',
           size === 'l' && 'md:w-1/2',
         )}
-        ref={ref}
       >
         <div className="flex items-center justify-between shrink-0">
           {title && <h2 className="text-lg font-bold">{title}</h2>}

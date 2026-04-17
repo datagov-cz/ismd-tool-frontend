@@ -1,69 +1,87 @@
 import {
+  GovButton,
   GovFormControl,
-  GovFormInput,
   GovFormLabel,
   GovFormSelect,
+  GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
-
-import { ConceptDetailModel } from '@/api/generated';
+import { useFieldArray } from 'react-hook-form';
 
 import { CommonConceptFields, CommonFieldsProps } from './CommonConceptFields';
-
-export interface PropertyCreateFieldsProps extends CommonFieldsProps {
-  concepts?: ConceptDetailModel[];
-}
+import { ConceptSelectInput } from './inputs/ConceptSelectInput';
 
 export const PropertyCreateFields = ({
   register,
   errors,
   control,
   form,
-  concepts,
-}: PropertyCreateFieldsProps) => {
+}: CommonFieldsProps) => {
   const t = useTranslations('CreateConcept.PropertyCreateFields');
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'superProperty',
+  });
 
   return (
     <>
-      <GovFormControl>
-        <GovFormLabel size="m" required>
-          {t('Labels.Domain')}
-        </GovFormLabel>
-        <GovFormSelect
-          {...register('domain')}
-          defaultValue={''}
-          invalid={'domain' in errors && !!errors.domain}
-        >
-          <option label={''} value={''} />
-          {concepts?.map((item, index) => (
-            <option
-              key={index}
-              label={item.název?.cs || t('Options.Undefined')}
-              value={item.iri}
-            />
-          ))}
-        </GovFormSelect>
-        {'domain' in errors && errors.domain && (
-          <span className="text-red-600 text-sm">{errors.domain.message}</span>
-        )}
-      </GovFormControl>
+      <ConceptSelectInput
+        register={register}
+        name="domain"
+        errors={errors}
+        label={t('Labels.Domain')}
+      />
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.SuperProperty')}</GovFormLabel>
-        <GovFormInput
-          {...register('superProperty')}
-          invalid={'superProperty' in errors && !!errors.superProperty}
-        />
-        {'superProperty' in errors && errors.superProperty && (
-          <span className="text-red-600 text-sm">
-            {errors.superProperty.message}
-          </span>
-        )}
-      </GovFormControl>
+      <div className="flex gap-2 items-end w-full">
+        <div className="flex flex-col w-full">
+          {fields.map((field, index) => (
+            <div className="flex gap-2 items-end w-full" key={field.id}>
+              <ConceptSelectInput
+                register={register}
+                name={`superProperty.${index}.value`}
+                errors={errors}
+                label={index === 0 ? t('Labels.SuperProperty') : ''}
+                conceptType="VLASTNOST"
+              />
+              {fields.length > 1 && (
+                <GovButton
+                  nativeType="button"
+                  color="error"
+                  type="solid"
+                  className="mt-2"
+                  onGovClick={() => remove(index)}
+                >
+                  <GovIcon name="trash" size="l" className="text-white" />
+                </GovButton>
+              )}
+            </div>
+          ))}
+        </div>
+        <GovButton
+          nativeType="button"
+          type="outlined"
+          color="primary"
+          onGovClick={() => append({ value: '' })}
+        >
+          +
+        </GovButton>
+      </div>
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.DataType')}</GovFormLabel>
-        <GovFormInput {...register('dataType')} />
+        <GovFormSelect {...register('dataType')}>
+          <option value="rdfs:Literal" label="rdfs:Literal" />
+          <option value="Ano či ne" label="Ano či ne" />
+          <option value="Datum" label="Datum" />
+          <option value="Čas" label="Čas" />
+          <option value="Datum a čas" label="Datum a čas" />
+          <option value="Celé číslo" label="Celé číslo" />
+          <option value="Desetinné číslo" label="Desetinné číslo" />
+          <option value="URI, IRI, URL" label="URI, IRI, URL" />
+          <option value="Řetězec" label="Řetězec" />
+          <option value="Text" label="Text" />
+        </GovFormSelect>
       </GovFormControl>
 
       <CommonConceptFields

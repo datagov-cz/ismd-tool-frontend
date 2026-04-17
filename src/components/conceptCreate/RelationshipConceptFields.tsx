@@ -1,86 +1,73 @@
-import {
-  GovFormControl,
-  GovFormInput,
-  GovFormLabel,
-  GovFormSelect,
-} from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
-
-import { ConceptDetailModel } from '@/api/generated';
+import { useFieldArray } from 'react-hook-form';
 
 import { CommonConceptFields, CommonFieldsProps } from './CommonConceptFields';
-
-export interface RelationshipConceptFieldsProps extends CommonFieldsProps {
-  concepts?: ConceptDetailModel[];
-}
+import { ConceptSelectInput } from './inputs/ConceptSelectInput';
 
 export const RelationshipConceptFields = ({
   register,
   errors,
   control,
   form,
-  concepts,
-}: RelationshipConceptFieldsProps) => {
+}: CommonFieldsProps) => {
   const t = useTranslations('CreateConcept.RelationshipConceptFields');
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'superRelation',
+  });
 
   return (
     <>
-      <GovFormControl>
-        <GovFormLabel size="m" required>
-          {t('Labels.Domain')}
-        </GovFormLabel>
-        <GovFormSelect
-          {...register('domain')}
-          invalid={'domain' in errors && !!errors.domain}
-        >
-          <option label="" value="" />
-          {concepts?.map((item, index) => (
-            <option
-              key={index}
-              label={item.název?.cs || t('Options.Undefined')}
-              value={item.iri}
-            />
-          ))}
-        </GovFormSelect>
-        {'domain' in errors && errors.domain && (
-          <span className="text-red-600 text-sm">{errors.domain.message}</span>
-        )}
-      </GovFormControl>
+      <ConceptSelectInput
+        register={register}
+        name="domain"
+        errors={errors}
+        label={t('Labels.Domain')}
+      />
 
-      <GovFormControl>
-        <GovFormLabel size="m" required>
-          {t('Labels.Range')}
-        </GovFormLabel>
-        <GovFormSelect
-          {...register('range')}
-          invalid={'range' in errors && !!errors.range}
-        >
-          <option label="" value="" />
-          {concepts?.map((item, index) => (
-            <option
-              key={index}
-              label={item.název?.cs || t('Options.Undefined')}
-              value={item.iri}
-            />
-          ))}
-        </GovFormSelect>
-        {'range' in errors && errors.range && (
-          <span className="text-red-600 text-sm">{errors.range.message}</span>
-        )}
-      </GovFormControl>
+      <ConceptSelectInput
+        register={register}
+        name="range"
+        errors={errors}
+        label={t('Labels.Range')}
+      />
 
-      <GovFormControl>
-        <GovFormLabel size="m">{t('Labels.SuperRelation')}</GovFormLabel>
-        <GovFormInput
-          {...register('superRelation')}
-          invalid={'superRelation' in errors && !!errors.superRelation}
-        />
-        {'superRelation' in errors && errors.superRelation && (
-          <span className="text-red-600 text-sm">
-            {errors.superRelation.message}
-          </span>
-        )}
-      </GovFormControl>
+      <div className="flex gap-2 items-end w-full">
+        <div className="flex flex-col w-full">
+          {fields.map((field, index) => (
+            <div className="flex gap-2 items-end w-full" key={field.id}>
+              <ConceptSelectInput
+                register={register}
+                name={`superRelation.${index}.value`}
+                errors={errors}
+                label={index === 0 ? t('Labels.SuperRelation') : ''}
+                conceptType="VZTAH"
+              />
+              {fields.length > 1 && (
+                <GovButton
+                  nativeType="button"
+                  color="error"
+                  type="solid"
+                  className="mt-2"
+                  onGovClick={() => remove(index)}
+                >
+                  <GovIcon name="trash" size="l" className="text-white" />
+                </GovButton>
+              )}
+            </div>
+          ))}
+        </div>
+        <GovButton
+          nativeType="button"
+          type="outlined"
+          color="primary"
+          onGovClick={() => append({ value: '' })}
+        >
+          +
+        </GovButton>
+      </div>
 
       <CommonConceptFields
         register={register}

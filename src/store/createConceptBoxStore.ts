@@ -1,20 +1,22 @@
 import { create } from 'zustand';
 
 type CreateConceptBoxStoreType = {
-  isOpen: boolean;
+  openBoxId: string | null;
 };
 
 type CreateConceptBoxStoreActions = {
-  setIsOpen: (_isOpen: boolean) => void;
+  setOpenBoxId: (_id: string | null) => void;
+  isOpen: (_id: string) => boolean;
 };
 
 const initialState: CreateConceptBoxStoreType = {
-  isOpen: false,
+  openBoxId: null,
 };
 
 export const useCreateConceptBoxStore = create<
   CreateConceptBoxStoreType & CreateConceptBoxStoreActions
->()((set) => ({
+>()((set, get) => ({
   ...initialState,
-  setIsOpen: (isOpen) => set({ isOpen }),
+  setOpenBoxId: (id) => set({ openBoxId: id }),
+  isOpen: (id) => get().openBoxId === id,
 }));

@@ -56,6 +56,7 @@ export const CommonConceptFields = ({
         }}
         register={register}
         errors={errors}
+        disableLanguage
       />
 
       <ArrayInputLanguage<CreateConceptFormData>
@@ -187,7 +188,10 @@ export const CommonConceptFields = ({
 
       <GovFormControl>
         <GovFormLabel size="m">{t('Labels.ContentType')}</GovFormLabel>
-        <GovFormSelect {...register('contentType')}>
+        <GovFormSelect
+          {...register('contentType')}
+          // defaultValue={form.getValues('conceptType')}
+        >
           <option value="" label="" />
           <option
             value="identifikační"
@@ -280,9 +284,19 @@ export const CommonConceptFields = ({
       <GovFormControl className="flex flex-row">
         <div className="flex gap-2 items-center">
           <input type="checkbox" {...register('isPublic')} className="w-fit" />
-          <GovFormLabel size="m">{t('Labels.IsPublic')}</GovFormLabel>
+          <GovFormLabel size="m" className="w-fit mb-0!">
+            {t('Labels.IsPublic')}
+          </GovFormLabel>
         </div>
       </GovFormControl>
+
+      <ArrayInput
+        form={form}
+        register={register}
+        name="privacyProvision"
+        label={t('Labels.PrivacyProvision')}
+        errors={errors}
+      />
 
       <GovFormControl>
         <GovFormLabel size="m" required={form.watch('isPublic') === true}>

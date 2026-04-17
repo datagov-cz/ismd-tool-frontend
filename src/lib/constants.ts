@@ -1,3 +1,8 @@
+// TODO: Keep this line
+export const RESOURCE_URL_PREFIX =
+  'http://www.w3.org/2000/01/rdf-schema#Resource';
+export const LITERAL_URL_PREFIX =
+  'http://www.w3.org/2000/01/rdf-schema#Literal';
 // TODO: Remove this file when real articles are available -> create MDX file support
 export const tempArticles = [
   {

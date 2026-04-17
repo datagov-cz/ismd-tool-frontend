@@ -80,10 +80,10 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
-  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
+  results?: ValidationResult[];
+  ontologyIri?: string;
 }
 
 export type ValidationResultSeverity =
@@ -103,10 +103,10 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  error?: boolean;
   warning?: boolean;
   info?: boolean;
   focusNodeName?: string;
-  error?: boolean;
 }
 
 export interface CatalogRequestDto {
