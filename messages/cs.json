@@ -6,6 +6,7 @@
     },
     "LogoTitle": "Informační systém pro modelování dat",
     "LogoTitleMobile": "ISMD",
+    "LoginButton": "Přihlásit se přes CAAIS",
     "Nav": {
       "Link1": "Nápověda",
       "Dropdown": {
@@ -25,7 +26,8 @@
         "Link1": "Nahlásit chybu",
         "Link2": "Navrhnout vylepšení"
       },
-      "Logout": "Odhlásit"
+      "Logout": "Odhlásit",
+      "Settings": "Obecné nastavení"
     },
     "MenuButtonAria": "Otevřít navigaci",
     "Hintbox": {
@@ -66,9 +68,9 @@
   },
   "Home": {
     "MainControls": {
-      "OpenDictFromFile": "Otevřít slovník ze souboru...",
+      "OpenDictFromFile": "Importovat ze souboru",
       "SearchPlaceholder": "Hledat pojmy a slovníky...",
-      "CreateNewDict": "Vytvořit nový slovník...",
+      "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
         "PublishedDictionaries": "Publikované slovníky",
@@ -79,19 +81,19 @@
     "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
     "LoginButton": "Přihlásit",
     "WelcomeSection": {
-      "Title": "Vítejte v nástroji ISMD",
-      "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit."
+      "Title": "Vítejte v nástroji pro tvorbu správu a tvorbu datových slovníku",
+      "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
+      "BrowseDictionaries": "Procházet slovníky"
     },
     "LastVisited": {
       "Title": "Naposledy navštívené"
     },
     "DraftDictionariesSection": {
-      "Title": "Vaše rozpracované slovníky",
-      "ShowMore": "Zobrazit více rozpracovaných slovníků",
-      "ShowLess": "Zobrazit méně rozpracovaných slovníků"
+      "Title": "Rozpracované slovníky",
+      "ShowAll": "Zobrazit všechny rozpracované slovníky"
     },
     "News": {
-      "Title": "Co je nového",
+      "Title": "Co je nového?",
       "ToDetailButton": "Více"
     }
   },
@@ -184,7 +186,9 @@
         "ValidationFailed": "Validace neprošla",
         "Download": "Stáhnout",
         "Delete": "Smazat",
-        "Add": "Přidat"
+        "Add": "Přidat",
+        "Concepts": "pojmů",
+        "Updated": "aktualizováno"
       }
     }
   },
@@ -341,6 +345,16 @@
       "Options": {
         "Undefined": "undefined"
       }
+    }
+  },
+  "SearchTypes": {
+    "AllTypes": "Všechny typy",
+    "Selected": "Vybrané:",
+    "Types": {
+      "Pojem": "Pojem",
+      "Diagram": "Diagram",
+      "Slovník": "Slovník",
+      "Rozpracovaný": "Rozpracovaný"
     }
   }
 }

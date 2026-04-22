@@ -1,6 +1,5 @@
-import { useTranslations } from 'next-intl';
-
-import { ButtonLink } from '@/components/shared/ButtonLink';
+import { GovCard, GovIcon } from '@gov-design-system-ce/react';
+import Link from 'next/link';
 
 interface NewsArticleProps {
   date: string;
@@ -15,18 +14,27 @@ export function NewsArticle({
   description,
   href,
 }: NewsArticleProps) {
-  const t = useTranslations('Home');
-
   return (
-    <div className="flex flex-col gap-y-2">
-      <div>
-        <p className="text-sm">{date}</p>
-        <h4 className="font-medium lg:text-lg">{title}</h4>
-        <p className="line-clamp-3 text-sm lg:text-base">{description}</p>
-      </div>
-      <ButtonLink href={href} className="self-end">
-        {t('News.ToDetailButton')}
-      </ButtonLink>
-    </div>
+    <Link href={href}>
+      <GovCard className="flex flex-col gap-y-2">
+        <div>
+          <h4 className="font-medium lg:text-lg">{title}</h4>
+          <span className="text-sm flex items-center gap-x-1 opacity-70">
+            <GovIcon
+              type="components"
+              color="neutral"
+              name="calendar-event"
+              slot="icon-start"
+              size="s"
+              className="transition-transform duration-200"
+            />
+            {date}
+          </span>
+          <p className="line-clamp-3 text-sm lg:text-base pt-3">
+            {description}
+          </p>
+        </div>
+      </GovCard>
+    </Link>
   );
 }

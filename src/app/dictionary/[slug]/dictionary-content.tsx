@@ -25,7 +25,7 @@ interface Props {
 export const DictionaryContent = ({ slug }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
-  const ontology = useGetOntologyDetail(slug);
+  const ontology = useGetOntologyDetail(encodeURIComponent(slug));
   const { data } = useGetCurrentUser();
   const user = data?.data;
 

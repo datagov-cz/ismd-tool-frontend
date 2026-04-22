@@ -9,7 +9,7 @@ import {
   useGetCurrentUser,
   useGetOntologyList,
 } from '@/api/generated';
-import { DraftDictionaryCard } from '../draftDictionaries/DraftDictionaryCard';
+import { DictionaryCard } from '../shared/DictionaryCard/DictionaryCard';
 
 export const VisitedOntologies = () => {
   const t = useTranslations('Home');
@@ -17,7 +17,6 @@ export const VisitedOntologies = () => {
   const user = data?.data;
 
   const [visitedSlugs, setVisitedSlugs] = useState<string[]>([]);
-  const [isShowAll, setIsShowAll] = useState(false);
   const [cachedOntologies, setCachedOntologies] = useState<
     OntologyMetadataModel[]
   >([]);
@@ -77,42 +76,37 @@ export const VisitedOntologies = () => {
   }, [visitedSlugs]);
 
   return (
-    <div className="space-y-5 pb-10 mt-8">
-      <h2 className="font-medium text-xl">{t('LastVisited.Title')}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="space-y-5 pb-10 mt-8 w-full">
+      <h2 className="font-medium text-xl flex items-center gap-2">
+        <GovIcon
+          type="components"
+          color="neutral"
+          name="history"
+          slot="icon-start"
+          size="m"
+          className="transition-transform duration-200"
+        />
+        {t('LastVisited.Title')}
+      </h2>
+      <div className="space-y-4">
         {visitedOntologies
-          ?.slice(0, isShowAll ? undefined : 3)
+          ?.slice(0, 4)
           .map(
-            ({ id, name, slug, popis }) =>
-              name && (
-                <DraftDictionaryCard
+            ({ id, name, slug, popis, concepts, updatedAt }) =>
+              name &&
+              id && (
+                <DictionaryCard
                   key={id || slug}
                   title={name}
                   link={`/dictionary/${slug}`}
                   text={popis || ''}
+                  concepts={concepts?.length ?? 0}
+                  modified={updatedAt ? new Date(updatedAt) : undefined}
+                  id={id}
                 />
               ),
           )}
       </div>
-
-      {visitedOntologies && visitedOntologies.length > 3 && (
-        <button
-          type="button"
-          onClick={() => setIsShowAll(!isShowAll)}
-          className="flex items-center gap-3 ml-auto cursor-pointer text-blue-primary hover:underline"
-        >
-          {t(
-            isShowAll
-              ? 'DraftDictionariesSection.ShowLess'
-              : 'DraftDictionariesSection.ShowMore',
-          )}
-          <GovIcon
-            name="chevron-up"
-            slot="icon-end"
-            className={`${isShowAll ? '' : 'rotate-180'} transition-transform duration-200`}
-          />
-        </button>
-      )}
     </div>
   );
 };

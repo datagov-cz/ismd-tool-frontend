@@ -88,6 +88,7 @@ export const UploadDialog = ({
               toast(t('Dialog.SyncSuccess'));
             },
             onError: async (e) => {
+              // eslint-disable-next-line no-console
               console.error('Failed to sync offline data:', e);
               const errorMessage = getErrorMessage(e, tError);
 
@@ -102,6 +103,7 @@ export const UploadDialog = ({
         );
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Sync failed:', error);
     }
   };
@@ -125,6 +127,7 @@ export const UploadDialog = ({
         form.reset();
         toast(t('Dialog.OfflineUploadSuccess'));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to save offline:', error);
         toast(t('Dialog.OfflineUploadError'));
         return;

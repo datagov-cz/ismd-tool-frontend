@@ -2,14 +2,20 @@
 
 import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
+import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
+import { normalizeBasePath } from '@/lib/basePath';
+import { useEnvironment } from '../contexts/Environment';
+import { SearchInput } from '../searchInput/SearchInput';
 import { ThemeSwitch } from '../shared/ThemeSwitch';
 
 import { HintSidebox } from './hintSidebox/HintSidebox';
+import { LoginButton } from './LoginButton';
 import { NavItems } from './NavItems';
 
 interface Props {
@@ -20,86 +26,110 @@ export const Header = ({ session }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations('Header');
 
-  const handleToggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const handleCloseMenu = () => setIsMenuOpen(false);
+  const pathname = usePathname();
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  const { variables } = useEnvironment();
+  const callbackUrl =
+    normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH) || '/';
 
-  const router = useRouter();
+  const isHomepage = pathname === '/';
+  const showFullHeader = !isHomepage || !!session;
+
+  const handleLogin = () =>
+    signIn('keycloak', { prompt: 'login', callbackUrl });
 
   return (
     <>
-      <header className="bg-white py-3 z-50 transition-colors duration-300">
-        <section className="mx-auto max-w-desktop px-5 flex justify-between items-center gap-x-4">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="h-12 no-underline flex items-center text-blue-primary font-medium gap-2"
-            >
-              <GovIcon
-                name="logo-lion"
-                slot="icon-start"
-                className="size-10!"
-              />
-              <span className="hidden desktop:inline-block">
-                {t('LogoTitle')}
-              </span>
-              <span className="inline-block desktop:hidden">
-                {t('LogoTitleMobile')}
-              </span>
-            </Link>
-            <Link href="/" className="items-center hidden desktop:flex">
-              <GovIcon name="home" slot="icon-start" size="l" />
-            </Link>
-            <div className="flex items-center gap-2">
-              <button onClick={() => router.back()}>
-                <GovIcon
-                  className="cursor-pointer"
-                  name="chevron-left"
-                  size="l"
+      <header className="bg-footer-separator py-3 z-50 transition-colors duration-300">
+        <section className="mx-auto max-w-full-hd px-5 flex justify-between items-center gap-x-4">
+          {showFullHeader && (
+            <div className="flex items-center gap-4 flex-1">
+              <Link
+                href="/"
+                className="no-underline flex items-center text-white font-medium gap-4"
+              >
+                <Image
+                  src={`${basePath}/assets/icon-pixel.svg`}
+                  width={36}
+                  height={48}
+                  alt="lion"
                 />
-              </button>
-              <button onClick={() => router.forward()}>
-                <GovIcon
-                  className="cursor-pointer"
-                  name="chevron-right"
-                  size="l"
-                />
-              </button>
+                <span className="hidden desktop:inline-block text-xl">
+                  ISMD
+                </span>
+                <span className="inline-block desktop:hidden">
+                  {t('LogoTitleMobile')}
+                </span>
+              </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <GovIcon name="undo" size="l" />
-              <GovIcon name="redo" size="l" />
+          )}
+
+          {showFullHeader && (
+            <div className="flex-2 2xl:flex-1 flex justify-center">
+              <SearchInput />
             </div>
-          </div>
-          <nav className="ml-auto">
-            <ul className="hidden gap-x-4 px-3 flex-col desktop:flex-row flex-wrap items-center desktop:flex">
-              <NavItems session={session} />
-            </ul>
-          </nav>
-          <div className="flex gap-x-4 items-center">
-            <ThemeSwitch />
-            <GovButton
-              size="m"
-              type="outlined"
-              aria-label={t('MenuButtonAria')}
-              color="primary"
-              className="desktop:hidden!"
-              onGovClick={handleToggleMenu}
-            >
-              <GovIcon slot="icon-start" name="list" />
-            </GovButton>
+          )}
+
+          <div className="flex flex-1 justify-end">
+            <nav>
+              <ul className="hidden gap-x-3 px-3 w-full flex-col desktop:flex-row flex-nowrap items-center justify-end desktop:flex">
+                {!isHomepage && !session && (
+                  <LoginButton
+                    size="s"
+                    className="mx-2"
+                    onLogin={handleLogin}
+                  />
+                )}
+                <NavItems session={session} />
+              </ul>
+            </nav>
+            <div className="flex gap-x-4 items-center">
+              <ThemeSwitch />
+              <GovButton
+                size="m"
+                type="outlined"
+                aria-label={t('MenuButtonAria')}
+                color="primary"
+                className="desktop:hidden!"
+                onGovClick={() => setIsMenuOpen((prev) => !prev)}
+              >
+                <GovIcon slot="icon-start" name="list" />
+              </GovButton>
+            </div>
           </div>
         </section>
+
+        {!session && isHomepage && (
+          <div className="text-white w-full flex justify-center mt-4 desktop:mt-0 flex-col">
+            <div className="flex items-center justify-center gap-8">
+              <Image
+                src={`${basePath}/assets/icon-pixel.svg`}
+                width={60}
+                height={80}
+                alt="lion"
+              />
+              <h1 className="text-3xl">{t('LogoTitle')}</h1>
+            </div>
+            <div className="flex flex-col items-center justify-center gap-y-8 p-5">
+              <LoginButton
+                size="l"
+                className="[&>button]:px-20!"
+                onLogin={handleLogin}
+              />
+            </div>
+          </div>
+        )}
       </header>
 
       {isMenuOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-20"
-          onClick={handleCloseMenu}
+          onClick={() => setIsMenuOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed top-[72px] left-0 h-full w-64 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out ${
+        className={`fixed top-18 left-0 h-full w-64 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } desktop:hidden`}
       >
@@ -109,6 +139,7 @@ export const Header = ({ session }: Props) => {
           </ul>
         </nav>
       </aside>
+
       <HintSidebox />
     </>
   );

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GovButton } from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { OntologyMetadataModel } from '@/api/generated';
@@ -21,12 +21,20 @@ export const UploadFlow = () => {
   return (
     <>
       <GovButton
-        type="solid"
+        type="outlined"
         size="m"
-        color="primary"
+        color="secondary"
         slot="button"
         onGovClick={() => setOpen(true)}
       >
+        <GovIcon
+          type="components"
+          color="secondary"
+          name="upload"
+          slot="icon-start"
+          size="m"
+          className="transition-transform duration-200"
+        />
         {t('MainControls.OpenDictFromFile')}
       </GovButton>
       <UploadDialog open={open} setOpen={setOpen} setSuccess={setSuccessData} />
