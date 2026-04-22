@@ -70,7 +70,8 @@ export const NavItems = ({ session }: Props) => {
               {
                 icon: 'upload',
                 label: t('NavLogged.Logout'),
-                onClick: () => signOut(),
+                onClick: () =>
+                  signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_PATH }),
               },
             ]}
           />

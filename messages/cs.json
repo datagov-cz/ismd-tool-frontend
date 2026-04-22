@@ -4,6 +4,7 @@
       "ToLight": "Přepnout na světlý režim",
       "ToDark": "Přepnout na tmavý režim"
     },
+    "Ontology": "Slovník",
     "LogoTitle": "Informační systém pro modelování dat",
     "LogoTitleMobile": "ISMD",
     "LoginButton": "Přihlásit se přes CAAIS",
@@ -208,10 +209,10 @@
   },
   "UploadOntology": {
     "Dialog": {
-      "Title": "Otevřít slovník ze souboru",
+      "Title": "Importovat ze souboru",
       "FileInputLabel": "Vyberte soubor",
       "CancelButton": "Zrušit",
-      "SubmitButton": "Vytvořit",
+      "SubmitButton": "Importovat slovník",
       "OfflineUploadSuccess": "Slovník byl úspěšně vytvořen offline. Pro uložení do Národního katalogu dat se musíte obnovit vaše spojení.",
       "OfflineUploadError": "Chyba při vytváření slovníku offline",
       "SyncSuccess": "Slovník byl úspěšně vytvořen a synchronizován s Národním katalogem dat",
@@ -220,7 +221,8 @@
     },
     "FileUpload": {
       "Drag": "Přetáhnětě soubor nebo",
-      "Upload": "Nahrát ze zařízení"
+      "Upload": "Nahrát ze zařízení",
+      "Supported": "Podporované formáty: OFN, XLSX, CSV, TTL"
     },
     "ConfirmCancelDialog": {
       "Title": "Máte neuložené změny, chcete ukončit vytváření slovníku?",
@@ -242,11 +244,11 @@
       "Title": "Vytvořit nový slovník",
       "NamespaceLabel": "Prostor názvů",
       "NamespacePlaceholder": "Zadejte prostor názvů...",
-      "NameLabel": "Název (Čeština)",
-      "NamePlaceholder": "Zadejte název slovníku...",
+      "NameLabel": "Název slovníku",
+      "NamePlaceholder": "Zadejte název slovníku v češtině",
       "LanguageTagLabel": "Jazykový tag",
-      "DescriptionLabel": "Popis (Čeština)",
-      "DescriptionPlaceholder": "Zadejte popis slovníku...",
+      "DescriptionLabel": "Popis slovníku",
+      "DescriptionPlaceholder": "Zadejte popis slovníku v češtině",
       "CreateButton": "Vytvořit slovník",
       "CreatingButton": "Vytváří se...",
       "SubmitButton": "Vytvořit",
@@ -254,7 +256,8 @@
       "CreateNewDictError": "Chyba při vytváření nového slovníku",
       "CreateNewDictSyncError": "Chyba při syncrhonizaci slovníku, zkuste se znova přihlásit",
       "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
-      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení."
+      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení.",
+      "Or": "nebo"
     },
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",

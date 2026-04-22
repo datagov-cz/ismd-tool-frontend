@@ -7,6 +7,7 @@ import { SessionProvider } from 'next-auth/react';
 
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
+import { SessionGuard } from '@/components/contexts/SessionGuard';
 import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 import { normalizeBasePath } from '@/lib/basePath';
@@ -42,8 +43,10 @@ export default function Providers({
       <Environment variables={environmentVariables}>
         <QueryClientProvider client={queryClient}>
           <SessionProvider session={session} basePath={nextAuthBasePath}>
-            <ToastWrapper />
-            {children}
+            <SessionGuard>
+              <ToastWrapper />
+              {children}
+            </SessionGuard>
           </SessionProvider>
         </QueryClientProvider>
       </Environment>

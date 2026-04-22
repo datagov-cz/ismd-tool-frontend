@@ -17,6 +17,7 @@ import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
 import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
 import { Term } from '@/components/dictionaryDetail/Term';
+import { CircularLoader } from '@/components/shared/CircularLoader';
 
 interface Props {
   slug: string;
@@ -45,6 +46,13 @@ export const DictionaryContent = ({ slug }: Props) => {
       localStorage.setItem(storageKey, JSON.stringify(slugs));
     }
   }, [slug, user?.userId]);
+
+  if (ontology.isLoading)
+    return (
+      <div className="h-full flex items-center justify-center">
+        <CircularLoader />
+      </div>
+    );
 
   if (ontology.data) {
     const { ontologyMetadata, ontologyDetail, conceptMetadataModelList } =

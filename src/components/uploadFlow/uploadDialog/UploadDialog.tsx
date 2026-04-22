@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GovButton, GovDialog } from '@gov-design-system-ce/react';
+import { GovButton } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -17,21 +17,13 @@ import { db, type UploadFromFileDraft } from '@/lib/db';
 import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
-import { ConfirmDialog } from './ConfirmDialog';
 import { FileController } from './FileController';
 
 interface UploadDialogProps {
-  open: boolean;
-  setOpen: (_value: boolean) => void;
   setSuccess: (_value: OntologyMetadataModel) => void;
 }
 
-export const UploadDialog = ({
-  open,
-  setOpen,
-  setSuccess,
-}: UploadDialogProps) => {
-  const [confirmDialog, setConfirmDialog] = useState(false);
+export const UploadDialog = ({ setSuccess }: UploadDialogProps) => {
   const [submitError, setSubmitError] = useState<string>();
 
   const isOnline = useIsOnline();
@@ -48,7 +40,6 @@ export const UploadDialog = ({
           setSubmitError(undefined);
           setSuccess(data.data);
           invalidator.invalidateOntologyList();
-          setOpen(false);
         }
       },
       onError: (error) => {
@@ -61,11 +52,7 @@ export const UploadDialog = ({
     resolver: zodResolver(uploadOntologySchema()),
   });
 
-  const {
-    handleSubmit,
-    reset,
-    formState: { dirtyFields },
-  } = form;
+  const { handleSubmit } = form;
 
   const syncOfflineData = async () => {
     try {
@@ -114,7 +101,6 @@ export const UploadDialog = ({
     }
   }, [isOnline]);
 
-  // TODO: add logged in user functionality
   const onSubmit = async (data: UploadFromFileBody) => {
     if (!isOnline) {
       try {
@@ -141,61 +127,29 @@ export const UploadDialog = ({
     });
   };
 
-  const handleClose = () => {
-    const dirty = Object.keys(dirtyFields).length > 0;
-    if (!dirty) {
-      setOpen(false);
-      reset();
-    } else {
-      setConfirmDialog(true);
-    }
-  };
-
   return (
     <>
-      <GovDialog
-        open={open}
-        onGovClose={() => handleClose()}
-        labelTag="h2"
-        title={t('Dialog.Title')}
-      >
-        <h2 slot="title" className="font-medium text-xl">
+      <div className="w-full space-y-10 bg-page-background p-6 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)] flex flex-col items-center">
+        <h2 slot="title" className="font-medium text-lg w-fit">
           {t('Dialog.Title')}
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4 items-center justify-center"
+        >
           <FileController
             name="file"
-            label={t('Dialog.FileInputLabel')}
             form={form}
             translationNamespace="UploadOntology"
           />
           {submitError && <ErrorText text={submitError} />}
-          <div className="gap-2 flex justify-end w-full">
-            <GovButton
-              type="outlined"
-              color="primary"
-              nativeType="button"
-              onGovClick={handleClose}
-            >
-              {t('Dialog.CancelButton')}
-            </GovButton>
-            <GovButton type="solid" color="primary" nativeType="submit">
-              {t('Dialog.SubmitButton')}
-            </GovButton>
-          </div>
-        </form>
-      </GovDialog>
 
-      <ConfirmDialog
-        open={confirmDialog}
-        onClose={() => setConfirmDialog(false)}
-        handleUnsavedClose={() => {
-          reset();
-          setOpen(false);
-          setConfirmDialog(false);
-        }}
-      />
+          <GovButton type="solid" color="primary" nativeType="submit">
+            {t('Dialog.SubmitButton')}
+          </GovButton>
+        </form>
+      </div>
     </>
   );
 };
