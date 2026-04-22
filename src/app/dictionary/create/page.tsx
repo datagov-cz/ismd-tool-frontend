@@ -24,7 +24,7 @@ const CreateDictionary = () => {
   if (!data?.success) return null;
 
   return (
-    <div className="w-full py-2.5">
+    <div className="w-full py-10">
       <div className="max-w-250 mx-auto space-y-5">
         <h2 className="text-blue-primary font-medium">{t('Form.Title')}</h2>
         <CreateForm />
