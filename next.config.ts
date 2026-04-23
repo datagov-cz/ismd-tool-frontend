@@ -10,20 +10,22 @@ const nextConfig: NextConfig = {
     mdxRs: true,
   },
   async rewrites() {
-    const beUrl = process.env.BE_URL ?? '';
     return [
-      { source: '/v3/api-docs', destination: `${beUrl}/v3/api-docs` },
+      { source: '/v3/api-docs', destination: '/api/backend/v3/api-docs' },
       {
         source: '/v3/api-docs/:path*',
-        destination: `${beUrl}/v3/api-docs/:path*`,
+        destination: '/api/backend/v3/api-docs/:path*',
       },
-      { source: '/swagger-ui', destination: `${beUrl}/swagger-ui` },
+      { source: '/swagger-ui', destination: '/api/backend/swagger-ui' },
       {
         source: '/swagger-ui/:path*',
-        destination: `${beUrl}/swagger-ui/:path*`,
+        destination: '/api/backend/swagger-ui/:path*',
       },
-      { source: '/api-docs', destination: `${beUrl}/api-docs` },
-      { source: '/api-docs/:path*', destination: `${beUrl}/api-docs/:path*` },
+      { source: '/api-docs', destination: '/api/backend/api-docs' },
+      {
+        source: '/api-docs/:path*',
+        destination: '/api/backend/api-docs/:path*',
+      },
     ];
   },
 };
