@@ -36,8 +36,8 @@ export const AddPropertyRelation = ({
         <div>
           {concepts?.map((item) => (
             <Term
-              key={item.slug}
-              slug={item.slug || ''}
+              key={item.ref}
+              slug={item.ref || ''}
               tree={false}
               data={{ název: { cs: item.name || '' } }}
             />

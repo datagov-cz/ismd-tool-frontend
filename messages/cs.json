@@ -350,6 +350,14 @@
       }
     }
   },
+  "Search": {
+    "More": "Další",
+    "Ontologies": "Slovníky",
+    "Concepts": "Pojmy",
+    "DetailSearch": "Detailní vyhledávání",
+    "NoOntologies": "Žádné slovníky nenalezeny",
+    "NoConcepts": "Žádné pojmy nenalezeny"
+  },
   "SearchTypes": {
     "AllTypes": "Všechny typy",
     "Selected": "Vybrané:",

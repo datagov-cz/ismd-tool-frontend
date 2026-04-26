@@ -1,4 +1,4 @@
-import ConceptContent from './concept-content';
+import { ConceptContent } from './concept-content';
 
 interface Props {
   params: Promise<{
