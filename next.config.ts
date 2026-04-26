@@ -9,6 +9,25 @@ const nextConfig: NextConfig = {
   experimental: {
     mdxRs: true,
   },
+  async rewrites() {
+    return [
+      { source: '/v3/api-docs', destination: '/api/backend/v3/api-docs' },
+      {
+        source: '/v3/api-docs/:path*',
+        destination: '/api/backend/v3/api-docs/:path*',
+      },
+      { source: '/swagger-ui', destination: '/api/backend/swagger-ui' },
+      {
+        source: '/swagger-ui/:path*',
+        destination: '/api/backend/swagger-ui/:path*',
+      },
+      { source: '/api-docs', destination: '/api/backend/api-docs' },
+      {
+        source: '/api-docs/:path*',
+        destination: '/api/backend/api-docs/:path*',
+      },
+    ];
+  },
 };
 
 const withMDX = createMDX({
