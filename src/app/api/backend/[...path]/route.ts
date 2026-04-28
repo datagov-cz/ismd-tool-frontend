@@ -12,6 +12,10 @@ const HOP_BY_HOP = new Set([
   'te',
   'trailer',
   'upgrade',
+  // Strip framing headers — Next.js owns the frame policy at the outer layer.
+  // Without this, Spring Boot's default X-Frame-Options: DENY blocks the
+  // swagger-ui iframe on /api-docs.
+  'x-frame-options',
 ]);
 
 async function handler(
@@ -32,7 +36,15 @@ async function handler(
 
   const targetUrl = `${BE_URL}/${joined}${req.nextUrl.search}`;
 
-  const session = await getServerSession(authOptions);
+  // Swagger and OpenAPI paths are public — skip the session lookup so swagger
+  // works even when Keycloak is not running locally. NextAuth lazily fetches
+  // the OIDC discovery doc on first getServerSession, which hangs without it.
+  const isPublicDocsPath =
+    joined.startsWith('swagger-ui') ||
+    joined.startsWith('api-docs') ||
+    joined.startsWith('v3/api-docs');
+
+  const session = isPublicDocsPath ? null : await getServerSession(authOptions);
 
   const headers = new Headers();
   const contentType = req.headers.get('Content-Type');
