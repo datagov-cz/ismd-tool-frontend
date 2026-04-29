@@ -1,8 +1,4 @@
-import {
-  GovButton,
-  GovFormFile,
-  GovFormLabel,
-} from '@gov-design-system-ce/react';
+import { GovButton, GovFormFile, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import {
   FieldValues,
@@ -16,7 +12,6 @@ import { UploadFromFileBody } from '@/api/generated';
 type FileControllerProps<TForm extends FieldValues> = {
   form: UseFormReturn<TForm>;
   name: Path<TForm>;
-  label: string;
   accept?: string;
   translationNamespace?: string;
 };
@@ -27,7 +22,6 @@ const DEFAULT_ACCEPTED_FILE_TYPES =
 export const FileController = ({
   form,
   name,
-  label,
   accept,
   translationNamespace,
 }: FileControllerProps<UploadFromFileBody>) => {
@@ -39,8 +33,7 @@ export const FileController = ({
   const t = useTranslations(translationNamespace);
 
   return (
-    <div>
-      <GovFormLabel>{label}</GovFormLabel>
+    <div className="w-fit mx-auto">
       <GovFormFile
         expanded
         accept={accept || DEFAULT_ACCEPTED_FILE_TYPES}
@@ -61,10 +54,16 @@ export const FileController = ({
         onGovRemoveFile={() => form.reset()}
       >
         <div>
-          <p>{t('FileUpload.Drag')}</p>
           <GovButton type="outlined" color="primary">
+            <GovIcon
+              type="components"
+              name="upload"
+              slot="icon-start"
+              size="m"
+            />
             {t('FileUpload.Upload')}
           </GovButton>
+          <p className="opacity-60 text-sm pt-2">{t('FileUpload.Supported')}</p>
         </div>
       </GovFormFile>
       {error && <p className="text-red-600 text-sm mt-1">{error.message}</p>}

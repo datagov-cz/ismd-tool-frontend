@@ -1,8 +1,5 @@
 export const dynamic = 'force-dynamic';
-// TODO: Fix useTranslation not gracefully handling missing localizations.
-// It breaks npm run build, specifically the optimization for static pages
-// Even more specifically, Layout is a server component, because it's an async function,
-// but it needs to be rendered dynamically because of the client components it uses
+
 import '../styles/globals.css';
 
 import { ReactNode } from 'react';
@@ -10,7 +7,7 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getMessages } from 'next-intl/server';
 
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import { Footer } from '@/components/footer/Footer';
@@ -25,7 +22,6 @@ export const metadata: Metadata = {
 };
 
 const loadEnvVariables = () => {
-  // define any variables to be loaded on the node server to be passed to the client
   return {
     NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH ?? undefined,
     environment: process.env.environment ?? 'development',
@@ -38,6 +34,7 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const locale = await getLocale();
+  const messages = await getMessages();
   const session = await getServerSession(authOptions);
 
   const variables: EnvironmentVariables = {
@@ -48,18 +45,18 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <NextIntlClientProvider>
-        <body>
-          <Script id="gov-ds-config" strategy="beforeInteractive">
-            {`window.GOV_DS_CONFIG = { iconsPath: '${basePath}/assets/icons' };`}
-          </Script>
+      <body>
+        <Script id="gov-ds-config" strategy="beforeInteractive">
+          {`window.GOV_DS_CONFIG = { iconsPath: '${basePath}/assets/icons' };`}
+        </Script>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers environmentVariables={variables} session={session}>
             <Header session={session} />
             {children}
           </Providers>
           <Footer />
-        </body>
-      </NextIntlClientProvider>
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

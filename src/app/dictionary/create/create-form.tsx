@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
-import { TextArea } from '@/components/shared/Textarea';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import { LANG_TAGS, NAMESPACE } from '@/lib/constants';
 import { db, type OntologyDraft } from '@/lib/db';
@@ -149,20 +148,27 @@ export const CreateForm = () => {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-10">
-        <div className="w-full space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full space-y-10 bg-page-background p-6 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)]"
+      >
+        <div className="w-full space-y-7">
           <Input
+            register={form.register}
             name="namespace"
             label={t('Form.NamespaceLabel')}
             placeholder={t('Form.NamespacePlaceholder')}
           />
           <Input
+            register={form.register}
             name="name"
             label={t('Form.NameLabel')}
             placeholder={t('Form.NamePlaceholder')}
           />
-          <TextArea
+          <Input
             name="description"
+            multiline
+            register={form.register}
             label={t('Form.DescriptionLabel')}
             placeholder={t('Form.DescriptionPlaceholder')}
           />

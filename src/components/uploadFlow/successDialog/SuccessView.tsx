@@ -1,34 +1,23 @@
-import { GovButton, GovDialog } from '@gov-design-system-ce/react';
+import { GovButton } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { OntologyMetadataModel } from '@/api/generated';
 
-interface SuccessDialogProps {
-  open: boolean;
+interface SuccessViewProps {
   onClose: () => void;
   ontologyData: OntologyMetadataModel;
 }
 
-export const SuccessDialog = ({
-  open,
-  onClose,
-  ontologyData,
-}: SuccessDialogProps) => {
+export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
   const { id, graphName, slug } = ontologyData;
   const t = useTranslations('UploadOntology');
 
   return (
-    <GovDialog
-      open={open}
-      onGovClose={onClose}
-      labelTag="h2"
-      title={t('Dialog.Title')}
-    >
-      <h2 slot="title" className="font-medium text-xl">
-        {t('SuccessDialog.Title')}
-      </h2>
-      <div className="flex flex-col gap-4 pb-10">
+    <div className="w-full space-y-10 bg-page-background p-6 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)]">
+      <h2 className="font-medium text-xl">{t('SuccessDialog.Title')}</h2>
+
+      <div className="flex flex-col gap-4 pb-4">
         <p>
           <span className="font-bold">ID: </span>
           {id}
@@ -40,6 +29,7 @@ export const SuccessDialog = ({
           </div>
         )}
       </div>
+
       <div className="gap-2 flex justify-end w-full">
         <GovButton
           type="outlined"
@@ -57,6 +47,6 @@ export const SuccessDialog = ({
           {t('SuccessDialog.ViewOntology')}
         </GovButton>
       </div>
-    </GovDialog>
+    </div>
   );
 };

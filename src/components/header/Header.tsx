@@ -65,8 +65,29 @@ export const Header = ({ session }: Props) => {
           )}
 
           {showFullHeader && (
-            <div className="flex-2 2xl:flex-1 flex justify-center">
+            <div className="flex-2 2xl:flex-2 flex justify-center items-center gap-4">
+              {!isHomepage && (
+                <GovButton
+                  size="m"
+                  type="solid"
+                  color="primary"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/`}
+                >
+                  <GovIcon slot="icon-start" name="home" />
+                </GovButton>
+              )}
               <SearchInput />
+              {session && (
+                <GovButton
+                  size="m"
+                  type="solid"
+                  color="primary"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
+                >
+                  <GovIcon slot="icon-start" name="plus" />
+                  {t('Ontology')}
+                </GovButton>
+              )}
             </div>
           )}
 

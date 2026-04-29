@@ -3,8 +3,6 @@
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import { UploadFlow } from '../uploadFlow/UploadFlow';
-
 export const MainControls = () => {
   const t = useTranslations('Home');
 
@@ -28,7 +26,6 @@ export const MainControls = () => {
           />
           {t('MainControls.CreateNewDict')}
         </GovButton>
-        <UploadFlow />
       </div>
     </div>
   );
