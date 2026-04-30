@@ -11,12 +11,26 @@ import {
 } from '@/api/generated';
 import { DictionaryCard } from '../shared/DictionaryCard/DictionaryCard';
 
+export type VisitedEntry = {
+  slug: string;
+  source: 'ISMD' | 'NKD';
+  iri?: string;
+  name?: string;
+};
+
+const getOntologyHref = (entry: VisitedEntry) => {
+  if (entry.source === 'NKD') {
+    return `/dictionary/nkd?iri=${encodeURIComponent(entry.iri || entry.slug)}`;
+  }
+  return `/dictionary/${entry.slug}`;
+};
+
 export const VisitedOntologies = () => {
   const t = useTranslations('Home');
   const { data } = useGetCurrentUser();
   const user = data?.data;
 
-  const [visitedSlugs, setVisitedSlugs] = useState<string[]>([]);
+  const [visitedEntries, setVisitedEntries] = useState<VisitedEntry[]>([]);
   const [cachedOntologies, setCachedOntologies] = useState<
     OntologyMetadataModel[]
   >([]);
@@ -26,19 +40,23 @@ export const VisitedOntologies = () => {
     const key = `dictionarySlugs_${user?.userId}`;
     const stored = localStorage.getItem(key);
     if (stored) {
-      const parsed = JSON.parse(stored);
+      const parsed: (string | VisitedEntry)[] = JSON.parse(stored);
 
-      const decodedSlugs = parsed.map((slug: string) => {
-        try {
-          return decodeURIComponent(slug);
-        } catch {
-          return slug;
+      // Backwards-compat: migrate plain strings (old format) to entry objects
+      const entries: VisitedEntry[] = parsed.map((item) => {
+        if (typeof item === 'string') {
+          try {
+            return { slug: decodeURIComponent(item), source: 'ISMD' as const };
+          } catch {
+            return { slug: item, source: 'ISMD' as const };
+          }
         }
+        return item;
       });
 
-      setVisitedSlugs(decodedSlugs);
+      setVisitedEntries(entries);
     }
-  }, []);
+  }, [user?.userId]);
 
   useEffect(() => {
     const cached = localStorage.getItem('cached-visited-ontologies');
@@ -47,11 +65,13 @@ export const VisitedOntologies = () => {
     }
   }, []);
 
+  const ismdSlugs = visitedEntries
+    .filter((e) => e.source === 'ISMD')
+    .map((e) => e.slug);
+
   const getOntologies = useGetOntologyList(
-    {
-      slugs: visitedSlugs,
-    },
-    { query: { enabled: visitedSlugs.length > 0 } },
+    { slugs: ismdSlugs },
+    { query: { enabled: ismdSlugs.length > 0 } },
   );
 
   useEffect(() => {
@@ -62,18 +82,42 @@ export const VisitedOntologies = () => {
     localStorage.setItem('cached-visited-ontologies', JSON.stringify(newData));
   }, [getOntologies, cachedOntologies]);
 
-  const visitedOntologies = (
-    getOntologies.data?.data || cachedOntologies
-  )?.sort(
-    (a, b) =>
-      visitedSlugs.indexOf(a.slug || '') - visitedSlugs.indexOf(b.slug || ''),
-  );
-
   useEffect(() => {
-    if (visitedSlugs.length > 0) {
+    if (ismdSlugs.length > 0) {
       getOntologies.refetch();
     }
-  }, [visitedSlugs]);
+  }, [visitedEntries]);
+
+  const visitedOntologies = visitedEntries
+    .slice(0, 4)
+    .map((entry) => {
+      if (entry.source === 'ISMD') {
+        const ontology = (getOntologies.data?.data || cachedOntologies)?.find(
+          (o) => o.slug === entry.slug,
+        );
+        return {
+          ...(ontology ?? {
+            id: entry.slug,
+            name: entry.name,
+            slug: entry.slug,
+            popis: '',
+            concepts: [],
+            updatedAt: undefined,
+          }),
+          _href: getOntologyHref(entry),
+        };
+      }
+      return {
+        id: entry.iri || entry.slug,
+        name: entry.name || entry.slug,
+        slug: entry.slug,
+        popis: '',
+        concepts: [],
+        updatedAt: undefined,
+        _href: getOntologyHref(entry),
+      };
+    })
+    .filter(Boolean) as (OntologyMetadataModel & { _href: string })[];
 
   return (
     <div className="space-y-5 pb-10 mt-8 w-full">
@@ -89,23 +133,21 @@ export const VisitedOntologies = () => {
         {t('LastVisited.Title')}
       </h2>
       <div className="space-y-4">
-        {visitedOntologies
-          ?.slice(0, 4)
-          .map(
-            ({ id, name, slug, popis, concepts, updatedAt }) =>
-              name &&
-              id && (
-                <DictionaryCard
-                  key={id || slug}
-                  title={name}
-                  link={`/dictionary/${slug}`}
-                  text={popis || ''}
-                  concepts={concepts?.length ?? 0}
-                  modified={updatedAt ? new Date(updatedAt) : undefined}
-                  id={id}
-                />
-              ),
-          )}
+        {visitedOntologies.map(
+          ({ id, name, slug, popis, concepts, updatedAt, _href }) =>
+            name &&
+            id && (
+              <DictionaryCard
+                key={id || slug}
+                title={name}
+                link={_href}
+                text={popis || ''}
+                concepts={concepts?.length ?? 0}
+                modified={updatedAt ? new Date(updatedAt) : undefined}
+                id={id}
+              />
+            ),
+        )}
       </div>
     </div>
   );

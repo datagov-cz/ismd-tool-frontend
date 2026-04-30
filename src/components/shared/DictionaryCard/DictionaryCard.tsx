@@ -49,12 +49,14 @@ export const DictionaryCard = ({
 
       <div className="flex justify-between bg-page-background px-4 py-0.5">
         <div className="flex gap-3 items-center">
-          <CardStat label={t('Concepts')} value={concepts} />
-          <span className="bg-link h-3 w-px" />
-          <CardStat
-            label={t('Updated')}
-            value={modified?.toLocaleDateString('CS')}
-          />
+          {concepts > 0 && <CardStat label={t('Concepts')} value={concepts} />}
+          {concepts > 0 && modified && <span className="bg-link h-3 w-px" />}
+          {modified && (
+            <CardStat
+              label={t('Updated')}
+              value={modified?.toLocaleDateString('CS')}
+            />
+          )}
         </div>
         <div className="flex gap-2 items-center">
           <CardIconButton icon="link" onClick={handleCopyLink} />

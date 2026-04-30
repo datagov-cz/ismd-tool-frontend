@@ -80,8 +80,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -103,9 +103,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -405,6 +405,106 @@ export interface UserInfoDto {
   admin?: boolean;
 }
 
+export interface ApiResponseDtoSearchResponseDto {
+  data?: SearchResponseDto;
+  message?: string;
+  success?: boolean;
+}
+
+export type SearchResponseDtoSourceStatuses = {
+  [key: string]: SourceStatusDto;
+};
+
+export interface SearchResponseDto {
+  results?: SearchResultDto[];
+  returnedCount?: number;
+  limit?: number;
+  offset?: number;
+  sourceStatuses?: SearchResponseDtoSourceStatuses;
+}
+
+export type SearchResultDtoType =
+  (typeof SearchResultDtoType)[keyof typeof SearchResultDtoType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchResultDtoType = {
+  ONTOLOGY: 'ONTOLOGY',
+  CONCEPT: 'CONCEPT',
+} as const;
+
+export type SearchResultDtoSource =
+  (typeof SearchResultDtoSource)[keyof typeof SearchResultDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchResultDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export type SearchResultDtoConceptType =
+  (typeof SearchResultDtoConceptType)[keyof typeof SearchResultDtoConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchResultDtoConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+} as const;
+
+export type SearchResultDtoMatchedBy =
+  (typeof SearchResultDtoMatchedBy)[keyof typeof SearchResultDtoMatchedBy];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchResultDtoMatchedBy = {
+  PG: 'PG',
+  SPARQL: 'SPARQL',
+  BOTH: 'BOTH',
+} as const;
+
+export interface SearchResultDto {
+  iri?: string;
+  slug?: string;
+  label?: string;
+  labelLang?: string;
+  altName?: string;
+  description?: string;
+  definition?: string;
+  type?: SearchResultDtoType;
+  source?: SearchResultDtoSource;
+  conceptType?: SearchResultDtoConceptType;
+  ontologyIri?: string;
+  isPublished?: boolean;
+  matchedBy?: SearchResultDtoMatchedBy;
+}
+
+export type SourceStatusDtoStatus =
+  (typeof SourceStatusDtoStatus)[keyof typeof SourceStatusDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SourceStatusDtoStatus = {
+  OK: 'OK',
+  DEGRADED: 'DEGRADED',
+  TIMEOUT: 'TIMEOUT',
+  ERROR: 'ERROR',
+  SKIPPED: 'SKIPPED',
+  UNAVAILABLE: 'UNAVAILABLE',
+} as const;
+
+export interface SourceStatusDto {
+  status?: SourceStatusDtoStatus;
+  returnedCount?: number;
+  totalCount?: number;
+  message?: string;
+}
+
+export interface ApiResponseDtoGetOntologyDto {
+  data?: GetOntologyDto;
+  message?: string;
+  success?: boolean;
+}
+
 export type ConceptDetailModelNázev = { [key: string]: string };
 
 export type ConceptDetailModelAlternativníNázev = {
@@ -454,12 +554,12 @@ export interface ConceptDetailModel {
 
 export interface ConceptPropertiesModel {
   name?: string;
-  slug?: string;
+  ref?: string;
 }
 
 export interface ConceptRelationshipsModel {
   name?: string;
-  slug?: string;
+  ref?: string;
 }
 
 export type GetOntologyDtoPublishedConceptDeviations = {
@@ -615,6 +715,55 @@ export interface ApiResponseDtoListOntologyMetadataModel {
   success?: boolean;
 }
 
+export interface ApiResponseDtoGetNkdOntologyListDto {
+  data?: GetNkdOntologyListDto;
+  message?: string;
+  success?: boolean;
+}
+
+export interface GetNkdOntologyListDto {
+  ontologies?: NkdOntologyListItemDto[];
+}
+
+export type NkdOntologyListItemDtoNázev = { [key: string]: string };
+
+export type NkdOntologyListItemDtoPopis = { [key: string]: string };
+
+export interface NkdOntologyListItemDto {
+  iri?: string;
+  název?: NkdOntologyListItemDtoNázev;
+  popis?: NkdOntologyListItemDtoPopis;
+  'časový-okamžik-vytvoření'?: string;
+  'časový-okamžik-poslední-změny'?: string;
+}
+
+export interface ApiResponseDtoGetNkdOntologyDto {
+  data?: GetNkdOntologyDto;
+  message?: string;
+  success?: boolean;
+}
+
+export interface GetNkdOntologyDto {
+  ontologyDetail?: OntologyDetailModel;
+}
+
+export interface ApiResponseDtoGetNkdConceptDto {
+  data?: GetNkdConceptDto;
+  message?: string;
+  success?: boolean;
+}
+
+export interface GetNkdConceptDto {
+  conceptDetail?: ConceptDetailModel;
+  ontologyIri?: string;
+}
+
+export interface ApiResponseDtoGetConceptDto {
+  data?: GetConceptDto;
+  message?: string;
+  success?: boolean;
+}
+
 export interface GetConceptDto {
   conceptMetadata?: ConceptMetadataModel;
   conceptDetail?: ConceptDetailModel;
@@ -653,6 +802,71 @@ export type EditConceptBody =
   | PropertyConceptEditModel
   | RelationshipConceptEditModel;
 
+export type SearchParams = {
+  /**
+   * Vyhledávací dotaz (min. 2 znaky)
+   */
+  q: string;
+  /**
+   * Typ výsledku: ONTOLOGY, CONCEPT
+   */
+  type?: SearchType;
+  /**
+   * Zdroj dat: NKD, ISMD, ALL
+   */
+  source?: SearchSource;
+  /**
+   * Maximální počet výsledků (1-100)
+   */
+  limit?: number;
+  /**
+   * Offset pro stránkování
+   */
+  offset?: number;
+  /**
+   * Preferovaný jazyk
+   */
+  lang?: string;
+  /**
+   * Filtrování podle IRI slovníku
+   */
+  ontologyIri?: string[];
+  /**
+   * Filtrování podle typů vztahů: SUBCLASS, SUPERCLASS, EXACT_MATCH, PROPERTY_OF, RELATIONSHIP_OF
+   */
+  relationTypes?: SearchRelationTypesItem[];
+};
+
+export type SearchType = (typeof SearchType)[keyof typeof SearchType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchType = {
+  ONTOLOGY: 'ONTOLOGY',
+  CONCEPT: 'CONCEPT',
+} as const;
+
+export type SearchSource = (typeof SearchSource)[keyof typeof SearchSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export type SearchRelationTypesItem =
+  (typeof SearchRelationTypesItem)[keyof typeof SearchRelationTypesItem];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SearchRelationTypesItem = {
+  SUBCLASS: 'SUBCLASS',
+  SUPERCLASS: 'SUPERCLASS',
+  EXACT_MATCH: 'EXACT_MATCH',
+  PROPERTY_OF: 'PROPERTY_OF',
+  RELATIONSHIP_OF: 'RELATIONSHIP_OF',
+} as const;
+
 export type DownloadFileParams = {
   format: string;
 };
@@ -661,6 +875,31 @@ export type GetOntologyListParams = {
   userId?: string;
   isPublished?: boolean;
   slugs?: string[];
+};
+
+export type GetNkdOntologyListParams = {
+  /**
+   * Seznam IRI slovníků v NKD (max 50)
+   */
+  iris: string[];
+};
+
+export type GetNkdOntologyDetailParams = {
+  /**
+   * IRI slovníku v NKD
+   */
+  iri: string;
+};
+
+export type GetNkdConceptDetailParams = {
+  /**
+   * IRI pojmu v NKD
+   */
+  iri: string;
+  /**
+   * IRI slovníku, do kterého pojem patří (volitelné)
+   */
+  ontologyIri?: string;
 };
 
 export type GetConceptListParams = {
@@ -1534,6 +1773,147 @@ export function useGetCurrentUser<
 }
 
 /**
+ * Vyhledává slovníky a pojmy napříč zdroji NKD a ISMD. Anonymní uživatelé mohou vyhledávat pouze v NKD, přihlášení uživatelé oba zdroje.
+ * @summary Vyhledávání slovníků a pojmů
+ */
+export const search = (
+  params: SearchParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoSearchResponseDto>(
+    { url: `/api/search`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getSearchQueryKey = (params?: SearchParams) => {
+  return [`/api/search`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchQueryOptions = <
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getSearchQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof search>>> = ({
+    signal,
+  }) => search(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof search>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchQueryResult = NonNullable<Awaited<ReturnType<typeof search>>>;
+export type SearchQueryError = unknown;
+
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof search>>,
+          TError,
+          Awaited<ReturnType<typeof search>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof search>>,
+          TError,
+          Awaited<ReturnType<typeof search>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vyhledávání slovníků a pojmů
+ */
+
+export function useSearch<
+  TData = Awaited<ReturnType<typeof search>>,
+  TError = unknown,
+>(
+  params: SearchParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof search>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací kompletní detail slovníku včetně všech pojmů, jejich vztahů a metadat. Obsahuje také informace o odchylkách od publikované verze, pokud existuje. Veřejný endpoint.
  * @summary Detail slovníku
  */
@@ -1542,7 +1922,7 @@ export const getOntologyDetail = (
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<GetOntologyDto>(
+  return axiosInstance<ApiResponseDtoGetOntologyDto>(
     { url: `/api/ontology/${slug}/detail`, method: 'GET', signal },
     options,
   );
@@ -2032,6 +2412,504 @@ export function useGetOntologyList<
 }
 
 /**
+ * Vrací zkrácené metadata slovníků publikovaných v Národním katalogu dat (NKD) pro zadaný seznam IRI. Slouží například k zobrazení naposledy navštívených slovníků, kde frontend uchovává seznam IRI v localStorage. IRI, které se nepodaří načíst nebo v NKD neexistují, jsou v odpovědi vynechány. Maximálně 50 IRI v jedné žádosti. Veřejný endpoint.
+ * @summary Seznam slovníků z NKD podle IRI
+ */
+export const getNkdOntologyList = (
+  params: GetNkdOntologyListParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoGetNkdOntologyListDto>(
+    { url: `/api/nkd/ontology/list`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetNkdOntologyListQueryKey = (
+  params?: GetNkdOntologyListParams,
+) => {
+  return [`/api/nkd/ontology/list`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetNkdOntologyListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetNkdOntologyListQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getNkdOntologyList>>
+  > = ({ signal }) => getNkdOntologyList(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getNkdOntologyList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNkdOntologyListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getNkdOntologyList>>
+>;
+export type GetNkdOntologyListQueryError = unknown;
+
+export function useGetNkdOntologyList<
+  TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNkdOntologyList>>,
+          TError,
+          Awaited<ReturnType<typeof getNkdOntologyList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNkdOntologyList<
+  TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNkdOntologyList>>,
+          TError,
+          Awaited<ReturnType<typeof getNkdOntologyList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNkdOntologyList<
+  TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Seznam slovníků z NKD podle IRI
+ */
+
+export function useGetNkdOntologyList<
+  TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetNkdOntologyListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací kompletní detail slovníku publikovaného v Národním katalogu dat (NKD) podle IRI zdroje. Detail je sestaven ze SPARQL CONSTRUCT dotazu na NKD endpoint a obsahuje metadata slovníku včetně všech jeho pojmů. Veřejný endpoint.
+ * @summary Detail slovníku z NKD
+ */
+export const getNkdOntologyDetail = (
+  params: GetNkdOntologyDetailParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoGetNkdOntologyDto>(
+    { url: `/api/nkd/ontology/detail`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetNkdOntologyDetailQueryKey = (
+  params?: GetNkdOntologyDetailParams,
+) => {
+  return [`/api/nkd/ontology/detail`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetNkdOntologyDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetNkdOntologyDetailQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getNkdOntologyDetail>>
+  > = ({ signal }) => getNkdOntologyDetail(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNkdOntologyDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getNkdOntologyDetail>>
+>;
+export type GetNkdOntologyDetailQueryError = unknown;
+
+export function useGetNkdOntologyDetail<
+  TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyDetailParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getNkdOntologyDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNkdOntologyDetail<
+  TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getNkdOntologyDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNkdOntologyDetail<
+  TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Detail slovníku z NKD
+ */
+
+export function useGetNkdOntologyDetail<
+  TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdOntologyDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdOntologyDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetNkdOntologyDetailQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací kompletní detail pojmu publikovaného v Národním katalogu dat (NKD) podle IRI zdroje. Detail je sestaven ze SPARQL CONSTRUCT dotazu na NKD endpoint. Parametr ontologyIri je volitelný a slouží jako kontext pro frontend (např. drobečková navigace). Veřejný endpoint.
+ * @summary Detail pojmu z NKD
+ */
+export const getNkdConceptDetail = (
+  params: GetNkdConceptDetailParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoGetNkdConceptDto>(
+    { url: `/api/nkd/concept/detail`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetNkdConceptDetailQueryKey = (
+  params?: GetNkdConceptDetailParams,
+) => {
+  return [`/api/nkd/concept/detail`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetNkdConceptDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdConceptDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdConceptDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetNkdConceptDetailQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getNkdConceptDetail>>
+  > = ({ signal }) => getNkdConceptDetail(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getNkdConceptDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNkdConceptDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getNkdConceptDetail>>
+>;
+export type GetNkdConceptDetailQueryError = unknown;
+
+export function useGetNkdConceptDetail<
+  TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdConceptDetailParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdConceptDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNkdConceptDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getNkdConceptDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNkdConceptDetail<
+  TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdConceptDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdConceptDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNkdConceptDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getNkdConceptDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetNkdConceptDetail<
+  TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdConceptDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdConceptDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Detail pojmu z NKD
+ */
+
+export function useGetNkdConceptDetail<
+  TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
+  TError = unknown,
+>(
+  params: GetNkdConceptDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getNkdConceptDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetNkdConceptDetailQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací kompletní detail pojmu včetně všech vlastností, vztahů, definic a dalších metadat. Obsahuje také informace o odchylkách od publikované verze. Veřejný endpoint.
  * @summary Detail pojmu
  */
@@ -2040,7 +2918,7 @@ export const getConceptDetail = (
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<GetConceptDto>(
+  return axiosInstance<ApiResponseDtoGetConceptDto>(
     { url: `/api/concept/${slug}/detail`, method: 'GET', signal },
     options,
   );

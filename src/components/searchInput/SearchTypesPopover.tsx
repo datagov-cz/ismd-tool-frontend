@@ -46,14 +46,20 @@ const SEARCH_TYPES: SearchTypeConfig[] = [
   },
 ];
 
-export const SearchTypesPopover = () => {
+type Props = {
+  selected: SearchType[];
+  onSelectionChange: (_selected: SearchType[]) => void;
+};
+
+export const SearchTypesPopover = ({ selected, onSelectionChange }: Props) => {
   const t = useTranslations('SearchTypes');
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<SearchType[]>([]);
 
   const toggleType = (type: SearchType) => {
-    setSelected((prev) =>
-      prev.includes(type) ? prev.filter((s) => s !== type) : [...prev, type],
+    onSelectionChange(
+      selected.includes(type)
+        ? selected.filter((s) => s !== type)
+        : [...selected, type],
     );
   };
 
@@ -65,7 +71,7 @@ export const SearchTypesPopover = () => {
       id="search-type-dropdown"
       position="left"
       onChange={() => setOpen((prev) => !prev)}
-      className="absolute! top-1/2! right-0! -translate-y-1/2!"
+      className="absolute! top-1/2! right-0! -translate-y-1/2! z-100"
     >
       <GovButton
         type="base"
@@ -106,7 +112,7 @@ export const SearchTypesPopover = () => {
         )}
       </GovButton>
 
-      <ul slot="list" className="p-0!">
+      <ul className="p-0!" slot="list">
         {SEARCH_TYPES.map(({ key, icon, iconType, color }) => {
           const isSelected = selected.includes(key);
           return (
