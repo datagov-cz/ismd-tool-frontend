@@ -5,6 +5,7 @@ import {
   useGetCurrentUser,
   useGetNkdOntologyDetail,
 } from '@/api/generated';
+import { ControlPanelNKD } from '@/components/dictionaryDetail/ControlPanelNKD';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
@@ -43,15 +44,20 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
 
   return (
     <OntologyLayout
+      source="NKD"
       title={ontologyDetail.název?.cs ?? ''}
       popis={ontologyDetail.popis}
       sortedParentTerms={sortedParentTerms ?? []}
+      updatedAt={ontologyDetail['časový-okamžik-poslední-změny']}
+      conceptCount={ontologyDetail.pojmy?.length}
       getConceptSlug={nkdSlug}
       getRelatedTerms={(parent) =>
         ontologyDetail.pojmy
           ?.filter((item) => item.iri && item['definiční-obor'] === parent.iri)
           .map((item) => ({ data: item, slug: `/nkd?iri=${item.iri}` })) || []
       }
-    />
+    >
+      <ControlPanelNKD ontologyID={0} />
+    </OntologyLayout>
   );
 };

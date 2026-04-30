@@ -1,9 +1,22 @@
+import { useMemo, useState } from 'react';
+import {
+  GovButton,
+  GovFormGroup,
+  GovFormInput,
+  GovIcon,
+  GovTag,
+} from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel } from '@/api/generated';
-import { LanguageSwitcher } from '@/components/conceptDetail/LanguageSwitcher';
-import { GridContainer } from '@/components/dictionaryDetail/GridContainer';
+import {
+  ConceptDetailModel,
+  OntologyMetadataModel,
+  useGetCurrentUser,
+} from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
+
+import { ValidationSummary } from './validation/ValidationSummary';
 
 export interface TermWithSlug {
   data: ConceptDetailModel;
@@ -13,12 +26,17 @@ export interface TermWithSlug {
 interface Props {
   title: string;
   popis?: Record<string, string> | null;
+  source: 'NKD' | 'ISMD';
   fallbackPopis?: string;
   statusLabel?: string;
   sortedParentTerms: ConceptDetailModel[];
   getConceptSlug: (_concept: ConceptDetailModel) => string;
   getRelatedTerms: (_concept: ConceptDetailModel) => TermWithSlug[];
   children?: React.ReactNode;
+  updatedAt?: string;
+  conceptCount?: number;
+  metaData?: OntologyMetadataModel;
+  slug?: string;
 }
 
 export const OntologyLayout = ({
@@ -30,47 +48,144 @@ export const OntologyLayout = ({
   getConceptSlug,
   getRelatedTerms,
   children,
+  source,
+  updatedAt,
+  conceptCount,
+  slug,
+  metaData,
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
+  const { data } = useGetCurrentUser();
+
+  const [filterQuery, setFilterQuery] = useState('');
+  const filteredParentTerms = useMemo(() => {
+    if (!filterQuery.trim()) return sortedParentTerms;
+    const q = filterQuery.toLowerCase();
+    return sortedParentTerms.filter((concept) => {
+      const nameMatch = concept.název?.cs?.toLowerCase().includes(q);
+      const subtermsMatch = getRelatedTerms(concept).some((sub) =>
+        sub.data.název?.cs?.toLowerCase().includes(q),
+      );
+      return nameMatch || subtermsMatch;
+    });
+  }, [sortedParentTerms, filterQuery, getRelatedTerms]);
+
+  const isLoggedOutOrNKD = data?.success !== true || source === 'NKD';
+
   return (
-    <div className="w-full relative flex max-w-250 mx-auto py-10">
-      <div className="w-full pl-2 pr-8 space-y-6 relative">
-        <GridContainer>
-          <div className="space-y-2 col-span-4 col-start-2">
-            <h1 className="text-xl lg:text-3xl font-bold">{title}</h1>
-            {statusLabel && (
-              <p className="text-sm text-dark-secondary">{statusLabel}</p>
-            )}
-          </div>
-        </GridContainer>
-        <GridContainer>
-          <p className="font-medium text-xl">
-            {t('Main.Sections.Description')}
-          </p>
-          {popis ? (
-            <div className="col-span-4">
-              <LanguageSwitcher item={popis} />
-            </div>
-          ) : fallbackPopis ? (
-            <p className="col-span-4">{fallbackPopis}</p>
-          ) : null}
-        </GridContainer>
-        <GridContainer>
-          <p className="font-medium text-xl">{t('Main.Sections.Terms')}</p>
-          <div className="col-span-4">
-            {sortedParentTerms.map((concept, index) => (
-              <Term
-                data={concept}
-                subterms={getRelatedTerms(concept)}
-                key={concept.iri || index}
-                slug={getConceptSlug(concept)}
-              />
-            ))}
-          </div>
-        </GridContainer>
+    <div className="w-full h-full flex-1">
+      <div className="w-full bg-primary-subtlest">
+        <div className="w-full relative max-w-250 mx-auto pt-2 pb-3">
+          <GovButton
+            type="base"
+            color="primary"
+            size="s"
+            href={process.env.NEXT_PUBLIC_BASE_PATH}
+          >
+            <GovIcon
+              slot="icon-start"
+              name="arrow-right"
+              size="l"
+              className="rotate-180"
+            />
+            Zpět k úvodu
+          </GovButton>
+        </div>
       </div>
-      {children}
+      <div className="w-full relative max-w-250 mx-auto py-3">
+        <div className="w-full space-y-6 relative">
+          <div className="space-y-3">
+            <div className="flex flex-col gap-2">
+              <div className="flex w-full justify-between">
+                <GovTag
+                  color="success"
+                  size="xs"
+                  type="subtle"
+                  className="w-fit [&_span]:font-bold!"
+                >
+                  <GovIcon
+                    slot="icon-start"
+                    name="journal-text"
+                    size="l"
+                    className="text-white"
+                  />
+                  Slovník<span> / {source}</span>
+                  {statusLabel && <span> / {statusLabel}</span>}
+                </GovTag>
+                {updatedAt && (
+                  <span className="text-sm text-dark-primary">
+                    aktualizováno:{' '}
+                    {new Date(updatedAt).toLocaleDateString('CS')}
+                  </span>
+                )}
+              </div>
+              <h1 className="text-[32px] font-medium">{title}</h1>
+              <div>
+                <p className="text-md">{popis?.cs ?? fallbackPopis}</p>
+              </div>
+            </div>
+            {children}
+          </div>
+        </div>
+      </div>
+      <div className="w-full bg-primary-subtlest flex-1 h-full">
+        <div className="w-full relative max-w-250 mx-auto py-3 grid grid-cols-10 ">
+          <div
+            className={clsx(isLoggedOutOrNKD ? 'col-span-10' : 'col-span-6')}
+          >
+            <p className="font-medium text-lg mb-3">
+              {t('Main.Sections.Terms')}{' '}
+              <span className="opacity-60">[{conceptCount}]</span>
+            </p>
+            <div className="flex justify-between pb-2 items-end">
+              {!isLoggedOutOrNKD && (
+                <GovButton type="solid" color="primary" size="s">
+                  <GovIcon
+                    slot="icon-start"
+                    name="plus"
+                    size="s"
+                    className="text-white"
+                  />
+                  Přidat pojem
+                </GovButton>
+              )}
+
+              <GovFormGroup className="relative w-full max-w-60">
+                <GovFormInput
+                  className="max-w-60 w-full border-0!"
+                  size="s"
+                  placeholder="Hledat výraz"
+                  value={filterQuery}
+                  onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
+                >
+                  <GovIcon
+                    type="components"
+                    color="neutral"
+                    name="funnel"
+                    slot="icon-start"
+                    size="s"
+                    className="transition-transform duration-200"
+                  />
+                </GovFormInput>
+              </GovFormGroup>
+            </div>
+            <div className="col-span-4 space-y-2">
+              {filteredParentTerms.map((concept, index) => (
+                <Term
+                  data={concept}
+                  subterms={getRelatedTerms(concept)}
+                  key={concept.iri || index}
+                  slug={getConceptSlug(concept)}
+                />
+              ))}
+            </div>
+          </div>
+          {!isLoggedOutOrNKD && slug && metaData && (
+            <ValidationSummary slug={slug} metaData={metaData} />
+          )}
+        </div>
+      </div>
     </div>
   );
 };

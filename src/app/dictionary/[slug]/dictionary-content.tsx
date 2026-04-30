@@ -4,15 +4,12 @@ import { useTranslations } from 'next-intl';
 
 import {
   ConceptDetailModel,
-  OntologyDetailModel,
-  OntologyMetadataModel,
   useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
-import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
@@ -78,28 +75,9 @@ export const DictionaryContent = ({ slug }: Props) => {
     conceptMetadataModelList?.find((m) => m.conceptIri === concept.iri)?.slug ||
     '';
 
-  const transformToArrayFormat = ({
-    data,
-    meta,
-  }: {
-    data: OntologyDetailModel;
-    meta: OntologyMetadataModel;
-  }) => {
-    const nameModel = data.název?.cs || meta?.name || '';
-    const descriptionModel = data.popis
-      ? Object.entries(data.popis)
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          .filter(([_, value]) => value !== undefined && value !== '')
-          .map(([languageTag, description]) => ({
-            languageTag: languageTag,
-            name: description as string,
-          }))
-      : [{ name: meta.popis || '', languageTag: 'cs' }];
-    return { nameModel, descriptionModel };
-  };
-
   return (
     <OntologyLayout
+      source="ISMD"
       title={ontologyDetail.název?.cs || ontologyMetadata.name || ''}
       popis={ontologyDetail.popis}
       fallbackPopis={ontologyMetadata.popis}
@@ -111,11 +89,21 @@ export const DictionaryContent = ({ slug }: Props) => {
       sortedParentTerms={sortedParentTerms ?? []}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}
+      updatedAt={
+        ontologyDetail['časový-okamžik-poslední-změny'] ||
+        ontologyMetadata.updatedAt
+      }
+      conceptCount={ontologyDetail.pojmy?.length}
+      metaData={ontologyMetadata}
+      slug={slug}
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}
         isPublished={ontologyMetadata.isPublished || false}
         name={ontologyDetail.název?.cs || ''}
+        user={ontologyMetadata.user}
+        commentsCount={ontologyMetadata.comments?.length}
+        slug={slug}
       />
       {user?.userId && (
         <CommentSidebox
@@ -131,16 +119,6 @@ export const DictionaryContent = ({ slug }: Props) => {
           namespace={ontologyDetail.iri || ontologyMetadata.graphName || ''}
           action="create"
           sideboxId="create"
-        />
-      )}
-      {ontologyMetadata.id && (
-        <EditSideBox
-          ontologySlug={slug}
-          ontologyID={ontologyMetadata.id}
-          defaultValues={transformToArrayFormat({
-            data: ontologyDetail,
-            meta: ontologyMetadata,
-          })}
         />
       )}
     </OntologyLayout>

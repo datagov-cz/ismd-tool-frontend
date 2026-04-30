@@ -44,7 +44,12 @@ export const DownloadDialog = ({
   };
 
   return (
-    <GovDialog open={open} onGovClose={onClose} labelTag="h2">
+    <GovDialog
+      open={open}
+      onGovClose={onClose}
+      labelTag="h2"
+      className="fixed z-100"
+    >
       <h2 slot="title">{t('Title')}</h2>
       <div className="flex items-end justify-end gap-2 w-full">
         <GovButton

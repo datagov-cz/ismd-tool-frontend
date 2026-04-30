@@ -16,25 +16,24 @@ export type UploadFromFileBody = z.infer<
   ReturnType<typeof uploadOntologySchema>
 >;
 
+const languageSchema = z.object({
+  languageTag: z.string().optional(),
+  name: z.string().optional(),
+});
+
 export const createOntologySchema = (t: (_key: string) => string) =>
   z.object({
     namespace: z.string().min(1, t('FormSchema.NamespaceRequired')),
-    name: z.string().min(1, t('FormSchema.NameRequired')),
-    description: z.string().min(1, t('FormSchema.DescriptionRequired')),
-    languageTag: z.string().min(1, t('FormSchema.LanguageTagRequired')),
+    nameModel: z.array(languageSchema).min(1, t('FormSchema.NameRequired')),
+    descriptionModel: z.array(languageSchema).optional(),
   });
 
 export type OntologySchemaType = z.infer<
   ReturnType<typeof createOntologySchema>
 >;
 
-const languageSchema = z.object({
-  languageTag: z.string().optional(),
-  name: z.string().optional(),
-});
-
 export const ontologyEditModelSchema = z.object({
-  nameModel: z.string().optional(),
+  nameModel: z.array(languageSchema).optional(),
   descriptionModel: z.array(languageSchema).optional(),
 });
 

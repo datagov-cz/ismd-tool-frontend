@@ -15,7 +15,7 @@ export const LanguageSwitcher = ({ item }: LanguageSwitcherProps) => {
   if (Object.keys(item).length === 0) return;
   return (
     <div className="flex justify-between w-full gap-4">
-      <p>{String(item[language])}</p>
+      <p className="font-sm text-md">{String(item[language])}</p>
       <div className="flex gap-0.5">
         {Object.keys(item)
           .sort()

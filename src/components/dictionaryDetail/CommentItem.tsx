@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
-import clsx from 'clsx';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -22,6 +21,8 @@ export const CommentItem = ({
 }: Props) => {
   const t = useTranslations('DictionaryDetail.CommentSidebox');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const isOwner = userId === loggedUser;
 
   const deleteComment = useDeleteComment({
     mutation: {
@@ -50,32 +51,40 @@ export const CommentItem = ({
   };
 
   return (
-    <div className="flex flex-col gap-y-2 p-2 [&:not(:last-child))]:border-b border-secondary">
+    <div className="flex flex-col gap-y-2 p-2 not-last:border-b border-secondary/70">
       <div className="flex gap-4 justify-between">
         <div className="flex gap-4 items-center">
-          <span className="font-bold">{userId}</span>
-          <span className="text-xs text-black/80">
+          <span className="text-sm text-black flex justify-center items-center gap-1.5 font-medium">
             {postedTime &&
-              new Date(postedTime).toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
+              new Date(postedTime).toLocaleTimeString('CS', {
                 hour: 'numeric',
                 minute: 'numeric',
               })}
+            <span className="min-w-0.5 min-h-0.5 w-0.5 h-0.5 bg-black rounded-full block" />
+            {postedTime && new Date(postedTime).toLocaleDateString('CS')}
+            {isOwner && (
+              <span className="pl-1.5 border-l border-blue/30 text-blue-primary leading-3">
+                Vlastní komentář
+              </span>
+            )}
           </span>
         </div>
-        <button
-          className={clsx(
-            'outline-blue dark:outline-white/60 flex items-center justify-center p-1 outline-1 rounded-md hover:bg-blue/20 dark:hover:bg-blue-hover transition-colors duration-200 mr-2',
-            userId !== loggedUser ? 'hidden' : '',
-          )}
-          onClick={handleDelete}
-        >
-          <GovIcon name="trash" size="m" />
-        </button>
       </div>
-      <p className="mt-1 text-sm whitespace-pre-wrap line-clamp-3">{comment}</p>
+      <div className="flex justify-between gap-4">
+        <p className="mt-1 text-sm whitespace-pre-wrap line-clamp-3">
+          {comment}
+        </p>
+        {isOwner && (
+          <GovButton
+            onGovClick={handleDelete}
+            color="error"
+            type="base"
+            size="s"
+          >
+            <GovIcon name="trash" size="m" />
+          </GovButton>
+        )}
+      </div>
 
       <ConfirmationModal
         isOpen={showConfirmModal}
