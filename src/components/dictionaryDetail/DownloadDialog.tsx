@@ -2,24 +2,30 @@ import { GovButton, GovDialog } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { downloadFile } from '@/api/generated';
+import { downloadFile, downloadNkdOntology } from '@/api/generated';
 
-interface DownloadDialogProps {
+type DownloadDialogProps = {
   open: boolean;
   onClose: () => void;
-  ontologyID: number;
-}
+} & (
+  | { type: 'ISMD'; ontologyID: number; ontologyIRI?: never }
+  | { type: 'NKD'; ontologyIRI: string; ontologyID?: never }
+);
 
 export const DownloadDialog = ({
   open,
   onClose,
   ontologyID,
+  ontologyIRI,
+  type,
 }: DownloadDialogProps) => {
   const t = useTranslations('DownloadDialog');
 
   const handleDownload = async (format: 'json-ld' | 'ttl') => {
     try {
-      const file = await downloadFile(ontologyID, { format });
+      const file = await (type === 'ISMD'
+        ? downloadFile(ontologyID, { format })
+        : downloadNkdOntology({ iri: ontologyIRI, format }));
       if (!file) {
         throw new Error('No file returned');
       }
@@ -35,7 +41,6 @@ export const DownloadDialog = ({
 
       toast.success(t('Success', { format }));
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Download failed:', error);
       toast.error(t('Error'));
     } finally {

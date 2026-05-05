@@ -29,7 +29,7 @@ interface Props {
   source: 'NKD' | 'ISMD';
   fallbackPopis?: string;
   statusLabel?: string;
-  sortedParentTerms: ConceptDetailModel[];
+  concepts?: ConceptDetailModel[];
   getConceptSlug: (_concept: ConceptDetailModel) => string;
   getRelatedTerms: (_concept: ConceptDetailModel) => TermWithSlug[];
   children?: React.ReactNode;
@@ -44,7 +44,7 @@ export const OntologyLayout = ({
   popis,
   fallbackPopis,
   statusLabel,
-  sortedParentTerms,
+  concepts,
   getConceptSlug,
   getRelatedTerms,
   children,
@@ -59,17 +59,42 @@ export const OntologyLayout = ({
   const { data } = useGetCurrentUser();
 
   const [filterQuery, setFilterQuery] = useState('');
+
   const filteredParentTerms = useMemo(() => {
-    if (!filterQuery.trim()) return sortedParentTerms;
+    const allParents =
+      concepts
+        ?.filter((item) => item.název)
+        ?.filter((item) => !item['definiční-obor'])
+        .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? '')) ??
+      [];
+
+    if (!filterQuery.trim()) {
+      return allParents.map((concept) => ({
+        concept,
+        subterms: getRelatedTerms(concept),
+      }));
+    }
+
     const q = filterQuery.toLowerCase();
-    return sortedParentTerms.filter((concept) => {
-      const nameMatch = concept.název?.cs?.toLowerCase().includes(q);
-      const subtermsMatch = getRelatedTerms(concept).some((sub) =>
-        sub.data.název?.cs?.toLowerCase().includes(q),
+
+    return allParents
+      .map((concept) => {
+        const allSubterms = getRelatedTerms(concept);
+        const nameMatch = concept.název?.cs?.toLowerCase().includes(q);
+        const filteredSubterms = allSubterms.filter((sub) =>
+          sub.data.název?.cs?.toLowerCase().includes(q),
+        );
+
+        return {
+          concept,
+          subterms: nameMatch ? allSubterms : filteredSubterms,
+        };
+      })
+      .filter(
+        ({ concept, subterms }) =>
+          concept.název?.cs?.toLowerCase().includes(q) || subterms.length > 0,
       );
-      return nameMatch || subtermsMatch;
-    });
-  }, [sortedParentTerms, filterQuery, getRelatedTerms]);
+  }, [concepts, filterQuery, getRelatedTerms]);
 
   const isLoggedOutOrNKD = data?.success !== true || source === 'NKD';
 
@@ -89,7 +114,7 @@ export const OntologyLayout = ({
               size="l"
               className="rotate-180"
             />
-            Zpět k úvodu
+            {t('Main.BackToHome')}
           </GovButton>
         </div>
       </div>
@@ -115,7 +140,7 @@ export const OntologyLayout = ({
                 </GovTag>
                 {updatedAt && (
                   <span className="text-sm text-dark-primary">
-                    aktualizováno:{' '}
+                    {t('Main.ControlPanel.Updated')}:{' '}
                     {new Date(updatedAt).toLocaleDateString('CS')}
                   </span>
                 )}
@@ -147,7 +172,7 @@ export const OntologyLayout = ({
                     size="s"
                     className="text-white"
                   />
-                  Přidat pojem
+                  {t('Main.AddConcept')}
                 </GovButton>
               )}
 
@@ -155,7 +180,7 @@ export const OntologyLayout = ({
                 <GovFormInput
                   className="max-w-60 w-full border-0!"
                   size="s"
-                  placeholder="Hledat výraz"
+                  placeholder={t('Main.SearchConcepts')}
                   value={filterQuery}
                   onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
                 >
@@ -171,12 +196,13 @@ export const OntologyLayout = ({
               </GovFormGroup>
             </div>
             <div className="col-span-4 space-y-2">
-              {filteredParentTerms.map((concept, index) => (
+              {filteredParentTerms.map(({ concept, subterms }, index) => (
                 <Term
                   data={concept}
-                  subterms={getRelatedTerms(concept)}
+                  subterms={subterms}
                   key={concept.iri || index}
                   slug={getConceptSlug(concept)}
+                  filterQuery={filterQuery}
                 />
               ))}
             </div>

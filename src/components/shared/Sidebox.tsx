@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 interface Props {
-  title?: string;
+  title?: ReactNode;
   isOpen: boolean;
   setIsOpen: (_open: boolean) => void;
   closeAriaLabel?: string;

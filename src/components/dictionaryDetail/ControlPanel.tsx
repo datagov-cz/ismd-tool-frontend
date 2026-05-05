@@ -124,6 +124,7 @@ export const ControlPanel = ({
       <DownloadDialog
         ontologyID={ontologyID}
         open={openDownload}
+        type="ISMD"
         onClose={() => setOpenDownload(false)}
       />
     </div>

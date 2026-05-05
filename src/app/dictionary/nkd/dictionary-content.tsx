@@ -20,11 +20,6 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
   const user = data?.data;
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
 
-  const sortedParentTerms = ontologyDetail?.pojmy
-    ?.filter((item) => item.název)
-    ?.filter((item) => !item['definiční-obor'])
-    .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
-
   useVisitedOntology(
     ontologyDetail
       ? { slug, source: 'NKD', iri: slug, name: ontologyDetail.název?.cs }
@@ -47,7 +42,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
       source="NKD"
       title={ontologyDetail.název?.cs ?? ''}
       popis={ontologyDetail.popis}
-      sortedParentTerms={sortedParentTerms ?? []}
+      concepts={ontologyDetail.pojmy}
       updatedAt={ontologyDetail['časový-okamžik-poslední-změny']}
       conceptCount={ontologyDetail.pojmy?.length}
       getConceptSlug={nkdSlug}
@@ -57,7 +52,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
           .map((item) => ({ data: item, slug: `/nkd?iri=${item.iri}` })) || []
       }
     >
-      <ControlPanelNKD ontologyID={0} />
+      <ControlPanelNKD ontologyIRI={ontologyDetail.iri || ''} />
     </OntologyLayout>
   );
 };

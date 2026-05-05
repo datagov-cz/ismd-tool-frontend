@@ -8,10 +8,10 @@ import { toast } from 'react-toastify';
 import { DownloadDialog } from './DownloadDialog';
 
 interface Props {
-  ontologyID: number;
+  ontologyIRI: string;
 }
 
-export const ControlPanelNKD = ({ ontologyID }: Props) => {
+export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
@@ -56,9 +56,10 @@ export const ControlPanelNKD = ({ ontologyID }: Props) => {
         </GovButton>
       </div>
       <DownloadDialog
-        ontologyID={ontologyID}
+        ontologyIRI={ontologyIRI}
         open={openDownload}
         onClose={() => setOpenDownload(false)}
+        type="NKD"
       />
     </div>
   );
