@@ -10,7 +10,7 @@ import { DictionaryCardProps } from '../shared/DictionaryCard/DictionaryCard';
 
 import { OntologyList } from './OntologyList';
 
-const LIMIT = 5;
+const LIMIT = 20;
 
 const toCardItem = (
   item: NkdOntologyListItemDto,
