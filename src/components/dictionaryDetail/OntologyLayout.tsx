@@ -135,7 +135,8 @@ export const OntologyLayout = ({
                     size="l"
                     className="text-white"
                   />
-                  Slovník<span> / {source}</span>
+                  {t('Main.Ontology')}
+                  <span> / {source}</span>
                   {statusLabel && <span> / {statusLabel}</span>}
                 </GovTag>
                 {updatedAt && (

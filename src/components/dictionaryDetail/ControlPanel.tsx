@@ -32,6 +32,7 @@ export const ControlPanel = ({
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+  const tEdit = useTranslations('DictionaryDetail.EditOntology');
   const { data } = useGetCurrentUser();
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
@@ -68,7 +69,7 @@ export const ControlPanel = ({
               slot="icon-start"
               type="components"
             />
-            Upravit slovník
+            {tEdit('Title')}
           </GovButton>
         )}
 
@@ -86,7 +87,7 @@ export const ControlPanel = ({
               slot="icon-start"
               type="components"
             />
-            Komentáře ke slovníku
+            {tEdit('Comments')}
             {(commentsCount ?? 0) > 0 && (
               <span className="font-normal">[{commentsCount}]</span>
             )}

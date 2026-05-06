@@ -42,7 +42,7 @@ export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
             slot="icon-start"
             type="components"
           />
-          Stáhnout
+          {t('Download')}
         </GovButton>
         <GovButton
           nativeType="button"
@@ -52,7 +52,7 @@ export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
           onGovClick={() => handleCopyLink()}
         >
           <GovIcon name="link" size="l" slot="icon-start" type="components" />
-          Kopírovat odkaz
+          {t('CopyLink')}
         </GovButton>
       </div>
       <DownloadDialog

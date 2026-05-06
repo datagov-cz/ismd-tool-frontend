@@ -144,6 +144,9 @@
     "EditOntology": {
       "Title": "Upravit slovník",
       "Save": "Uložit",
+      "Back": "Zpět",
+      "Ontology": "Slovníky",
+      "Comments": "Komentáře ke slovníku",
       "Labels": {
         "Name": "Název",
         "Language": "Jazyk",
@@ -194,7 +197,9 @@
         "Description": "Opravdu chcete smazat komentář?",
         "ConfirmButton": "Potvrdit",
         "CancelButton": "Zrušit"
-      }
+      },
+      "OwnComment": "Vlastní komentář",
+      "Send": "Odeslat"
     },
     "Main": {
       "DictionaryStatus": {
@@ -209,6 +214,7 @@
       },
       "ControlPanel": {
         "GetLink": "Získání odkazu",
+        "CopyLink": "Kopírovat odkaz",
         "LinkCopied": "Odkaz zkopírován",
         "Comments": "Komentáře",
         "ValidationPassed": "Validace proběhla úspěšně",
@@ -221,7 +227,8 @@
       },
       "BackToHome": "Zpět k úvodu",
       "AddConcept": "Přidat pojem",
-      "SearchConcepts": "Hledat výraz"
+      "SearchConcepts": "Hledat výraz",
+      "Ontology": "Slovníky"
     }
   },
   "Shared": {

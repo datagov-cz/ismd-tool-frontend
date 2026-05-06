@@ -119,7 +119,7 @@ export const DictionaryEditForm = ({
               size="l"
               className="rotate-180"
             />
-            Zpět
+            {t('Back')}
           </GovButton>
         </div>
       </div>
@@ -139,7 +139,7 @@ export const DictionaryEditForm = ({
                   size="l"
                   className="text-white"
                 />
-                Slovník
+                {t('Ontology')}
               </GovTag>
               <h1 className="text-[32px] font-medium">{detail.název?.cs}</h1>
             </div>

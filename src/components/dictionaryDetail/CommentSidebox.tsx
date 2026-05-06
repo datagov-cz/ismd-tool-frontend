@@ -126,7 +126,7 @@ export const CommentSidebox = ({
             size="xs"
             className="absolute z-1000 bottom-2 right-3"
           >
-            Odeslat
+            {t('Send')}
             <GovIcon name="send" size="l" slot="icon-end" />
           </GovButton>
         </form>

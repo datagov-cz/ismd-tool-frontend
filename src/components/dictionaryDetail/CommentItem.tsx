@@ -64,7 +64,7 @@ export const CommentItem = ({
             {postedTime && new Date(postedTime).toLocaleDateString('CS')}
             {isOwner && (
               <span className="pl-1.5 border-l border-blue/30 text-blue-primary leading-3">
-                Vlastní komentář
+                {t('OwnComment')}
               </span>
             )}
           </span>
