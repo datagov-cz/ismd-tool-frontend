@@ -28,13 +28,10 @@ export const DictionaryContent = ({ slug }: Props) => {
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
 
   useVisitedOntology(
-    ontologyDetail && ontologyMetadata
-      ? {
-          slug,
-          source: 'ISMD',
-          name: ontologyDetail.název?.cs || ontologyMetadata.name,
-        }
-      : null,
+    {
+      slug,
+      source: 'ISMD',
+    },
     user?.userId,
   );
 

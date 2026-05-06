@@ -21,9 +21,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
 
   useVisitedOntology(
-    ontologyDetail
-      ? { slug, source: 'NKD', iri: slug, name: ontologyDetail.název?.cs }
-      : null,
+    ontologyDetail ? { slug, source: 'NKD' } : null,
     user?.userId,
   );
 

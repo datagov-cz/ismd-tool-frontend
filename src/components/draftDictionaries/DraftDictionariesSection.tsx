@@ -14,7 +14,7 @@ export const DraftDictionariesSection = () => {
   const user = data?.data;
 
   const ontologies = useGetOntologyList(
-    { userId: user?.userId },
+    { userId: user?.userId, isPublished: false },
     { query: { enabled: !!user?.userId } },
   );
 
@@ -40,7 +40,7 @@ export const DraftDictionariesSection = () => {
           ontologies.data?.data
             ?.slice(0, 8)
             .map(
-              ({ id, name, slug, popis, concepts, updatedAt }) =>
+              ({ id, name, slug, popis, concepts, updatedAt, isPublished }) =>
                 id &&
                 name && (
                   <DictionaryCard
@@ -52,6 +52,7 @@ export const DraftDictionariesSection = () => {
                     concepts={concepts?.length ?? 0}
                     modified={updatedAt ? new Date(updatedAt) : undefined}
                     id={id}
+                    isPublished={isPublished ?? false}
                   />
                 ),
             )
@@ -65,7 +66,7 @@ export const DraftDictionariesSection = () => {
               type="outlined"
               color="primary"
               className="flex items-center gap-3 mx-auto cursor-pointer text-blue-primary hover:underline"
-              href={'/dictionaries'}
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/list`}
             >
               {t('DraftDictionariesSection.ShowAll')} (
               {ontologies.data.data.length})

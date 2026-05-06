@@ -9,7 +9,7 @@ import { DownloadDialog } from '../../dictionaryDetail/DownloadDialog';
 import { CardIconButton } from './CardIconButton';
 import { CardStat } from './CardStat';
 
-type Props = {
+export type DictionaryCardProps = {
   title: string;
   link: string;
   text?: string;
@@ -65,7 +65,7 @@ export const DictionaryCard = ({
   type,
   ontologyIRI,
   isPublished,
-}: Props) => {
+}: DictionaryCardProps) => {
   const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 

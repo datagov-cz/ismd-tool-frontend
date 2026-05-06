@@ -1,9 +1,9 @@
-import { OntologyList } from '@/components/onotologyList/OntologyList';
+import { NKDListWrapper } from '@/components/onotologyList/NKDlistWrapper';
 
 const NKDList = async () => {
   return (
     <div className="w-full bg-primary-subtlest">
-      <OntologyList type="NKD" />
+      <NKDListWrapper />
     </div>
   );
 };
