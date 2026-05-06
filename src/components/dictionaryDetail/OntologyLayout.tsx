@@ -61,10 +61,15 @@ export const OntologyLayout = ({
   const [filterQuery, setFilterQuery] = useState('');
 
   const filteredParentTerms = useMemo(() => {
+    const conceptIris = new Set(concepts?.map((c) => c.iri).filter(Boolean));
+
     const allParents =
       concepts
         ?.filter((item) => item.název)
-        ?.filter((item) => !item['definiční-obor'])
+        ?.filter(
+          (item) =>
+            !item['definiční-obor'] || !conceptIris.has(item['definiční-obor']),
+        )
         .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? '')) ??
       [];
 

@@ -231,6 +231,11 @@
       "Ontology": "Slovníky"
     }
   },
+  "OntologyList": {
+    "NKDTitle": "Publikované slovníky",
+    "ISMDTitle": "Rozpracované slovníky",
+    "SearchOntologies": "Hledat slovníky"
+  },
   "Shared": {
     "CloseAria": "Zavřít"
   },
