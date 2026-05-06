@@ -4,16 +4,14 @@ import { useTranslations } from 'next-intl';
 
 import {
   ConceptDetailModel,
-  OntologyDetailModel,
-  OntologyMetadataModel,
   useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
 import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
-import { EditSideBox } from '@/components/dictionaryDetail/EditSideBox';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
+import { ValidationSidebox } from '@/components/dictionaryDetail/validation/ValidationSidebox';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
 
@@ -28,8 +26,6 @@ export const DictionaryContent = ({ slug }: Props) => {
   const user = data?.data;
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
-  const conceptMetadataModelList =
-    ontology.data?.data?.conceptMetadataModelList;
 
   useVisitedOntology(
     ontologyDetail && ontologyMetadata
@@ -50,56 +46,34 @@ export const DictionaryContent = ({ slug }: Props) => {
     );
   if (!ontologyDetail || !ontologyMetadata) return null;
 
-  const sortedParentTerms = ontologyDetail?.pojmy
-    ?.filter((item) => item.název)
-    ?.filter((item) => !item['definiční-obor'])
-    .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
-
   const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
+    const parentLocalName = parentTerm.iri?.split('/').pop();
+
     return (
       ontologyDetail?.pojmy
-        ?.filter(
-          (item) =>
-            item['definiční-obor'] && item['definiční-obor'] === parentTerm.iri,
-        )
-        .map((item) => {
-          return {
-            data: item,
-            slug:
-              conceptMetadataModelList?.find(
-                (meta) => meta.conceptIri === item.iri,
-              )?.slug || '',
-          };
-        }) || []
+        ?.filter((item) => {
+          if (!item['definiční-obor']) return false;
+          if (item['definiční-obor'] === parentTerm.iri) return true;
+          const domainLocalName = item['definiční-obor'].split('/').pop();
+          return domainLocalName === parentLocalName;
+        })
+        .map((item) => ({
+          data: item,
+          slug:
+            ontologyMetadata?.concepts?.find(
+              (meta) => meta.conceptIri === item.iri,
+            )?.slug || '',
+        })) || []
     );
   };
 
   const getConceptSlug = (concept: ConceptDetailModel) =>
-    conceptMetadataModelList?.find((m) => m.conceptIri === concept.iri)?.slug ||
-    '';
-
-  const transformToArrayFormat = ({
-    data,
-    meta,
-  }: {
-    data: OntologyDetailModel;
-    meta: OntologyMetadataModel;
-  }) => {
-    const nameModel = data.název?.cs || meta?.name || '';
-    const descriptionModel = data.popis
-      ? Object.entries(data.popis)
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          .filter(([_, value]) => value !== undefined && value !== '')
-          .map(([languageTag, description]) => ({
-            languageTag: languageTag,
-            name: description as string,
-          }))
-      : [{ name: meta.popis || '', languageTag: 'cs' }];
-    return { nameModel, descriptionModel };
-  };
+    ontologyMetadata.concepts?.find((m) => m.conceptIri === concept.iri)
+      ?.slug || '';
 
   return (
     <OntologyLayout
+      source="ISMD"
       title={ontologyDetail.název?.cs || ontologyMetadata.name || ''}
       popis={ontologyDetail.popis}
       fallbackPopis={ontologyMetadata.popis}
@@ -108,14 +82,24 @@ export const DictionaryContent = ({ slug }: Props) => {
           ? t('Main.DictionaryStatus.Published')
           : t('Main.DictionaryStatus.Draft')
       }
-      sortedParentTerms={sortedParentTerms ?? []}
+      concepts={ontologyDetail.pojmy}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}
+      updatedAt={
+        ontologyDetail['časový-okamžik-poslední-změny'] ||
+        ontologyMetadata.updatedAt
+      }
+      conceptCount={ontologyDetail.pojmy?.length}
+      metaData={ontologyMetadata}
+      slug={slug}
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}
         isPublished={ontologyMetadata.isPublished || false}
         name={ontologyDetail.název?.cs || ''}
+        user={ontologyMetadata.user}
+        commentsCount={ontologyMetadata.comments?.length}
+        slug={slug}
       />
       {user?.userId && (
         <CommentSidebox
@@ -125,22 +109,14 @@ export const DictionaryContent = ({ slug }: Props) => {
           userId={user.userId}
         />
       )}
+      <ValidationSidebox />
+
       {ontologyDetail.iri && (
         <CreateConceptSideBox
           slug={slug}
           namespace={ontologyDetail.iri || ontologyMetadata.graphName || ''}
           action="create"
           sideboxId="create"
-        />
-      )}
-      {ontologyMetadata.id && (
-        <EditSideBox
-          ontologySlug={slug}
-          ontologyID={ontologyMetadata.id}
-          defaultValues={transformToArrayFormat({
-            data: ontologyDetail,
-            meta: ontologyMetadata,
-          })}
         />
       )}
     </OntologyLayout>

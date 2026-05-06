@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -81,25 +81,24 @@ export const CommentSidebox = ({
 
   return (
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className="mt-4 flex-1 overflow-hidden flex flex-col h-full justify-between">
-        <div ref={containerRef} className="space-y-4 overflow-y-auto">
+      <div className="flex-1 overflow-hidden flex flex-col h-full justify-between">
+        <div ref={containerRef} className="space-y-3 overflow-y-auto">
           {comments?.map(({ id, ...comment }) => (
-            // TODO: use real user data
             <CommentItem
               key={id}
               {...comment}
               id={id}
-              loggedUser={userId || 'Anonymous'}
+              loggedUser={userId}
               refetch={() => refetch()}
             />
           ))}
         </div>
         <form
           className={clsx(
-            'relative w-full border rounded-md',
+            'relative w-full border rounded-md bg-primary-subtlest',
             errors.comment
               ? 'border-red-500'
-              : 'border-blue dark:border-white/60',
+              : 'border-blue/20 dark:border-white/60',
           )}
           onSubmit={handleSubmit(onSubmit)}
         >
@@ -109,6 +108,7 @@ export const CommentSidebox = ({
           <textarea
             id="comment"
             className="size-full px-3 py-2"
+            rows={4}
             placeholder={t('TextareaPlaceholder')}
             {...register('comment')}
           />
@@ -117,14 +117,18 @@ export const CommentSidebox = ({
               {errors.comment.message}
             </p>
           )}
-          <button
-            className="absolute right-4 bottom-2 text-sm outline-1 outline-blue dark:outline-white/60 font-medium cursor-pointer hover:bg-blue/20 dark:hover:bg-blue-hover p-1 rounded transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+          <GovButton
             aria-label={t('SendButtonAria')}
-            type="submit"
+            nativeType="submit"
+            type="outlined"
+            color="primary"
             disabled={isSubmitting || !!errors.comment}
+            size="xs"
+            className="absolute z-1000 bottom-2 right-3"
           >
-            <GovIcon name="send" size="l" />
-          </button>
+            {t('Send')}
+            <GovIcon name="send" size="l" slot="icon-end" />
+          </GovButton>
         </form>
       </div>
     </Sidebox>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -40,7 +41,7 @@ export const Header = ({ session }: Props) => {
 
   return (
     <>
-      <header className="bg-footer-separator py-3 z-50 transition-colors duration-300">
+      <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-50 transition-colors duration-300">
         <section className="mx-auto max-w-full-hd px-5 flex justify-between items-center gap-x-4">
           {showFullHeader && (
             <div className="flex items-center gap-4 flex-1">
@@ -162,6 +163,7 @@ export const Header = ({ session }: Props) => {
       </aside>
 
       <HintSidebox />
+      <div className={clsx(!session && isHomepage ? 'min-h-58' : 'min-h-18')} />
     </>
   );
 };

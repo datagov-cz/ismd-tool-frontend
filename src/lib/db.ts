@@ -1,11 +1,11 @@
 import Dexie, { type EntityTable } from 'dexie';
 
+import { OntologyCreateModel } from '@/api/generated';
+
 interface OntologyDraft {
   id?: number;
   namespace: string;
-  name: string;
-  description: string;
-  languageTag: string;
+  payload: OntologyCreateModel;
   createdAt: Date;
   updatedAt: Date;
 }

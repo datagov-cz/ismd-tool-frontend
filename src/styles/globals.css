@@ -8,6 +8,7 @@
 
 @theme {
   --color-blue: #1d3c5d;
+  --color-warning: #feed8a;
   --color-blue-subtle: #e5eef9;
   --color-blue-button-active: #1d456f;
   --color-secondary: #d1d1d1;
@@ -23,10 +24,15 @@
   --spacing-desktop: 1200px;
   --spacing-full-hd: 1920px;
   --color-blue-hover: #1e5086;
+  --color-blue-border: #d4e7ff;
   --color-blue-outlined-hover: #c5dbf2;
   --color-button-solid-disabled: #d1d1d1;
   --color-green: #198754;
   --color-gray: #6c757d;
+  --color-status-warning-100: #fff9e9;
+  --color-status-warning-600: #ca8504;
+  --color-status-warning-700: #6b4a0d;
+  --color-status-error-100: #fde3e3;
   --color-status-error-200: #f37676;
   --color-status-error-600: #c62828;
   --color-status-error-700: #b32222;
@@ -35,6 +41,7 @@
   --color-field-hover: #c5dbf2;
   --color-primary-subtlest: #f3f7fc;
   --color-card-description: #6d6d6d;
+  --color-border-primary-subtle: #599bd7;
 
   /* Dark mode colors */
   --color-dark-bg: #1a1a1a;

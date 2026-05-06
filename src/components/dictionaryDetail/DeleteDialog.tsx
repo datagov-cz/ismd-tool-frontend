@@ -60,7 +60,12 @@ export const DeleteDialog = ({
   };
 
   return (
-    <GovDialog labelTag="h2" onGovClose={() => onClose()} open={open}>
+    <GovDialog
+      labelTag="h2"
+      onGovClose={() => onClose()}
+      open={open}
+      className="fixed z-100"
+    >
       <h2 slot="title">{t('Title')}</h2>
       <p>
         <span>{t('Name')}:</span> {name}

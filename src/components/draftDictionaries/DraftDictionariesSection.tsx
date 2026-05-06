@@ -44,6 +44,7 @@ export const DraftDictionariesSection = () => {
                 id &&
                 name && (
                   <DictionaryCard
+                    type="ISMD"
                     key={id}
                     title={name}
                     link={`/dictionary/${slug}`}

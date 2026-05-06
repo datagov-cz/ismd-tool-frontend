@@ -105,6 +105,8 @@ export const VisitedOntologies = () => {
             updatedAt: undefined,
           }),
           _href: getOntologyHref(entry),
+          _source: 'ISMD' as const,
+          _iri: undefined,
         };
       }
       return {
@@ -115,9 +117,15 @@ export const VisitedOntologies = () => {
         concepts: [],
         updatedAt: undefined,
         _href: getOntologyHref(entry),
+        _source: 'NKD' as const,
+        _iri: entry.iri,
       };
     })
-    .filter(Boolean) as (OntologyMetadataModel & { _href: string })[];
+    .filter(Boolean) as (OntologyMetadataModel & {
+    _href: string;
+    _source: 'ISMD' | 'NKD';
+    _iri?: string;
+  })[];
 
   return (
     <div className="space-y-5 pb-10 mt-8 w-full">
@@ -134,7 +142,17 @@ export const VisitedOntologies = () => {
       </h2>
       <div className="space-y-4">
         {visitedOntologies.map(
-          ({ id, name, slug, popis, concepts, updatedAt, _href }) =>
+          ({
+            id,
+            name,
+            slug,
+            popis,
+            concepts,
+            updatedAt,
+            _href,
+            _source,
+            _iri,
+          }) =>
             name &&
             id && (
               <DictionaryCard
@@ -144,7 +162,9 @@ export const VisitedOntologies = () => {
                 text={popis || ''}
                 concepts={concepts?.length ?? 0}
                 modified={updatedAt ? new Date(updatedAt) : undefined}
-                id={id}
+                {...(_source === 'NKD'
+                  ? { type: 'NKD', ontologyIRI: _iri || String(id) }
+                  : { type: 'ISMD', id: Number(id) })}
               />
             ),
         )}

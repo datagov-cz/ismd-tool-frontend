@@ -5,6 +5,7 @@ import {
   useGetCurrentUser,
   useGetNkdOntologyDetail,
 } from '@/api/generated';
+import { ControlPanelNKD } from '@/components/dictionaryDetail/ControlPanelNKD';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
@@ -18,11 +19,6 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
   const { data } = useGetCurrentUser();
   const user = data?.data;
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
-
-  const sortedParentTerms = ontologyDetail?.pojmy
-    ?.filter((item) => item.název)
-    ?.filter((item) => !item['definiční-obor'])
-    .sort((a, b) => (a.název?.cs ?? '').localeCompare(b.název?.cs ?? ''));
 
   useVisitedOntology(
     ontologyDetail
@@ -43,15 +39,20 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
 
   return (
     <OntologyLayout
+      source="NKD"
       title={ontologyDetail.název?.cs ?? ''}
       popis={ontologyDetail.popis}
-      sortedParentTerms={sortedParentTerms ?? []}
+      concepts={ontologyDetail.pojmy}
+      updatedAt={ontologyDetail['časový-okamžik-poslední-změny']}
+      conceptCount={ontologyDetail.pojmy?.length}
       getConceptSlug={nkdSlug}
       getRelatedTerms={(parent) =>
         ontologyDetail.pojmy
           ?.filter((item) => item.iri && item['definiční-obor'] === parent.iri)
           .map((item) => ({ data: item, slug: `/nkd?iri=${item.iri}` })) || []
       }
-    />
+    >
+      <ControlPanelNKD ontologyIRI={ontologyDetail.iri || ''} />
+    </OntologyLayout>
   );
 };

@@ -47,7 +47,7 @@ export const SearchResultsPopover = ({
       .slice(0, CONCEPT_PREVIEW_LIMIT) ?? [];
 
   const totalConcepts = Object.values(data?.sourceStatuses ?? {}).reduce(
-    (acc, s) => acc + (s.totalCount ?? 0),
+    (acc, s) => acc + (s.totalConcepts ?? 0),
     0,
   );
 

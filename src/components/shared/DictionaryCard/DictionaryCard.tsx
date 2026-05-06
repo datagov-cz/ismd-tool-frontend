@@ -8,14 +8,16 @@ import { DownloadDialog } from '../../dictionaryDetail/DownloadDialog';
 import { CardIconButton } from './CardIconButton';
 import { CardStat } from './CardStat';
 
-interface Props {
+type Props = {
   title: string;
   link: string;
   text: string;
   modified?: Date;
   concepts: number;
-  id: number;
-}
+} & (
+  | { type: 'ISMD'; id: number; ontologyIRI?: never }
+  | { type: 'NKD'; ontologyIRI: string; id?: never }
+);
 
 export const DictionaryCard = ({
   title,
@@ -24,6 +26,8 @@ export const DictionaryCard = ({
   modified,
   concepts,
   id,
+  type,
+  ontologyIRI,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
@@ -68,7 +72,9 @@ export const DictionaryCard = ({
       </div>
 
       <DownloadDialog
-        ontologyID={id}
+        {...(type === 'ISMD'
+          ? { type, ontologyID: id }
+          : { type, ontologyIRI })}
         open={openDownload}
         onClose={() => setOpenDownload(false)}
       />

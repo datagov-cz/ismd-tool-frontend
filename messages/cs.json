@@ -130,6 +130,12 @@
       "Type": "Typ obsahu údaje"
     }
   },
+  "Term": {
+    "Properties": "Vlastnosti",
+    "Relations": "Vztahy",
+    "ShowLess": "[méně]",
+    "ShowMore": "[více]"
+  },
   "DictionaryDetail": {
     "CreateConcept": {
       "Title": "Nový pojem",
@@ -138,13 +144,38 @@
     "EditOntology": {
       "Title": "Upravit slovník",
       "Save": "Uložit",
+      "Back": "Zpět",
+      "Ontology": "Slovníky",
+      "Comments": "Komentáře ke slovníku",
       "Labels": {
-        "Name": "Název (Čeština)",
+        "Name": "Název",
         "Language": "Jazyk",
         "Description": "Popis"
       },
       "SuccessMessage": "Slovník byl úspěšně upraven",
       "ErrorMessage": "Chyba při úpravě slovníku"
+    },
+    "ValidationSidebox": {
+      "Title": "Výsledky kontroly",
+      "DateOfControl": "Datum kontroly: ",
+      "DownloadSuccess": "Stahování reportu proběhlo úspěšně",
+      "DownloadError": "Report se nepodařilo stáhnout",
+      "Download": "Stáhnout nekompletní katalogizační záznam",
+      "Revalidate": "Znovu zkontrolovat",
+      "ERROR": "Chyba",
+      "WARNING": "Varování",
+      "INFO": "Informace",
+      "UpdatedAt": "Aktualizováno",
+      "PriorityHigh": "Vysoká priorita",
+      "PriorityMedium": "Střední priorita",
+      "PriorityLow": "Nízká priorita",
+      "NotValidated": "Slovník ještě nebyl zvalidován",
+      "RunValidation": "Spustit validaci",
+      "ValidationResult": "Výsledek kontroly",
+      "RevalidateShort": "Znovu ověřit",
+      "IncompleteCatalogRecord": "Nekompletní katalogizační záznam",
+      "OpenConcept": "Otevřít",
+      "ShowConcepts": "Zobrazit pojmy"
     },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
@@ -166,7 +197,9 @@
         "Description": "Opravdu chcete smazat komentář?",
         "ConfirmButton": "Potvrdit",
         "CancelButton": "Zrušit"
-      }
+      },
+      "OwnComment": "Vlastní komentář",
+      "Send": "Odeslat"
     },
     "Main": {
       "DictionaryStatus": {
@@ -181,6 +214,7 @@
       },
       "ControlPanel": {
         "GetLink": "Získání odkazu",
+        "CopyLink": "Kopírovat odkaz",
         "LinkCopied": "Odkaz zkopírován",
         "Comments": "Komentáře",
         "ValidationPassed": "Validace proběhla úspěšně",
@@ -190,7 +224,11 @@
         "Add": "Přidat",
         "Concepts": "pojmů",
         "Updated": "aktualizováno"
-      }
+      },
+      "BackToHome": "Zpět k úvodu",
+      "AddConcept": "Přidat pojem",
+      "SearchConcepts": "Hledat výraz",
+      "Ontology": "Slovníky"
     }
   },
   "Shared": {

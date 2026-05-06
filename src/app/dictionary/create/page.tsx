@@ -12,8 +12,6 @@ const CreateDictionary = () => {
   const { data, isLoading } = useGetCurrentUser();
   const t = useTranslations('CreateOntology');
 
-  console.log(isLoading, 'test');
-
   if (isLoading)
     return (
       <div className="h-full flex-1 flex items-center justify-center">
