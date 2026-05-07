@@ -4,6 +4,7 @@ import '../styles/globals.css';
 
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Script from 'next/script';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
@@ -13,6 +14,7 @@ import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import { Footer } from '@/components/footer/Footer';
 import { Header } from '@/components/header/Header';
 import { authOptions } from '@/lib/auth';
+import { GATED_REQUEST_HEADER } from '@/lib/site-status';
 
 import Providers from './providers';
 
@@ -36,6 +38,8 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const session = await getServerSession(authOptions);
+  const requestHeaders = await headers();
+  const isGated = requestHeaders.get(GATED_REQUEST_HEADER) === '1';
 
   const variables: EnvironmentVariables = {
     ...loadEnvVariables(),
@@ -51,10 +55,10 @@ export default async function RootLayout({
         </Script>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers environmentVariables={variables} session={session}>
-            <Header session={session} />
+            <Header session={session} isGated={isGated} />
             {children}
           </Providers>
-          <Footer />
+          <Footer isGated={isGated} />
         </NextIntlClientProvider>
       </body>
     </html>

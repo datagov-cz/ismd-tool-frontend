@@ -5,12 +5,19 @@ import {
   BYPASS_QUERY_PARAM,
   BYPASS_QUERY_VALUE_DISABLE,
   COMING_SOON_PATH,
+  GATED_REQUEST_HEADER,
   getPreviewSecret,
   MAINTENANCE_PATH,
   parseSiteStatus,
 } from '@/lib/site-status';
 
 const BYPASS_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+
+function gatedRequestHeaders(request: NextRequest): Headers {
+  const headers = new Headers(request.headers);
+  headers.set(GATED_REQUEST_HEADER, '1');
+  return headers;
+}
 
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -55,9 +62,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow already on gated pages so the rewrite target itself can render
+  // Direct visit to a gated page — allow through but flag it so the layout
+  // renders the stripped header/footer regardless of the original pathname.
   if (pathname === COMING_SOON_PATH || pathname === MAINTENANCE_PATH) {
-    return NextResponse.next();
+    return NextResponse.next({
+      request: { headers: gatedRequestHeaders(request) },
+    });
   }
 
   // Bypass cookie holders see the live app. Cookie value must match the
@@ -75,7 +85,9 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   url.pathname = gatedPath;
   url.search = '';
-  return NextResponse.rewrite(url);
+  return NextResponse.rewrite(url, {
+    request: { headers: gatedRequestHeaders(request) },
+  });
 }
 
 export const config = {

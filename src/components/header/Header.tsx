@@ -22,9 +22,10 @@ import { NavItems } from './NavItems';
 
 interface Props {
   session: Session | null;
+  isGated?: boolean;
 }
 
-export const Header = ({ session }: Props) => {
+export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations('Header');
 
@@ -36,7 +37,7 @@ export const Header = ({ session }: Props) => {
 
   const isHomepage = pathname === '/';
   const showFullHeader = !isHomepage || !!session;
-  const isGated = isGatedPath(pathname);
+  const isGated = isGatedProp ?? isGatedPath(pathname);
 
   const handleLogin = () =>
     signIn('keycloak', { prompt: 'login', callbackUrl });
