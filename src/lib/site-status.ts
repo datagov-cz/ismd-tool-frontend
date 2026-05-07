@@ -38,3 +38,8 @@ export function parseSiteStatus(value: string | undefined): SiteStatus {
 export function isGatedPath(pathname: string): boolean {
   return pathname === COMING_SOON_PATH || pathname === MAINTENANCE_PATH;
 }
+
+// Header set by middleware on gated requests so server components (layout)
+// can detect the gated state without depending on usePathname, which returns
+// the original (un-rewritten) pathname on the client after NextResponse.rewrite.
+export const GATED_REQUEST_HEADER = 'x-site-gated';
