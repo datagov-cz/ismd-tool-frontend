@@ -80,6 +80,11 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // Match the bare basePath itself (e.g. /popisujeme). Without this entry
+    // Next.js compiles a regex that requires a sub-path, so the gate would
+    // be invisible at the canonical URL — especially when an upstream proxy
+    // strips trailing slashes.
+    '/',
     // Skip Next.js internals, static assets, health endpoints, and API routes
     // (the readiness probe must keep working when the site is gated).
     '/((?!_next/static|_next/image|favicon.ico|assets/|api/health|api/auth).*)',
