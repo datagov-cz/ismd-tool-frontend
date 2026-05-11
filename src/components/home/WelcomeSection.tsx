@@ -11,7 +11,10 @@ export const WelcomeSection = () => {
       <h2 className="text-xl font-bold">{t('WelcomeSection.Title')}</h2>
       <p className="text-lg">{t('WelcomeSection.Description')}</p>
       <SearchInput />
-      <Link href="/slovniky" className="underline text-sm text-dark-primary">
+      <Link
+        href="/dictionary/nkd/list"
+        className="underline text-sm text-dark-primary"
+      >
         {t('WelcomeSection.BrowseDictionaries')}
       </Link>
     </div>

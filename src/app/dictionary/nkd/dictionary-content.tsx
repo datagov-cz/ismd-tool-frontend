@@ -21,9 +21,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
 
   useVisitedOntology(
-    ontologyDetail
-      ? { slug, source: 'NKD', iri: slug, name: ontologyDetail.název?.cs }
-      : null,
+    ontologyDetail ? { slug, source: 'NKD' } : null,
     user?.userId,
   );
 
@@ -49,7 +47,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
       getRelatedTerms={(parent) =>
         ontologyDetail.pojmy
           ?.filter((item) => item.iri && item['definiční-obor'] === parent.iri)
-          .map((item) => ({ data: item, slug: `/nkd?iri=${item.iri}` })) || []
+          ?.map((item) => ({ data: item, slug: `/nkd?iri=${item.iri}` })) || []
       }
     >
       <ControlPanelNKD ontologyIRI={ontologyDetail.iri || ''} />

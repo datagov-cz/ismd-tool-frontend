@@ -10,6 +10,7 @@ import {
   UploadFromFileBody,
   useUploadFromFile,
 } from '@/api/generated';
+import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ErrorText } from '@/components/shared/ErrorText';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
@@ -134,21 +135,27 @@ export const UploadDialog = ({ setSuccess }: UploadDialogProps) => {
           {t('Dialog.Title')}
         </h2>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 items-center justify-center"
-        >
-          <FileController
-            name="file"
-            form={form}
-            translationNamespace="UploadOntology"
-          />
-          {submitError && <ErrorText text={submitError} />}
+        {mutation.isPending ? (
+          <div className="flex items-center justify-center">
+            <CircularLoader />
+          </div>
+        ) : (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4 items-center justify-center"
+          >
+            <FileController
+              name="file"
+              form={form}
+              translationNamespace="UploadOntology"
+            />
+            {submitError && <ErrorText text={submitError} />}
 
-          <GovButton type="solid" color="primary" nativeType="submit">
-            {t('Dialog.SubmitButton')}
-          </GovButton>
-        </form>
+            <GovButton type="solid" color="primary" nativeType="submit">
+              {t('Dialog.SubmitButton')}
+            </GovButton>
+          </form>
+        )}
       </div>
     </>
   );
