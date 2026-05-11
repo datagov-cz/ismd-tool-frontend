@@ -399,7 +399,10 @@
     "Concepts": "Pojmy",
     "DetailSearch": "Detailní vyhledávání",
     "NoOntologies": "Žádné slovníky nenalezeny",
-    "NoConcepts": "Žádné pojmy nenalezeny"
+    "NoConcepts": "Žádné pojmy nenalezeny",
+    "SearchesFor": "Výsledky hledání pro",
+    "FilterLabel": "Filtrování:",
+    "Unpublished": "Rozpracované"
   },
   "SearchTypes": {
     "AllTypes": "Všechny typy",

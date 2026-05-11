@@ -2,24 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
 
-import { DownloadDialog } from '../../dictionaryDetail/DownloadDialog';
-
-import { CardIconButton } from './CardIconButton';
-import { CardStat } from './CardStat';
+import { CardStat } from '../DictionaryCard/CardStat';
 
 export type DictionaryCardProps = {
   title: string;
   link: string;
   text?: string;
   modified?: Date;
-  concepts: number;
-  isPublished?: boolean;
-} & (
-  | { type: 'ISMD'; id: number; ontologyIRI?: never }
-  | { type: 'NKD'; ontologyIRI: string; id?: never }
-);
+};
 
 const TruncatedText = ({ text }: { text: string }) => {
   const t = useTranslations('Term');
@@ -55,28 +46,13 @@ const TruncatedText = ({ text }: { text: string }) => {
   );
 };
 
-export const DictionaryCard = ({
+export const ConceptCard = ({
   title,
   link,
   text,
   modified,
-  concepts,
-  id,
-  type,
-  ontologyIRI,
-  isPublished,
 }: DictionaryCardProps) => {
-  const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href + link);
-      toast(t('LinkCopied'), { type: 'success' });
-    } catch {
-      toast(t('LinkCopyFailed'), { type: 'error' });
-    }
-  };
 
   return (
     <div className="rounded-xl border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
@@ -86,10 +62,10 @@ export const DictionaryCard = ({
       >
         <GovIcon
           slot="icon-start"
-          name={type === 'NKD' || isPublished ? 'journal-text' : 'journals'}
+          name="card-heading"
           type="components"
           size="m"
-          color={type === 'NKD' || isPublished ? 'success' : 'warning'}
+          color="primary"
           className="mt-0.5!"
         />
         <span>
@@ -100,8 +76,6 @@ export const DictionaryCard = ({
 
       <div className="flex justify-between bg-page-background pl-9 pr-4 py-0.5">
         <div className="flex gap-3 items-center">
-          {concepts > 0 && <CardStat label={t('Concepts')} value={concepts} />}
-          {concepts > 0 && modified && <span className="bg-link h-3 w-px" />}
           {modified && (
             <CardStat
               label={t('Updated')}
@@ -109,24 +83,7 @@ export const DictionaryCard = ({
             />
           )}
         </div>
-        <div className="flex gap-2 items-center">
-          <CardIconButton icon="link" onClick={handleCopyLink} />
-          {id && (
-            <CardIconButton
-              icon="download"
-              onClick={() => setOpenDownload(true)}
-            />
-          )}
-        </div>
       </div>
-
-      <DownloadDialog
-        {...(type === 'ISMD'
-          ? { type, ontologyID: id }
-          : { type, ontologyIRI })}
-        open={openDownload}
-        onClose={() => setOpenDownload(false)}
-      />
     </div>
   );
 };

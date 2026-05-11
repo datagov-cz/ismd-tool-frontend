@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
 
 import {
   OntologyMetadataModel,
-  useRequestCatalogRecord,
   useValidateOntology,
-  ValidationReportDto,
+  ValidationReport,
   ValidationResult,
   ValidationResultSeverity,
 } from '@/api/generated';
@@ -56,12 +54,11 @@ export const ValidationSummary = ({
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
 
-  const [validationReport, setValidationReport] =
-    useState<ValidationReportDto>();
+  const [validationReport, setValidationReport] = useState<ValidationReport>();
   const [grouped, setGrouped] = useState<GroupedValidation>();
 
   const validate = useValidateOntology();
-  const catalogReport = useRequestCatalogRecord();
+  // const catalogReport = useRequestCatalogRecord();
   const openRule = useValidationSideboxStore((state) => state.openRule);
 
   const handleValidate = () => {
@@ -88,48 +85,6 @@ export const ValidationSummary = ({
       },
     );
   };
-
-  const handleCatalogReport = () =>
-    catalogReport.mutate(
-      {
-        slug: slug,
-        data: {
-          validationReport,
-          ontologyMetadata: metaData,
-        },
-      },
-      {
-        onSuccess: (data) => {
-          try {
-            const file = data.data || data;
-
-            if (!file) {
-              throw new Error('No file returned');
-            }
-
-            const jsonString =
-              typeof file === 'string' ? file : JSON.stringify(file, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json' });
-
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `catalog-report.json`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-
-            toast.success(t('DownloadSuccess'), { position: 'bottom-right' });
-          } catch (error) {
-            console.error('Download failed:', error);
-            toast.error(t('DownloadError'), { position: 'bottom-right' });
-          }
-        },
-        onError: () =>
-          toast.error(t('DownloadError'), { position: 'bottom-right' }),
-      },
-    );
 
   if (validate.isPending)
     return (
@@ -219,21 +174,7 @@ export const ValidationSummary = ({
             openRule(rule, grouped, validationReport.timestamp || null, slug)
           }
         />
-        <div className="w-full flex justify-between px-2">
-          <GovButton
-            type="outlined"
-            color="primary"
-            size="xs"
-            onGovClick={handleCatalogReport}
-          >
-            <GovIcon
-              type="components"
-              size="s"
-              color={'primary'}
-              name={'download'}
-            />
-            {t('IncompleteCatalogRecord')}
-          </GovButton>
+        <div className="w-full flex justify-end px-2">
           <GovButton
             type="outlined"
             color="primary"

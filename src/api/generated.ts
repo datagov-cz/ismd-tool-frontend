@@ -104,74 +104,10 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
-}
-
-export interface CatalogRequestDto {
-  ontologyMetadata?: OntologyMetadataModel;
-  validationReport?: ValidationReportDto;
-}
-
-export interface ValidationReportDto {
-  results?: ValidationResult[];
-  timestamp?: string;
-  ontologyIri?: string;
-  id?: number;
-}
-
-export interface ApiResponseDtoCatalogRecordDto {
-  data?: CatalogRecordDto;
-  message?: string;
-  success?: boolean;
-}
-
-export type CatalogRecordDtoPopis = { [key: string]: string };
-
-export type CatalogRecordDtoNázev = { [key: string]: string };
-
-export type CatalogRecordDtoKlíčovéSlovo = { [key: string]: string[] };
-
-export type CatalogRecordDtoKontaktníBod = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export interface CatalogRecordDto {
-  iri?: string;
-  typ?: string;
-  popis?: CatalogRecordDtoPopis;
-  specifikace?: string[];
-  distribuce?: DistribuceDto[];
-  '@context'?: string;
-  název?: CatalogRecordDtoNázev;
-  prvek_rúian?: string[];
-  geografické_území?: string[];
-  prostorové_pokrytí?: string[];
-  klíčové_slovo?: CatalogRecordDtoKlíčovéSlovo;
-  periodicita_aktualizace?: string;
-  téma?: string[];
-  koncept_euroVoc?: string[];
-  kontaktní_bod?: CatalogRecordDtoKontaktníBod;
-}
-
-export interface DistribuceDto {
-  typ?: string;
-  podmínky_užití?: PodminkyUzitiDto;
-  soubor_ke_stažení?: string;
-  přístupové_url?: string;
-  typ_média?: string;
-  formát?: string;
-  schéma?: string;
-}
-
-export interface PodminkyUzitiDto {
-  typ?: string;
-  autorské_dílo?: string;
-  databáze_jako_autorské_dílo?: string;
-  databáze_chráněná_zvláštními_právy?: string;
-  osobní_údaje?: string;
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
@@ -1055,97 +991,6 @@ export const useValidateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getValidateOntologyMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * Vyžádá katalogizační záznam slovníku z validační služby na základě RDF dat a výsledků validace. Vyžaduje oprávnění vlastníka nebo administrátora.
- * @summary Žádost o katalogizační záznam
- */
-export const requestCatalogRecord = (
-  slug: string,
-  catalogRequestDto: CatalogRequestDto,
-  options?: SecondParameter<typeof axiosInstance>,
-  signal?: AbortSignal,
-) => {
-  return axiosInstance<ApiResponseDtoCatalogRecordDto>(
-    {
-      url: `/api/ontology/${slug}/catalog-record`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: catalogRequestDto,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getRequestCatalogRecordMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof requestCatalogRecord>>,
-    TError,
-    { slug: string; data: CatalogRequestDto },
-    TContext
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof requestCatalogRecord>>,
-  TError,
-  { slug: string; data: CatalogRequestDto },
-  TContext
-> => {
-  const mutationKey = ['requestCatalogRecord'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof requestCatalogRecord>>,
-    { slug: string; data: CatalogRequestDto }
-  > = (props) => {
-    const { slug, data } = props ?? {};
-
-    return requestCatalogRecord(slug, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type RequestCatalogRecordMutationResult = NonNullable<
-  Awaited<ReturnType<typeof requestCatalogRecord>>
->;
-export type RequestCatalogRecordMutationBody = CatalogRequestDto;
-export type RequestCatalogRecordMutationError = unknown;
-
-/**
- * @summary Žádost o katalogizační záznam
- */
-export const useRequestCatalogRecord = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof requestCatalogRecord>>,
-      TError,
-      { slug: string; data: CatalogRequestDto },
-      TContext
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof requestCatalogRecord>>,
-  TError,
-  { slug: string; data: CatalogRequestDto },
-  TContext
-> => {
-  const mutationOptions = getRequestCatalogRecordMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
