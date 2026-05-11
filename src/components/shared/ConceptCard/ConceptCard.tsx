@@ -75,7 +75,7 @@ export const ConceptCard = ({
       </Link>
 
       <div className="flex justify-between bg-page-background pl-9 pr-4 py-0.5">
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 items-center min-h-6">
           {modified && (
             <CardStat
               label={t('Updated')}

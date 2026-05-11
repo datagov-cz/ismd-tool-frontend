@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { GovButton } from '@gov-design-system-ce/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import {
+  SearchResultDto,
   SearchSource,
   SearchType as ApiSearchType,
   useGetCurrentUser,
@@ -13,6 +15,8 @@ import { useSearch } from '@/api/generated';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
 import { DictionaryCard } from '@/components/shared/DictionaryCard/DictionaryCard';
+
+const LIMIT = 20;
 
 const isApiSearchType = (v: string | null): v is ApiSearchType =>
   Object.values(ApiSearchType).includes(v as ApiSearchType);
@@ -36,6 +40,50 @@ const Search = () => {
 
   const { data: user } = useGetCurrentUser();
 
+  const [offset, setOffset] = useState(0);
+  const [results, setResults] = useState<SearchResultDto[]>([]);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setOffset(0);
+    setResults([]);
+  }, [q, activeType, activeSource]);
+
+  const { data, isFetching } = useSearch(
+    { q, type: activeType, source: activeSource, offset, limit: LIMIT },
+    { query: { enabled: q.trim().length > 1 } },
+  );
+
+  useEffect(() => {
+    if (data?.success && data.data?.results && !isFetching) {
+      setResults((prev) =>
+        offset === 0
+          ? (data.data?.results ?? [])
+          : [...prev, ...(data.data?.results ?? [])],
+      );
+    }
+  }, [isFetching, data, offset]);
+
+  const totalCount =
+    (data?.data?.totalOntologies ?? 0) + (data?.data?.totalConcepts ?? 0);
+  const hasMore = totalCount > results.length;
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetching && hasMore) {
+          setOffset((prev) => prev + LIMIT);
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [isFetching, hasMore]);
+
   const toggleType = (type: ApiSearchType) => {
     const params = new URLSearchParams(searchParams.toString());
     if (activeType === type) {
@@ -56,20 +104,6 @@ const Search = () => {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const { data, isLoading } = useSearch(
-    { q, type: activeType, source: activeSource },
-    { query: { enabled: q.trim().length > 1 } },
-  );
-
-  if (isLoading)
-    return (
-      <div className="h-full flex-1 flex items-center justify-center">
-        <CircularLoader />
-      </div>
-    );
-
-  if (!data?.success) return null;
-
   return (
     <div className="w-full py-10">
       <div className="max-w-250 mx-auto space-y-3">
@@ -89,7 +123,8 @@ const Search = () => {
               size="xs"
             >
               {tTypes('Types.Slovník')}{' '}
-              {activeType !== 'CONCEPT' && `[${data.data?.totalOntologies}]`}
+              {activeType !== 'CONCEPT' &&
+                `[${data?.data?.totalOntologies ?? 0}]`}
             </GovButton>
             <GovButton
               type={activeType === ApiSearchType.CONCEPT ? 'solid' : 'outlined'}
@@ -98,7 +133,8 @@ const Search = () => {
               size="xs"
             >
               {tTypes('Types.Pojem')}{' '}
-              {activeType !== 'ONTOLOGY' && `[${data.data?.totalConcepts}]`}
+              {activeType !== 'ONTOLOGY' &&
+                `[${data?.data?.totalConcepts ?? 0}]`}
             </GovButton>
             {user?.success === true && (
               <GovButton
@@ -117,18 +153,23 @@ const Search = () => {
           </div>
         </div>
 
-        {data.data?.results?.map((item) => {
+        {isFetching && results.length === 0 && (
+          <div className="h-full flex-1 flex items-center justify-center">
+            <CircularLoader />
+          </div>
+        )}
+
+        {results.map((item) => {
           if (item.type === 'ONTOLOGY') {
             const cardProps =
               item.source === 'ISMD'
-                ? // TODO - BE musi pridat od odpovedi i ID upravit jak bude pridano
-                  { type: 'ISMD' as const, id: 2 }
+                ? { type: 'ISMD' as const, id: 2 }
                 : { type: 'NKD' as const, ontologyIRI: item.iri ?? '' };
 
             return (
               <DictionaryCard
                 {...cardProps}
-                key={item.label}
+                key={item.iri ?? item.label}
                 title={item.label || ''}
                 text={item.description || item.definition || ''}
                 link={
@@ -147,7 +188,7 @@ const Search = () => {
           if (item.type === 'CONCEPT') {
             return (
               <ConceptCard
-                key={item.label}
+                key={item.iri ?? item.label}
                 title={item.label || ''}
                 text={item.description || item.definition || ''}
                 modified={
@@ -162,6 +203,16 @@ const Search = () => {
             );
           }
         })}
+
+        <div
+          ref={sentinelRef}
+          className="py-4 flex justify-center text-sm text-muted-foreground"
+        >
+          {isFetching && results.length > 0 && <CircularLoader />}
+          {!isFetching && !hasMore && results.length > 0 && (
+            <span>{t('NoMoreResults')}</span>
+          )}
+        </div>
       </div>
     </div>
   );
