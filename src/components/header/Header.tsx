@@ -11,6 +11,7 @@ import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { normalizeBasePath } from '@/lib/basePath';
+import { isGatedPath } from '@/lib/site-status';
 import { useEnvironment } from '../contexts/Environment';
 import { SearchInput } from '../searchInput/SearchInput';
 import { ThemeSwitch } from '../shared/ThemeSwitch';
@@ -21,9 +22,10 @@ import { NavItems } from './NavItems';
 
 interface Props {
   session: Session | null;
+  isGated?: boolean;
 }
 
-export const Header = ({ session }: Props) => {
+export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations('Header');
 
@@ -35,9 +37,31 @@ export const Header = ({ session }: Props) => {
 
   const isHomepage = pathname === '/';
   const showFullHeader = !isHomepage || !!session;
+  const isGated = isGatedProp ?? isGatedPath(pathname);
 
   const handleLogin = () =>
     signIn('keycloak', { prompt: 'login', callbackUrl });
+
+  if (isGated) {
+    return (
+      <>
+        <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-50">
+          <section className="mx-auto max-w-full-hd px-5 flex items-center">
+            <div className="flex items-center text-white font-medium gap-4">
+              <Image
+                src={`${basePath}/assets/icon-pixel.svg`}
+                width={36}
+                height={48}
+                alt="lion"
+              />
+              <span className="text-xl">ISMD</span>
+            </div>
+          </section>
+        </header>
+        <div className="min-h-18" />
+      </>
+    );
+  }
 
   return (
     <>
