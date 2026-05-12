@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -13,18 +14,26 @@ interface Props {
   isPublished: boolean;
   conceptID: number;
   name: string;
+  commentsCount: number;
+  loggedIn?: boolean;
+  source?: 'NKD' | 'ISMD';
+  owner: boolean;
 }
 
 export const ControlPanelConcept = ({
   isPublished,
   conceptID,
   name,
+  commentsCount,
+  loggedIn,
+  owner,
+  source,
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
-  const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId); // Changed
+  const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
 
   const handleCopyLink = async () => {
     try {
@@ -37,31 +46,47 @@ export const ControlPanelConcept = ({
   };
 
   return (
-    <div className="sticky right-0 top-10 flex flex-col gap-2 h-fit">
-      <ControlPanelButton
-        iconName="gear"
-        ariaLabel={t('GetLink')}
-        onClick={() => setOpenBoxId('update')}
-        className="mb-10"
-      />
-      <ControlPanelButton
-        iconName="link"
-        ariaLabel={t('GetLink')}
-        onClick={() => handleCopyLink()}
-      />
-      <ControlPanelButton
-        iconName="message"
-        ariaLabel={t('Comments')}
-        onClick={() => setIsCommentBoxOpen(true)}
-      />
-      {!isPublished && (
+    <div className="flex gap-2 h-fit w-full justify-between">
+      <div className="flex gap-8">
+        {owner && (
+          <GovButton
+            type="solid"
+            color="primary"
+            size="s"
+            onGovClick={() => setOpenBoxId('update')}
+          >
+            <GovIcon name="pencil-square" slot="icon-start" type="components" />
+            Upravit Pojem
+          </GovButton>
+        )}
+        {loggedIn && source === 'ISMD' && (
+          <GovButton
+            type="outlined"
+            color="primary"
+            size="s"
+            onGovClick={() => setIsCommentBoxOpen(true)}
+          >
+            <GovIcon name="pencil-square" slot="icon-start" type="components" />
+            Komentáře k pojmu{' '}
+            <span className="font-normal">[{commentsCount}]</span>
+          </GovButton>
+        )}
+      </div>
+      <div>
         <ControlPanelButton
-          iconName="trash"
-          danger
-          ariaLabel={t('Delete')}
-          onClick={() => setOpenDelete(true)}
+          iconName="link"
+          ariaLabel={t('GetLink')}
+          onClick={() => handleCopyLink()}
         />
-      )}
+        {!isPublished && owner && (
+          <ControlPanelButton
+            iconName="trash"
+            danger
+            ariaLabel={t('Delete')}
+            onClick={() => setOpenDelete(true)}
+          />
+        )}
+      </div>
       <DeleteDialog
         open={openDelete}
         id={conceptID}

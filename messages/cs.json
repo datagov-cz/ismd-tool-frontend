@@ -103,7 +103,7 @@
       "AlternativeName": "Alternativní název",
       "Definition": "Definice",
       "Description": "Popis",
-      "SupersededClass": "Nadřazena třída",
+      "SupersededClass": "Nadřazená třída",
       "SupersededConcepts": "Nadřazené pojmy",
       "SupersededRelation": "Nadřazený vztah",
       "SupersededProperty": "Nadřazená vlastnost",
@@ -114,7 +114,26 @@
       "RelatedResources": "Související ustanovení právního předpisu",
       "NonLegalResources": "Definující nelegislativní zdroj",
       "RelatedNonLegalResources": "Související nelegislativní zdroj",
-      "Range": "Obor hodnot"
+      "Range": "Obor hodnot",
+      "EquivalentConcept": "Ekvivalentní pojem",
+      "WaySharingData": "Způsob sdílení údajů",
+      "WayObtainingData": "Způsob získání údajů",
+      "DataContentType": "Typ obsahu údajů",
+      "IsPpdf": "Je v PPDF",
+      "AgendaInfoSystem": "Agendový informační systém",
+      "Agenda": "Agenda",
+      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje"
+    },
+    "Groups": {
+      "TypesAndClassification": "Typy a zařazení",
+      "Naming": "Pojmenování",
+      "ConceptMeaning": "Význam pojmu",
+      "ConceptSources": "Zdroje pojmu",
+      "AgendaAndInfoSystems": "Agenda a informační systémy",
+      "PublicityAndPublication": "Veřejnost a publikace"
+    },
+    "UdajeKDoplneni": {
+      "Title": "Údaje k doplnění"
     },
     "Registry": {
       "Title": "Registr práv a povinností",
@@ -128,6 +147,11 @@
       "Aquire": "Způsob získání údaje",
       "Share": "Způsob sdílení údaje",
       "Type": "Typ obsahu údaje"
+    },
+    "Main": {
+      "ControlPanel": {
+        "Updated": "aktualizováno"
+      }
     }
   },
   "Term": {

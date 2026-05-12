@@ -2,13 +2,11 @@
 
 import { useTranslations } from 'next-intl';
 
-import { useGetConceptDetail } from '@/api/generated';
-import { conceptDataFormatter } from '@/components/conceptCreate/conceptDataFormatter';
-import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
+import { useGetConceptDetail, useGetCurrentUser } from '@/api/generated';
 import { AddPropertyRelation } from '@/components/conceptDetail/AddPropertyRelation';
 import { ConceptDetailLink } from '@/components/conceptDetail/ConceptDetailLink';
+import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
-import { ControlPanelConcept } from '@/components/conceptDetail/ControlPanelConcept';
 import { Section } from '@/components/conceptDetail/Section';
 import { SuperClassList } from '@/components/conceptDetail/SuperClassList';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
@@ -24,6 +22,7 @@ interface Props {
 export const ConceptContent = ({ slug }: Props) => {
   const t = useTranslations('ConceptDetail');
   const concept = useGetConceptDetail(slug);
+  const { data: user } = useGetCurrentUser();
 
   if (!concept.data) return null;
 
@@ -34,14 +33,32 @@ export const ConceptContent = ({ slug }: Props) => {
   const ontology = extractOntologyFromUrl(conceptMetadata.graphName || '');
   const pathname = new URL(conceptMetadata.graphName || '').pathname;
   const definicniObor = extractDefinicniObor(conceptDetail, pathname);
-  const conceptType = conceptMetadata.conceptType;
+  const conceptType = conceptMetadata.conceptType as
+    | 'TRIDA'
+    | 'VLASTNOST'
+    | 'VZTAH'
+    | undefined;
 
   return (
     <>
+      <ConceptHeader
+        ontology={ontology}
+        conceptDetail={conceptDetail}
+        definicniObor={definicniObor}
+        conceptId={conceptMetadata.id}
+        isPublished={conceptMetadata.isPublished}
+        commentsCount={conceptMetadata.comments?.length ?? 0}
+        loggedIn={user?.success === true}
+        owner={conceptMetadata.user?.userId === user?.data?.userId}
+        source={'ISMD'}
+        updatedAt={conceptMetadata.updatedAt}
+      />
+
       <ConceptLayout
         conceptDetail={conceptDetail}
         ontology={ontology}
         definicniObor={definicniObor}
+        conceptType={conceptType}
       >
         {conceptType !== 'TRIDA' && (
           <Section title={t('Sections.Range')}>
@@ -53,28 +70,39 @@ export const ConceptContent = ({ slug }: Props) => {
 
         {conceptType === 'TRIDA' && (
           <>
-            <Section title={t('Sections.SupersededClass')}>
-              <SuperClassList
-                items={conceptDetail['nadřazená-třída']}
-                pathname={pathname}
-              />
-            </Section>
-            <AddPropertyRelation
-              concepts={conceptDetail.conceptProperties || []}
-              conceptIRI={conceptDetail.iri || ''}
-              type="VLASTNOST"
-              title={t('Sections.Properties')}
-              ontologyIRI={conceptMetadata.graphName || ''}
-              conceptSlug={conceptMetadata.slug || ''}
-            />
-            <AddPropertyRelation
-              concepts={conceptDetail.conceptRelationships || []}
-              conceptIRI={conceptDetail.iri || ''}
-              type="VZTAH"
-              title={t('Sections.Relations')}
-              ontologyIRI={conceptMetadata.graphName || ''}
-              conceptSlug={conceptMetadata.slug || ''}
-            />
+            {conceptDetail['nadřazená-třída'] &&
+              conceptDetail['nadřazená-třída']?.length > 0 && (
+                <Section title={t('Sections.SupersededClass')}>
+                  <div className="pl-12">
+                    <SuperClassList
+                      items={conceptDetail['nadřazená-třída']}
+                      pathname={pathname}
+                    />
+                  </div>
+                </Section>
+              )}
+            {conceptDetail.conceptProperties &&
+              conceptDetail.conceptProperties?.length > 0 && (
+                <AddPropertyRelation
+                  concepts={conceptDetail.conceptProperties || []}
+                  conceptIRI={conceptDetail.iri || ''}
+                  type="VLASTNOST"
+                  title={t('Sections.Properties')}
+                  ontologyIRI={conceptMetadata.graphName || ''}
+                  conceptSlug={conceptMetadata.slug || ''}
+                />
+              )}
+            {conceptDetail.conceptRelationships &&
+              conceptDetail.conceptRelationships?.length > 0 && (
+                <AddPropertyRelation
+                  concepts={conceptDetail.conceptRelationships || []}
+                  conceptIRI={conceptDetail.iri || ''}
+                  type="VZTAH"
+                  title={t('Sections.Relations')}
+                  ontologyIRI={conceptMetadata.graphName || ''}
+                  conceptSlug={conceptMetadata.slug || ''}
+                />
+              )}
           </>
         )}
 
@@ -97,25 +125,12 @@ export const ConceptContent = ({ slug }: Props) => {
         )}
       </ConceptLayout>
 
-      <ControlPanelConcept
-        conceptID={conceptMetadata.id || 0}
-        isPublished={conceptMetadata.isPublished || false}
-        name={conceptDetail.název?.cs || ''}
-      />
-      <CommentSidebox
-        conceptIRI={conceptDetail.iri}
-        comments={conceptMetadata.comments}
-        refetch={() => concept.refetch()}
-        userId="test"
-      />
-      {conceptMetadata.graphName && concept.data.data && (
-        <CreateConceptSideBox
-          slug={conceptMetadata.slug || ''}
-          namespace={conceptMetadata.graphName}
-          defaultData={conceptDataFormatter(concept.data.data)}
-          action="update"
-          conceptId={conceptMetadata.id}
-          sideboxId="update"
+      {user?.data?.userId && (
+        <CommentSidebox
+          conceptIRI={conceptDetail.iri}
+          comments={conceptMetadata.comments}
+          refetch={() => concept.refetch()}
+          userId={user?.data?.userId}
         />
       )}
     </>

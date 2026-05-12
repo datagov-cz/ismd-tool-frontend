@@ -19,10 +19,12 @@ export const ControlPanelButton = ({
       color={danger ? 'error' : 'primary'}
       type="base"
       onGovClick={onClick}
+      size="m"
+      className="h-8! [&_button]:h-8!"
     >
       <GovIcon
         name={iconName}
-        size="l"
+        size="m"
         aria-label={ariaLabel}
         className="text-white"
       />

@@ -5,5 +5,5 @@ interface Props {
 }
 
 export const GridContainer = ({ children }: Props) => {
-  return <div className="grid grid-cols-5 gap-x-4 gap-y-2">{children}</div>;
+  return <div className="grid grid-cols-4 gap-x-4 gap-y-2">{children}</div>;
 };
