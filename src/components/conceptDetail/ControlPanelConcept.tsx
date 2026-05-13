@@ -46,7 +46,7 @@ export const ControlPanelConcept = ({
   };
 
   return (
-    <div className="flex gap-2 h-fit w-full justify-between">
+    <div className="flex flex-col gap-2 justify-between h-full">
       <div className="flex gap-8">
         {owner && (
           <GovButton
@@ -56,7 +56,7 @@ export const ControlPanelConcept = ({
             onGovClick={() => setOpenBoxId('update')}
           >
             <GovIcon name="pencil-square" slot="icon-start" type="components" />
-            Upravit Pojem
+            Upravit pojem
           </GovButton>
         )}
         {loggedIn && source === 'ISMD' && (
@@ -72,7 +72,7 @@ export const ControlPanelConcept = ({
           </GovButton>
         )}
       </div>
-      <div>
+      <div className="self-end">
         <ControlPanelButton
           iconName="link"
           ariaLabel={t('GetLink')}

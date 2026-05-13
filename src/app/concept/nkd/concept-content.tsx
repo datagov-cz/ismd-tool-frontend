@@ -15,5 +15,5 @@ export const ConceptContentNKD = ({ slug }: Props) => {
   const conceptDetail = concept.data.data?.conceptDetail;
   if (!conceptDetail) return null;
 
-  return <ConceptLayout conceptDetail={conceptDetail} />;
+  return <ConceptLayout conceptDetail={conceptDetail} pathname="" />;
 };

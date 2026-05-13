@@ -1,5 +1,6 @@
 import { LITERAL_URL_PREFIX, RESOURCE_URL_PREFIX } from '@/lib/constants';
-import { Term } from '../dictionaryDetail/Term';
+
+import { RelatedTerm } from './RelatedTerm';
 
 export const SuperClassList = ({
   items,
@@ -17,15 +18,10 @@ export const SuperClassList = ({
   return (
     <>
       {filteredItems.map((item, index) => (
-        <Term
-          key={item + index}
-          slug={`${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`}
-          tree={false}
-          data={{
-            název: {
-              cs: item.split('pojem/')[1]?.replace(/-/g, ' ') || '',
-            },
-          }}
+        <RelatedTerm
+          key={index + item}
+          label={item.split('pojem/')[1]?.replace(/-/g, ' ') || ''}
+          href={`${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`}
         />
       ))}
     </>

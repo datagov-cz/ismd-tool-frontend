@@ -3,12 +3,10 @@
 import { useTranslations } from 'next-intl';
 
 import { useGetConceptDetail, useGetCurrentUser } from '@/api/generated';
-import { AddPropertyRelation } from '@/components/conceptDetail/AddPropertyRelation';
 import { ConceptDetailLink } from '@/components/conceptDetail/ConceptDetailLink';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { Section } from '@/components/conceptDetail/Section';
-import { SuperClassList } from '@/components/conceptDetail/SuperClassList';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import {
   extractDefinicniObor,
@@ -52,6 +50,7 @@ export const ConceptContent = ({ slug }: Props) => {
         owner={conceptMetadata.user?.userId === user?.data?.userId}
         source={'ISMD'}
         updatedAt={conceptMetadata.updatedAt}
+        conceptType={conceptType}
       />
 
       <ConceptLayout
@@ -59,68 +58,13 @@ export const ConceptContent = ({ slug }: Props) => {
         ontology={ontology}
         definicniObor={definicniObor}
         conceptType={conceptType}
+        pathname={pathname}
       >
         {conceptType !== 'TRIDA' && (
           <Section title={t('Sections.Range')}>
             {conceptDetail['obor-hodnot'] && (
               <ConceptDetailLink href={conceptDetail['obor-hodnot']} />
             )}
-          </Section>
-        )}
-
-        {conceptType === 'TRIDA' && (
-          <>
-            {conceptDetail['nadřazená-třída'] &&
-              conceptDetail['nadřazená-třída']?.length > 0 && (
-                <Section title={t('Sections.SupersededClass')}>
-                  <div className="pl-12">
-                    <SuperClassList
-                      items={conceptDetail['nadřazená-třída']}
-                      pathname={pathname}
-                    />
-                  </div>
-                </Section>
-              )}
-            {conceptDetail.conceptProperties &&
-              conceptDetail.conceptProperties?.length > 0 && (
-                <AddPropertyRelation
-                  concepts={conceptDetail.conceptProperties || []}
-                  conceptIRI={conceptDetail.iri || ''}
-                  type="VLASTNOST"
-                  title={t('Sections.Properties')}
-                  ontologyIRI={conceptMetadata.graphName || ''}
-                  conceptSlug={conceptMetadata.slug || ''}
-                />
-              )}
-            {conceptDetail.conceptRelationships &&
-              conceptDetail.conceptRelationships?.length > 0 && (
-                <AddPropertyRelation
-                  concepts={conceptDetail.conceptRelationships || []}
-                  conceptIRI={conceptDetail.iri || ''}
-                  type="VZTAH"
-                  title={t('Sections.Relations')}
-                  ontologyIRI={conceptMetadata.graphName || ''}
-                  conceptSlug={conceptMetadata.slug || ''}
-                />
-              )}
-          </>
-        )}
-
-        {conceptType === 'VLASTNOST' && (
-          <Section title={t('Sections.SupersededProperty')}>
-            <SuperClassList
-              items={conceptDetail['nadřazená-vlastnost']}
-              pathname={pathname}
-            />
-          </Section>
-        )}
-
-        {conceptType === 'VZTAH' && (
-          <Section title={t('Sections.SupersededRelation')}>
-            <SuperClassList
-              items={conceptDetail['nadřazený-vztah']}
-              pathname={pathname}
-            />
           </Section>
         )}
       </ConceptLayout>

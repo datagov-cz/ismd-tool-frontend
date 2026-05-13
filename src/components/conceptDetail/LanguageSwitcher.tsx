@@ -1,6 +1,5 @@
-'use client';
-import { useState } from 'react';
 import { GovChip } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 
 interface LanguageSwitcherProps {
   item: {
@@ -9,30 +8,34 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher = ({ item }: LanguageSwitcherProps) => {
-  console.log(item, 'test');
-  const [language, setLanguage] = useState(
-    Object.keys(item).includes('cs') ? 'cs' : Object.keys(item)[0],
-  );
   if (Object.keys(item).length === 0) return;
   return (
     <div className="flex justify-between w-full gap-4">
-      <div className="flex gap-0.5">
-        {Object.keys(item)
-          .sort()
-          .map((item) => (
-            <GovChip
-              key={item}
-              color="primary"
-              size="xs"
-              type={item === language ? 'solid' : 'outlined'}
-              className="h-fit cursor-pointer!"
-              onGovClick={() => setLanguage(item)}
+      <div className="flex flex-col w-full">
+        {Object.keys(item).map((lang) => (
+          <div
+            key={lang}
+            className="flex gap-2 border-b last:border-0 w-full pb-2 pt-2 last:pb-0 first:pt-0 border-border-subtlest relative"
+          >
+            {lang !== 'cs' && (
+              <GovChip
+                key={lang}
+                color="primary"
+                size="xs"
+                type="outlined"
+                className="h-fit cursor-pointer! absolute -left-10 border-0!"
+              >
+                {lang.toLocaleUpperCase()}
+              </GovChip>
+            )}
+            <p
+              className={clsx('font-sm text-md', lang !== 'cs' && 'opacity-60')}
             >
-              <span className="cursor-pointer">{item.toLocaleUpperCase()}</span>
-            </GovChip>
-          ))}
+              {String(item[lang])}
+            </p>
+          </div>
+        ))}
       </div>
-      <p className="font-sm text-md">{String(item[language])}</p>
     </div>
   );
 };

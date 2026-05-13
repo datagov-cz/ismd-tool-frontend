@@ -42,6 +42,8 @@
   --color-primary-subtlest: #f3f7fc;
   --color-card-description: #6d6d6d;
   --color-border-primary-subtle: #599bd7;
+  --color-border-primary: #2362a2;
+  --color-border-subtlest: #e7e7e7;
 
   /* Dark mode colors */
   --color-dark-bg: #1a1a1a;
