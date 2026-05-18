@@ -104,74 +104,10 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
-}
-
-export interface CatalogRequestDto {
-  ontologyMetadata?: OntologyMetadataModel;
-  validationReport?: ValidationReportDto;
-}
-
-export interface ValidationReportDto {
-  results?: ValidationResult[];
-  timestamp?: string;
-  ontologyIri?: string;
-  id?: number;
-}
-
-export interface ApiResponseDtoCatalogRecordDto {
-  data?: CatalogRecordDto;
-  message?: string;
-  success?: boolean;
-}
-
-export type CatalogRecordDtoPopis = { [key: string]: string };
-
-export type CatalogRecordDtoNázev = { [key: string]: string };
-
-export type CatalogRecordDtoKlíčovéSlovo = { [key: string]: string[] };
-
-export type CatalogRecordDtoKontaktníBod = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export interface CatalogRecordDto {
-  iri?: string;
-  typ?: string;
-  popis?: CatalogRecordDtoPopis;
-  specifikace?: string[];
-  distribuce?: DistribuceDto[];
-  '@context'?: string;
-  název?: CatalogRecordDtoNázev;
-  prvek_rúian?: string[];
-  geografické_území?: string[];
-  prostorové_pokrytí?: string[];
-  klíčové_slovo?: CatalogRecordDtoKlíčovéSlovo;
-  periodicita_aktualizace?: string;
-  téma?: string[];
-  koncept_euroVoc?: string[];
-  kontaktní_bod?: CatalogRecordDtoKontaktníBod;
-}
-
-export interface DistribuceDto {
-  typ?: string;
-  podmínky_užití?: PodminkyUzitiDto;
-  soubor_ke_stažení?: string;
-  přístupové_url?: string;
-  typ_média?: string;
-  formát?: string;
-  schéma?: string;
-}
-
-export interface PodminkyUzitiDto {
-  typ?: string;
-  autorské_dílo?: string;
-  databáze_jako_autorské_dílo?: string;
-  databáze_chráněná_zvláštními_právy?: string;
-  osobní_údaje?: string;
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
@@ -559,6 +495,8 @@ export interface ConceptDetailModel {
   'nadřazená-vlastnost'?: string[];
   'definující-ustanovení-právního-předpisu'?: string[];
   'související-ustanovení-právního-předpisu'?: string[];
+  'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
   'definující-nelegislativní-zdroj'?: ConceptDetailModelDefinujícíNelegislativníZdrojItem[];
   'související-nelegislativní-zdroj'?: ConceptDetailModelSouvisejícíNelegislativníZdrojItem[];
   'způsob-sdílení-údaje'?: string[];
@@ -578,6 +516,11 @@ export interface ConceptPropertiesModel {
 export interface ConceptRelationshipsModel {
   name?: string;
   ref?: string;
+}
+
+export interface FragmentSegment {
+  kind?: string;
+  number?: string;
 }
 
 export type GetOntologyDtoPublishedConceptDeviations = {
@@ -727,6 +670,49 @@ export interface PublishedOntologyDeviationModel {
   popis?: PropertyDeviationMapStringString;
 }
 
+export type ResolvedLegalSourceDtoLevel =
+  (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoLevel = {
+  LAW: 'LAW',
+  VERSION: 'VERSION',
+  FRAGMENT: 'FRAGMENT',
+} as const;
+
+export type ResolvedLegalSourceDtoEnrichmentStatus =
+  (typeof ResolvedLegalSourceDtoEnrichmentStatus)[keyof typeof ResolvedLegalSourceDtoEnrichmentStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoEnrichmentStatus = {
+  OK: 'OK',
+  PENDING: 'PENDING',
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_FOUND: 'NOT_FOUND',
+  SKIPPED_NON_FRAGMENT: 'SKIPPED_NON_FRAGMENT',
+  INVALID_IRI: 'INVALID_IRI',
+} as const;
+
+export interface ResolvedLegalSourceDto {
+  originalUrl?: string;
+  eliPath?: string;
+  domain?: string;
+  level?: ResolvedLegalSourceDtoLevel;
+  lawIri?: string;
+  versionIri?: string;
+  fragmentIri?: string;
+  lawNumber?: string;
+  lawYear?: number;
+  sbirkaCode?: string;
+  versionDate?: string;
+  fragmentSegments?: FragmentSegment[];
+  displayLabel?: string;
+  fragmentCitation?: string;
+  versionValidUntil?: string;
+  isLatestVersion?: boolean;
+  enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
+}
+
 export interface ApiResponseDtoListOntologyMetadataModel {
   data?: OntologyMetadataModel[];
   message?: string;
@@ -778,6 +764,58 @@ export interface ApiResponseDtoGetNkdConceptDto {
 export interface GetNkdConceptDto {
   conceptDetail?: ConceptDetailModel;
   ontologyIri?: string;
+}
+
+export interface ApiResponseDtoResolvedLegalSourceDto {
+  data?: ResolvedLegalSourceDto;
+  message?: string;
+  success?: boolean;
+}
+
+export interface ApiResponseDtoListLawVersionDto {
+  data?: LawVersionDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface LawVersionDto {
+  iri?: string;
+  eliPath?: string;
+  ucinnostOd?: string;
+  ucinnostDo?: string;
+  versionType?: string;
+  latest?: boolean;
+}
+
+export interface ApiResponseDtoListLawDto {
+  data?: LawDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface LawDto {
+  iri?: string;
+  eliPath?: string;
+  domain?: string;
+  citace?: string;
+  displayName?: string;
+  cislo?: string;
+  rok?: number;
+  sbirka?: string;
+}
+
+export interface ApiResponseDtoListFragmentDto {
+  data?: FragmentDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface FragmentDto {
+  iri?: string;
+  eliPath?: string;
+  kind?: string;
+  citation?: string;
+  order?: string;
 }
 
 export interface ApiResponseDtoGetConceptDto {
@@ -961,6 +999,23 @@ export type GetNkdConceptDetailParams = {
   ontologyIri?: string;
 };
 
+export type ResolveLegalSourceParams = {
+  iri: string;
+};
+
+export type GetVersionsParams = {
+  lawIri: string;
+};
+
+export type SearchLawsParams = {
+  q?: string;
+  limit?: number;
+};
+
+export type GetFragmentsParams = {
+  versionIri: string;
+};
+
 export type GetConceptListParams = {
   userId?: string;
   isPublished?: boolean;
@@ -1055,97 +1110,6 @@ export const useValidateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getValidateOntologyMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * Vyžádá katalogizační záznam slovníku z validační služby na základě RDF dat a výsledků validace. Vyžaduje oprávnění vlastníka nebo administrátora.
- * @summary Žádost o katalogizační záznam
- */
-export const requestCatalogRecord = (
-  slug: string,
-  catalogRequestDto: CatalogRequestDto,
-  options?: SecondParameter<typeof axiosInstance>,
-  signal?: AbortSignal,
-) => {
-  return axiosInstance<ApiResponseDtoCatalogRecordDto>(
-    {
-      url: `/api/ontology/${slug}/catalog-record`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: catalogRequestDto,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getRequestCatalogRecordMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof requestCatalogRecord>>,
-    TError,
-    { slug: string; data: CatalogRequestDto },
-    TContext
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof requestCatalogRecord>>,
-  TError,
-  { slug: string; data: CatalogRequestDto },
-  TContext
-> => {
-  const mutationKey = ['requestCatalogRecord'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof requestCatalogRecord>>,
-    { slug: string; data: CatalogRequestDto }
-  > = (props) => {
-    const { slug, data } = props ?? {};
-
-    return requestCatalogRecord(slug, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type RequestCatalogRecordMutationResult = NonNullable<
-  Awaited<ReturnType<typeof requestCatalogRecord>>
->;
-export type RequestCatalogRecordMutationBody = CatalogRequestDto;
-export type RequestCatalogRecordMutationError = unknown;
-
-/**
- * @summary Žádost o katalogizační záznam
- */
-export const useRequestCatalogRecord = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof requestCatalogRecord>>,
-      TError,
-      { slug: string; data: CatalogRequestDto },
-      TContext
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof requestCatalogRecord>>,
-  TError,
-  { slug: string; data: CatalogRequestDto },
-  TContext
-> => {
-  const mutationOptions = getRequestCatalogRecordMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -3581,6 +3545,601 @@ export function useGetNkdConceptDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetNkdConceptDetailQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Parses the URL synchronously, and for fragment-level URLs fetches the official citation + version metadata via SPARQL (cached 24h). Forgiving: invalid URLs return HTTP 200 with enrichmentStatus=INVALID_IRI. Public endpoint — used by concept detail rendering for unauthenticated viewers.
+ * @summary Resolve e-Sbírka ELI URL to a display object
+ */
+export const resolveLegalSource = (
+  params: ResolveLegalSourceParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoResolvedLegalSourceDto>(
+    { url: `/api/eli/resolve`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getResolveLegalSourceQueryKey = (
+  params?: ResolveLegalSourceParams,
+) => {
+  return [`/api/eli/resolve`, ...(params ? [params] : [])] as const;
+};
+
+export const getResolveLegalSourceQueryOptions = <
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getResolveLegalSourceQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof resolveLegalSource>>
+  > = ({ signal }) => resolveLegalSource(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof resolveLegalSource>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ResolveLegalSourceQueryResult = NonNullable<
+  Awaited<ReturnType<typeof resolveLegalSource>>
+>;
+export type ResolveLegalSourceQueryError = unknown;
+
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof resolveLegalSource>>,
+          TError,
+          Awaited<ReturnType<typeof resolveLegalSource>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof resolveLegalSource>>,
+          TError,
+          Awaited<ReturnType<typeof resolveLegalSource>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Resolve e-Sbírka ELI URL to a display object
+ */
+
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getResolveLegalSourceQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací všechna znění zadaného právního aktu, řazeno od nejnovějšího; pole "latest" označuje aktuálně poslední znění.
+ * @summary Seznam znění daného právního aktu
+ */
+export const getVersions = (
+  params: GetVersionsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListLawVersionDto>(
+    { url: `/api/eli/law/versions`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetVersionsQueryKey = (params?: GetVersionsParams) => {
+  return [`/api/eli/law/versions`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetVersionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetVersionsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVersions>>> = ({
+    signal,
+  }) => getVersions(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVersions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVersionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVersions>>
+>;
+export type GetVersionsQueryError = unknown;
+
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVersions>>,
+          TError,
+          Awaited<ReturnType<typeof getVersions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVersions>>,
+          TError,
+          Awaited<ReturnType<typeof getVersions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Seznam znění daného právního aktu
+ */
+
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetVersionsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací seznam právních aktů filtrovaný podle citace (např. "187/2006"). Při prázdném dotazu se vrací nejnovější akty (rok desc, číslo asc).
+ * @summary Vyhledávání právních aktů v e-Sbírce
+ */
+export const searchLaws = (
+  params?: SearchLawsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListLawDto>(
+    { url: `/api/eli/law/search`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getSearchLawsQueryKey = (params?: SearchLawsParams) => {
+  return [`/api/eli/law/search`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchLawsQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getSearchLawsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof searchLaws>>> = ({
+    signal,
+  }) => searchLaws(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof searchLaws>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchLawsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchLaws>>
+>;
+export type SearchLawsQueryError = unknown;
+
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params: undefined | SearchLawsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchLaws>>,
+          TError,
+          Awaited<ReturnType<typeof searchLaws>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchLaws>>,
+          TError,
+          Awaited<ReturnType<typeof searchLaws>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vyhledávání právních aktů v e-Sbírce
+ */
+
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchLawsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací rekurzivní strom fragmentů zadaného znění (jeden SPARQL dotaz, stromová struktura sestavena na serveru).
+ * @summary Strom fragmentů daného znění právního aktu
+ */
+export const getFragments = (
+  params: GetFragmentsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListFragmentDto>(
+    { url: `/api/eli/law/fragments`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetFragmentsQueryKey = (params?: GetFragmentsParams) => {
+  return [`/api/eli/law/fragments`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetFragmentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetFragmentsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFragments>>> = ({
+    signal,
+  }) => getFragments(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFragments>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetFragmentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFragments>>
+>;
+export type GetFragmentsQueryError = unknown;
+
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFragments>>,
+          TError,
+          Awaited<ReturnType<typeof getFragments>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFragments>>,
+          TError,
+          Awaited<ReturnType<typeof getFragments>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Strom fragmentů daného znění právního aktu
+ */
+
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetFragmentsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
