@@ -13,6 +13,7 @@ interface Props<T extends FieldValues> {
   name: Path<T>;
   register: UseFormRegister<T>;
   multiline?: boolean;
+  disabled?: boolean;
 }
 
 export const Input = <T extends FieldValues>({
@@ -21,6 +22,7 @@ export const Input = <T extends FieldValues>({
   name,
   register,
   multiline,
+  disabled,
 }: Props<T>) => {
   const {
     control,
@@ -36,7 +38,7 @@ export const Input = <T extends FieldValues>({
           <GovFormLabel className="w-fit! pt-2.5">
             <span className="font-bold">{label}</span>
           </GovFormLabel>
-          <div className="col-span-6 relative">
+          <div className="col-span-6 relative ml-10">
             <GovFormInput
               {...register(name)}
               id={field.name}
@@ -44,6 +46,7 @@ export const Input = <T extends FieldValues>({
               className="border-0!"
               multiline={multiline}
               rows={4}
+              disabled={disabled}
             />
             {errors[name]?.message && (
               <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">

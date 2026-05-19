@@ -79,7 +79,7 @@ export const LanguageInput = <T extends FieldValues>({
             <GovFormLabel className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>
             </GovFormLabel>
-            <div className="col-span-6 relative flex items-center gap-2">
+            <div className="col-span-6 relative flex items-center gap-2 ml-10">
               <GovChip
                 type="outlined"
                 color="primary"
@@ -115,15 +115,17 @@ export const LanguageInput = <T extends FieldValues>({
             )}
 
             {index > 0 && (
-              <GovButton
-                className="absolute! right-1 top-1/2 -translate-y-1/2"
-                type="base"
-                color="error"
-                size="s"
-                onGovClick={() => remove(index)}
+              <button
+                className="absolute! right-2 top-1/2 -translate-y-1/2 cursor-pointer h-6!"
+                onClick={() => remove(index)}
               >
-                <GovIcon type="components" name="trash" slot="icon-start" />
-              </GovButton>
+                <GovIcon
+                  type="components"
+                  name="x"
+                  slot="icon-start"
+                  size="2xl"
+                />
+              </button>
             )}
           </div>
         );

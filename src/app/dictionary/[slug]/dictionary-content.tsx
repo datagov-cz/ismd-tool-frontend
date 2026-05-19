@@ -7,7 +7,6 @@ import {
   useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
-import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
@@ -107,15 +106,6 @@ export const DictionaryContent = ({ slug }: Props) => {
         />
       )}
       <ValidationSidebox />
-
-      {ontologyDetail.iri && (
-        <CreateConceptSideBox
-          slug={slug}
-          namespace={ontologyDetail.iri || ontologyMetadata.graphName || ''}
-          action="create"
-          sideboxId="create"
-        />
-      )}
     </OntologyLayout>
   );
 };

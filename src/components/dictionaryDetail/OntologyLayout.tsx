@@ -171,7 +171,12 @@ export const OntologyLayout = ({
             </p>
             <div className="flex justify-between pb-2 items-end">
               {!isLoggedOutOrNKD && (
-                <GovButton type="solid" color="primary" size="s">
+                <GovButton
+                  type="solid"
+                  color="primary"
+                  size="s"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/create?ontology=${slug}`}
+                >
                   <GovIcon
                     slot="icon-start"
                     name="plus"

@@ -1,0 +1,145 @@
+import { useEffect } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+
+import { CreateConceptBody, useCreateConcept } from '@/api/generated';
+
+import {
+  type ConceptForm as ConceptFormValues,
+  ConceptFormSchema,
+} from './schema/conceptFormSchema';
+import { ConceptMeaningSection } from './sections/ConceptMeaningSection';
+import { NamingSection } from './sections/NamingSection';
+import { OntologySection } from './sections/OntologySection';
+import { ProclamationSection } from './sections/ProclamationSection';
+import { RightsAndObligationsSection } from './sections/RightsAndObligationsSection';
+import { SourcesSection } from './sections/SourcesSection';
+import { TypesSection } from './sections/TypeSection';
+
+function getDomain(url: string): string | null {
+  try {
+    const withProtocol = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    const match = withProtocol.match(/^(https?:\/\/[^/]+)/i);
+    return match ? `${match[1]}/` : null;
+  } catch {
+    return null;
+  }
+}
+
+export const ConceptForm = ({
+  ontology,
+  ontologyGraphName,
+}: {
+  ontology: string;
+  ontologyGraphName: string;
+}) => {
+  const { mutate: createConcept, isPending } = useCreateConcept();
+
+  const form = useForm<ConceptFormValues>({
+    resolver: zodResolver(ConceptFormSchema),
+    defaultValues: {
+      ontologyGraphName: ontologyGraphName,
+      conceptType: 'TRIDA',
+      conceptTypeEnum: 'TRIDA',
+      identifier: undefined,
+      nameModel: { name: { cs: '' } },
+      namespace: getDomain(ontologyGraphName) ?? undefined,
+      altNameModel: { altName: [{ languageTag: 'cs', name: '' }] },
+      definitionModel: { definition: [{ languageTag: 'cs', name: '' }] },
+      descriptionModel: { description: [{ languageTag: 'cs', name: '' }] },
+      definingNonLegalSource: [],
+      definingLegalSource: [],
+      relatedNonLegalSource: [],
+      relatedLegalSource: [],
+      exactMatch: [],
+      inTezaurus: false,
+      type: '',
+      broaderConcept: [],
+      dataType: undefined,
+      superProperty: [],
+      range: undefined,
+      superRelation: [],
+      agendaCode: undefined,
+      agendaSystemCode: undefined,
+      contentType: '',
+      acquisitionMethod: '',
+      sharingMethod: [],
+      isInPPDF: false,
+      isPublic: false,
+      privacyProvisions: [],
+      domain: undefined,
+      codeListDataset: undefined,
+    },
+  });
+
+  const { errors } = form.formState;
+
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      toast.error('Prosím opravte chyby ve formuláři.', {
+        position: 'bottom-right',
+      });
+    }
+  }, [errors]);
+
+  const onSubmit = (formData: ConceptFormValues) => {
+    const toRecord = (arr?: { languageTag: string; name: string }[]) =>
+      arr?.reduce<Record<string, string>>((acc, { languageTag, name }) => {
+        acc[languageTag] = name;
+        return acc;
+      }, {});
+
+    const normalized = {
+      ...formData,
+      altNameModel: formData.altNameModel?.altName
+        ? { altName: toRecord(formData.altNameModel.altName) }
+        : undefined,
+      definitionModel: formData.definitionModel?.definition
+        ? { definition: toRecord(formData.definitionModel.definition) }
+        : undefined,
+      descriptionModel: formData.descriptionModel?.description
+        ? { description: toRecord(formData.descriptionModel.description) }
+        : undefined,
+    };
+
+    createConcept(
+      {
+        slug: ontology,
+        data: normalized as unknown as CreateConceptBody,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Koncept byl úspěšně vytvořen.', {
+            position: 'bottom-right',
+          });
+        },
+        onError: () => {
+          toast.error('Při ukládání konceptu došlo k chybě.', {
+            position: 'bottom-right',
+          });
+        },
+      },
+    );
+  };
+
+  console.log(form.formState.errors, 'test');
+
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">
+        <NamingSection />
+        <TypesSection />
+        <ConceptMeaningSection />
+        <SourcesSection />
+        <RightsAndObligationsSection />
+        <ProclamationSection />
+        <OntologySection />
+        <button type="submit" disabled={isPending}>
+          {isPending ? 'Saving...' : 'Submit'}
+        </button>
+      </form>
+    </FormProvider>
+  );
+};
