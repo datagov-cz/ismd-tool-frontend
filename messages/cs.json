@@ -101,6 +101,7 @@
   "ConceptDetail": {
     "Sections": {
       "AlternativeName": "Alternativní název",
+      "Agenda": "Agenda",
       "Definition": "Definice",
       "Description": "Popis",
       "SupersededClass": "Nadřazená třída",
@@ -115,13 +116,13 @@
       "NonLegalResources": "Definující nelegislativní zdroj",
       "RelatedNonLegalResources": "Související nelegislativní zdroj",
       "Range": "Obor hodnot",
+      "DefinicniObor": "Definiční obor",
       "EquivalentConcept": "Ekvivalentní pojem",
       "WaySharingData": "Způsob sdílení údajů",
       "WayObtainingData": "Způsob získání údajů",
       "DataContentType": "Typ obsahu údajů",
       "IsPpdf": "Je v PPDF",
       "AgendaInfoSystem": "Agendový informační systém",
-      "Agenda": "Agenda",
       "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje"
     },
     "Groups": {

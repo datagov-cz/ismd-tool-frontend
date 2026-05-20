@@ -1,24 +1,16 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-
 import { useGetConceptDetail, useGetCurrentUser } from '@/api/generated';
-import { ConceptDetailLink } from '@/components/conceptDetail/ConceptDetailLink';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
-import { Section } from '@/components/conceptDetail/Section';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
-import {
-  extractDefinicniObor,
-  extractOntologyFromUrl,
-} from '@/utils/conceptDetailUtils';
+import { extractOntologyFromUrl } from '@/utils/conceptDetailUtils';
 
 interface Props {
   slug: string;
 }
 
 export const ConceptContent = ({ slug }: Props) => {
-  const t = useTranslations('ConceptDetail');
   const concept = useGetConceptDetail(slug);
   const { data: user } = useGetCurrentUser();
 
@@ -30,7 +22,6 @@ export const ConceptContent = ({ slug }: Props) => {
 
   const ontology = extractOntologyFromUrl(conceptMetadata.graphName || '');
   const pathname = new URL(conceptMetadata.graphName || '').pathname;
-  const definicniObor = extractDefinicniObor(conceptDetail, pathname);
   const conceptType = conceptMetadata.conceptType as
     | 'TRIDA'
     | 'VLASTNOST'
@@ -42,7 +33,6 @@ export const ConceptContent = ({ slug }: Props) => {
       <ConceptHeader
         ontology={ontology}
         conceptDetail={conceptDetail}
-        definicniObor={definicniObor}
         conceptId={conceptMetadata.id}
         isPublished={conceptMetadata.isPublished}
         commentsCount={conceptMetadata.comments?.length ?? 0}
@@ -56,18 +46,9 @@ export const ConceptContent = ({ slug }: Props) => {
       <ConceptLayout
         conceptDetail={conceptDetail}
         ontology={ontology}
-        definicniObor={definicniObor}
         conceptType={conceptType}
         pathname={pathname}
-      >
-        {conceptType !== 'TRIDA' && (
-          <Section title={t('Sections.Range')}>
-            {conceptDetail['obor-hodnot'] && (
-              <ConceptDetailLink href={conceptDetail['obor-hodnot']} />
-            )}
-          </Section>
-        )}
-      </ConceptLayout>
+      />
 
       {user?.data?.userId && (
         <CommentSidebox

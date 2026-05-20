@@ -34,6 +34,11 @@ export const FIELD_GROUPS: FieldGroup[] = [
         types: ['VZTAH'],
       },
       {
+        key: 'definiční-obor',
+        labelKey: 'Sections.DefinicniObor',
+        types: ['VLASTNOST', 'VZTAH', undefined],
+      },
+      {
         key: 'obor-hodnot',
         labelKey: 'Sections.Range',
         types: ['VLASTNOST', 'VZTAH', undefined],
@@ -68,11 +73,11 @@ export const FIELD_GROUPS: FieldGroup[] = [
     groupLabelKey: 'Groups.ConceptSources',
     fields: [
       {
-        key: 'definující-ustanovení-právního-předpisu',
+        key: 'definující-ustanovení-právního-předpisu-resolved',
         labelKey: 'Sections.Resource',
       },
       {
-        key: 'související-ustanovení-právního-předpisu',
+        key: 'související-ustanovení-právního-předpisu-resolved',
         labelKey: 'Sections.RelatedResources',
       },
       {
@@ -88,9 +93,9 @@ export const FIELD_GROUPS: FieldGroup[] = [
   {
     groupLabelKey: 'Groups.AgendaAndInfoSystems',
     fields: [
-      { key: 'agenda', labelKey: 'Sections.Agenda' },
+      { key: 'agenda-resolved', labelKey: 'Sections.Agenda' },
       {
-        key: 'agendový-informační-systém',
+        key: 'agendový-informační-systém-resolved',
         labelKey: 'Sections.AgendaInfoSystem',
       },
       { key: 'typ-obsahu-údaje', labelKey: 'Sections.DataContentType' },

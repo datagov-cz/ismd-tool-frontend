@@ -175,9 +175,9 @@ export interface ConceptCreateModel {
   altNameModel?: AltNameModel;
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
-  definingNonLegalSource?: string[];
+  definingNonLegalSource?: DigitalObjectModel[];
   definingLegalSource?: string[];
-  relatedNonLegalSource?: string[];
+  relatedNonLegalSource?: DigitalObjectModel[];
   relatedLegalSource?: string[];
   exactMatch?: string[];
   inTezaurus?: boolean;
@@ -188,6 +188,12 @@ export type DefinitionModelDefinition = { [key: string]: string };
 
 export interface DefinitionModel {
   definition?: DefinitionModelDefinition;
+}
+
+export interface DigitalObjectModel {
+  name?: string;
+  description?: string;
+  url?: string;
 }
 
 export type PropertyConceptModelAllOf = {
@@ -284,9 +290,9 @@ export interface ConceptEditModel {
   altNameModel?: AltNameModel;
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
-  definingNonLegalSource?: string[];
+  definingNonLegalSource?: DigitalObjectModel[];
   definingLegalSource?: string[];
-  relatedNonLegalSource?: string[];
+  relatedNonLegalSource?: DigitalObjectModel[];
   relatedLegalSource?: string[];
   exactMatch?: string[];
   inTezaurus?: boolean;
@@ -369,6 +375,9 @@ export type SearchResultDtoType =
 export const SearchResultDtoType = {
   ONTOLOGY: 'ONTOLOGY',
   CONCEPT: 'CONCEPT',
+  CLASS: 'CLASS',
+  PROPERTY: 'PROPERTY',
+  RELATIONSHIP: 'RELATIONSHIP',
 } as const;
 
 export type SearchResultDtoSource =
@@ -403,6 +412,7 @@ export const SearchResultDtoMatchedBy = {
 } as const;
 
 export interface SearchResultDto {
+  id?: number;
   iri?: string;
   slug?: string;
   label?: string;
@@ -469,14 +479,6 @@ export type ConceptDetailModelDefinice = { [key: string]: string };
 
 export type ConceptDetailModelPopis = { [key: string]: string };
 
-export type ConceptDetailModelDefinujícíNelegislativníZdrojItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export type ConceptDetailModelSouvisejícíNelegislativníZdrojItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
 export interface ConceptDetailModel {
   conceptProperties?: ConceptPropertiesModel[];
   conceptRelationships?: ConceptRelationshipsModel[];
@@ -497,14 +499,16 @@ export interface ConceptDetailModel {
   'související-ustanovení-právního-předpisu'?: string[];
   'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
   'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
-  'definující-nelegislativní-zdroj'?: ConceptDetailModelDefinujícíNelegislativníZdrojItem[];
-  'související-nelegislativní-zdroj'?: ConceptDetailModelSouvisejícíNelegislativníZdrojItem[];
+  'definující-nelegislativní-zdroj'?: NonLegalSourceDto[];
+  'související-nelegislativní-zdroj'?: NonLegalSourceDto[];
   'způsob-sdílení-údaje'?: string[];
   'způsob-získání-údaje'?: string;
   'typ-obsahu-údaje'?: string;
   'je-ppdf'?: boolean;
   'agendový-informační-systém'?: string;
   agenda?: string;
+  'agendový-informační-systém-resolved'?: RppIsvs;
+  'agenda-resolved'?: RppAgenda;
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
 }
 
@@ -534,6 +538,18 @@ export interface GetOntologyDto {
   publishedConceptDeviations?: GetOntologyDtoPublishedConceptDeviations;
 }
 
+export type NonLegalSourceDtoNázev = { [key: string]: string };
+
+export type NonLegalSourceDtoPopis = { [key: string]: string };
+
+export interface NonLegalSourceDto {
+  iri?: string;
+  url?: string;
+  typ?: string;
+  název?: NonLegalSourceDtoNázev;
+  popis?: NonLegalSourceDtoPopis;
+}
+
 export type OntologyDetailModelNázev = { [key: string]: string };
 
 export type OntologyDetailModelPopis = { [key: string]: string };
@@ -556,17 +572,9 @@ export interface PropertyDeviationBoolean {
   different?: boolean;
 }
 
-export type PropertyDeviationListMapStringObjectLocalValueItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export type PropertyDeviationListMapStringObjectPublishedValueItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export interface PropertyDeviationListMapStringObject {
-  localValue?: PropertyDeviationListMapStringObjectLocalValueItem[];
-  publishedValue?: PropertyDeviationListMapStringObjectPublishedValueItem[];
+export interface PropertyDeviationListNonLegalSourceDto {
+  localValue?: NonLegalSourceDto[];
+  publishedValue?: NonLegalSourceDto[];
   different?: boolean;
 }
 
@@ -639,8 +647,8 @@ export interface PublishedConceptDeviationModel {
   'ekvivalentní-pojem'?: PropertyDeviationListString;
   'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
   'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
-  'definující-nelegislativní-zdroj'?: PropertyDeviationListMapStringObject;
-  'související-nelegislativní-zdroj'?: PropertyDeviationListMapStringObject;
+  'definující-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
+  'související-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
   'způsob-sdílení-údajů'?: PropertyDeviationListString;
   'způsob-získání-údajů'?: PropertyDeviationString;
   'typ-obsahu-údajů'?: PropertyDeviationString;
@@ -711,6 +719,19 @@ export interface ResolvedLegalSourceDto {
   versionValidUntil?: string;
   isLatestVersion?: boolean;
   enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
+}
+
+export interface RppAgenda {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+}
+
+export interface RppIsvs {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+  agendaIris?: string[];
 }
 
 export interface ApiResponseDtoListOntologyMetadataModel {
@@ -864,11 +885,11 @@ export type EditConceptBody =
 
 export type SearchParams = {
   /**
-   * Vyhledávací dotaz (min. 2 znaky)
+   * Vyhledávací dotaz (min. 4 znaky — odpovídá frontendové validaci a Virtuoso FT370 minimální délce zástupného znaku pro NKD)
    */
   q: string;
   /**
-   * Typ výsledku: ONTOLOGY, CONCEPT
+   * Typ výsledku: ONTOLOGY, CONCEPT, CLASS, PROPERTY, RELATIONSHIP (CLASS/PROPERTY/RELATIONSHIP narrow to concepts of the given role)
    */
   type?: SearchType;
   /**
@@ -903,6 +924,9 @@ export type SearchType = (typeof SearchType)[keyof typeof SearchType];
 export const SearchType = {
   ONTOLOGY: 'ONTOLOGY',
   CONCEPT: 'CONCEPT',
+  CLASS: 'CLASS',
+  PROPERTY: 'PROPERTY',
+  RELATIONSHIP: 'RELATIONSHIP',
 } as const;
 
 export type SearchSource = (typeof SearchSource)[keyof typeof SearchSource];
