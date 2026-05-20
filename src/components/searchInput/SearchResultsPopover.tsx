@@ -9,9 +9,6 @@ import { CircularLoader } from '../shared/CircularLoader';
 
 import { SearchResultColumn } from './SearchResultColumn';
 
-const CONCEPT_PREVIEW_LIMIT = 5;
-const ONTOLOGY_PREVIEW_LIMIT = 5;
-
 type Props = {
   data?: SearchResponseDto;
   type?: SearchType;
@@ -29,6 +26,8 @@ export const SearchResultsPopover = ({
 }: Props) => {
   const t = useTranslations('Search');
 
+  const base = process.env.NEXT_PUBLIC_BASE_PATH;
+
   if (loading) {
     return (
       <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -37,22 +36,11 @@ export const SearchResultsPopover = ({
     );
   }
 
-  const ontologies =
-    data?.results
-      ?.filter((r) => r.type === 'ONTOLOGY')
-      .slice(0, ONTOLOGY_PREVIEW_LIMIT) ?? [];
-  const concepts =
-    data?.results
-      ?.filter((r) => r.type === 'CONCEPT')
-      .slice(0, CONCEPT_PREVIEW_LIMIT) ?? [];
-
-  const totalConcepts = Object.values(data?.sourceStatuses ?? {}).reduce(
-    (acc, s) => acc + (s.totalConcepts ?? 0),
-    0,
-  );
+  const ontologies = data?.results?.filter((r) => r.type === 'ONTOLOGY') ?? [];
+  const concepts = data?.results?.filter((r) => r.type === 'CONCEPT') ?? [];
 
   const handleDetailSearch = (searchType?: SearchType) =>
-    `/search?q=${encodeURIComponent(query)}${searchType ? `&type=${searchType}` : ''}`;
+    `${base}/search?q=${encodeURIComponent(query)}${searchType ? `&type=${searchType}` : ''}`;
 
   const showOntologies = !type || type !== SearchType.CONCEPT;
   const showConcepts = !type || type !== SearchType.ONTOLOGY;
@@ -70,8 +58,8 @@ export const SearchResultsPopover = ({
             type={SearchType.ONTOLOGY}
             items={ontologies}
             remaining={
-              ontologies.length > 0
-                ? totalConcepts - ontologies.length
+              ontologies.length > 0 && data?.totalOntologies
+                ? data?.totalOntologies - ontologies.length
                 : undefined
             }
             moreHref={handleDetailSearch(SearchType.ONTOLOGY)}
@@ -85,7 +73,9 @@ export const SearchResultsPopover = ({
             type={SearchType.CONCEPT}
             items={concepts}
             remaining={
-              concepts.length > 0 ? totalConcepts - concepts.length : undefined
+              concepts.length > 0 && data?.totalConcepts
+                ? data?.totalConcepts - concepts.length
+                : undefined
             }
             moreHref={handleDetailSearch(SearchType.CONCEPT)}
             query={query}

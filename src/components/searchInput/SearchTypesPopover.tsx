@@ -10,27 +10,23 @@ import {
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-export type SearchType = 'Pojem' | 'Diagram' | 'Slovník' | 'Rozpracovaný';
+import { SearchSource, SearchType as ApiSearchType } from '@/api/generated';
 
-type SearchTypeConfig = {
-  key: SearchType;
+export type SearchFilter = 'Pojem' | 'Slovník' | 'Rozpracovaný';
+
+type SearchFilterConfig = {
+  key: SearchFilter;
   icon: string;
   iconType: string;
   color: 'primary' | 'secondary' | 'success' | 'neutral';
 };
 
-const SEARCH_TYPES: SearchTypeConfig[] = [
+export const SEARCH_FILTERS: SearchFilterConfig[] = [
   {
     key: 'Pojem',
     icon: 'card-heading',
     iconType: 'components',
     color: 'primary',
-  },
-  {
-    key: 'Diagram',
-    icon: 'diagram-3',
-    iconType: 'components',
-    color: 'neutral',
   },
   {
     key: 'Slovník',
@@ -46,25 +42,46 @@ const SEARCH_TYPES: SearchTypeConfig[] = [
   },
 ];
 
+export function filterToApiParams(filters: SearchFilter[]): {
+  type?: ApiSearchType;
+  source?: SearchSource;
+} {
+  const hasConcept = filters.includes('Pojem');
+  const hasOntology = filters.includes('Slovník');
+  const hasUnpublished = filters.includes('Rozpracovaný');
+  const allOrNone =
+    filters.length === 0 || filters.length === SEARCH_FILTERS.length;
+
+  return {
+    type: allOrNone
+      ? undefined
+      : hasConcept && !hasOntology
+        ? ApiSearchType.CONCEPT
+        : !hasConcept && hasOntology
+          ? ApiSearchType.ONTOLOGY
+          : undefined,
+    source: hasUnpublished ? SearchSource.UNPUBLISHED : undefined,
+  };
+}
+
 type Props = {
-  selected: SearchType[];
-  onSelectionChange: (_selected: SearchType[]) => void;
+  value: SearchFilter[];
+  onChange: (_value: SearchFilter[]) => void;
 };
 
-export const SearchTypesPopover = ({ selected, onSelectionChange }: Props) => {
+export const SearchTypesPopover = ({ value, onChange }: Props) => {
   const t = useTranslations('SearchTypes');
   const [open, setOpen] = useState(false);
 
-  const toggleType = (type: SearchType) => {
-    onSelectionChange(
-      selected.includes(type)
-        ? selected.filter((s) => s !== type)
-        : [...selected, type],
+  const toggle = (filter: SearchFilter) =>
+    onChange(
+      value.includes(filter)
+        ? value.filter((f) => f !== filter)
+        : [...value, filter],
     );
-  };
 
   const allOrNone =
-    selected.length === 0 || selected.length === SEARCH_TYPES.length;
+    value.length === 0 || value.length === SEARCH_FILTERS.length;
 
   return (
     <GovDropdown
@@ -91,54 +108,49 @@ export const SearchTypesPopover = ({ selected, onSelectionChange }: Props) => {
         ) : (
           <span className="flex items-center gap-2 font-normal">
             {t('Selected')}
-            {SEARCH_TYPES.filter((i) => selected.includes(i.key)).map(
-              (type) => (
-                <GovTooltip
-                  key={type.key}
-                  position="bottom"
-                  className="border-0! mt-1"
-                  message={t(`Types.${type.key}`)}
-                >
-                  <GovIcon
-                    type={type.iconType}
-                    name={type.icon}
-                    color={type.color}
-                    size="s"
-                  />
-                </GovTooltip>
-              ),
-            )}
+            {SEARCH_FILTERS.filter((f) => value.includes(f.key)).map((f) => (
+              <GovTooltip
+                key={f.key}
+                position="bottom"
+                className="border-0! mt-1"
+                message={t(`Types.${f.key}`)}
+              >
+                <GovIcon
+                  type={f.iconType}
+                  name={f.icon}
+                  color={f.color}
+                  size="s"
+                />
+              </GovTooltip>
+            ))}
           </span>
         )}
       </GovButton>
 
       <ul className="p-0!" slot="list">
-        {SEARCH_TYPES.map(({ key, icon, iconType, color }) => {
-          const isSelected = selected.includes(key);
-          return (
-            <li key={key}>
-              <GovButton
-                type="base"
-                color="neutral"
-                expanded
-                onGovClick={() => toggleType(key)}
-                className={clsx(
-                  '[&_button]:justify-start! [&_button]:text-black! rounded-none!',
-                  isSelected && 'bg-blue-outlined-hover!',
-                )}
-              >
-                <GovIcon
-                  type={iconType}
-                  color={color}
-                  name={icon}
-                  size="s"
-                  slot="icon-start"
-                />
-                <span className="font-normal">{t(`Types.${key}`)}</span>
-              </GovButton>
-            </li>
-          );
-        })}
+        {SEARCH_FILTERS.map(({ key, icon, iconType, color }) => (
+          <li key={key}>
+            <GovButton
+              type="base"
+              color="neutral"
+              expanded
+              onGovClick={() => toggle(key)}
+              className={clsx(
+                '[&_button]:justify-start! [&_button]:text-black! rounded-none!',
+                value.includes(key) && 'bg-blue-outlined-hover!',
+              )}
+            >
+              <GovIcon
+                type={iconType}
+                color={color}
+                name={icon}
+                size="s"
+                slot="icon-start"
+              />
+              <span className="font-normal">{t(`Types.${key}`)}</span>
+            </GovButton>
+          </li>
+        ))}
       </ul>
     </GovDropdown>
   );

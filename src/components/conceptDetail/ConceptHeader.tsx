@@ -15,10 +15,6 @@ type Props = {
   conceptId?: number;
   commentsCount: number;
   isPublished?: boolean;
-  definicniObor?: {
-    name: string;
-    link: string;
-  } | null;
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
   owner: boolean;
@@ -29,7 +25,6 @@ type Props = {
 export const ConceptHeader = ({
   ontology,
   conceptDetail,
-  definicniObor,
   conceptId,
   isPublished,
   commentsCount,
@@ -50,17 +45,26 @@ export const ConceptHeader = ({
     <div className="w-full bg-white">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
         <div className="flex items-center justify-between">
-          <GovTag
-            color="success"
-            type="subtle"
-            size="xs"
-            className="w-fit border bg-white!"
+          <Link
+            href={`/dictionary/${ontology.split(' ').join('-')}`}
+            className="cursor-pointer"
           >
-            <GovIcon name="journal-text" slot="icon-start" type="components" />
-            <span className="font-bold text-blue-primary">
-              {capitalizeFirst(ontology)}
-            </span>
-          </GovTag>
+            <GovTag
+              color="success"
+              type="subtle"
+              size="xs"
+              className="w-fit border bg-white! cursor-pointer"
+            >
+              <GovIcon
+                name="journal-text"
+                slot="icon-start"
+                type="components"
+              />
+              <span className="font-bold text-blue-primary cursor-pointer">
+                {capitalizeFirst(ontology)}
+              </span>
+            </GovTag>
+          </Link>
 
           {updatedAt && (
             <span className="text-sm text-dark-primary">
@@ -136,18 +140,6 @@ export const ConceptHeader = ({
             owner={owner}
           />
         </div>
-
-        {definicniObor?.name && (
-          <span className="text-sm">
-            {conceptDetail.typ?.[1]} pojmu{' '}
-            <Link
-              className="text-blue-primary visited:text-blue-primary underline cursor-pointer"
-              href={definicniObor.link}
-            >
-              {capitalizeFirst(definicniObor.name)}
-            </Link>
-          </span>
-        )}
       </div>
     </div>
   );

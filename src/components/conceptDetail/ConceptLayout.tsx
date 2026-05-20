@@ -2,9 +2,10 @@ import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
-import { getMissingConceptFieldKeys } from '@/utils/getMissingConceptFields';
 
 import { AddPropertyRelation } from './AddPropertyRelation';
+import { ConceptRelation } from './ConceptRelation';
+import { AgendaSection } from './sections/AgendaSection';
 import { DefiningSection } from './sections/DefiningSection';
 import { LegalSection } from './sections/LegalSection';
 import { SuperClassList } from './SuperClassList';
@@ -28,27 +29,15 @@ export const ConceptLayout = ({
   children,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
-  const missing = getMissingConceptFieldKeys(conceptDetail, conceptType);
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10">
       <div className="w-full py-6 col-span-6 flex flex-col gap-2">
         <DefiningSection
           conceptType={conceptType}
-          definice={
-            !missing.has('definice') ? conceptDetail.definice : undefined
-          }
-          popis={!missing.has('popis') ? conceptDetail.popis : undefined}
-          ekvivalentniPojem={
-            !missing.has('ekvivalentní-pojem')
-              ? conceptDetail['ekvivalentní-pojem']
-              : undefined
-          }
-          nadrazenaTrida={
-            conceptDetail['nadřazená-třída'] &&
-            conceptDetail['nadřazená-třída']?.length > 0
-              ? conceptDetail['nadřazená-třída']
-              : undefined
-          }
+          definice={conceptDetail.definice}
+          popis={conceptDetail.popis}
+          ekvivalentniPojem={conceptDetail['ekvivalentní-pojem']}
+          nadrazenaTrida={conceptDetail['nadřazená-třída']}
           pathname={pathname}
         />
 
@@ -74,17 +63,37 @@ export const ConceptLayout = ({
                 )}
             </div>
           )}
+        {conceptType !== 'TRIDA' &&
+          (conceptDetail['definiční-obor'] || conceptDetail['obor-hodnot']) && (
+            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+              {conceptDetail['definiční-obor'] && (
+                <ConceptRelation
+                  title={t('Sections.DefinicniObor')}
+                  source={conceptDetail['definiční-obor']}
+                  pathname={pathname}
+                />
+              )}
+              {conceptDetail['obor-hodnot'] && (
+                <ConceptRelation
+                  source={conceptDetail['obor-hodnot']}
+                  title={t('Sections.Range')}
+                  pathname={pathname}
+                />
+              )}
+            </div>
+          )}
 
-        {conceptType === 'VLASTNOST' && (
-          <Section title={t('Sections.SupersededProperty')}>
-            <SuperClassList
-              items={conceptDetail['nadřazená-vlastnost']}
-              pathname={pathname}
-            />
-          </Section>
-        )}
+        {conceptType === 'VLASTNOST' &&
+          conceptDetail['nadřazená-vlastnost'] && (
+            <Section title={t('Sections.SupersededProperty')}>
+              <SuperClassList
+                items={conceptDetail['nadřazená-vlastnost']}
+                pathname={pathname}
+              />
+            </Section>
+          )}
 
-        {conceptType === 'VZTAH' && (
+        {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (
           <Section title={t('Sections.SupersededRelation')}>
             <SuperClassList
               items={conceptDetail['nadřazený-vztah']}
@@ -92,19 +101,28 @@ export const ConceptLayout = ({
             />
           </Section>
         )}
-
         <LegalSection
           definujiciUstanoveni={
-            conceptDetail['definující-ustanovení-právního-předpisu']
+            conceptDetail['definující-ustanovení-právního-předpisu-resolved']
           }
           souvisejiciUstanoveni={
-            conceptDetail['související-ustanovení-právního-předpisu']
+            conceptDetail['související-ustanovení-právního-předpisu-resolved']
           }
           definujícíZdroj={conceptDetail['definující-nelegislativní-zdroj']}
           souvisejícíZdroj={conceptDetail['související-nelegislativní-zdroj']}
         />
 
         {/* ISMD-only: range, superclass/property/relation sections, etc. */}
+
+        <AgendaSection
+          agenda={conceptDetail['agenda-resolved']}
+          agendovyInformacniSystem={
+            conceptDetail['agendový-informační-systém-resolved']
+          }
+          neverejnostUdaje={
+            conceptDetail['ustanovení-dokládající-neveřejnost-údaje']
+          }
+        />
         {children}
 
         {/* Fields with no data, grouped for completion */}
