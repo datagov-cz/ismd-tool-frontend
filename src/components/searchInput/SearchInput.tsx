@@ -6,48 +6,70 @@ import {
   GovFormInput,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { SearchType as ApiSearchType } from '@/api/generated';
 import { useSearch } from '@/api/generated';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 import { SearchResultsPopover } from './SearchResultsPopover';
-import { SearchType, SearchTypesPopover } from './SearchTypesPopover';
-
-function toApiType(selected: SearchType[]): ApiSearchType | undefined {
-  const hasConcept = selected.includes('Pojem');
-  const hasOntology =
-    selected.includes('Slovník') || selected.includes('Rozpracovaný');
-
-  if (hasConcept && !hasOntology) return ApiSearchType.CONCEPT;
-  if (hasOntology && !hasConcept) return ApiSearchType.ONTOLOGY;
-  return undefined;
-}
+import {
+  filterToApiParams,
+  SearchFilter,
+  SearchTypesPopover,
+} from './SearchTypesPopover';
 
 export const SearchInput = () => {
   const t = useTranslations('Home.MainControls');
+  const router = useRouter();
+
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [selected, setSelected] = useState<SearchType[]>([]);
+  const [filters, setFilters] = useState<SearchFilter[]>([]);
+
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLGovFormInputElement | null>(null);
+
+  const focusInput = useCallback(() => {
+    (
+      inputRef.current as unknown as { inputRef: HTMLInputElement }
+    )?.inputRef?.focus();
+  }, []);
+
   const closeResults = useCallback(() => {
     setDebouncedQuery('');
     setQuery('');
   }, []);
 
   const ref = useOutsideClick(closeResults);
-
-  const apiType = toApiType(selected);
+  const { type, source } = filterToApiParams(filters);
 
   const { data, isLoading } = useSearch(
-    { q: debouncedQuery, type: apiType },
-    { query: { enabled: debouncedQuery.trim().length > 1 } },
+    { limit: 5, q: debouncedQuery, type, source },
+    {
+      query: {
+        enabled: debouncedQuery.trim().length > 3,
+      },
+    },
   );
 
   useEffect(() => {
     setDebouncedQuery(query);
-  }, [apiType]);
+  }, [filters]);
+
+  useEffect(() => {
+    const handleShortcut = (e: KeyboardEvent) => {
+      const isCtrlK = e.key === 'k' && (e.ctrlKey || e.metaKey);
+
+      if (isCtrlK) {
+        e.preventDefault();
+        focusInput();
+      }
+    };
+
+    document.addEventListener('keydown', handleShortcut);
+    return () => document.removeEventListener('keydown', handleShortcut);
+  }, [focusInput]);
 
   const handleInput = useCallback((e: Event) => {
     const value = (e.target as HTMLInputElement).value;
@@ -56,17 +78,36 @@ export const SearchInput = () => {
     debounceTimer.current = setTimeout(() => setDebouncedQuery(value), 300);
   }, []);
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key !== 'Enter') return;
+      const trimmed = query.trim();
+      if (trimmed.length < 2) return;
+
+      const params = new URLSearchParams({ q: trimmed });
+      if (type) params.set('type', type);
+      if (source) params.set('source', source);
+      router.push(`/search?${params.toString()}`);
+    },
+    [query, type, source, router],
+  );
+
   const showResults =
-    (!!data?.data && debouncedQuery.trim().length > 1) || isLoading;
+    (!!data?.data && debouncedQuery.trim().length > 3) || isLoading;
 
   return (
     <div className="w-full max-w-150 relative" ref={ref}>
       <GovFormGroup className="relative">
         <GovFormInput
+          ref={inputRef}
           placeholder={t('SearchPlaceholder')}
           size="l"
           value={query}
           onGovInput={handleInput}
+          onGovKeydown={(e) =>
+            e.detail.originalEvent &&
+            handleKeyDown(e.detail.originalEvent as KeyboardEvent)
+          }
         >
           <GovIcon
             type="components"
@@ -74,20 +115,16 @@ export const SearchInput = () => {
             name="search"
             slot="icon-start"
             size="s"
-            className="transition-transform duration-200"
           />
         </GovFormInput>
-        <SearchTypesPopover
-          selected={selected}
-          onSelectionChange={setSelected}
-        />
+        <SearchTypesPopover value={filters} onChange={setFilters} />
       </GovFormGroup>
 
       {showResults && (
         <SearchResultsPopover
           data={data?.data}
           query={debouncedQuery}
-          type={apiType}
+          type={type}
           onClose={() => setDebouncedQuery('')}
           loading={isLoading}
         />

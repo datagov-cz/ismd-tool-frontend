@@ -258,7 +258,8 @@
   "OntologyList": {
     "NKDTitle": "Publikované slovníky",
     "ISMDTitle": "Moje rozpracované slovníky",
-    "SearchOntologies": "Hledat slovníky"
+    "SearchOntologies": "Hledat slovníky",
+    "NoMoreResults": "Žádné další výsledky"
   },
   "Shared": {
     "CloseAria": "Zavřít"
@@ -423,7 +424,11 @@
     "Concepts": "Pojmy",
     "DetailSearch": "Detailní vyhledávání",
     "NoOntologies": "Žádné slovníky nenalezeny",
-    "NoConcepts": "Žádné pojmy nenalezeny"
+    "NoConcepts": "Žádné pojmy nenalezeny",
+    "SearchesFor": "Výsledky hledání pro",
+    "FilterLabel": "Filtrování:",
+    "Unpublished": "Rozpracované",
+    "NoMoreResults": "Žádné další výsledky"
   },
   "SearchTypes": {
     "AllTypes": "Všechny typy",

@@ -16,6 +16,7 @@ const HOP_BY_HOP = new Set([
   // Without this, Spring Boot's default X-Frame-Options: DENY blocks the
   // swagger-ui iframe on /api-docs.
   'x-frame-options',
+  'content-encoding',
 ]);
 
 async function handler(

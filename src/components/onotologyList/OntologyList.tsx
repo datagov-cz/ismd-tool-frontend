@@ -95,7 +95,9 @@ export const OntologyList = ({
         className="py-4 flex justify-center text-sm text-muted-foreground"
       >
         {isFetching && items.length > 0 && <CircularLoader />}
-        {!isFetching && !hasMore && items.length > 0 && <span />}
+        {!isFetching && !hasMore && items.length > 0 && (
+          <span>{t('NoMoreResults')}</span>
+        )}
       </div>
     </div>
   );

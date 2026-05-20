@@ -173,7 +173,7 @@ export const ValidationSummary = ({
             openRule(rule, grouped, validationReport.timestamp || null, slug)
           }
         />
-        <div className="w-full flex justify-between px-2">
+        <div className="w-full flex justify-end px-2">
           <GovButton
             type="outlined"
             color="primary"
