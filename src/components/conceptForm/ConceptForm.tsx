@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
-import { CreateConceptBody, useCreateConcept } from '@/api/generated';
+import { useCreateConcept } from '@/api/generated';
 
+import { FormToolbar } from './components/FormToolbar';
 import {
   type ConceptForm as ConceptFormValues,
   ConceptFormSchema,
@@ -34,6 +36,7 @@ export const ConceptForm = ({
   ontology: string;
   ontologyGraphName: string;
 }) => {
+  const navigate = useRouter();
   const { mutate: createConcept, isPending } = useCreateConcept();
 
   const form = useForm<ConceptFormValues>({
@@ -107,13 +110,14 @@ export const ConceptForm = ({
     createConcept(
       {
         slug: ontology,
-        data: normalized as unknown as CreateConceptBody,
+        data: normalized,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success('Koncept byl úspěšně vytvořen.', {
             position: 'bottom-right',
           });
+          navigate.push(`/concept/${data.data?.slug}`);
         },
         onError: () => {
           toast.error('Při ukládání konceptu došlo k chybě.', {
@@ -123,8 +127,6 @@ export const ConceptForm = ({
       },
     );
   };
-
-  console.log(form.formState.errors, 'test');
 
   return (
     <FormProvider {...form}>
@@ -136,9 +138,7 @@ export const ConceptForm = ({
         <RightsAndObligationsSection />
         <ProclamationSection />
         <OntologySection />
-        <button type="submit" disabled={isPending}>
-          {isPending ? 'Saving...' : 'Submit'}
-        </button>
+        <FormToolbar isPending={isPending} />
       </form>
     </FormProvider>
   );
