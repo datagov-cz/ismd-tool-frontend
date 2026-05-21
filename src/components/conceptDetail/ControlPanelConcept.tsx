@@ -31,6 +31,7 @@ export const ControlPanelConcept = ({
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+  const tConcept = useTranslations('ConceptDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
   const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
@@ -61,7 +62,7 @@ export const ControlPanelConcept = ({
                 slot="icon-start"
                 type="components"
               />
-              Upravit pojem
+              {tConcept('EditConcept')}
             </GovButton>
           )}
           {loggedIn && source === 'ISMD' && (
@@ -76,7 +77,7 @@ export const ControlPanelConcept = ({
                 slot="icon-start"
                 type="components"
               />
-              Komentáře k pojmu{' '}
+              {tConcept('ConceptComments')}{' '}
               <span className="font-normal">[{commentsCount}]</span>
             </GovButton>
           )}
@@ -88,7 +89,7 @@ export const ControlPanelConcept = ({
           iconName="link"
           ariaLabel={t('GetLink')}
           onClick={() => handleCopyLink()}
-          label={source === 'NKD' ? 'Kopírovat odkaz' : undefined}
+          label={source === 'NKD' ? t('CopyLink') : undefined}
         />
         {!isPublished && owner && (
           <ControlPanelButton

@@ -27,7 +27,7 @@ export const UdajeKDoplneni = ({ conceptDetail, conceptType }: Props) => {
     <div className="mt-2 pl-4">
       <div>
         <span className="font-bold text-blue-primary text-lg">
-          Údaje k doplnění
+          {t('UdajeKDoplneni.Title')}
         </span>
         {missingGroups.map((group) => (
           <div

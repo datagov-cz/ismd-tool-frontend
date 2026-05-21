@@ -80,14 +80,14 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   slot="icon-start"
                   type="components"
                 />
-                {isPublic ? 'Veřejný' : 'Neveřejný'}
+                {isPublic ? t('Main.Public') : t('Main.NonPublic')}
               </GovTag>
             </div>
             <div>
               {conceptDetail['název'] &&
                 (Object.keys(conceptDetail['název']).includes('en') ||
                   Object.keys(conceptDetail['název']).includes('sk')) && (
-                  <Section title="Název">
+                  <Section title={t('Main.Name')}>
                     <LanguageSwitcher item={conceptDetail['název']!} />
                   </Section>
                 )}

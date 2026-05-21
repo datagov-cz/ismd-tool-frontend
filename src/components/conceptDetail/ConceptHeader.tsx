@@ -48,7 +48,7 @@ export const ConceptHeader = ({
             className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
-            Zpět
+            {t('Main.ControlPanel.Back')}
           </button>
           <Link
             href={`/dictionary/${ontology.split(' ').join('-')}`}
@@ -106,7 +106,7 @@ export const ConceptHeader = ({
                   slot="icon-start"
                   type="components"
                 />
-                {isPublic ? 'Veřejný' : 'Neveřejný'}
+                {isPublic ? t('Main.Public') : t('Main.NonPublic')}
               </GovTag>
             </div>
             <div>
@@ -114,7 +114,7 @@ export const ConceptHeader = ({
                 conceptDetail['název'] &&
                 (Object.keys(conceptDetail['název']).includes('en') ||
                   Object.keys(conceptDetail['název']).includes('sk')) && (
-                  <Section title="Název">
+                  <Section title={t('Main.Name')}>
                     <LanguageSwitcher item={conceptDetail['název']!} />
                   </Section>
                 )}

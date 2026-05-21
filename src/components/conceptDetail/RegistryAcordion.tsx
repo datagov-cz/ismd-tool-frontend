@@ -15,6 +15,7 @@ type Props = {
 
 export const RegistryAccordion = ({ conceptDetail, conceptType }: Props) => {
   const t = useTranslations('ConceptDetail.Registry');
+  const tShared = useTranslations('Shared');
   const missing = getMissingConceptFieldKeys(conceptDetail, conceptType);
 
   const showPpdf = !missing.has('je-ppdf');
@@ -35,14 +36,16 @@ export const RegistryAccordion = ({ conceptDetail, conceptType }: Props) => {
         {showPpdf && (
           <AccordionItemContent title="">
             <Section title={t('PPDF')}>
-              {conceptDetail['je-ppdf'] ? 'Ano' : 'Ne'}
+              {conceptDetail['je-ppdf'] ? tShared('Yes') : tShared('No')}
             </Section>
           </AccordionItemContent>
         )}
 
         {showPublic && (
           <AccordionItemContent title={t('NonPublic')}>
-            {conceptDetail['typ']?.includes('Veřejný údaj') ? 'Ano' : 'Ne'}
+            {conceptDetail['typ']?.includes('Veřejný údaj')
+              ? tShared('Yes')
+              : tShared('No')}
           </AccordionItemContent>
         )}
 

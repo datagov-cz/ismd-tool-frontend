@@ -151,8 +151,15 @@
     },
     "Main": {
       "ControlPanel": {
-        "Updated": "aktualizováno"
-      }
+        "Updated": "aktualizováno",
+        "Back": "Zpět",
+        "EditConcept": "Upravit pojem",
+        "ConceptComments": "Komentáře k pojmu"
+      },
+      "Public": "Veřejný",
+      "NonPublic": "Neveřejný",
+      "Name": "Název",
+      "OpenInESbirka": "Otevřít v e-sbírce"
     }
   },
   "Term": {
@@ -263,7 +270,9 @@
     "NoMoreResults": "Žádné další výsledky"
   },
   "Shared": {
-    "CloseAria": "Zavřít"
+    "CloseAria": "Zavřít",
+    "Yes": "Ano",
+    "No": "Ne"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
@@ -405,7 +414,18 @@
         "BroaderConcept": "Nadřazená třida"
       },
       "Options": {
-        "Undefined": "undefined"
+        "Undefined": "undefined",
+        "DataType": {
+          "Boolean": "Ano či ne",
+          "Date": "Datum",
+          "Time": "Čas",
+          "DateTime": "Datum a čas",
+          "Integer": "Celé číslo",
+          "Decimal": "Desetinné číslo",
+          "Uri": "URI, IRI, URL",
+          "String": "Řetězec",
+          "Text": "Text"
+        }
       }
     },
     "RelationshipConceptFields": {
@@ -440,5 +460,15 @@
       "Slovník": "Slovník",
       "Rozpracovaný": "Rozpracovaný"
     }
+  },
+  "ComingSoon": {
+    "Title": "Připravujeme",
+    "Description": "Nástroj pro tvorbu a správu sémantických slovníků v rámci Informačního systému pro modelování dat dokončujeme. Veřejně dostupný bude v nejbližší době.",
+    "Thanks": "Děkujeme za trpělivost."
+  },
+  "Maintenance": {
+    "Title": "Probíhá údržba",
+    "Description": "Aplikace je dočasně nedostupná z důvodu plánované údržby. Pracujeme na obnovení provozu.",
+    "Thanks": "Děkujeme za pochopení."
   }
 }
