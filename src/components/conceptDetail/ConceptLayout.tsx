@@ -3,14 +3,14 @@ import { useTranslations } from 'next-intl';
 import { ConceptDetailModel } from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
 
-import { AddPropertyRelation } from './AddPropertyRelation';
 import { ConceptRelation } from './ConceptRelation';
+import { MissingConceptFields } from './MissingConceptFields';
 import { AgendaSection } from './sections/AgendaSection';
 import { DefiningSection } from './sections/DefiningSection';
 import { LegalSection } from './sections/LegalSection';
+import { PropertiesRelationsSection } from './sections/PropertiesRelationsSection';
 import { SharingTypeSection } from './sections/SharingTypeSection';
 import { SuperClassList } from './SuperClassList';
-import { UdajeKDoplneni } from './UdajeKDoplneni';
 
 interface Props {
   conceptDetail: ConceptDetailModel;
@@ -41,28 +41,13 @@ export const ConceptLayout = ({
           source={source}
         />
 
-        {conceptType === 'TRIDA' &&
-          ((conceptDetail.conceptProperties &&
-            conceptDetail.conceptProperties?.length > 0) ||
-            (conceptDetail.conceptRelationships &&
-              conceptDetail.conceptRelationships?.length > 0)) && (
-            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
-              {conceptDetail.conceptProperties &&
-                conceptDetail.conceptProperties?.length > 0 && (
-                  <AddPropertyRelation
-                    title={t('Sections.Properties')}
-                    concepts={conceptDetail.conceptProperties || []}
-                  />
-                )}
-              {conceptDetail.conceptRelationships &&
-                conceptDetail.conceptRelationships?.length > 0 && (
-                  <AddPropertyRelation
-                    concepts={conceptDetail.conceptRelationships || []}
-                    title={t('Sections.Relations')}
-                  />
-                )}
-            </div>
-          )}
+        {conceptType === 'TRIDA' && (
+          <PropertiesRelationsSection
+            properties={conceptDetail.conceptProperties}
+            relationships={conceptDetail.conceptRelationships}
+          />
+        )}
+
         {conceptType !== 'TRIDA' &&
           (conceptDetail['definiční-obor'] || conceptDetail['obor-hodnot']) && (
             <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
@@ -134,7 +119,7 @@ export const ConceptLayout = ({
         />
 
         {source === 'ISMD' && (
-          <UdajeKDoplneni
+          <MissingConceptFields
             conceptDetail={conceptDetail}
             conceptType={conceptType}
           />

@@ -14,7 +14,7 @@ interface Props {
   conceptType: ConceptType;
 }
 
-export const UdajeKDoplneni = ({ conceptDetail, conceptType }: Props) => {
+export const MissingConceptFields = ({ conceptDetail, conceptType }: Props) => {
   const t = useTranslations('ConceptDetail');
   const missingGroups = getMissingConceptFieldGroups(
     conceptDetail,
