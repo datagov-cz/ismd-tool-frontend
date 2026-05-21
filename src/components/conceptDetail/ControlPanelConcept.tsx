@@ -47,36 +47,48 @@ export const ControlPanelConcept = ({
 
   return (
     <div className="flex flex-col gap-2 justify-between h-full">
-      <div className="flex gap-8">
-        {owner && (
-          <GovButton
-            type="solid"
-            color="primary"
-            size="s"
-            onGovClick={() => setOpenBoxId('update')}
-          >
-            <GovIcon name="pencil-square" slot="icon-start" type="components" />
-            Upravit pojem
-          </GovButton>
-        )}
-        {loggedIn && source === 'ISMD' && (
-          <GovButton
-            type="outlined"
-            color="primary"
-            size="s"
-            onGovClick={() => setIsCommentBoxOpen(true)}
-          >
-            <GovIcon name="pencil-square" slot="icon-start" type="components" />
-            Komentáře k pojmu{' '}
-            <span className="font-normal">[{commentsCount}]</span>
-          </GovButton>
-        )}
-      </div>
+      {((loggedIn && source === 'ISMD') || owner) && (
+        <div className="flex gap-8">
+          {owner && (
+            <GovButton
+              type="solid"
+              color="primary"
+              size="s"
+              onGovClick={() => setOpenBoxId('update')}
+            >
+              <GovIcon
+                name="pencil-square"
+                slot="icon-start"
+                type="components"
+              />
+              Upravit pojem
+            </GovButton>
+          )}
+          {loggedIn && source === 'ISMD' && (
+            <GovButton
+              type="outlined"
+              color="primary"
+              size="s"
+              onGovClick={() => setIsCommentBoxOpen(true)}
+            >
+              <GovIcon
+                name="pencil-square"
+                slot="icon-start"
+                type="components"
+              />
+              Komentáře k pojmu{' '}
+              <span className="font-normal">[{commentsCount}]</span>
+            </GovButton>
+          )}
+        </div>
+      )}
+
       <div className="self-end">
         <ControlPanelButton
           iconName="link"
           ariaLabel={t('GetLink')}
           onClick={() => handleCopyLink()}
+          label={source === 'NKD' ? 'Kopírovat odkaz' : undefined}
         />
         {!isPublished && owner && (
           <ControlPanelButton

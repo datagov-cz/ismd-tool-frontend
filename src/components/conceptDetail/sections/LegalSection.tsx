@@ -116,8 +116,8 @@ export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
   const [open, setOpen] = useState(false);
 
   const { data } = useResolveLegalSource(
-    { iri: item.lawIri ?? '' },
-    { query: { enabled: !!item.lawIri && open } },
+    { iri: item.fragmentIri ?? '' },
+    { query: { enabled: !!item.fragmentIri && open } },
   );
 
   return (

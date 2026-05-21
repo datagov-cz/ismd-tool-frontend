@@ -5,9 +5,11 @@ import { RelatedTerm } from './RelatedTerm';
 export const SuperClassList = ({
   items,
   pathname,
+  source,
 }: {
   items?: string[];
   pathname: string;
+  source: 'ISMD' | 'NKD';
 }) => {
   if (!items || items.length === 0) return null;
 
@@ -21,7 +23,11 @@ export const SuperClassList = ({
         <RelatedTerm
           key={index + item}
           label={item.split('pojem/')[1]?.replace(/-/g, ' ') || ''}
-          href={`${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`}
+          href={
+            source === 'ISMD'
+              ? `${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`
+              : `/concept/nkd?iri=${item}`
+          }
         />
       ))}
     </>

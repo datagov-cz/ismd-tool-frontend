@@ -15,6 +15,7 @@ export const DefiningSection = ({
   conceptType,
   nadrazenaTrida,
   pathname,
+  source,
 }: {
   definice?: ConceptDetailModelDefinice;
   popis?: ConceptDetailModelPopis;
@@ -22,6 +23,7 @@ export const DefiningSection = ({
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   nadrazenaTrida?: string[];
   pathname: string;
+  source: 'ISMD' | 'NKD';
 }) => {
   const t = useTranslations('ConceptDetail');
 
@@ -31,7 +33,7 @@ export const DefiningSection = ({
   if (!definice && !popis && !ekvivalentniPojem && !hasNadrazenaTrida) {
     return null;
   }
-
+  console.log(nadrazenaTrida, 'test');
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
       {definice && (
@@ -50,7 +52,11 @@ export const DefiningSection = ({
             <RelatedTerm
               key={item}
               label={item.split('pojem/')[1]?.replace(/-/g, ' ') || ''}
-              href={`${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`}
+              href={
+                source === 'ISMD'
+                  ? `${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`
+                  : `/concept/nkd?iri=${item}`
+              }
             />
           ))}
         </Section>

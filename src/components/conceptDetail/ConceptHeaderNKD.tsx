@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
-import { getMissingConceptFieldKeys } from '@/utils/getMissingConceptFields';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -12,44 +11,19 @@ import { Section } from './Section';
 type Props = {
   ontology: string;
   conceptDetail: ConceptDetailModel;
-  conceptId?: number;
-  commentsCount: number;
-  isPublished?: boolean;
-  loggedIn?: boolean;
-  source?: 'NKD' | 'ISMD';
-  owner: boolean;
-  conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
 };
 
-export const ConceptHeader = ({
-  ontology,
-  conceptDetail,
-  conceptId,
-  isPublished,
-  commentsCount,
-  loggedIn,
-  source,
-  owner,
-  conceptType,
-}: Props) => {
+export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
   const isPublic = conceptDetail['typ']?.includes('Veřejný údaj');
-  const missing = getMissingConceptFieldKeys(conceptDetail, conceptType);
 
   return (
     <div className="w-full bg-white">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
-        <div className="flex items-center justify-between relative">
-          <button
-            onClick={() => window.history.back()}
-            className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
-          >
-            <GovIcon name="chevron-compact-left" size="s" color="primary" />
-            Zpět
-          </button>
+        <div className="flex items-center justify-between">
           <Link
             href={`/dictionary/${ontology.split(' ').join('-')}`}
             className="cursor-pointer"
@@ -110,15 +84,14 @@ export const ConceptHeader = ({
               </GovTag>
             </div>
             <div>
-              {!missing.has('název') &&
-                conceptDetail['název'] &&
+              {conceptDetail['název'] &&
                 (Object.keys(conceptDetail['název']).includes('en') ||
                   Object.keys(conceptDetail['název']).includes('sk')) && (
                   <Section title="Název">
                     <LanguageSwitcher item={conceptDetail['název']!} />
                   </Section>
                 )}
-              {!missing.has('alternativní-název') && (
+              {conceptDetail['alternativní-název'] && (
                 <Section title={t('Sections.AlternativeName')}>
                   <LanguageSwitcher
                     item={conceptDetail['alternativní-název']!}
@@ -129,13 +102,12 @@ export const ConceptHeader = ({
           </div>
 
           <ControlPanelConcept
-            commentsCount={commentsCount}
-            conceptID={conceptId || 0}
-            isPublished={isPublished || false}
+            conceptID={0}
+            isPublished={true}
             name={conceptDetail.název?.cs || ''}
-            loggedIn={loggedIn}
-            source={source}
-            owner={owner}
+            source={'NKD'}
+            owner={false}
+            commentsCount={0}
           />
         </div>
       </div>

@@ -3,20 +3,25 @@ import { Section } from './Section';
 
 type Props = {
   title: string;
-  source: string;
+  iri: string;
   pathname: string;
+  source: 'NKD' | 'ISMD';
 };
 
-export const ConceptRelation = ({ title, source, pathname }: Props) => {
-  const name = source.split('pojem/')[1]?.replace(/-/g, ' ');
+export const ConceptRelation = ({ title, iri, pathname, source }: Props) => {
+  const name = iri.split('pojem/')[1]?.replace(/-/g, ' ');
   if (!name || name.length === 0) return null;
   return (
     <Section title={title}>
       <div className="space-y-2">
         <RelatedTerm
-          key={source}
+          key={iri}
           label={name}
-          href={`${pathname.replace(/^\/|\/$/g, '')}-${source.split('/pojem/')[1]}`}
+          href={
+            source === 'ISMD'
+              ? `${pathname.replace(/^\/|\/$/g, '')}-${iri.split('/pojem/')[1]}`
+              : `/concept/nkd?iri=${iri}`
+          }
         />
       </div>
     </Section>

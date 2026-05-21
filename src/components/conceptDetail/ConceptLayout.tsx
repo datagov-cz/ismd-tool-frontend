@@ -8,29 +8,28 @@ import { ConceptRelation } from './ConceptRelation';
 import { AgendaSection } from './sections/AgendaSection';
 import { DefiningSection } from './sections/DefiningSection';
 import { LegalSection } from './sections/LegalSection';
+import { SharingTypeSection } from './sections/SharingTypeSection';
 import { SuperClassList } from './SuperClassList';
 import { UdajeKDoplneni } from './UdajeKDoplneni';
 
 interface Props {
   conceptDetail: ConceptDetailModel;
-  ontology?: string;
-  definicniObor?: { name: string; link: string } | null;
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   children?: React.ReactNode;
   pathname: string;
+  source: 'NKD' | 'ISMD';
 }
 
 export const ConceptLayout = ({
   conceptDetail,
-  // ontology = '',
-  // definicniObor,
   conceptType,
   pathname,
   children,
+  source,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   return (
-    <div className="w-full relative mx-auto max-w-250 grid grid-cols-10">
+    <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start">
       <div className="w-full py-6 col-span-6 flex flex-col gap-2">
         <DefiningSection
           conceptType={conceptType}
@@ -39,6 +38,7 @@ export const ConceptLayout = ({
           ekvivalentniPojem={conceptDetail['ekvivalentní-pojem']}
           nadrazenaTrida={conceptDetail['nadřazená-třída']}
           pathname={pathname}
+          source={source}
         />
 
         {conceptType === 'TRIDA' &&
@@ -68,14 +68,16 @@ export const ConceptLayout = ({
             <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
               {conceptDetail['definiční-obor'] && (
                 <ConceptRelation
+                  source={source}
                   title={t('Sections.DefinicniObor')}
-                  source={conceptDetail['definiční-obor']}
+                  iri={conceptDetail['definiční-obor']}
                   pathname={pathname}
                 />
               )}
               {conceptDetail['obor-hodnot'] && (
                 <ConceptRelation
-                  source={conceptDetail['obor-hodnot']}
+                  source={source}
+                  iri={conceptDetail['obor-hodnot']}
                   title={t('Sections.Range')}
                   pathname={pathname}
                 />
@@ -89,6 +91,7 @@ export const ConceptLayout = ({
               <SuperClassList
                 items={conceptDetail['nadřazená-vlastnost']}
                 pathname={pathname}
+                source={source}
               />
             </Section>
           )}
@@ -98,6 +101,7 @@ export const ConceptLayout = ({
             <SuperClassList
               items={conceptDetail['nadřazený-vztah']}
               pathname={pathname}
+              source={source}
             />
           </Section>
         )}
@@ -112,25 +116,31 @@ export const ConceptLayout = ({
           souvisejícíZdroj={conceptDetail['související-nelegislativní-zdroj']}
         />
 
-        {/* ISMD-only: range, superclass/property/relation sections, etc. */}
-
         <AgendaSection
-          agenda={conceptDetail['agenda-resolved']}
+          agenda={conceptDetail['agenda-resolved'] ?? conceptDetail.agenda}
           agendovyInformacniSystem={
-            conceptDetail['agendový-informační-systém-resolved']
+            conceptDetail['agendový-informační-systém-resolved'] ??
+            conceptDetail['agendový-informační-systém']
           }
           neverejnostUdaje={
             conceptDetail['ustanovení-dokládající-neveřejnost-údaje']
           }
         />
-        {children}
 
-        {/* Fields with no data, grouped for completion */}
-        <UdajeKDoplneni
-          conceptDetail={conceptDetail}
-          conceptType={conceptType}
+        <SharingTypeSection
+          typObsahuUdaje={conceptDetail['typ-obsahu-údaje']}
+          zpusobSdileniUdaje={conceptDetail['způsob-sdílení-údaje']}
+          zpusobZiskaniUdaje={conceptDetail['způsob-získání-údaje']}
         />
+
+        {source === 'ISMD' && (
+          <UdajeKDoplneni
+            conceptDetail={conceptDetail}
+            conceptType={conceptType}
+          />
+        )}
       </div>
+      <div className="w-full pl-10 col-span-4">{children}</div>
     </div>
   );
 };

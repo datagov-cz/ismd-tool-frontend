@@ -1,0 +1,63 @@
+import { useState } from 'react';
+import {
+  GovFormControl,
+  GovFormInput,
+  GovIcon,
+} from '@gov-design-system-ce/react';
+import Link from 'next/link';
+
+import { useGetConceptsByIri } from '@/api/generated';
+
+export const OtherOntologyConcepts = ({
+  ontology,
+  source,
+}: {
+  ontology: string;
+  source: 'NKD' | 'ISMD';
+}) => {
+  const [search, setSearch] = useState('');
+
+  const { data } = useGetConceptsByIri({ iri: ontology, source });
+
+  const concepts = data?.data;
+
+  const filtered = concepts?.filter((item) => {
+    const name = item.název?.cs;
+    return name?.includes(search.toLowerCase());
+  });
+
+  return (
+    <div className="pt-6 flex flex-col max-h-[50vh]">
+      <div>
+        <span className="font-bold mb-4 block">Dalsi pojmy ve slovniku</span>
+        <GovFormControl>
+          <GovFormInput
+            placeholder="Hledat vyraz"
+            size="s"
+            value={search}
+            onGovInput={(e) => setSearch(e.target.value ?? '')}
+          >
+            <GovIcon slot="icon-start" name="funnel" />
+          </GovFormInput>
+        </GovFormControl>
+      </div>
+
+      <div className="flex flex-col overflow-y-auto mt-2">
+        {filtered?.map((item) => (
+          <Link
+            key={item.iri}
+            href={
+              source === 'ISMD'
+                ? `/concept/${item.iri}`
+                : `/concept/nkd?iri=${item.iri}`
+            }
+            className="flex gap-3 items-center px-2 py-3 border-b border-gray-border hover:bg-border-primary-subtle/20"
+          >
+            <GovIcon slot="icon-start" name="card-heading" color="primary" />
+            {item.název?.cs ?? ''}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
