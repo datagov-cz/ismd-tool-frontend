@@ -1,7 +1,7 @@
 import { ConceptPropertiesModel } from '@/api/generated';
 
-import { RelatedTerm } from './RelatedTerm';
 import { Section } from './Section';
+import { RelatedTerm } from './Term/RelatedTerm';
 
 type Props = {
   title: string;

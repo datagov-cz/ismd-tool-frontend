@@ -1,5 +1,7 @@
-import { RelatedTerm } from './RelatedTerm';
+import { iriToLabel } from '@/lib/concept-utils';
+
 import { Section } from './Section';
+import { IriRelatedTerm } from './Term/IriRelatedTerm';
 
 type Props = {
   title: string;
@@ -9,21 +11,11 @@ type Props = {
 };
 
 export const ConceptRelation = ({ title, iri, pathname, source }: Props) => {
-  const name = iri.split('pojem/')[1]?.replace(/-/g, ' ');
-  if (!name || name.length === 0) return null;
+  const label = iriToLabel(iri);
+  if (!label) return null;
   return (
     <Section title={title}>
-      <div className="space-y-2">
-        <RelatedTerm
-          key={iri}
-          label={name}
-          href={
-            source === 'ISMD'
-              ? `${pathname.replace(/^\/|\/$/g, '')}-${iri.split('/pojem/')[1]}`
-              : `/concept/nkd?iri=${iri}`
-          }
-        />
-      </div>
+      <IriRelatedTerm iri={iri} pathname={pathname} source={source} />
     </Section>
   );
 };
