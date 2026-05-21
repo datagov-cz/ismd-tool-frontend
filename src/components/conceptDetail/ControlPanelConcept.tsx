@@ -31,6 +31,7 @@ export const ControlPanelConcept = ({
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+  const tConcept = useTranslations('ConceptDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
   const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
@@ -40,6 +41,7 @@ export const ControlPanelConcept = ({
       await navigator.clipboard.writeText(window.location.href);
       toast(t('LinkCopied'), { type: 'success' });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to copy link:', error);
       toast(t('LinkCopyFailed'), { type: 'error' });
     }
@@ -47,36 +49,48 @@ export const ControlPanelConcept = ({
 
   return (
     <div className="flex flex-col gap-2 justify-between h-full">
-      <div className="flex gap-8">
-        {owner && (
-          <GovButton
-            type="solid"
-            color="primary"
-            size="s"
-            onGovClick={() => setOpenBoxId('update')}
-          >
-            <GovIcon name="pencil-square" slot="icon-start" type="components" />
-            Upravit pojem
-          </GovButton>
-        )}
-        {loggedIn && source === 'ISMD' && (
-          <GovButton
-            type="outlined"
-            color="primary"
-            size="s"
-            onGovClick={() => setIsCommentBoxOpen(true)}
-          >
-            <GovIcon name="pencil-square" slot="icon-start" type="components" />
-            Komentáře k pojmu{' '}
-            <span className="font-normal">[{commentsCount}]</span>
-          </GovButton>
-        )}
-      </div>
+      {((loggedIn && source === 'ISMD') || owner) && (
+        <div className="flex gap-8">
+          {owner && (
+            <GovButton
+              type="solid"
+              color="primary"
+              size="s"
+              onGovClick={() => setOpenBoxId('update')}
+            >
+              <GovIcon
+                name="pencil-square"
+                slot="icon-start"
+                type="components"
+              />
+              {tConcept('EditConcept')}
+            </GovButton>
+          )}
+          {loggedIn && source === 'ISMD' && (
+            <GovButton
+              type="outlined"
+              color="primary"
+              size="s"
+              onGovClick={() => setIsCommentBoxOpen(true)}
+            >
+              <GovIcon
+                name="pencil-square"
+                slot="icon-start"
+                type="components"
+              />
+              {tConcept('ConceptComments')}{' '}
+              <span className="font-normal">[{commentsCount}]</span>
+            </GovButton>
+          )}
+        </div>
+      )}
+
       <div className="self-end">
         <ControlPanelButton
           iconName="link"
           ariaLabel={t('GetLink')}
           onClick={() => handleCopyLink()}
+          label={source === 'NKD' ? t('CopyLink') : undefined}
         />
         {!isPublished && owner && (
           <ControlPanelButton

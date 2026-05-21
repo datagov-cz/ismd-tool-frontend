@@ -5,8 +5,8 @@ import {
   ConceptDetailModelPopis,
 } from '@/api/generated';
 import { LanguageSwitcher } from '../LanguageSwitcher';
-import { RelatedTerm } from '../RelatedTerm';
 import { Section } from '../Section';
+import { IriRelatedTermList } from '../Term/IriRelatedTermList';
 
 export const DefiningSection = ({
   definice,
@@ -15,6 +15,7 @@ export const DefiningSection = ({
   conceptType,
   nadrazenaTrida,
   pathname,
+  source,
 }: {
   definice?: ConceptDetailModelDefinice;
   popis?: ConceptDetailModelPopis;
@@ -22,6 +23,7 @@ export const DefiningSection = ({
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   nadrazenaTrida?: string[];
   pathname: string;
+  source: 'ISMD' | 'NKD';
 }) => {
   const t = useTranslations('ConceptDetail');
 
@@ -31,7 +33,6 @@ export const DefiningSection = ({
   if (!definice && !popis && !ekvivalentniPojem && !hasNadrazenaTrida) {
     return null;
   }
-
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
       {definice && (
@@ -46,24 +47,20 @@ export const DefiningSection = ({
       )}
       {hasNadrazenaTrida && (
         <Section title={t('Sections.SupersededClass')}>
-          {nadrazenaTrida?.map((item) => (
-            <RelatedTerm
-              key={item}
-              label={item.split('pojem/')[1]?.replace(/-/g, ' ') || ''}
-              href={`${pathname.replace(/^\/|\/$/g, '')}-${item.split('/pojem/')[1]}`}
-            />
-          ))}
+          <IriRelatedTermList
+            iris={nadrazenaTrida!}
+            pathname={pathname}
+            source={source}
+          />
         </Section>
       )}
       {ekvivalentniPojem && (
-        <Section title="Ekvivalentni pojem">
-          {ekvivalentniPojem?.map((item) => (
-            <RelatedTerm
-              key={item}
-              label={item.split('pojem/')[1]?.replace(/-/g, ' ') || ''}
-              href={`/concept/nkd?iri=${item}`}
-            />
-          ))}
+        <Section title={t('Sections.EquivalentConcept')}>
+          <IriRelatedTermList
+            iris={ekvivalentniPojem}
+            pathname=""
+            source="NKD"
+          />
         </Section>
       )}
     </div>

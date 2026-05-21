@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -740,6 +740,20 @@ export interface ApiResponseDtoListOntologyMetadataModel {
   success?: boolean;
 }
 
+export interface ApiResponseDtoListMinimalConceptDto {
+  data?: MinimalConceptDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export type MinimalConceptDtoName = { [key: string]: string };
+
+export interface MinimalConceptDto {
+  iri?: string;
+  slug?: string;
+  name?: MinimalConceptDtoName;
+}
+
 export interface ApiResponseDtoGetNkdOntologyListDto {
   data?: GetNkdOntologyListDto;
   message?: string;
@@ -971,6 +985,28 @@ export type GetOntologyListParams = {
   isPublished?: boolean;
   slugs?: string[];
 };
+
+export type GetConceptsByIriParams = {
+  /**
+   * IRI slovníku
+   */
+  iri: string;
+  /**
+   * Zdroj: ISMD nebo NKD
+   */
+  source: GetConceptsByIriSource;
+};
+
+export type GetConceptsByIriSource =
+  (typeof GetConceptsByIriSource)[keyof typeof GetConceptsByIriSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetConceptsByIriSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
 
 export type GetNkdOntologyListParams = {
   /**
@@ -2733,6 +2769,172 @@ export function useGetOntologyList<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetOntologyListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací minimalistický seznam pojmů slovníku (iri, slug, název) podle IRI slovníku. Parametr source určuje zdroj: ISMD (lokální úložiště – položky obsahují slug pro navigaci) nebo NKD (Národní katalog dat – položky obsahují pouze IRI). Veřejný endpoint.
+ * @summary Minimalistický seznam pojmů slovníku podle IRI
+ */
+export const getConceptsByIri = (
+  params: GetConceptsByIriParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListMinimalConceptDto>(
+    { url: `/api/ontology/concepts`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetConceptsByIriQueryKey = (
+  params?: GetConceptsByIriParams,
+) => {
+  return [`/api/ontology/concepts`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetConceptsByIriQueryOptions = <
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetConceptsByIriQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getConceptsByIri>>
+  > = ({ signal }) => getConceptsByIri(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getConceptsByIri>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetConceptsByIriQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getConceptsByIri>>
+>;
+export type GetConceptsByIriQueryError = unknown;
+
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptsByIri>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptsByIri>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptsByIri>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptsByIri>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Minimalistický seznam pojmů slovníku podle IRI
+ */
+
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetConceptsByIriQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

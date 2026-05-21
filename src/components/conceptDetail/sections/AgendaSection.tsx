@@ -8,8 +8,8 @@ export const AgendaSection = ({
   agendovyInformacniSystem,
   neverejnostUdaje,
 }: {
-  agenda?: RppAgenda;
-  agendovyInformacniSystem?: RppIsvs;
+  agenda?: RppAgenda | string;
+  agendovyInformacniSystem?: RppIsvs | string;
   neverejnostUdaje?: string[];
 }) => {
   const t = useTranslations('ConceptDetail');
@@ -18,20 +18,26 @@ export const AgendaSection = ({
     return null;
   }
 
+  const renderAgenda = (item: RppAgenda | string) => {
+    if (typeof item === 'string') {
+      const code = item.split('/').pop();
+      return <span>{code}</span>;
+    }
+    return (
+      <span>
+        {item.code} - {item.nazev}
+      </span>
+    );
+  };
+
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
       {agenda && (
-        <Section title={t('Sections.Agenda')}>
-          <span>
-            {agenda.code} - {agenda.nazev}
-          </span>
-        </Section>
+        <Section title={t('Sections.Agenda')}>{renderAgenda(agenda)}</Section>
       )}
       {agendovyInformacniSystem && (
         <Section title={t('Sections.AgendaInfoSystem')}>
-          <span>
-            {agendovyInformacniSystem.code} - {agendovyInformacniSystem.nazev}
-          </span>
+          {renderAgenda(agendovyInformacniSystem)}
         </Section>
       )}
       {neverejnostUdaje && (

@@ -1,22 +1,26 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'ISMD - Probíhá údržba',
-  description: 'Aplikace je dočasně nedostupná z důvodu plánované údržby.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('Maintenance');
+  return {
+    title: `ISMD - ${t('Title')}`,
+    description: t('Description'),
+  };
+}
 
-export default function MaintenancePage() {
+export default async function MaintenancePage() {
+  const t = await getTranslations('Maintenance');
   return (
     <main className="min-h-[calc(100vh-12rem)] bg-page-background flex items-center justify-center px-5 py-16">
       <div className="max-w-2xl text-center">
         <h1 className="text-4xl desktop:text-5xl font-medium text-blue mb-6">
-          Probíhá údržba
+          {t('Title')}
         </h1>
         <p className="text-lg desktop:text-xl text-dark-primary leading-relaxed mb-4">
-          Aplikace je dočasně nedostupná z důvodu plánované údržby. Pracujeme na
-          obnovení provozu.
+          {t('Description')}
         </p>
-        <p className="text-base text-dark-secondary">Děkujeme za pochopení.</p>
+        <p className="text-base text-dark-secondary">{t('Thanks')}</p>
       </div>
     </main>
   );

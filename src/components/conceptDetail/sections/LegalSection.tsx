@@ -114,10 +114,11 @@ interface LegislativeSourceProps {
 
 export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
   const [open, setOpen] = useState(false);
+  const t = useTranslations('ConceptDetail');
 
   const { data } = useResolveLegalSource(
-    { iri: item.lawIri ?? '' },
-    { query: { enabled: !!item.lawIri && open } },
+    { iri: item.fragmentIri ?? '' },
+    { query: { enabled: !!item.fragmentIri && open } },
   );
 
   return (
@@ -157,7 +158,7 @@ export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
               type="components"
               slot="icon-start"
             />
-            Otevřít v e-sbírce
+            {t('Main.OpenInESbirka')}
           </GovButton>
         </div>
       )}

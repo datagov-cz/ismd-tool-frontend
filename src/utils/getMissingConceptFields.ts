@@ -5,7 +5,6 @@ export type ConceptType = 'TRIDA' | 'VLASTNOST' | 'VZTAH' | undefined;
 export interface FieldConfig {
   key: keyof ConceptDetailModel;
   labelKey: string;
-  /** Which conceptTypes this field applies to. Undefined means all types. */
   types?: ConceptType[];
 }
 
@@ -115,17 +114,10 @@ export const FIELD_GROUPS: FieldGroup[] = [
   },
 ];
 
-// Flat list of all fields, derived from groups — used by ConceptLayout for key lookup
 export const FIELD_CONFIGS: FieldConfig[] = FIELD_GROUPS.flatMap(
   (g) => g.fields,
 );
 
-/**
- * A value is considered "missing" if it is:
- * - undefined or null
- * - an empty array []
- * - an empty object {}
- */
 const isEmpty = (value: unknown): boolean => {
   if (value === undefined || value === null) return true;
   if (Array.isArray(value)) return value.length === 0;
@@ -133,10 +125,6 @@ const isEmpty = (value: unknown): boolean => {
   return false;
 };
 
-/**
- * Returns groups that have at least one missing field, with only the missing
- * fields included. Groups where all fields are present are omitted entirely.
- */
 export const getMissingConceptFieldGroups = (
   conceptDetail: ConceptDetailModel,
   conceptType: ConceptType,
@@ -152,9 +140,6 @@ export const getMissingConceptFieldGroups = (
     return acc;
   }, []);
 
-/**
- * Returns a Set of missing field keys for fast O(1) lookup in ConceptLayout.
- */
 export const getMissingConceptFieldKeys = (
   conceptDetail: ConceptDetailModel,
   conceptType: ConceptType,
