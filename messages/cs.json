@@ -131,7 +131,9 @@
       "ConceptMeaning": "Význam pojmu",
       "ConceptSources": "Zdroje pojmu",
       "AgendaAndInfoSystems": "Agenda a informační systémy",
-      "PublicityAndPublication": "Veřejnost a publikace"
+      "PublicityAndPublication": "Veřejnost a publikace",
+      "AnotherConcepts": "Další pojmy ve slovníku",
+      "Search": "Hledat vyraz"
     },
     "UdajeKDoplneni": {
       "Title": "Údaje k doplnění"

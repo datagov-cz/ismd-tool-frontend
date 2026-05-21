@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -740,10 +740,18 @@ export interface ApiResponseDtoListOntologyMetadataModel {
   success?: boolean;
 }
 
-export interface ApiResponseDtoListConceptDetailModel {
-  data?: ConceptDetailModel[];
+export interface ApiResponseDtoListMinimalConceptDto {
+  data?: MinimalConceptDto[];
   message?: string;
   success?: boolean;
+}
+
+export type MinimalConceptDtoName = { [key: string]: string };
+
+export interface MinimalConceptDto {
+  iri?: string;
+  slug?: string;
+  name?: MinimalConceptDtoName;
 }
 
 export interface ApiResponseDtoGetNkdOntologyListDto {
@@ -2773,15 +2781,15 @@ export function useGetOntologyList<
 }
 
 /**
- * Vrací seznam pojmů slovníku podle jeho IRI. Parametr source určuje zdroj: ISMD (lokální úložiště) nebo NKD (Národní katalog dat). Veřejný endpoint.
- * @summary Seznam pojmů slovníku podle IRI
+ * Vrací minimalistický seznam pojmů slovníku (iri, slug, název) podle IRI slovníku. Parametr source určuje zdroj: ISMD (lokální úložiště – položky obsahují slug pro navigaci) nebo NKD (Národní katalog dat – položky obsahují pouze IRI). Veřejný endpoint.
+ * @summary Minimalistický seznam pojmů slovníku podle IRI
  */
 export const getConceptsByIri = (
   params: GetConceptsByIriParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<ApiResponseDtoListConceptDetailModel>(
+  return axiosInstance<ApiResponseDtoListMinimalConceptDto>(
     { url: `/api/ontology/concepts`, method: 'GET', params, signal },
     options,
   );
@@ -2904,7 +2912,7 @@ export function useGetConceptsByIri<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Seznam pojmů slovníku podle IRI
+ * @summary Minimalistický seznam pojmů slovníku podle IRI
  */
 
 export function useGetConceptsByIri<

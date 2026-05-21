@@ -55,7 +55,7 @@ export const DefiningSection = ({
         </Section>
       )}
       {ekvivalentniPojem && (
-        <Section title={t('Section.EquivalentConcept')}>
+        <Section title={t('Sections.EquivalentConcept')}>
           <IriRelatedTermList
             iris={ekvivalentniPojem}
             pathname=""
