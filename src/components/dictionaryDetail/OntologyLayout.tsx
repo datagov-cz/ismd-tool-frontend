@@ -33,7 +33,6 @@ interface Props {
   getConceptSlug: (_concept: ConceptDetailModel) => string;
   getRelatedTerms: (_concept: ConceptDetailModel) => TermWithSlug[];
   children?: React.ReactNode;
-  updatedAt?: string;
   conceptCount?: number;
   metaData?: OntologyMetadataModel;
   slug?: string;
@@ -49,7 +48,6 @@ export const OntologyLayout = ({
   getRelatedTerms,
   children,
   source,
-  updatedAt,
   conceptCount,
   slug,
   metaData,
@@ -105,28 +103,21 @@ export const OntologyLayout = ({
 
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full bg-primary-subtlest">
-        <div className="w-full relative max-w-250 mx-auto pt-2 pb-3">
-          <GovButton
-            type="base"
-            color="primary"
-            size="s"
-            href={process.env.NEXT_PUBLIC_BASE_PATH}
-          >
-            <GovIcon
-              slot="icon-start"
-              name="arrow-right"
-              size="l"
-              className="rotate-180"
-            />
-            {t('Main.BackToHome')}
-          </GovButton>
-        </div>
-      </div>
-      <div className="w-full relative max-w-250 mx-auto py-3">
+      <div className="w-full bg-primary-subtlest"></div>
+      <div className="w-full relative max-w-250 mx-auto py-5">
         <div className="w-full space-y-6 relative">
-          <div className="space-y-3">
-            <div className="flex flex-col gap-2">
+          <div className="space-y-3 flex gap-5">
+            <div className="flex flex-col gap-2 flex-1 relative">
+              <GovButton
+                type="base"
+                color="primary"
+                size="s"
+                href={process.env.NEXT_PUBLIC_BASE_PATH}
+                className="absolute -top-1 left-0 -translate-x-full"
+              >
+                <GovIcon slot="icon-start" name="chevron-left" size="m" />
+                {t('Main.BackToHome')}
+              </GovButton>
               <div className="flex w-full justify-between">
                 <GovTag
                   color="success"
@@ -144,12 +135,6 @@ export const OntologyLayout = ({
                   <span> / {source}</span>
                   {statusLabel && <span> / {statusLabel}</span>}
                 </GovTag>
-                {updatedAt && (
-                  <span className="text-sm text-dark-primary">
-                    {t('Main.ControlPanel.Updated')}:{' '}
-                    {new Date(updatedAt).toLocaleDateString('CS')}
-                  </span>
-                )}
               </div>
               <h1 className="text-[32px] font-medium">{title}</h1>
               <div>

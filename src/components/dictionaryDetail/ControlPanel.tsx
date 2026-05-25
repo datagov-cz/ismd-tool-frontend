@@ -19,6 +19,7 @@ interface Props {
   user?: UserModel;
   commentsCount?: number;
   slug: string;
+  updatedAt?: string;
 }
 
 export const ControlPanel = ({
@@ -28,6 +29,7 @@ export const ControlPanel = ({
   user,
   commentsCount,
   slug,
+  updatedAt,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -53,7 +55,12 @@ export const ControlPanel = ({
   const isLoggedOut = data?.success !== true;
 
   return (
-    <div className="flex gap-2 h-fit w-full justify-between relative">
+    <div className="flex flex-col gap-2 h-full w-fit justify-between items-end relative">
+      {updatedAt && (
+        <span className="text-sm text-dark-primary">
+          {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
+        </span>
+      )}
       <div className="flex gap-8">
         {isOwner && (
           <GovButton

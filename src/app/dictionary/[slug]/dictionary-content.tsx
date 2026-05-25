@@ -7,7 +7,6 @@ import {
   useGetCurrentUser,
   useGetOntologyDetail,
 } from '@/api/generated';
-import { CreateConceptSideBox } from '@/components/conceptCreate/CreateConceptSidebox';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
@@ -82,10 +81,6 @@ export const DictionaryContent = ({ slug }: Props) => {
       concepts={ontologyDetail.pojmy}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}
-      updatedAt={
-        ontologyDetail['časový-okamžik-poslední-změny'] ||
-        ontologyMetadata.updatedAt
-      }
       conceptCount={ontologyDetail.pojmy?.length}
       metaData={ontologyMetadata}
       slug={slug}
@@ -97,6 +92,10 @@ export const DictionaryContent = ({ slug }: Props) => {
         user={ontologyMetadata.user}
         commentsCount={ontologyMetadata.comments?.length}
         slug={slug}
+        updatedAt={
+          ontologyDetail['časový-okamžik-poslední-změny'] ||
+          ontologyMetadata.updatedAt
+        }
       />
       {user?.userId && (
         <CommentSidebox
@@ -107,15 +106,6 @@ export const DictionaryContent = ({ slug }: Props) => {
         />
       )}
       <ValidationSidebox />
-
-      {ontologyDetail.iri && (
-        <CreateConceptSideBox
-          slug={slug}
-          namespace={ontologyDetail.iri || ontologyMetadata.graphName || ''}
-          action="create"
-          sideboxId="create"
-        />
-      )}
     </OntologyLayout>
   );
 };
