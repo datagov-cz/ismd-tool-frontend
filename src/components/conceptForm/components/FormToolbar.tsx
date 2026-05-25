@@ -3,10 +3,13 @@ import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useFormContext } from 'react-hook-form';
 
+import { useFormHistory } from '@/hooks/useFormHistory';
+
 export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
   const {
     formState: { isDirty },
   } = useFormContext();
+  const { undo, redo, canUndo, canRedo } = useFormHistory();
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isFloating, setIsFloating] = useState(false);
@@ -14,15 +17,42 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => setIsFloating(!entry.isIntersecting),
       { threshold: 0 },
     );
-
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const undoRef = { fn: undo };
+    const redoRef = { fn: redo };
+
+    const handler = (e: KeyboardEvent) => {
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (!ctrl) return;
+
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isEditable =
+        tag === 'INPUT' ||
+        tag === 'TEXTAREA' ||
+        (e.target as HTMLElement)?.isContentEditable;
+      if (isEditable) return;
+
+      if (e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undoRef.fn();
+      }
+      if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+        e.preventDefault();
+        redoRef.fn();
+      }
+    };
+
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [undo, redo]);
 
   return (
     <>
@@ -34,11 +64,50 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
             : 'rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]',
         )}
       >
-        <div>
+        <div className="flex items-center gap-6">
           {isDirty && (
-            <div className="flex items-center gap-1.5 text-sm text-status-warning-700 font-bold">
-              <span className="bg-status-warning-200 size-2.5 rounded-full" />
-              <span>Neuložené změny</span>
+            <>
+              <div className="flex items-center gap-1.5 text-sm text-status-warning-700 font-bold px-5">
+                <span className="bg-status-warning-200 size-2.5 rounded-full" />
+                <span>Neuložené změny</span>
+              </div>
+              <span className="w-px! h-4! bg-blue-primary" />
+            </>
+          )}
+          {(isDirty || canRedo) && (
+            <div className="flex gap-2 items-center">
+              <GovButton
+                type="base"
+                color="primary"
+                size="s"
+                disabled={!canUndo || isPending}
+                onGovClick={undo}
+                title="Zpět (Ctrl+Z)"
+              >
+                <GovIcon
+                  type="components"
+                  name="arrow-counterclockwise"
+                  slot="icon-start"
+                />
+                Zpět
+              </GovButton>
+              <span className="w-px! h-2! bg-blue-primary" />
+              <GovButton
+                type="base"
+                color="primary"
+                size="s"
+                disabled={!canRedo || isPending}
+                onGovClick={redo}
+                title="Znovu (Ctrl+Y)"
+              >
+                <GovIcon
+                  type="components"
+                  name="arrow-counterclockwise"
+                  slot="icon-start"
+                  className="rotate-y-180"
+                />
+                Znovu
+              </GovButton>
             </div>
           )}
         </div>

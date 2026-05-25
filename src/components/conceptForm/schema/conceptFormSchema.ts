@@ -5,6 +5,8 @@ const NameModelSchema = z.object({
   name: z.record(z.string(), z.string()).optional(),
 });
 
+const ConceptRef = z.object({ iri: z.string(), label: z.string() });
+
 const MultiLangueModelSchema = z
   .array(
     z.object({
@@ -46,7 +48,7 @@ const ConceptCreateModelSchema = z.object({
   definingLegalSource: z.array(z.string()).optional(),
   relatedNonLegalSource: z.array(DigitalObject).optional(),
   relatedLegalSource: z.array(z.string()).optional(),
-  exactMatch: z.array(z.string()).optional(),
+  exactMatch: z.array(ConceptRef).optional(),
   inTezaurus: z.boolean().optional(),
 });
 
@@ -54,15 +56,15 @@ const ConceptCreateModelSchema = z.object({
 const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
   conceptTypeEnum: z.literal('TRIDA'),
   type: z.string().optional(),
-  agendaCode: z.string().optional(),
-  agendaSystemCode: z.string().optional(),
+  agendaCode: ConceptRef.optional(),
+  agendaSystemCode: ConceptRef.optional(),
   contentType: z.string().optional(),
   acquisitionMethod: z.string().optional(),
   sharingMethod: z.array(z.string()).optional(),
   isInPPDF: z.boolean().optional(),
   isPublic: z.boolean().optional(),
   privacyProvisions: z.array(z.string()).optional(),
-  broaderConcept: z.array(z.string()).optional(),
+  broaderConcept: z.array(ConceptRef).optional(),
   codeListDataset: z.string().optional(),
 });
 
@@ -70,11 +72,11 @@ const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
 const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
   conceptTypeEnum: z.literal('VLASTNOST'),
   dataType: z.string().optional(),
-  domain: z.string().optional(),
-  superProperty: z.array(z.string()).optional(),
+  domain: ConceptRef.optional(),
+  superProperty: z.array(ConceptRef).optional(),
   isInPPDF: z.boolean().optional(),
-  agendaCode: z.string().optional(),
-  agendaSystemCode: z.string().optional(),
+  agendaCode: ConceptRef.optional(),
+  agendaSystemCode: ConceptRef.optional(),
   isPublic: z.boolean().optional(),
   privacyProvisions: z.array(z.string()).optional(),
   sharingMethod: z.array(z.string()).optional(),
@@ -87,10 +89,10 @@ const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
 const RelationshipConceptModelSchema = ConceptCreateModelSchema.extend({
   conceptTypeEnum: z.literal('VZTAH'),
   domain: z.string().optional(),
-  range: z.string().optional(),
-  superRelation: z.array(z.string()).optional(),
-  agendaCode: z.string().optional(),
-  agendaSystemCode: z.string().optional(),
+  range: ConceptRef.optional(),
+  superRelation: z.array(ConceptRef).optional(),
+  agendaCode: ConceptRef.optional(),
+  agendaSystemCode: ConceptRef.optional(),
   contentType: z.string().optional(),
   acquisitionMethod: z.string().optional(),
   sharingMethod: z.array(z.string()).optional(),
@@ -113,23 +115,23 @@ const ConceptFormSchema = z.object({
   conceptTypeEnum: z.enum(['TRIDA', 'VLASTNOST', 'VZTAH']),
   // TRIDA
   type: z.string().optional(),
-  broaderConcept: z.array(z.string()).optional(),
+  broaderConcept: z.array(ConceptRef).optional(),
   // VLASTNOST
   dataType: z.string().optional(),
-  superProperty: z.array(z.string()).optional(),
+  superProperty: z.array(ConceptRef).optional(),
   // VZTAH
-  range: z.string().optional(),
-  superRelation: z.array(z.string()).optional(),
+  range: ConceptRef.optional(),
+  superRelation: z.array(ConceptRef).optional(),
   // shared type-specific
-  agendaCode: z.string().optional(),
-  agendaSystemCode: z.string().optional(),
+  agendaCode: ConceptRef.optional(),
+  agendaSystemCode: ConceptRef.optional(),
   contentType: z.string().optional(),
   acquisitionMethod: z.string().optional(),
   sharingMethod: z.array(z.string()).optional(),
   isInPPDF: z.boolean().optional(),
   isPublic: z.boolean().optional(),
   privacyProvisions: z.array(z.string()).optional(),
-  domain: z.string().optional(),
+  domain: ConceptRef.optional(),
   codeListDataset: z.string().optional(),
 });
 

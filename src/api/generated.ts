@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -132,6 +132,44 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
+}
+
+export interface ResolveConceptsRequest {
+  iris: string[];
+}
+
+export interface ApiResponseDtoResolveConceptsResponse {
+  data?: ResolveConceptsResponse;
+  message?: string;
+  success?: boolean;
+}
+
+export type ResolveConceptsResponseResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export interface ResolveConceptsResponse {
+  resolved?: ResolveConceptsResponseResolved;
+}
+
+export type ResolvedConceptDtoOntologyDescription = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  ontologyIri?: string;
+  ontologyDescription?: ResolvedConceptDtoOntologyDescription;
+  source?: ResolvedConceptDtoSource;
 }
 
 export type AltNameModelAltName = { [key: string]: string };
@@ -1357,6 +1395,99 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Pro pole IRI pojmů vrací mapu IRI → {ontologyIri, ontologyDescription, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
+ * @summary Získání metadat referencovaných pojmů
+ */
+export const resolveConceptReferences = (
+  resolveConceptsRequest: ResolveConceptsRequest,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoResolveConceptsResponse>(
+    {
+      url: `/api/ontology/concepts/resolve`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: resolveConceptsRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getResolveConceptReferencesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resolveConceptReferences>>,
+    TError,
+    { data: ResolveConceptsRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resolveConceptReferences>>,
+  TError,
+  { data: ResolveConceptsRequest },
+  TContext
+> => {
+  const mutationKey = ['resolveConceptReferences'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resolveConceptReferences>>,
+    { data: ResolveConceptsRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resolveConceptReferences(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ResolveConceptReferencesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resolveConceptReferences>>
+>;
+export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
+export type ResolveConceptReferencesMutationError = unknown;
+
+/**
+ * @summary Získání metadat referencovaných pojmů
+ */
+export const useResolveConceptReferences = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resolveConceptReferences>>,
+      TError,
+      { data: ResolveConceptsRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof resolveConceptReferences>>,
+  TError,
+  { data: ResolveConceptsRequest },
+  TContext
+> => {
+  const mutationOptions = getResolveConceptReferencesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

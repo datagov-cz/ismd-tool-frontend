@@ -4,14 +4,14 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form'; // 👈 add useWatch
 
 import {
   RppSearchResultDto,
   useSearchAgendas,
   useSearchIsvs,
 } from '@/api/generated';
-import { RelatedTerm } from '../conceptDetail/RelatedTerm';
+import { RelatedTerm } from '../conceptDetail/Term/RelatedTerm';
 
 interface Props {
   label: string;
@@ -22,9 +22,10 @@ interface Props {
 
 export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<RppSearchResultDto>();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { setValue } = useFormContext();
+
+  const selected: RppSearchResultDto | undefined = useWatch({ name });
 
   const enabled = query.length > 1;
 
@@ -41,10 +42,6 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   const showDropdown = enabled && (results?.length ?? 0) > 0;
 
   useEffect(() => {
-    setValue(name, selected?.iri);
-  }, [selected, name, setValue]);
-
-  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (!dropdownRef.current?.contains(e.target as Node)) setQuery('');
     };
@@ -53,7 +50,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   }, []);
 
   const handleSelect = (item: RppSearchResultDto) => {
-    setSelected(item);
+    setValue(name, item, { shouldDirty: true });
     setQuery('');
   };
 
@@ -102,7 +99,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
                 noIcon
                 label={selected.nazev ?? ''}
                 href=""
-                remove={() => setSelected(undefined)}
+                remove={() => setValue(name, undefined, { shouldDirty: true })}
               />
             </div>
           )}

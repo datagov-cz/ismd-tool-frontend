@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
-import { useCreateConcept } from '@/api/generated';
+import { CreateConceptBody, useCreateConcept } from '@/api/generated';
 
 import { FormToolbar } from './components/FormToolbar';
 import {
@@ -94,7 +94,11 @@ export const ConceptForm = ({
         return acc;
       }, {});
 
-    const normalized = {
+    const toIri = (refs?: { iri: string; label: string }[]) =>
+      refs?.map((r) => r.iri);
+    const toSingleIri = (ref?: { iri: string; label: string }) => ref?.iri;
+
+    const normalized: CreateConceptBody = {
       ...formData,
       altNameModel: formData.altNameModel?.altName
         ? { altName: toRecord(formData.altNameModel.altName) }
@@ -105,6 +109,14 @@ export const ConceptForm = ({
       descriptionModel: formData.descriptionModel?.description
         ? { description: toRecord(formData.descriptionModel.description) }
         : undefined,
+      broaderConcept: toIri(formData.broaderConcept),
+      superProperty: toIri(formData.superProperty),
+      superRelation: toIri(formData.superRelation),
+      exactMatch: toIri(formData.exactMatch),
+      domain: toSingleIri(formData.domain),
+      range: toSingleIri(formData.range),
+      agendaCode: toSingleIri(formData.agendaCode),
+      agendaSystemCode: toSingleIri(formData.agendaSystemCode),
     };
 
     createConcept(

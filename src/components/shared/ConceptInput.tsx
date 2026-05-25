@@ -4,10 +4,12 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
-import { useSearch } from '@/api/generated';
-import { RelatedTerm } from '../conceptDetail/RelatedTerm';
+import { SearchResultDto, useSearch } from '@/api/generated';
+import { RelatedTerm } from '../conceptDetail/Term/RelatedTerm';
+
+const LIMIT = 20;
 
 interface Concept {
   iri: string;
@@ -24,27 +26,73 @@ interface Props {
 export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
   const [query, setQuery] = useState('');
   const [showInput, setShowInput] = useState(true);
-  const [selected, setSelected] = useState<Concept[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [allResults, setAllResults] = useState<SearchResultDto[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const { data: search, isLoading } = useSearch(
-    { q: query, type: 'CONCEPT' },
-    { query: { enabled: query.length > 3 } },
-  );
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const { setValue } = useFormContext();
 
+  const rawValue = useWatch({ name });
+  const selected: Concept[] = single
+    ? rawValue
+      ? [rawValue]
+      : []
+    : Array.isArray(rawValue)
+      ? rawValue
+      : [];
+
   useEffect(() => {
-    if (single) {
-      setValue(name, selected[0]?.iri ?? '');
-    } else {
-      setValue(
-        name,
-        selected.map((s) => s.iri),
+    if (single && selected.length > 0) {
+      setShowInput(false);
+    } else if (!single && selected.length === 0) {
+      setShowInput(true);
+    }
+  }, [selected.length, single]);
+
+  // Reset pagination whenever the query changes
+  useEffect(() => {
+    setOffset(0);
+    setAllResults([]);
+  }, [query]);
+
+  const { data: search, isFetching } = useSearch(
+    { q: query, type: 'CONCEPT', offset, limit: LIMIT },
+    { query: { enabled: query.length > 3 } },
+  );
+
+  // Accumulate pages
+  useEffect(() => {
+    if (search?.data?.results && !isFetching) {
+      setAllResults((prev) =>
+        offset === 0
+          ? (search.data?.results ?? [])
+          : [...prev, ...(search.data?.results ?? [])],
       );
     }
-  }, [selected, name, setValue, single]);
+  }, [isFetching, search, offset]);
 
+  const totalCount = search?.data?.totalConcepts ?? 0;
+  const hasMore = totalCount > allResults.length;
+
+  // Infinite scroll sentinel inside the dropdown
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetching && hasMore) {
+          setOffset((prev) => prev + LIMIT);
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [isFetching, hasMore]);
+
+  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -60,24 +108,31 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
 
   const handleSelect = (item: Concept) => {
     if (single) {
-      setSelected([item]);
-    } else if (!selected.find((s) => s.iri === item.iri)) {
-      setSelected((prev) => [...prev, item]);
+      setValue(name, item, { shouldDirty: true });
+    } else {
+      const next = selected.some((s) => s.iri === item.iri)
+        ? selected
+        : [...selected, item];
+      setValue(name, next, { shouldDirty: true });
     }
     setQuery('');
     setShowInput(false);
   };
 
-  const handleRemove = (id: string) => {
-    const next = selected.filter((s) => s.iri !== id);
-    setSelected(next);
-    if (next.length === 0) setShowInput(true);
+  const handleRemove = (iri: string) => {
+    if (single) {
+      setValue(name, undefined, { shouldDirty: true });
+      setShowInput(true);
+    } else {
+      const next = selected.filter((s) => s.iri !== iri);
+      setValue(name, next, { shouldDirty: true });
+      if (next.length === 0) setShowInput(true);
+    }
   };
 
-  const results = search?.data?.results ?? [];
   const showDropdown =
     query.length > 3 &&
-    (isLoading || results.length > 0 || search !== undefined);
+    (isFetching || allResults.length > 0 || search !== undefined);
 
   return (
     <div className="w-full space-y-2">
@@ -118,7 +173,7 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
 
               {showDropdown && (
                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {isLoading ? (
+                  {isFetching && allResults.length === 0 ? (
                     <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
                       <GovIcon
                         name="loader"
@@ -128,34 +183,65 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
                       />
                       Načítání...
                     </div>
-                  ) : results.length === 0 ? (
+                  ) : allResults.length === 0 ? (
                     <div className="p-4 text-gray-500 text-sm text-center">
                       Pro tohle nemáme žádné výsledky
                     </div>
                   ) : (
-                    results.map((item) => (
-                      <button
-                        key={item.slug}
-                        type="button"
-                        onClick={() =>
-                          handleSelect({
-                            iri: item.iri || '',
-                            label: item.label || '',
-                          })
-                        }
-                        className="border-b border-border-subtlest text-blue-primary hover:bg-primary-subtlest w-full gap-1.5 flex font-bold p-2"
+                    <>
+                      {allResults.map((item) => (
+                        <button
+                          key={item.slug}
+                          type="button"
+                          onClick={() =>
+                            handleSelect({
+                              iri: item.iri || '',
+                              label: item.label || '',
+                            })
+                          }
+                          className="border-b border-border-subtlest text-blue-primary hover:bg-primary-subtlest text-left w-full gap-1.5 flex flex-col font-bold p-2"
+                        >
+                          <span className="flex gap-1.5">
+                            <GovIcon
+                              slot="icon-start"
+                              name="card-heading"
+                              type="components"
+                              size="l"
+                              color="primary"
+                              className="mt-0.5! shrink-0"
+                            />
+                            {item.label}
+                          </span>
+
+                          <span className="flex gap-1 items-center pl-4 font-normal text-dark-primary/70">
+                            <GovIcon
+                              slot="icon-start"
+                              name="journals"
+                              type="components"
+                              size="s"
+                              color="success"
+                              className="mt-0.5! shrink-0"
+                            />
+                            {item.ontologyIri}
+                          </span>
+                        </button>
+                      ))}
+
+                      {/* Infinite scroll sentinel */}
+                      <div
+                        ref={sentinelRef}
+                        className="py-2 flex justify-center"
                       >
-                        <GovIcon
-                          slot="icon-start"
-                          name="card-heading"
-                          type="components"
-                          size="l"
-                          color="primary"
-                          className="mt-0.5! shrink-0"
-                        />
-                        {item.label}
-                      </button>
-                    ))
+                        {isFetching && (
+                          <GovIcon
+                            name="loader"
+                            type="components"
+                            size="s"
+                            className="animate-spin"
+                          />
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
               )}
