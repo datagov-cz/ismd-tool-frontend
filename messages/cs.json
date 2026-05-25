@@ -98,6 +98,17 @@
       "ToDetailButton": "Více"
     }
   },
+  "ConceptCreateWrapper": {
+    "NewConceptFor": "Nový pojem k:",
+    "ToastSuccess": "Koncept byl úspěšně vytvořen.",
+    "ToastError": "Při ukládání konceptu došlo k chybě."
+  },
+  "ConceptEditWrapper": {
+    "EditConcept": "Upravit pojem:",
+    "Loading": "Načítání pojmu…",
+    "ToastSuccess": "Koncept byl úspěšně upraven.",
+    "ToastError": "Při ukládání konceptu došlo k chybě."
+  },
   "ConceptDetail": {
     "Sections": {
       "AlternativeName": "Alternativní název",

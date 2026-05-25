@@ -51,7 +51,8 @@ export const normalizeFormData = (
 export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const { data } = useGetOntologyDetail(ontology);
   const { mutate: createConcept, isPending } = useCreateConcept();
-  const t = useTranslations('ConceptDetail');
+  const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
+  const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
@@ -61,15 +62,11 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
       { slug: ontology, data: normalizeFormData(formData) },
       {
         onSuccess: (response) => {
-          toast.success('Koncept byl úspěšně vytvořen.', {
-            position: 'bottom-right',
-          });
+          toast.success(t('ToastSuccess'), { position: 'bottom-right' });
           router.push(`/concept/${response.data?.slug}`);
         },
         onError: () => {
-          toast.error('Při ukládání konceptu došlo k chybě.', {
-            position: 'bottom-right',
-          });
+          toast.error(t('ToastError'), { position: 'bottom-right' });
         },
       },
     );
@@ -83,10 +80,10 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
-          {t('Main.ControlPanel.Back')}
+          {tNav('Back')}
         </button>
 
-        <span className="font-medium text-md">Nový pojem k: </span>
+        <span className="font-medium text-md">{t('NewConceptFor')} </span>
 
         <GovTag
           color="success"

@@ -10,6 +10,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { normalizeFormData } from './ConceptCreate';
 import { ConceptForm } from './ConceptForm';
@@ -109,15 +110,13 @@ export function mapDetailToFormValues(
   };
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const { data, isLoading } = useGetConceptDetail(slug);
   const { mutate: editConcept, isPending } = useEditConcept();
-  const t = useTranslations('ConceptDetail');
+  const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
+  const t = useTranslations('ConceptEditWrapper');
   const router = useRouter();
+  const queryInvalidate = useQueryInvalidator();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
@@ -135,15 +134,12 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       { conceptId: conceptMetadata.id, data: normalizeFormData(formData) },
       {
         onSuccess: (response) => {
-          toast.success('Koncept byl úspěšně upraven.', {
-            position: 'bottom-right',
-          });
+          (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
+            toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
           router.push(`/concept/${response.data?.slug}`);
         },
         onError: () => {
-          toast.error('Při ukládání konceptu došlo k chybě.', {
-            position: 'bottom-right',
-          });
+          toast.error(t('ToastError'), { position: 'bottom-right' });
         },
       },
     );
@@ -157,10 +153,10 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
-          {t('Main.ControlPanel.Back')}
+          {tNav('Back')}
         </button>
 
-        <span className="font-medium text-md">Upravit pojem: </span>
+        <span className="font-medium text-md">{t('EditConcept')} </span>
 
         <GovTag
           color="success"
@@ -175,7 +171,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         </GovTag>
       </div>
 
-      {isLoading && <p className="text-sm text-gray-500">Načítání pojmu…</p>}
+      {isLoading && <p className="text-sm text-gray-500">{t('Loading')}</p>}
 
       {!isLoading && defaultValues && (
         <ConceptForm
