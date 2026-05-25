@@ -1,15 +1,25 @@
+import { ResolvedConceptsMap } from '@/utils/conceptRelations';
+
 import { IriRelatedTerm } from './IriRelatedTerm';
 
 type Props = {
   iris: string[];
-  pathname: string;
   source: 'ISMD' | 'NKD';
+  resolved: ResolvedConceptsMap;
 };
 
-export const IriRelatedTermList = ({ iris, pathname, source }: Props) => (
-  <>
-    {iris.map((iri) => (
-      <IriRelatedTerm key={iri} iri={iri} pathname={pathname} source={source} />
-    ))}
-  </>
-);
+export const IriRelatedTermList = ({ iris, source, resolved }: Props) => {
+  console.log(resolved, iris, 'test');
+  return (
+    <>
+      {iris.map((iri) => (
+        <IriRelatedTerm
+          key={iri}
+          iri={iri}
+          source={source}
+          resolved={resolved}
+        />
+      ))}
+    </>
+  );
+};

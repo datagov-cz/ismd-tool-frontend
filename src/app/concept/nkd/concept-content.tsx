@@ -1,9 +1,14 @@
 'use client';
 
+import { GovButton } from '@gov-design-system-ce/react';
+import { useRouter } from 'next/navigation';
+
 import { useGetNkdConceptDetail } from '@/api/generated';
 import { ConceptHeaderNKD } from '@/components/conceptDetail/ConceptHeaderNKD';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
+import { CircularLoader } from '@/components/shared/CircularLoader';
+import { useResolvedConceptReferences } from '@/hooks/useResolvedConceptReferences';
 
 interface Props {
   slug: string;
@@ -11,8 +16,32 @@ interface Props {
 
 export const ConceptContentNKD = ({ slug }: Props) => {
   const concept = useGetNkdConceptDetail({ iri: slug });
+  const router = useRouter();
 
-  if (!concept.data) return null;
+  const { resolved } = useResolvedConceptReferences(
+    concept.data?.data?.conceptDetail,
+  );
+
+  if (concept.isLoading)
+    return (
+      <div className="h-full flex items-center justify-center w-full">
+        <CircularLoader />
+      </div>
+    );
+
+  if (!concept.data)
+    return (
+      <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
+        <h1 className="text-2xl">Pojem nenalezen</h1>
+        <GovButton
+          type="solid"
+          color="primary"
+          onGovClick={() => router.back()}
+        >
+          Zpět
+        </GovButton>
+      </div>
+    );
 
   const conceptDetail = concept.data.data?.conceptDetail;
   if (!conceptDetail) return null;
@@ -29,8 +58,8 @@ export const ConceptContentNKD = ({ slug }: Props) => {
       <ConceptLayout
         source="NKD"
         conceptDetail={conceptDetail}
-        pathname=""
         conceptType={getType()}
+        resolvedRelations={resolved}
       >
         <OtherOntologyConcepts
           ontology={concept.data.data?.ontologyIri || ''}

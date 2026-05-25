@@ -4,6 +4,7 @@ import {
   ConceptDetailModelDefinice,
   ConceptDetailModelPopis,
 } from '@/api/generated';
+import { ResolvedConceptsMap } from '@/utils/conceptRelations';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { Section } from '../Section';
 import { IriRelatedTermList } from '../Term/IriRelatedTermList';
@@ -14,16 +15,16 @@ export const DefiningSection = ({
   ekvivalentniPojem,
   conceptType,
   nadrazenaTrida,
-  pathname,
   source,
+  resolved,
 }: {
   definice?: ConceptDetailModelDefinice;
   popis?: ConceptDetailModelPopis;
   ekvivalentniPojem?: string[];
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   nadrazenaTrida?: string[];
-  pathname: string;
   source: 'ISMD' | 'NKD';
+  resolved: ResolvedConceptsMap;
 }) => {
   const t = useTranslations('ConceptDetail');
 
@@ -33,6 +34,7 @@ export const DefiningSection = ({
   if (!definice && !popis && !ekvivalentniPojem && !hasNadrazenaTrida) {
     return null;
   }
+  console.log(nadrazenaTrida, 'test trida');
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
       {definice && (
@@ -49,8 +51,8 @@ export const DefiningSection = ({
         <Section title={t('Sections.SupersededClass')}>
           <IriRelatedTermList
             iris={nadrazenaTrida!}
-            pathname={pathname}
             source={source}
+            resolved={resolved}
           />
         </Section>
       )}
@@ -58,8 +60,8 @@ export const DefiningSection = ({
         <Section title={t('Sections.EquivalentConcept')}>
           <IriRelatedTermList
             iris={ekvivalentniPojem}
-            pathname=""
             source="NKD"
+            resolved={resolved}
           />
         </Section>
       )}
