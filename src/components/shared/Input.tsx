@@ -1,7 +1,13 @@
-import { GovFormInput, GovFormLabel } from '@gov-design-system-ce/react';
+import {
+  GovFormInput,
+  GovFormLabel,
+  GovFormMessage,
+} from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import {
   Controller,
   FieldValues,
+  get,
   Path,
   useFormContext,
   UseFormRegister,
@@ -14,6 +20,7 @@ interface Props<T extends FieldValues> {
   register: UseFormRegister<T>;
   multiline?: boolean;
   disabled?: boolean;
+  required?: boolean;
 }
 
 export const Input = <T extends FieldValues>({
@@ -23,11 +30,14 @@ export const Input = <T extends FieldValues>({
   register,
   multiline,
   disabled,
+  required,
 }: Props<T>) => {
   const {
     control,
     formState: { errors },
   } = useFormContext<T>();
+
+  const error = get(errors, name);
 
   return (
     <Controller
@@ -36,22 +46,26 @@ export const Input = <T extends FieldValues>({
       render={({ field }) => (
         <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
           <GovFormLabel className="w-fit! pt-2.5">
-            <span className="font-bold">{label}</span>
+            <span className="font-bold">
+              {label}
+              {required && <span className="text-status-error-700"> *</span>}
+            </span>
           </GovFormLabel>
           <div className="col-span-6 relative ml-10">
             <GovFormInput
               {...register(name)}
               id={field.name}
               placeholder={placeholder}
-              className="border-0!"
+              className={clsx('border-0!')}
+              invalid={!!error?.message}
               multiline={multiline}
               rows={4}
               disabled={disabled}
             />
-            {errors[name]?.message && (
-              <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">
-                {String(errors[name]?.message)}
-              </span>
+            {error?.message && (
+              <GovFormMessage color="error" slot="bottom">
+                {String(error.message)}
+              </GovFormMessage>
             )}
           </div>
         </div>

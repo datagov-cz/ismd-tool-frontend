@@ -111,6 +111,7 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
             source={'NKD'}
             owner={false}
             commentsCount={0}
+            slug=""
           />
         </div>
       </div>

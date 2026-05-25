@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { Input } from '@/components/shared/Input';
@@ -6,20 +7,22 @@ import { ConceptCreateModel } from '../schema/conceptFormSchema';
 
 export const OntologySection = () => {
   const form = useFormContext<ConceptCreateModel>();
+  const t = useTranslations('CreateConcept.OntologySection');
+
   return (
-    <FormSection icon="database-gear" label="Technické údaje">
+    <FormSection icon="database-gear" label={t('Label')}>
       <Input<ConceptCreateModel>
         register={form.register}
-        label="Slovnik"
+        label={t('OntologyLabel')}
         name="ontologyGraphName"
-        placeholder="zadejte iri slovniku"
+        placeholder={t('OntologyPlaceholder')}
         disabled
       />
       <Input<ConceptCreateModel>
         register={form.register}
-        label="Adresa lokalniho katalogu dat"
+        label={t('NamespaceLabel')}
         name="namespace"
-        placeholder="zadejte iri slovniku"
+        placeholder={t('NamespacePlaceholder')}
         disabled
       />
     </FormSection>

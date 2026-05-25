@@ -1,15 +1,18 @@
+import { useTranslations } from 'next-intl';
+
 import { NonLegislativeSourceInput } from '@/components/shared/NonLegislativeSourceInput';
 import { FormSection } from '../components/FormSection';
 
 export const SourcesSection = () => {
+  const t = useTranslations('ConceptDetail.Sections');
   return (
-    <FormSection label="Zdroje pojmu" icon="book">
+    <FormSection label={t('ConceptSource')} icon="book">
       <NonLegislativeSourceInput
-        label="Definujice nelegislativni zdroj"
+        label={t('DefiningNonLegislative')}
         name="definingNonLegalSource"
       />
       <NonLegislativeSourceInput
-        label="Souvisejici nelegislativni zdroj"
+        label={t('RelatedNonLeagislative')}
         name="relatedNonLegalSource"
       />
     </FormSection>

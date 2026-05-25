@@ -50,7 +50,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   }, []);
 
   const handleSelect = (item: RppSearchResultDto) => {
-    setValue(name, item, { shouldDirty: true });
+    setValue(name, { ...item, label: item.nazev }, { shouldDirty: true });
     setQuery('');
   };
 
@@ -87,7 +87,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
                     onClick={() => handleSelect(item)}
                     className="flex w-full gap-1.5 border-b border-border-subtlest p-2 font-bold text-blue-primary hover:bg-primary-subtlest"
                   >
-                    {item.nazev}
+                    {item.code} - {item.nazev}
                   </button>
                 ))}
               </div>
@@ -97,7 +97,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
             <div className="flex flex-wrap gap-2 pt-1">
               <RelatedTerm
                 noIcon
-                label={selected.nazev ?? ''}
+                label={`${selected.code} - ${selected.nazev}`}
                 href=""
                 remove={() => setValue(name, undefined, { shouldDirty: true })}
               />

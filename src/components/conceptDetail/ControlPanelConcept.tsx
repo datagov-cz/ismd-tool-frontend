@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { useCommentBoxStore } from '@/store/commentBoxStore';
-import { useCreateConceptBoxStore } from '@/store/createConceptBoxStore';
 import { ControlPanelButton } from '../dictionaryDetail/ControlPanelButton';
 import { DeleteDialog } from '../dictionaryDetail/DeleteDialog';
 
@@ -18,6 +17,7 @@ interface Props {
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
   owner: boolean;
+  slug: string;
 }
 
 export const ControlPanelConcept = ({
@@ -28,13 +28,13 @@ export const ControlPanelConcept = ({
   loggedIn,
   owner,
   source,
+  slug,
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   const tConcept = useTranslations('ConceptDetail.Main.ControlPanel');
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
-  const setOpenBoxId = useCreateConceptBoxStore((state) => state.setOpenBoxId);
 
   const handleCopyLink = async () => {
     try {
@@ -56,7 +56,7 @@ export const ControlPanelConcept = ({
               type="solid"
               color="primary"
               size="s"
-              onGovClick={() => setOpenBoxId('update')}
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}/edit`}
             >
               <GovIcon
                 name="pencil-square"

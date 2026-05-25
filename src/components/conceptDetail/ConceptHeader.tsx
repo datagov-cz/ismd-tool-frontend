@@ -18,6 +18,7 @@ type Props = {
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
   owner: boolean;
+  slug: string;
 };
 
 export const ConceptHeader = ({
@@ -29,6 +30,7 @@ export const ConceptHeader = ({
   loggedIn,
   source,
   owner,
+  slug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
@@ -130,6 +132,7 @@ export const ConceptHeader = ({
             loggedIn={loggedIn}
             source={source}
             owner={owner}
+            slug={slug}
           />
         </div>
       </div>

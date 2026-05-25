@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { useFormHistory } from '@/hooks/useFormHistory';
@@ -10,6 +11,7 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
     formState: { isDirty },
   } = useFormContext();
   const { undo, redo, canUndo, canRedo } = useFormHistory();
+  const t = useTranslations('FormToolbar');
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isFloating, setIsFloating] = useState(false);
@@ -69,7 +71,7 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
             <>
               <div className="flex items-center gap-1.5 text-sm text-status-warning-700 font-bold px-5">
                 <span className="bg-status-warning-200 size-2.5 rounded-full" />
-                <span>Neuložené změny</span>
+                <span>{t('UnsavedChanges')}</span>
               </div>
               <span className="w-px! h-4! bg-blue-primary" />
             </>
@@ -82,14 +84,14 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
                 size="s"
                 disabled={!canUndo || isPending}
                 onGovClick={undo}
-                title="Zpět (Ctrl+Z)"
+                title={t('UndoTitle')}
               >
                 <GovIcon
                   type="components"
                   name="arrow-counterclockwise"
                   slot="icon-start"
                 />
-                Zpět
+                {t('Undo')}
               </GovButton>
               <span className="w-px! h-2! bg-blue-primary" />
               <GovButton
@@ -98,7 +100,7 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
                 size="s"
                 disabled={!canRedo || isPending}
                 onGovClick={redo}
-                title="Znovu (Ctrl+Y)"
+                title={t('RedoTitle')}
               >
                 <GovIcon
                   type="components"
@@ -106,7 +108,7 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
                   slot="icon-start"
                   className="rotate-y-180"
                 />
-                Znovu
+                {t('Redo')}
               </GovButton>
             </div>
           )}
@@ -118,7 +120,7 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
             size="s"
             disabled={isPending}
           >
-            Zrušit
+            {t('Cancel')}
           </GovButton>
           <GovButton
             type="solid"
@@ -128,7 +130,7 @@ export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
             disabled={isPending}
           >
             <GovIcon type="components" name="floppy" slot="icon-start" />
-            Uložit
+            {t('Save')}
           </GovButton>
         </div>
       </div>

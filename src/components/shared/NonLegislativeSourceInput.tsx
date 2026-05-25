@@ -43,54 +43,71 @@ const SourceInputForm = ({
     errors[fieldName] as SourceItemFieldError[] | undefined
   )?.[index];
 
-  const errorMessage =
-    fieldErrors?.name?.message ??
-    fieldErrors?.description?.message ??
-    fieldErrors?.url?.message;
+  const nameError = fieldErrors?.name?.message;
+  const descriptionError = fieldErrors?.description?.message;
+  const urlError = fieldErrors?.url?.message;
 
   return (
     <div className="col-span-6 relative">
-      <Controller
-        control={control}
-        name={`${fieldName}.${index}.name`}
-        render={({ field }) => (
-          <GovFormInput
-            {...field}
-            id={`${fieldName}.${index}.name`}
-            placeholder="Zadejte název zdroje"
-            className="border-0! [&_span]:rounded-b-none!"
-          />
+      <div className="relative">
+        <Controller
+          control={control}
+          name={`${fieldName}.${index}.name`}
+          render={({ field }) => (
+            <GovFormInput
+              {...field}
+              id={`${fieldName}.${index}.name`}
+              placeholder="Zadejte název zdroje"
+              className={`border-0! [&_span]:rounded-b-none! ${nameError ? '[&_span]:bg-status-error-200/30!' : ''}`}
+            />
+          )}
+        />
+        {nameError && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-status-error-600 text-xs pointer-events-none z-10">
+            {nameError}
+          </span>
         )}
-      />
-      <Controller
-        control={control}
-        name={`${fieldName}.${index}.description`}
-        render={({ field }) => (
-          <GovFormInput
-            {...field}
-            id={`${fieldName}.${index}.description`}
-            placeholder="Zadejte popis"
-            className="border-0! [&_span]:rounded-none! [&_span]:border-y-0!"
-          />
+      </div>
+
+      <div className="relative">
+        <Controller
+          control={control}
+          name={`${fieldName}.${index}.description`}
+          render={({ field }) => (
+            <GovFormInput
+              {...field}
+              id={`${fieldName}.${index}.description`}
+              placeholder="Zadejte popis"
+              className={`border-0! [&_span]:rounded-none! [&_span]:border-y-0! ${descriptionError ? '[&_span]:bg-status-error-200/30!' : ''}`}
+            />
+          )}
+        />
+        {descriptionError && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-status-error-600 text-xs pointer-events-none z-10">
+            {descriptionError}
+          </span>
         )}
-      />
-      <Controller
-        control={control}
-        name={`${fieldName}.${index}.url`}
-        render={({ field }) => (
-          <GovFormInput
-            {...field}
-            id={`${fieldName}.${index}.url`}
-            placeholder="Zadejte odkaz ke zdroji"
-            className="border-0! [&_span]:rounded-t-none!"
-          />
+      </div>
+
+      <div className="relative">
+        <Controller
+          control={control}
+          name={`${fieldName}.${index}.url`}
+          render={({ field }) => (
+            <GovFormInput
+              {...field}
+              id={`${fieldName}.${index}.url`}
+              placeholder="Zadejte odkaz ke zdroji"
+              className={`border-0! [&_span]:rounded-t-none! ${urlError ? '[&_span]:bg-status-error-200/30!' : ''}`}
+            />
+          )}
+        />
+        {urlError && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-status-error-600 text-xs pointer-events-none z-10">
+            {urlError}
+          </span>
         )}
-      />
-      {errorMessage && (
-        <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">
-          {errorMessage}
-        </span>
-      )}
+      </div>
 
       <div className="pt-2 flex gap-2 w-full items-center justify-end">
         {isExisting && onDelete && (
@@ -123,24 +140,35 @@ const SourceInputForm = ({
 const SourceCard = ({
   data,
   onEdit,
+  error,
 }: {
   data: SourceItem;
   onEdit: () => void;
+  error?: string;
 }) => (
-  <div className="w-full border-gray-border border rounded-lg py-2 pl-4 pr-2 flex gap-2 text-sm items-start justify-between">
-    <div className="flex flex-col">
-      <span className="font-bold">{data.name}</span>
-      <span>{data.description}</span>
-      <span className="font-bold">{data.url}</span>
+  <div className="flex flex-col gap-1">
+    <div
+      className={`w-full border rounded-lg py-2 pl-4 pr-2 flex gap-2 text-sm items-start justify-between ${
+        error ? 'border-status-errtext-status-error-600' : 'border-gray-border'
+      }`}
+    >
+      <div className="flex flex-col">
+        <span className="font-bold">{data.name}</span>
+        <span>{data.description}</span>
+        <span className="font-bold">{data.url}</span>
+      </div>
+      <button type="button" onClick={onEdit}>
+        <GovIcon
+          type="components"
+          name="pencil-square"
+          size="s"
+          color="primary"
+        />
+      </button>
     </div>
-    <button type="button" onClick={onEdit}>
-      <GovIcon
-        type="components"
-        name="pencil-square"
-        size="s"
-        color="primary"
-      />
-    </button>
+    {error && (
+      <span className="text-status-error-600 text-xs px-1">{error}</span>
+    )}
   </div>
 );
 
@@ -151,7 +179,11 @@ export const NonLegislativeSourceInput = ({
   name: string;
   label: string;
 }) => {
-  const { control, watch } = useFormContext();
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useFormContext();
   const { fields, append, remove } = useFieldArray({ control, name });
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -187,6 +219,17 @@ export const NonLegislativeSourceInput = ({
     setEditingIndex(null);
   };
 
+  const getCardError = (index: number): string | undefined => {
+    const fieldErrors = (errors[name] as SourceItemFieldError[] | undefined)?.[
+      index
+    ];
+    return (
+      fieldErrors?.name?.message ??
+      fieldErrors?.description?.message ??
+      fieldErrors?.url?.message
+    );
+  };
+
   return (
     <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
       <GovFormLabel className="w-fit! pt-2.5">
@@ -217,6 +260,7 @@ export const NonLegislativeSourceInput = ({
               key={field.id}
               data={watchedFields[index]}
               onEdit={() => setEditingIndex(index)}
+              error={getCardError(index)}
             />
           );
         })}

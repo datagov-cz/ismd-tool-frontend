@@ -122,8 +122,12 @@
       "WayObtainingData": "Způsob získání údajů",
       "DataContentType": "Typ obsahu údajů",
       "IsPpdf": "Je v PPDF",
+      "IsPublic": "Je veřejný",
       "AgendaInfoSystem": "Agendový informační systém",
-      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje"
+      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
+      "ConceptSource": "Zdroje pojmu",
+      "DefiningNonLegislative": "Definujice nelegislativni zdroj",
+      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj"
     },
     "Groups": {
       "TypesAndClassification": "Typy a zařazení",
@@ -397,9 +401,11 @@
       }
     },
     "ClassCreateFields": {
+      "Label": "Typy a zařazení",
       "Labels": {
         "ClassType": "Typ třídy",
-        "BroaderConcept": "Nadřazená třída"
+        "BroaderConcept": "Nadřazená třída",
+        "ConceptType": "Typ pojmu"
       },
       "Options": {
         "ClassType": {
@@ -439,6 +445,52 @@
       "Options": {
         "Undefined": "undefined"
       }
+    },
+    "NamingSection": {
+      "Label": "Pojmenování",
+      "NameLabel": "Název",
+      "NamePlaceholder": "Zadejte název pojmu",
+      "AltNameLabel": "Alternativní název",
+      "AltNamePlaceholder": "Zadejte alternativní název pojmu"
+    },
+    "TypesSection": {
+      "PropertyDomainLabel": "Patří k pojmu",
+      "PropertyDomainPlaceholder": "Vyhledejte pojem",
+      "PropertyDataTypeLabel": "Datový typ hodnoty",
+      "PropertyDataTypePlaceholder": "Vyberte typ hodnoty",
+      "RelationDomainLabel": "Výchozí pojem",
+      "RelationDomainPlaceholder": "Vyhledejte pojem",
+      "RelationRangeLabel": "Cílový pojem",
+      "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptMeaningSection": {
+      "Label": "Význam pojmu",
+      "DefinitionLabel": "Definice",
+      "DefinitionPlaceholder": "Definice",
+      "DescriptionLabel": "Popis",
+      "DescriptionPlaceholder": "Popis",
+      "BroaderConceptLabel": "Nadřazená třída",
+      "SearchPlaceholder": "Hledat",
+      "SuperRelationLabel": "Nadřazený vztah",
+      "SuperPropertyLabel": "Nadřazená vlastnost",
+      "EquivalentConceptLabel": "Ekvivalentní pojem"
+    },
+    "RightsAndObligationsSection": {
+      "AgendaPlaceholder": "Vyhledat agendu RPP",
+      "AISPlaceholder": "Vyhledat AIS"
+    },
+    "ProclamationSection": {
+      "Label": "Kategorizace dle vyhlášky 360/2023",
+      "ContentTypeLabel": "Typ obsahu údajů",
+      "AcquisitionMethodLabel": "Způsob získání údajů",
+      "SharingMethodLabel": "Způsob sdílení údajů"
+    },
+    "OntologySection": {
+      "Label": "Technické údaje",
+      "OntologyLabel": "Slovník",
+      "OntologyPlaceholder": "Zadejte IRI slovníku",
+      "NamespaceLabel": "Adresa lokálního katalogu dat",
+      "NamespacePlaceholder": "Zadejte IRI slovníku"
     }
   },
   "Search": {
@@ -472,5 +524,14 @@
     "Title": "Probíhá údržba",
     "Description": "Aplikace je dočasně nedostupná z důvodu plánované údržby. Pracujeme na obnovení provozu.",
     "Thanks": "Děkujeme za pochopení."
+  },
+  "FormToolbar": {
+    "UnsavedChanges": "Neuložené změny",
+    "Undo": "Zpět",
+    "UndoTitle": "Zpět (Ctrl+Z)",
+    "Redo": "Znovu",
+    "RedoTitle": "Znovu (Ctrl+Y)",
+    "Cancel": "Zrušit",
+    "Save": "Uložit"
   }
 }

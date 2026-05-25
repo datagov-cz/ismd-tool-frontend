@@ -1,16 +1,91 @@
 'use client';
 
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
-import { useGetOntologyDetail } from '@/api/generated';
+import {
+  CreateConceptBody,
+  useCreateConcept,
+  useGetOntologyDetail,
+} from '@/api/generated';
 
 import { ConceptForm } from './ConceptForm';
+import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
+
+export const normalizeFormData = (
+  formData: ConceptFormValues,
+): CreateConceptBody => {
+  const toRecord = (arr?: { languageTag: string; name: string }[]) =>
+    arr?.reduce<Record<string, string>>((acc, { languageTag, name }) => {
+      acc[languageTag] = name;
+      return acc;
+    }, {});
+
+  const toIri = (refs?: { iri: string; label: string }[]) =>
+    refs?.map((r) => r.iri);
+
+  return {
+    ...formData,
+    altNameModel: formData.altNameModel?.altName
+      ? { altName: toRecord(formData.altNameModel.altName) }
+      : undefined,
+    definitionModel: formData.definitionModel?.definition
+      ? { definition: toRecord(formData.definitionModel.definition) }
+      : undefined,
+    descriptionModel: formData.descriptionModel?.description
+      ? { description: toRecord(formData.descriptionModel.description) }
+      : undefined,
+    broaderConcept: toIri(formData.broaderConcept),
+    superProperty: toIri(formData.superProperty),
+    superRelation: toIri(formData.superRelation),
+    exactMatch: toIri(formData.exactMatch),
+    domain: formData.domain?.iri,
+    range: formData.range?.iri,
+    agendaCode: formData.agendaCode?.iri,
+    agendaSystemCode: formData.agendaSystemCode?.iri,
+  };
+};
 
 export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const { data } = useGetOntologyDetail(ontology);
+  const { mutate: createConcept, isPending } = useCreateConcept();
+  const t = useTranslations('ConceptDetail');
+  const router = useRouter();
+
+  const graphName = data?.data?.ontologyMetadata?.graphName;
+
+  const handleSubmit = (formData: ConceptFormValues) => {
+    createConcept(
+      { slug: ontology, data: normalizeFormData(formData) },
+      {
+        onSuccess: (response) => {
+          toast.success('Koncept byl úspěšně vytvořen.', {
+            position: 'bottom-right',
+          });
+          router.push(`/concept/${response.data?.slug}`);
+        },
+        onError: () => {
+          toast.error('Při ukládání konceptu došlo k chybě.', {
+            position: 'bottom-right',
+          });
+        },
+      },
+    );
+  };
+
   return (
     <div className="w-full max-w-250 mx-auto flex flex-col gap-5 py-5">
-      <h1>
+      <div className="relative">
+        <button
+          onClick={() => router.back()}
+          className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+        >
+          <GovIcon name="chevron-compact-left" size="s" color="primary" />
+          {t('Main.ControlPanel.Back')}
+        </button>
+
         <span className="font-medium text-md">Nový pojem k: </span>
 
         <GovTag
@@ -24,11 +99,13 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
             {data?.data?.ontologyDetail?.název?.cs}
           </span>
         </GovTag>
-      </h1>
-      {data?.data?.ontologyMetadata?.graphName && (
+      </div>
+
+      {graphName && (
         <ConceptForm
-          ontology={ontology}
-          ontologyGraphName={data?.data?.ontologyMetadata?.graphName}
+          ontologyGraphName={graphName}
+          onSubmit={handleSubmit}
+          isPending={isPending}
         />
       )}
     </div>

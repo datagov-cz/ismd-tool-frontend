@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-
-import { CreateConceptBody, useCreateConcept } from '@/api/generated';
 
 import { FormToolbar } from './components/FormToolbar';
 import {
@@ -29,50 +26,61 @@ function getDomain(url: string): string | null {
   }
 }
 
-export const ConceptForm = ({
-  ontology,
-  ontologyGraphName,
-}: {
-  ontology: string;
-  ontologyGraphName: string;
-}) => {
-  const navigate = useRouter();
-  const { mutate: createConcept, isPending } = useCreateConcept();
+const BASE_DEFAULTS: Omit<
+  ConceptFormValues,
+  'ontologyGraphName' | 'namespace'
+> = {
+  conceptType: 'TRIDA',
+  conceptTypeEnum: 'TRIDA',
+  identifier: undefined,
+  nameModel: { name: { cs: '' } },
+  altNameModel: { altName: [{ languageTag: 'cs', name: '' }] },
+  definitionModel: { definition: [{ languageTag: 'cs', name: '' }] },
+  descriptionModel: { description: [{ languageTag: 'cs', name: '' }] },
+  definingNonLegalSource: [],
+  definingLegalSource: [],
+  relatedNonLegalSource: [],
+  relatedLegalSource: [],
+  exactMatch: [],
+  inTezaurus: false,
+  type: '',
+  broaderConcept: [],
+  dataType: undefined,
+  superProperty: [],
+  range: undefined,
+  superRelation: [],
+  agendaCode: undefined,
+  agendaSystemCode: undefined,
+  contentType: '',
+  acquisitionMethod: '',
+  sharingMethod: [],
+  isInPPDF: false,
+  isPublic: false,
+  privacyProvisions: [],
+  domain: undefined,
+  codeListDataset: undefined,
+};
 
+interface ConceptFormProps {
+  ontologyGraphName: string;
+  onSubmit: (_data: ConceptFormValues) => void;
+  isPending: boolean;
+  defaultValues?: Partial<ConceptFormValues>;
+}
+
+export const ConceptForm = ({
+  ontologyGraphName,
+  onSubmit,
+  isPending,
+  defaultValues: externalDefaults,
+}: ConceptFormProps) => {
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
     defaultValues: {
-      ontologyGraphName: ontologyGraphName,
-      conceptType: 'TRIDA',
-      conceptTypeEnum: 'TRIDA',
-      identifier: undefined,
-      nameModel: { name: { cs: '' } },
+      ...BASE_DEFAULTS,
+      ontologyGraphName,
       namespace: getDomain(ontologyGraphName) ?? undefined,
-      altNameModel: { altName: [{ languageTag: 'cs', name: '' }] },
-      definitionModel: { definition: [{ languageTag: 'cs', name: '' }] },
-      descriptionModel: { description: [{ languageTag: 'cs', name: '' }] },
-      definingNonLegalSource: [],
-      definingLegalSource: [],
-      relatedNonLegalSource: [],
-      relatedLegalSource: [],
-      exactMatch: [],
-      inTezaurus: false,
-      type: '',
-      broaderConcept: [],
-      dataType: undefined,
-      superProperty: [],
-      range: undefined,
-      superRelation: [],
-      agendaCode: undefined,
-      agendaSystemCode: undefined,
-      contentType: '',
-      acquisitionMethod: '',
-      sharingMethod: [],
-      isInPPDF: false,
-      isPublic: false,
-      privacyProvisions: [],
-      domain: undefined,
-      codeListDataset: undefined,
+      ...externalDefaults,
     },
   });
 
@@ -86,59 +94,6 @@ export const ConceptForm = ({
       });
     }
   }, [errors]);
-
-  const onSubmit = (formData: ConceptFormValues) => {
-    const toRecord = (arr?: { languageTag: string; name: string }[]) =>
-      arr?.reduce<Record<string, string>>((acc, { languageTag, name }) => {
-        acc[languageTag] = name;
-        return acc;
-      }, {});
-
-    const toIri = (refs?: { iri: string; label: string }[]) =>
-      refs?.map((r) => r.iri);
-    const toSingleIri = (ref?: { iri: string; label: string }) => ref?.iri;
-
-    const normalized: CreateConceptBody = {
-      ...formData,
-      altNameModel: formData.altNameModel?.altName
-        ? { altName: toRecord(formData.altNameModel.altName) }
-        : undefined,
-      definitionModel: formData.definitionModel?.definition
-        ? { definition: toRecord(formData.definitionModel.definition) }
-        : undefined,
-      descriptionModel: formData.descriptionModel?.description
-        ? { description: toRecord(formData.descriptionModel.description) }
-        : undefined,
-      broaderConcept: toIri(formData.broaderConcept),
-      superProperty: toIri(formData.superProperty),
-      superRelation: toIri(formData.superRelation),
-      exactMatch: toIri(formData.exactMatch),
-      domain: toSingleIri(formData.domain),
-      range: toSingleIri(formData.range),
-      agendaCode: toSingleIri(formData.agendaCode),
-      agendaSystemCode: toSingleIri(formData.agendaSystemCode),
-    };
-
-    createConcept(
-      {
-        slug: ontology,
-        data: normalized,
-      },
-      {
-        onSuccess: (data) => {
-          toast.success('Koncept byl úspěšně vytvořen.', {
-            position: 'bottom-right',
-          });
-          navigate.push(`/concept/${data.data?.slug}`);
-        },
-        onError: () => {
-          toast.error('Při ukládání konceptu došlo k chybě.', {
-            position: 'bottom-right',
-          });
-        },
-      },
-    );
-  };
 
   return (
     <FormProvider {...form}>

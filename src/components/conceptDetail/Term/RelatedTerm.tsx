@@ -16,8 +16,9 @@ export const RelatedTerm = ({
   ontologyLabel?: string;
 }) => {
   const className = clsx(
-    'border border-border-primary bg-primary-subtlest w-full gap-1.5 flex rounded-md text-blue-button-active p-2',
+    'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active',
     noIcon ? 'grayscale' : 'font-bold',
+    !!ontologyLabel ? 'px-2 py-1' : 'p-2',
   );
 
   const content = (

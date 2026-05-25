@@ -69,6 +69,7 @@ export const ConceptContent = ({ slug }: Props) => {
         loggedIn={user?.success === true}
         owner={conceptMetadata.user?.userId === user?.data?.userId}
         source={'ISMD'}
+        slug={slug}
       />
 
       <ConceptLayout

@@ -2,10 +2,15 @@ import { z } from 'zod';
 
 // Reusable base schemas
 const NameModelSchema = z.object({
-  name: z.record(z.string(), z.string()).optional(),
+  name: z.record(z.string(), z.string().min(1, 'Název je povinný')),
 });
 
 const ConceptRef = z.object({ iri: z.string(), label: z.string() });
+const AgendaRef = z.object({
+  iri: z.string().optional(),
+  nazev: z.string().optional(),
+  code: z.string().optional(),
+});
 
 const MultiLangueModelSchema = z
   .array(
@@ -19,7 +24,7 @@ const MultiLangueModelSchema = z
 const DigitalObject = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
-  url: z.string().optional(),
+  url: z.url().optional(),
 });
 
 // Shared base fields
@@ -56,8 +61,8 @@ const ConceptCreateModelSchema = z.object({
 const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
   conceptTypeEnum: z.literal('TRIDA'),
   type: z.string().optional(),
-  agendaCode: ConceptRef.optional(),
-  agendaSystemCode: ConceptRef.optional(),
+  agendaCode: AgendaRef.optional(),
+  agendaSystemCode: AgendaRef.optional(),
   contentType: z.string().optional(),
   acquisitionMethod: z.string().optional(),
   sharingMethod: z.array(z.string()).optional(),
@@ -75,8 +80,8 @@ const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
   domain: ConceptRef.optional(),
   superProperty: z.array(ConceptRef).optional(),
   isInPPDF: z.boolean().optional(),
-  agendaCode: ConceptRef.optional(),
-  agendaSystemCode: ConceptRef.optional(),
+  agendaCode: AgendaRef.optional(),
+  agendaSystemCode: AgendaRef.optional(),
   isPublic: z.boolean().optional(),
   privacyProvisions: z.array(z.string()).optional(),
   sharingMethod: z.array(z.string()).optional(),
@@ -91,8 +96,8 @@ const RelationshipConceptModelSchema = ConceptCreateModelSchema.extend({
   domain: z.string().optional(),
   range: ConceptRef.optional(),
   superRelation: z.array(ConceptRef).optional(),
-  agendaCode: ConceptRef.optional(),
-  agendaSystemCode: ConceptRef.optional(),
+  agendaCode: AgendaRef.optional(),
+  agendaSystemCode: AgendaRef.optional(),
   contentType: z.string().optional(),
   acquisitionMethod: z.string().optional(),
   sharingMethod: z.array(z.string()).optional(),
@@ -123,8 +128,8 @@ const ConceptFormSchema = z.object({
   range: ConceptRef.optional(),
   superRelation: z.array(ConceptRef).optional(),
   // shared type-specific
-  agendaCode: ConceptRef.optional(),
-  agendaSystemCode: ConceptRef.optional(),
+  agendaCode: AgendaRef.optional(),
+  agendaSystemCode: AgendaRef.optional(),
   contentType: z.string().optional(),
   acquisitionMethod: z.string().optional(),
   sharingMethod: z.array(z.string()).optional(),

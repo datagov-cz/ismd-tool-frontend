@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { ConceptInput } from '@/components/shared/ConceptInput';
@@ -7,43 +8,45 @@ import { ConceptForm } from '../schema/conceptFormSchema';
 
 export const ConceptMeaningSection = () => {
   const form = useFormContext();
+  const t = useTranslations('CreateConcept.ConceptMeaningSection');
+
   return (
-    <FormSection icon="journal-text" label="Význam pojmu">
+    <FormSection icon="journal-text" label={t('Label')}>
       <LanguageInput<ConceptForm>
         name="definitionModel.definition"
-        label="Definice"
-        placeholder="Definice"
+        label={t('DefinitionLabel')}
+        placeholder={t('DefinitionPlaceholder')}
       />
       <LanguageInput<ConceptForm>
         name="descriptionModel.description"
-        label="Popis"
-        placeholder="Popis"
+        label={t('DescriptionLabel')}
+        placeholder={t('DescriptionPlaceholder')}
       />
       {form.watch('conceptType') === 'TRIDA' && (
         <ConceptInput
           name="broaderConcept"
-          label="Nadřazená třída"
-          placeholder="Hledat"
+          label={t('BroaderConceptLabel')}
+          placeholder={t('SearchPlaceholder')}
         />
       )}
       {form.watch('conceptType') === 'VZTAH' && (
         <ConceptInput
           name="superRelation"
-          label="Nadřazeny vztah"
-          placeholder="Hledat"
+          label={t('SuperRelationLabel')}
+          placeholder={t('SearchPlaceholder')}
         />
       )}
       {form.watch('conceptType') === 'VLASTNOST' && (
         <ConceptInput
           name="superProperty"
-          label="Nadřazená vlastnost"
-          placeholder="Hledat"
+          label={t('SuperPropertyLabel')}
+          placeholder={t('SearchPlaceholder')}
         />
       )}
       <ConceptInput
         name="exactMatch"
-        label="Ekvivalnetní pojem"
-        placeholder="Hledat"
+        label={t('EquivalentConceptLabel')}
+        placeholder={t('SearchPlaceholder')}
       />
     </FormSection>
   );
