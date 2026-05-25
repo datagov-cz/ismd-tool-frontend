@@ -1,4 +1,5 @@
 import { iriToLabel } from '@/lib/concept-utils';
+import { ResolvedConceptsMap } from '@/utils/conceptRelations';
 
 import { Section } from './Section';
 import { IriRelatedTerm } from './Term/IriRelatedTerm';
@@ -6,16 +7,21 @@ import { IriRelatedTerm } from './Term/IriRelatedTerm';
 type Props = {
   title: string;
   iri: string;
-  pathname: string;
   source: 'NKD' | 'ISMD';
+  resolvedRelations: ResolvedConceptsMap;
 };
 
-export const ConceptRelation = ({ title, iri, pathname, source }: Props) => {
+export const ConceptRelation = ({
+  title,
+  iri,
+  source,
+  resolvedRelations,
+}: Props) => {
   const label = iriToLabel(iri);
   if (!label) return null;
   return (
     <Section title={title}>
-      <IriRelatedTerm iri={iri} pathname={pathname} source={source} />
+      <IriRelatedTerm iri={iri} source={source} resolved={resolvedRelations} />
     </Section>
   );
 };

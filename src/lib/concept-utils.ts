@@ -1,11 +1,12 @@
+import { ResolvedConceptDtoSource } from '@/api/generated';
+
 export const iriToLabel = (iri: string): string =>
   iri.split('pojem/')[1]?.replace(/-/g, ' ') ?? '';
 
 export const iriToHref = (
   iri: string,
-  pathname: string,
-  source: 'ISMD' | 'NKD',
+  source: ResolvedConceptDtoSource,
 ): string =>
-  source === 'ISMD'
-    ? `${pathname.replace(/^\/|\/$/g, '')}-${iri.split('/pojem/')[1]}`
+  source !== 'NKD'
+    ? `/concept/${iri.split('/pojem/')[1]}`
     : `/concept/nkd?iri=${iri}`;

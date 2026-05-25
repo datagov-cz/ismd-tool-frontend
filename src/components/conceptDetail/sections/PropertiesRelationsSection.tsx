@@ -12,7 +12,7 @@ export const PropertiesRelationsSection = ({
   properties = [],
   relationships = [],
 }: Props) => {
-  const t = useTranslations();
+  const t = useTranslations('ConceptDetail');
   if (!properties.length && !relationships.length) return null;
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">

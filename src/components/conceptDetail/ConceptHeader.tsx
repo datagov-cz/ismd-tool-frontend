@@ -1,9 +1,9 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
-import { getMissingConceptFieldKeys } from '@/utils/getMissingConceptFields';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -18,7 +18,6 @@ type Props = {
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
   owner: boolean;
-  conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
 };
 
 export const ConceptHeader = ({
@@ -30,46 +29,49 @@ export const ConceptHeader = ({
   loggedIn,
   source,
   owner,
-  conceptType,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
   const isPublic = conceptDetail['typ']?.includes('Veřejný údaj');
-  const missing = getMissingConceptFieldKeys(conceptDetail, conceptType);
+
+  const router = useRouter();
 
   return (
     <div className="w-full bg-white">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
         <div className="flex items-center justify-between relative">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => router.back()}
             className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
             {t('Main.ControlPanel.Back')}
           </button>
-          <Link
-            href={`/dictionary/${ontology.split(' ').join('-')}`}
-            className="cursor-pointer"
-          >
-            <GovTag
-              color="success"
-              type="subtle"
-              size="xs"
-              className="w-fit border bg-white! cursor-pointer"
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-sm">Ve slovníku:</span>
+            <Link
+              href={`/dictionary/${ontology.split(' ').join('-')}`}
+              className="cursor-pointer"
             >
-              <GovIcon
-                name="journal-text"
-                slot="icon-start"
-                type="components"
-              />
-              <span className="font-bold text-blue-primary cursor-pointer">
-                {capitalizeFirst(ontology)}
-              </span>
-            </GovTag>
-          </Link>
+              <GovTag
+                color="success"
+                type="subtle"
+                size="xs"
+                className="w-fit border bg-white! cursor-pointer"
+              >
+                <GovIcon
+                  name="journal-text"
+                  slot="icon-start"
+                  type="components"
+                />
+                <span className="font-bold text-blue-primary cursor-pointer">
+                  {capitalizeFirst(ontology)}
+                </span>
+              </GovTag>
+            </Link>
+          </div>
         </div>
         <div className="flex justify-between gap-3 w-full">
           <div>
@@ -110,21 +112,13 @@ export const ConceptHeader = ({
               </GovTag>
             </div>
             <div>
-              {!missing.has('název') &&
-                conceptDetail['název'] &&
+              {conceptDetail['název'] &&
                 (Object.keys(conceptDetail['název']).includes('en') ||
                   Object.keys(conceptDetail['název']).includes('sk')) && (
                   <Section title={t('Main.Name')}>
                     <LanguageSwitcher item={conceptDetail['název']!} />
                   </Section>
                 )}
-              {!missing.has('alternativní-název') && (
-                <Section title={t('Sections.AlternativeName')}>
-                  <LanguageSwitcher
-                    item={conceptDetail['alternativní-název']!}
-                  />
-                </Section>
-              )}
             </div>
           </div>
 

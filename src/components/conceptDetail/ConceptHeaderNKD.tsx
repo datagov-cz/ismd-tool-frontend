@@ -23,27 +23,37 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
   return (
     <div className="w-full bg-white">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
-        <div className="flex items-center justify-between">
-          <Link
-            href={`/dictionary/${ontology.split(' ').join('-')}`}
-            className="cursor-pointer"
+        <div className="flex items-center justify-between relative">
+          <button
+            onClick={() => window.history.back()}
+            className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
           >
-            <GovTag
-              color="success"
-              type="subtle"
-              size="xs"
-              className="w-fit border bg-white! cursor-pointer"
+            <GovIcon name="chevron-compact-left" size="s" color="primary" />
+            {t('Main.ControlPanel.Back')}
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-sm">Ve slovníku:</span>
+            <Link
+              href={`/dictionary/${ontology.split(' ').join('-')}`}
+              className="cursor-pointer"
             >
-              <GovIcon
-                name="journal-text"
-                slot="icon-start"
-                type="components"
-              />
-              <span className="font-bold text-blue-primary cursor-pointer">
-                {capitalizeFirst(ontology)}
-              </span>
-            </GovTag>
-          </Link>
+              <GovTag
+                color="success"
+                type="subtle"
+                size="xs"
+                className="w-fit border bg-white! cursor-pointer"
+              >
+                <GovIcon
+                  name="journal-text"
+                  slot="icon-start"
+                  type="components"
+                />
+                <span className="font-bold text-blue-primary cursor-pointer">
+                  {capitalizeFirst(ontology)}
+                </span>
+              </GovTag>
+            </Link>
+          </div>
         </div>
         <div className="flex justify-between gap-3 w-full">
           <div>
@@ -91,13 +101,6 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                     <LanguageSwitcher item={conceptDetail['název']!} />
                   </Section>
                 )}
-              {conceptDetail['alternativní-název'] && (
-                <Section title={t('Sections.AlternativeName')}>
-                  <LanguageSwitcher
-                    item={conceptDetail['alternativní-název']!}
-                  />
-                </Section>
-              )}
             </div>
           </div>
 
