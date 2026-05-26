@@ -178,7 +178,10 @@
       "Public": "Veřejný",
       "NonPublic": "Neveřejný",
       "Name": "Název",
-      "OpenInESbirka": "Otevřít v e-sbírce"
+      "OpenInESbirka": "Otevřít v e-sbírce",
+      "Loading": "Načítání...",
+      "NoResults": "Pro tohle nemáme žádné výsledky",
+      "AddConcept": "+ Přidat další pojem"
     }
   },
   "Term": {

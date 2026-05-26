@@ -4,6 +4,7 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { SearchResultDto, useSearch } from '@/api/generated';
@@ -30,6 +31,7 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
   const [allResults, setAllResults] = useState<SearchResultDto[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations('ConceptDetail.Main');
 
   const { setValue } = useFormContext();
 
@@ -50,7 +52,6 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
     }
   }, [selected.length, single]);
 
-  // Reset pagination whenever the query changes
   useEffect(() => {
     setOffset(0);
     setAllResults([]);
@@ -61,7 +62,6 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
     { query: { enabled: query.length > 3 } },
   );
 
-  // Accumulate pages
   useEffect(() => {
     if (search?.data?.results && !isFetching) {
       setAllResults((prev) =>
@@ -75,7 +75,6 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
   const totalCount = search?.data?.totalConcepts ?? 0;
   const hasMore = totalCount > allResults.length;
 
-  // Infinite scroll sentinel inside the dropdown
   useEffect(() => {
     if (!sentinelRef.current) return;
 
@@ -92,7 +91,6 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
     return () => observer.disconnect();
   }, [isFetching, hasMore]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -181,11 +179,11 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
                         size="s"
                         className="animate-spin"
                       />
-                      Načítání...
+                      {t('Loading')}
                     </div>
                   ) : allResults.length === 0 ? (
                     <div className="p-4 text-gray-500 text-sm text-center">
-                      Pro tohle nemáme žádné výsledky
+                      {t('NoResults')}
                     </div>
                   ) : (
                     <>
@@ -222,12 +220,19 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
                               color="success"
                               className="mt-0.5! shrink-0"
                             />
-                            {item.ontologyIri}
+                            {item.ontologyIri
+                              ?.split('/')
+                              .pop()
+                              ?.replace(/---/g, '\x00')
+                              .replace(/-/g, ' ')
+                              .replace(/\x00/g, ' - ')
+                              .normalize('NFD')
+                              .replace(/[\u0300-\u036f]/g, '')
+                              .normalize('NFC') || ''}
                           </span>
                         </button>
                       ))}
 
-                      {/* Infinite scroll sentinel */}
                       <div
                         ref={sentinelRef}
                         className="py-2 flex justify-center"
@@ -252,7 +257,7 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
               onClick={() => setShowInput(true)}
               className="self-start text-sm text-blue-primary hover:underline cursor-pointer font-medium flex items-center gap-1"
             >
-              + Přidat další pojem
+              {t('AddConcept')}
             </button>
           )}
         </div>
