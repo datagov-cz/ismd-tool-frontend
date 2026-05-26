@@ -3,6 +3,8 @@ import { useTranslations } from 'next-intl';
 import { RppAgenda, RppIsvs } from '@/api/generated';
 import { Section } from '../Section';
 
+import { LegislativeSource } from './LegalSection';
+
 export const AgendaSection = ({
   agenda,
   agendovyInformacniSystem,
@@ -42,7 +44,13 @@ export const AgendaSection = ({
       )}
       {neverejnostUdaje && (
         <Section title={t('Sections.ProvingNonPublicData')}>
-          {neverejnostUdaje.map((item) => item)}
+          <div className="space-y-2">
+            {neverejnostUdaje.map((item) => {
+              return (
+                <LegislativeSource item={{ fragmentIri: item }} key={item} />
+              );
+            })}
+          </div>
         </Section>
       )}
     </div>

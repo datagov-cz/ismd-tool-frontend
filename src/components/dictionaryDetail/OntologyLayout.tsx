@@ -97,7 +97,7 @@ export const OntologyLayout = ({
       );
   }, [concepts, filterQuery, getRelatedTerms]);
 
-  const isLoggedOutOrNKD = !!user?.userId || source === 'NKD';
+  const isLoggedOutOrNKD = !user?.userId || source === 'NKD';
 
   return (
     <div className="w-full h-full flex-1">

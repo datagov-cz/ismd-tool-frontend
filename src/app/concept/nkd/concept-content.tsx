@@ -8,7 +8,6 @@ import { ConceptHeaderNKD } from '@/components/conceptDetail/ConceptHeaderNKD';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { CircularLoader } from '@/components/shared/CircularLoader';
-import { useResolvedConceptReferences } from '@/hooks/useResolvedConceptReferences';
 
 interface Props {
   slug: string;
@@ -17,10 +16,6 @@ interface Props {
 export const ConceptContentNKD = ({ slug }: Props) => {
   const concept = useGetNkdConceptDetail({ iri: slug });
   const router = useRouter();
-
-  const { resolved } = useResolvedConceptReferences(
-    concept.data?.data?.conceptDetail,
-  );
 
   if (concept.isLoading)
     return (
@@ -59,7 +54,6 @@ export const ConceptContentNKD = ({ slug }: Props) => {
         source="NKD"
         conceptDetail={conceptDetail}
         conceptType={getType()}
-        resolvedRelations={resolved}
       >
         <OtherOntologyConcepts
           ontology={concept.data.data?.ontologyIri || ''}

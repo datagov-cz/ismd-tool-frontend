@@ -81,8 +81,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -152,7 +152,9 @@ export interface ResolveConceptsResponse {
   resolved?: ResolveConceptsResponseResolved;
 }
 
-export type ResolvedConceptDtoOntologyDescription = { [key: string]: string };
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
 
 export type ResolvedConceptDtoSource =
   (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
@@ -167,8 +169,10 @@ export const ResolvedConceptDtoSource = {
 
 export interface ResolvedConceptDto {
   iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
   ontologyIri?: string;
-  ontologyDescription?: ResolvedConceptDtoOntologyDescription;
+  ontologyName?: ResolvedConceptDtoOntologyName;
   source?: ResolvedConceptDtoSource;
 }
 
@@ -517,6 +521,10 @@ export type ConceptDetailModelDefinice = { [key: string]: string };
 
 export type ConceptDetailModelPopis = { [key: string]: string };
 
+export type ConceptDetailModelReferencovanéPojmyResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
 export interface ConceptDetailModel {
   conceptProperties?: ConceptPropertiesModel[];
   conceptRelationships?: ConceptRelationshipsModel[];
@@ -548,15 +556,18 @@ export interface ConceptDetailModel {
   'agendový-informační-systém-resolved'?: RppIsvs;
   'agenda-resolved'?: RppAgenda;
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
+  'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
 export interface ConceptPropertiesModel {
   name?: string;
+  iri?: string;
   ref?: string;
 }
 
 export interface ConceptRelationshipsModel {
   name?: string;
+  iri?: string;
   ref?: string;
 }
 
@@ -1400,7 +1411,7 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
 };
 
 /**
- * Pro pole IRI pojmů vrací mapu IRI → {ontologyIri, ontologyDescription, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
+ * Pro pole IRI pojmů vrací mapu IRI → {conceptName, conceptSlug, ontologyIri, ontologyName, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. {@code conceptSlug} je vyplněn pouze pro ISMD pojmy; NKD pojmy se navigují podle IRI. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
  * @summary Získání metadat referencovaných pojmů
  */
 export const resolveConceptReferences = (
