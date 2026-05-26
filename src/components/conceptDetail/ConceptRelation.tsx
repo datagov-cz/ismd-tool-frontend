@@ -1,5 +1,5 @@
+import { ConceptDetailModelReferencovanéPojmyResolved } from '@/api/generated';
 import { iriToLabel } from '@/lib/concept-utils';
-import { ResolvedConceptsMap } from '@/utils/conceptRelations';
 
 import { Section } from './Section';
 import { IriRelatedTerm } from './Term/IriRelatedTerm';
@@ -7,21 +7,15 @@ import { IriRelatedTerm } from './Term/IriRelatedTerm';
 type Props = {
   title: string;
   iri: string;
-  source: 'NKD' | 'ISMD';
-  resolvedRelations: ResolvedConceptsMap;
+  resolvedRelations?: ConceptDetailModelReferencovanéPojmyResolved;
 };
 
-export const ConceptRelation = ({
-  title,
-  iri,
-  source,
-  resolvedRelations,
-}: Props) => {
+export const ConceptRelation = ({ title, iri, resolvedRelations }: Props) => {
   const label = iriToLabel(iri);
   if (!label) return null;
   return (
     <Section title={title}>
-      <IriRelatedTerm iri={iri} source={source} resolved={resolvedRelations} />
+      <IriRelatedTerm iri={iri} resolved={resolvedRelations} />
     </Section>
   );
 };

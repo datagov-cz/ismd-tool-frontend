@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
-import { ResolvedConceptsMap } from '@/utils/conceptRelations';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ConceptRelation } from './ConceptRelation';
 import { MissingConceptFields } from './MissingConceptFields';
@@ -19,7 +19,6 @@ interface Props {
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   children?: React.ReactNode;
   source: 'NKD' | 'ISMD';
-  resolvedRelations: ResolvedConceptsMap;
 }
 
 export const ConceptLayout = ({
@@ -27,9 +26,10 @@ export const ConceptLayout = ({
   conceptType,
   children,
   source,
-  resolvedRelations,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
+  const { user } = useCurrentUser();
+  const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start">
       <div className="w-full py-6 col-span-6 flex flex-col gap-2">
@@ -40,7 +40,6 @@ export const ConceptLayout = ({
           popis={conceptDetail.popis}
           ekvivalentniPojem={conceptDetail['ekvivalentní-pojem']}
           nadrazenaTrida={conceptDetail['nadřazená-třída']}
-          source={source}
           resolved={resolvedRelations}
         />
 
@@ -56,7 +55,6 @@ export const ConceptLayout = ({
             <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
               {conceptDetail['definiční-obor'] && (
                 <ConceptRelation
-                  source={source}
                   title={t('Sections.DefinicniObor')}
                   iri={conceptDetail['definiční-obor']}
                   resolvedRelations={resolvedRelations}
@@ -64,7 +62,6 @@ export const ConceptLayout = ({
               )}
               {conceptDetail['obor-hodnot'] && (
                 <ConceptRelation
-                  source={source}
                   iri={conceptDetail['obor-hodnot']}
                   title={t('Sections.Range')}
                   resolvedRelations={resolvedRelations}
@@ -78,7 +75,6 @@ export const ConceptLayout = ({
             <Section title={t('Sections.SupersededProperty')}>
               <SuperClassList
                 items={conceptDetail['nadřazená-vlastnost']}
-                source={source}
                 resolved={resolvedRelations}
               />
             </Section>
@@ -88,7 +84,6 @@ export const ConceptLayout = ({
           <Section title={t('Sections.SupersededRelation')}>
             <SuperClassList
               items={conceptDetail['nadřazený-vztah']}
-              source={source}
               resolved={resolvedRelations}
             />
           </Section>
@@ -121,7 +116,7 @@ export const ConceptLayout = ({
           zpusobZiskaniUdaje={conceptDetail['způsob-získání-údaje']}
         />
 
-        {source === 'ISMD' && (
+        {source === 'ISMD' && user?.userId && (
           <MissingConceptFields
             conceptDetail={conceptDetail}
             conceptType={conceptType}

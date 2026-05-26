@@ -9,7 +9,6 @@ import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { CircularLoader } from '@/components/shared/CircularLoader';
-import { useResolvedConceptReferences } from '@/hooks/useResolvedConceptReferences';
 import { extractOntologyFromUrl } from '@/utils/conceptDetailUtils';
 
 interface Props {
@@ -19,10 +18,6 @@ interface Props {
 export const ConceptContent = ({ slug }: Props) => {
   const concept = useGetConceptDetail(slug);
   const { data: user } = useGetCurrentUser();
-
-  const { resolved } = useResolvedConceptReferences(
-    concept.data?.data?.conceptDetail,
-  );
 
   const router = useRouter();
 
@@ -69,13 +64,13 @@ export const ConceptContent = ({ slug }: Props) => {
         loggedIn={user?.success === true}
         owner={conceptMetadata.user?.userId === user?.data?.userId}
         source={'ISMD'}
+        slug={slug}
       />
 
       <ConceptLayout
         conceptDetail={conceptDetail}
         conceptType={conceptType}
         source="ISMD"
-        resolvedRelations={resolved}
       >
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}
