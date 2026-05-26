@@ -171,7 +171,9 @@
         "Updated": "aktualizováno",
         "Back": "Zpět",
         "EditConcept": "Upravit pojem",
-        "ConceptComments": "Komentáře k pojmu"
+        "ConceptComments": "Komentáře k pojmu",
+        "NotFound": "Pojem nenalezen",
+        "InOntology": "Ve slovníku"
       },
       "Public": "Veřejný",
       "NonPublic": "Neveřejný",

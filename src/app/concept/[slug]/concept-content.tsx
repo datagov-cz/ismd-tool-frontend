@@ -2,6 +2,7 @@
 
 import { GovButton } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { useGetConceptDetail } from '@/api/generated';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
@@ -19,6 +20,7 @@ interface Props {
 export const ConceptContent = ({ slug }: Props) => {
   const concept = useGetConceptDetail(slug);
   const { user } = useCurrentUser();
+  const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
   const router = useRouter();
 
@@ -32,13 +34,13 @@ export const ConceptContent = ({ slug }: Props) => {
   if (!concept.data)
     return (
       <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
-        <h1 className="text-2xl">Pojem nenalezen</h1>
+        <h1 className="text-2xl">{t('NotFound')}</h1>
         <GovButton
           type="solid"
           color="primary"
           onGovClick={() => router.back()}
         >
-          Zpět
+          {t('Back')}
         </GovButton>
       </div>
     );

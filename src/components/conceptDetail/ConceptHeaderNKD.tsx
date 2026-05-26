@@ -32,9 +32,11 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
             {t('Main.ControlPanel.Back')}
           </button>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm">Ve slovníku:</span>
+            <span className="font-bold text-sm">
+              {t('Main.ControlPanel.InOntology')}:
+            </span>
             <Link
-              href={`/dictionary/${ontology.split(' ').join('-')}`}
+              href={`/dictionary/nkd?iri=${ontology}`}
               className="cursor-pointer"
             >
               <GovTag
@@ -49,7 +51,17 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   type="components"
                 />
                 <span className="font-bold text-blue-primary cursor-pointer">
-                  {capitalizeFirst(ontology)}
+                  {capitalizeFirst(
+                    ontology
+                      ?.split('/')
+                      .pop()
+                      ?.replace(/---/g, '\x00')
+                      .replace(/-/g, ' ')
+                      .replace(/\x00/g, ' - ')
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                      .normalize('NFC') || '',
+                  )}
                 </span>
               </GovTag>
             </Link>
