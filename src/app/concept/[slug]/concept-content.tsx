@@ -3,10 +3,11 @@
 import { GovButton } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
 
-import { useGetConceptDetail, useGetCurrentUser } from '@/api/generated';
+import { useGetConceptDetail } from '@/api/generated';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useResolvedConceptReferences } from '@/hooks/useResolvedConceptReferences';
@@ -18,7 +19,7 @@ interface Props {
 
 export const ConceptContent = ({ slug }: Props) => {
   const concept = useGetConceptDetail(slug);
-  const { data: user } = useGetCurrentUser();
+  const { user } = useCurrentUser();
 
   const { resolved } = useResolvedConceptReferences(
     concept.data?.data?.conceptDetail,
@@ -66,8 +67,8 @@ export const ConceptContent = ({ slug }: Props) => {
         conceptId={conceptMetadata.id}
         isPublished={conceptMetadata.isPublished}
         commentsCount={conceptMetadata.comments?.length ?? 0}
-        loggedIn={user?.success === true}
-        owner={conceptMetadata.user?.userId === user?.data?.userId}
+        loggedIn={!!user?.userId}
+        owner={conceptMetadata.user?.userId === user?.userId}
         source={'ISMD'}
         slug={slug}
       />
@@ -84,12 +85,12 @@ export const ConceptContent = ({ slug }: Props) => {
         />
       </ConceptLayout>
 
-      {user?.data?.userId && (
+      {user?.userId && (
         <CommentSidebox
           conceptIRI={conceptDetail.iri}
           comments={conceptMetadata.comments}
           refetch={() => concept.refetch()}
-          userId={user?.data?.userId}
+          userId={user?.userId}
         />
       )}
     </>
