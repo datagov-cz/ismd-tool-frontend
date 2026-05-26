@@ -10,7 +10,11 @@ import {
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { SearchSource, SearchType as ApiSearchType } from '@/api/generated';
+import {
+  SearchSource,
+  SearchType as ApiSearchType,
+  useGetCurrentUser,
+} from '@/api/generated';
 
 export type SearchFilter = 'Pojem' | 'Slovník' | 'Rozpracovaný';
 
@@ -72,6 +76,12 @@ type Props = {
 export const SearchTypesPopover = ({ value, onChange }: Props) => {
   const t = useTranslations('SearchTypes');
   const [open, setOpen] = useState(false);
+  const { data } = useGetCurrentUser();
+
+  const isLoggedIn = !!data?.data?.userId;
+  const visibleFilters = SEARCH_FILTERS.filter(
+    (f) => f.key !== 'Rozpracovaný' || isLoggedIn,
+  );
 
   const toggle = (filter: SearchFilter) =>
     onChange(
@@ -108,27 +118,29 @@ export const SearchTypesPopover = ({ value, onChange }: Props) => {
         ) : (
           <span className="flex items-center gap-2 font-normal">
             {t('Selected')}
-            {SEARCH_FILTERS.filter((f) => value.includes(f.key)).map((f) => (
-              <GovTooltip
-                key={f.key}
-                position="bottom"
-                className="border-0! mt-1"
-                message={t(`Types.${f.key}`)}
-              >
-                <GovIcon
-                  type={f.iconType}
-                  name={f.icon}
-                  color={f.color}
-                  size="s"
-                />
-              </GovTooltip>
-            ))}
+            {visibleFilters
+              .filter((f) => value.includes(f.key))
+              .map((f) => (
+                <GovTooltip
+                  key={f.key}
+                  position="bottom"
+                  className="border-0! mt-1"
+                  message={t(`Types.${f.key}`)}
+                >
+                  <GovIcon
+                    type={f.iconType}
+                    name={f.icon}
+                    color={f.color}
+                    size="s"
+                  />
+                </GovTooltip>
+              ))}
           </span>
         )}
       </GovButton>
 
       <ul className="p-0!" slot="list">
-        {SEARCH_FILTERS.map(({ key, icon, iconType, color }) => (
+        {visibleFilters.map(({ key, icon, iconType, color }) => (
           <li key={key}>
             <GovButton
               type="base"
