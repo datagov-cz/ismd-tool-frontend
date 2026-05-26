@@ -2,11 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 
-import {
-  ConceptDetailModel,
-  useGetCurrentUser,
-  useGetOntologyDetail,
-} from '@/api/generated';
+import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
@@ -21,8 +18,7 @@ interface Props {
 export const DictionaryContent = ({ slug }: Props) => {
   const t = useTranslations('DictionaryDetail');
   const ontology = useGetOntologyDetail(encodeURIComponent(slug));
-  const { data } = useGetCurrentUser();
-  const user = data?.data;
+  const { user } = useCurrentUser();
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
 
@@ -81,10 +77,6 @@ export const DictionaryContent = ({ slug }: Props) => {
       concepts={ontologyDetail.pojmy}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}
-      updatedAt={
-        ontologyDetail['časový-okamžik-poslední-změny'] ||
-        ontologyMetadata.updatedAt
-      }
       conceptCount={ontologyDetail.pojmy?.length}
       metaData={ontologyMetadata}
       slug={slug}
@@ -96,6 +88,10 @@ export const DictionaryContent = ({ slug }: Props) => {
         user={ontologyMetadata.user}
         commentsCount={ontologyMetadata.comments?.length}
         slug={slug}
+        updatedAt={
+          ontologyDetail['časový-okamžik-poslední-změny'] ||
+          ontologyMetadata.updatedAt
+        }
       />
       {user?.userId && (
         <CommentSidebox

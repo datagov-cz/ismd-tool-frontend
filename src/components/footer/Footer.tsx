@@ -41,7 +41,7 @@ export const Footer = ({ isGated = false }: Props) => {
             </ul>
           </div>
           <div className="space-y-4">
-            <hr className="!border-t-footer-separator" />
+            <hr className="border-t-footer-separator!" />
             <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-secondary text-xs">
               <p>{t('FooterCopySection.Copyright')}</p>
               <div className="flex gap-x-3">
@@ -140,7 +140,7 @@ export const Footer = ({ isGated = false }: Props) => {
               </GovLink>
             </li>
           </ul>
-          <hr className="!border-t-footer-separator" />
+          <hr className="border-t-footer-separator!" />
           <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-secondary text-xs">
             <p>{t('FooterCopySection.Copyright')}</p>
             <div className="flex gap-x-3">

@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 
-import {
-  OntologyMetadataModel,
-  useGetCurrentUser,
-  useGetOntologyList,
-} from '@/api/generated';
+import { OntologyMetadataModel, useGetOntologyList } from '@/api/generated';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 import { DictionaryCardProps } from '../shared/DictionaryCard/DictionaryCard';
 
 import { OntologyList } from './OntologyList';
@@ -30,11 +27,11 @@ const toCardItem = (
 
 export const ISMDListWrapper = () => {
   const [filterQuery, setFilterQuery] = useState('');
-  const { data: user } = useGetCurrentUser();
+  const { user } = useCurrentUser();
 
   const { data, isFetching } = useGetOntologyList(
-    { userId: user?.data?.userId, isPublished: false },
-    { query: { enabled: !!user?.data?.userId } },
+    { userId: user?.userId, isPublished: false },
+    { query: { enabled: !!user?.userId } },
   );
 
   const items = (data?.data ?? [])
