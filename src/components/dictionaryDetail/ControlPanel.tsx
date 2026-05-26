@@ -5,8 +5,9 @@ import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { useGetCurrentUser, UserModel } from '@/api/generated';
+import { UserModel } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ControlPanelButton } from './ControlPanelButton';
 import { DeleteDialog } from './DeleteDialog';
@@ -19,6 +20,7 @@ interface Props {
   user?: UserModel;
   commentsCount?: number;
   slug: string;
+  updatedAt?: string;
 }
 
 export const ControlPanel = ({
@@ -28,12 +30,13 @@ export const ControlPanel = ({
   user,
   commentsCount,
   slug,
+  updatedAt,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   const tEdit = useTranslations('DictionaryDetail.EditOntology');
-  const { data } = useGetCurrentUser();
+  const { user: currentUser } = useCurrentUser();
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
@@ -48,49 +51,74 @@ export const ControlPanel = ({
     }
   };
 
-  const isOwner = user?.userId === data?.data?.userId;
+  const isOwner = user?.userId === currentUser?.userId;
 
-  const isLoggedOut = data?.success !== true;
+  const isLoggedOut = !currentUser?.userId;
 
   return (
-    <div className="flex gap-2 h-fit w-full justify-between relative">
-      <div className="flex gap-8">
-        {isOwner && (
-          <GovButton
-            nativeType="button"
-            color="primary"
-            type="solid"
-            size="s"
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
-          >
-            <GovIcon
-              name="pencil-square"
-              size="l"
-              slot="icon-start"
-              type="components"
-            />
-            {tEdit('Title')}
-          </GovButton>
-        )}
+    <div className="flex flex-col gap-2 h-full w-fit justify-between items-end relative">
+      {updatedAt && (
+        <span className="text-sm text-dark-primary">
+          {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
+        </span>
+      )}
+      <div className="flex gap-2 flex-col items-end">
+        <div className="flex gap-8">
+          {isOwner && (
+            <GovButton
+              nativeType="button"
+              color="primary"
+              type="solid"
+              size="s"
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
+            >
+              <GovIcon
+                name="pencil-square"
+                size="l"
+                slot="icon-start"
+                type="components"
+              />
+              {tEdit('Title')}
+            </GovButton>
+          )}
 
-        {!isLoggedOut && (
+          {!isLoggedOut && (
+            <GovButton
+              nativeType="button"
+              color="primary"
+              type="outlined"
+              size="s"
+              onGovClick={() => setIsCommentBoxOpen(true)}
+            >
+              <GovIcon
+                name="chat-square-text"
+                size="l"
+                slot="icon-start"
+                type="components"
+              />
+              {tEdit('Comments')}
+              {(commentsCount ?? 0) > 0 && (
+                <span className="font-normal">[{commentsCount}]</span>
+              )}
+            </GovButton>
+          )}
+        </div>
+
+        {isOwner && (
           <GovButton
             nativeType="button"
             color="primary"
             type="outlined"
             size="s"
-            onGovClick={() => setIsCommentBoxOpen(true)}
+            disabled
           >
             <GovIcon
-              name="chat-square-text"
+              name="diagram-3"
               size="l"
               slot="icon-start"
               type="components"
             />
-            {tEdit('Comments')}
-            {(commentsCount ?? 0) > 0 && (
-              <span className="font-normal">[{commentsCount}]</span>
-            )}
+            {t('CreateDiagram')}
           </GovButton>
         )}
       </div>

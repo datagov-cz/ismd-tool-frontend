@@ -3,15 +3,15 @@
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import { useGetCurrentUser, useGetOntologyList } from '@/api/generated';
+import { useGetOntologyList } from '@/api/generated';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 import { CircularLoader } from '../shared/CircularLoader';
 import { DictionaryCard } from '../shared/DictionaryCard/DictionaryCard';
 
 export const DraftDictionariesSection = () => {
   const t = useTranslations('Home');
 
-  const { data } = useGetCurrentUser();
-  const user = data?.data;
+  const { user } = useCurrentUser();
 
   const ontologies = useGetOntologyList(
     { userId: user?.userId, isPublished: false },

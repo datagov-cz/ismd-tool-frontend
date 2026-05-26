@@ -2,14 +2,14 @@
 
 import { useTranslations } from 'next-intl';
 
-import { useGetCurrentUser } from '@/api/generated';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { UploadFlow } from '@/components/uploadFlow/UploadFlow';
 
 import { CreateForm } from './create-form';
 
 const CreateDictionary = () => {
-  const { data, isLoading } = useGetCurrentUser();
+  const { user, isLoading } = useCurrentUser();
   const t = useTranslations('CreateOntology');
 
   if (isLoading)
@@ -19,7 +19,7 @@ const CreateDictionary = () => {
       </div>
     );
 
-  if (!data?.success) return null;
+  if (user?.userId) return null;
 
   return (
     <div className="w-full py-10">
