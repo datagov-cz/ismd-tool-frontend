@@ -61,43 +61,63 @@ export const ControlPanel = ({
           {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
         </span>
       )}
-      <div className="flex gap-8">
-        {isOwner && (
-          <GovButton
-            nativeType="button"
-            color="primary"
-            type="solid"
-            size="s"
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
-          >
-            <GovIcon
-              name="pencil-square"
-              size="l"
-              slot="icon-start"
-              type="components"
-            />
-            {tEdit('Title')}
-          </GovButton>
-        )}
+      <div className="flex gap-2 flex-col items-end">
+        <div className="flex gap-8">
+          {isOwner && (
+            <GovButton
+              nativeType="button"
+              color="primary"
+              type="solid"
+              size="s"
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
+            >
+              <GovIcon
+                name="pencil-square"
+                size="l"
+                slot="icon-start"
+                type="components"
+              />
+              {tEdit('Title')}
+            </GovButton>
+          )}
 
-        {!isLoggedOut && (
+          {!isLoggedOut && (
+            <GovButton
+              nativeType="button"
+              color="primary"
+              type="outlined"
+              size="s"
+              onGovClick={() => setIsCommentBoxOpen(true)}
+            >
+              <GovIcon
+                name="chat-square-text"
+                size="l"
+                slot="icon-start"
+                type="components"
+              />
+              {tEdit('Comments')}
+              {(commentsCount ?? 0) > 0 && (
+                <span className="font-normal">[{commentsCount}]</span>
+              )}
+            </GovButton>
+          )}
+        </div>
+
+        {isOwner && (
           <GovButton
             nativeType="button"
             color="primary"
             type="outlined"
             size="s"
-            onGovClick={() => setIsCommentBoxOpen(true)}
+            disabled
           >
             <GovIcon
-              name="chat-square-text"
+              name="diagram-3"
               size="l"
               slot="icon-start"
               type="components"
             />
-            {tEdit('Comments')}
-            {(commentsCount ?? 0) > 0 && (
-              <span className="font-normal">[{commentsCount}]</span>
-            )}
+            {t('CreateDiagram')}
           </GovButton>
         )}
       </div>

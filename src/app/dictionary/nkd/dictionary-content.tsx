@@ -24,7 +24,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
     ontologyDetail ? { slug, source: 'NKD' } : null,
     user?.userId,
   );
-
+  console.log(ontology.data, 'test');
   if (ontology.isLoading)
     return (
       <div className="h-full flex items-center justify-center w-full">
@@ -41,7 +41,6 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
       title={ontologyDetail.název?.cs ?? ''}
       popis={ontologyDetail.popis}
       concepts={ontologyDetail.pojmy}
-      updatedAt={ontologyDetail['časový-okamžik-poslední-změny']}
       conceptCount={ontologyDetail.pojmy?.length}
       getConceptSlug={nkdSlug}
       getRelatedTerms={(parent) =>

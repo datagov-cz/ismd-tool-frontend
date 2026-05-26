@@ -223,7 +223,8 @@
         "Delete": "Smazat",
         "Add": "Přidat",
         "Concepts": "pojmů",
-        "Updated": "aktualizováno"
+        "Updated": "aktualizováno",
+        "CreateDiagram": "Vytvořit diagram"
       },
       "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",
