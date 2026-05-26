@@ -4,11 +4,8 @@ import { useEffect, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import {
-  useGetCurrentUser,
-  useGetNkdOntologyList,
-  useGetOntologyList,
-} from '@/api/generated';
+import { useGetNkdOntologyList, useGetOntologyList } from '@/api/generated';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 import {
   DictionaryCard,
   DictionaryCardProps,
@@ -28,8 +25,7 @@ const getOntologyHref = (entry: VisitedEntry) => {
 
 export const VisitedOntologies = () => {
   const t = useTranslations('Home');
-  const { data } = useGetCurrentUser();
-  const user = data?.data;
+  const { user } = useCurrentUser();
 
   const [visitedEntries, setVisitedEntries] = useState<VisitedEntry[]>([]);
 

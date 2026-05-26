@@ -105,28 +105,20 @@ export const DictionaryEditForm = ({
 
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full bg-primary-subtlest">
-        <div className="w-full relative max-w-250 mx-auto pt-2 pb-3">
-          <GovButton
-            type="base"
-            color="primary"
-            size="s"
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${metadata.slug}`}
-          >
-            <GovIcon
-              slot="icon-start"
-              name="arrow-right"
-              size="l"
-              className="rotate-180"
-            />
-            {t('Back')}
-          </GovButton>
-        </div>
-      </div>
-      <div className="w-full relative max-w-250 mx-auto py-3">
+      <div className="w-full relative max-w-250 mx-auto py-5">
         <div className="w-full space-y-6 relative">
-          <div className="space-y-3">
+          <div className="space-y-3 relative">
             <div className="flex gap-2 items-center">
+              <GovButton
+                type="base"
+                color="primary"
+                size="s"
+                className="absolute top-2 left-0 -translate-x-full"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${metadata.slug}`}
+              >
+                <GovIcon slot="icon-start" name="chevron-left" size="l" />
+                {t('Back')}
+              </GovButton>
               <GovTag
                 color="success"
                 size="xs"

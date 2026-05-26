@@ -223,9 +223,10 @@
         "Delete": "Smazat",
         "Add": "Přidat",
         "Concepts": "pojmů",
-        "Updated": "aktualizováno"
+        "Updated": "aktualizováno",
+        "CreateDiagram": "Vytvořit diagram"
       },
-      "BackToHome": "Zpět k úvodu",
+      "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",
       "SearchConcepts": "Hledat výraz",
       "Ontology": "Slovníky"
