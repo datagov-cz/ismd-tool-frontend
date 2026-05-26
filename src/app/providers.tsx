@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 
+import { CurrentUserProvider } from '@/components/contexts/CurrentUserProvider';
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
 import { SessionGuard } from '@/components/contexts/SessionGuard';
@@ -44,8 +45,10 @@ export default function Providers({
         <QueryClientProvider client={queryClient}>
           <SessionProvider session={session} basePath={nextAuthBasePath}>
             <SessionGuard>
-              <ToastWrapper />
-              {children}
+              <CurrentUserProvider>
+                <ToastWrapper />
+                {children}
+              </CurrentUserProvider>
             </SessionGuard>
           </SessionProvider>
         </QueryClientProvider>

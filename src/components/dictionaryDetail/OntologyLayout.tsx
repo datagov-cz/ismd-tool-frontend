@@ -9,12 +9,9 @@ import {
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import {
-  ConceptDetailModel,
-  OntologyMetadataModel,
-  useGetCurrentUser,
-} from '@/api/generated';
+import { ConceptDetailModel, OntologyMetadataModel } from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ValidationSummary } from './validation/ValidationSummary';
 
@@ -54,7 +51,7 @@ export const OntologyLayout = ({
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
-  const { data } = useGetCurrentUser();
+  const { user } = useCurrentUser();
 
   const [filterQuery, setFilterQuery] = useState('');
 
@@ -99,7 +96,7 @@ export const OntologyLayout = ({
       );
   }, [concepts, filterQuery, getRelatedTerms]);
 
-  const isLoggedOutOrNKD = data?.success !== true || source === 'NKD';
+  const isLoggedOutOrNKD = !!user?.userId || source === 'NKD';
 
   return (
     <div className="w-full h-full flex-1">

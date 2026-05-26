@@ -1,10 +1,7 @@
 'use client';
 
-import {
-  ConceptDetailModel,
-  useGetCurrentUser,
-  useGetNkdOntologyDetail,
-} from '@/api/generated';
+import { ConceptDetailModel, useGetNkdOntologyDetail } from '@/api/generated';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { ControlPanelNKD } from '@/components/dictionaryDetail/ControlPanelNKD';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { CircularLoader } from '@/components/shared/CircularLoader';
@@ -16,15 +13,14 @@ interface Props {
 
 export const DictionaryContentNKD = ({ slug }: Props) => {
   const ontology = useGetNkdOntologyDetail({ iri: slug });
-  const { data } = useGetCurrentUser();
-  const user = data?.data;
+  const { user } = useCurrentUser();
+
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
 
   useVisitedOntology(
     ontologyDetail ? { slug, source: 'NKD' } : null,
     user?.userId,
   );
-  console.log(ontology.data, 'test');
   if (ontology.isLoading)
     return (
       <div className="h-full flex items-center justify-center w-full">

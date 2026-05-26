@@ -10,11 +10,8 @@ import {
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import {
-  SearchSource,
-  SearchType as ApiSearchType,
-  useGetCurrentUser,
-} from '@/api/generated';
+import { SearchSource, SearchType as ApiSearchType } from '@/api/generated';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 export type SearchFilter = 'Pojem' | 'Slovník' | 'Rozpracovaný';
 
@@ -76,9 +73,9 @@ type Props = {
 export const SearchTypesPopover = ({ value, onChange }: Props) => {
   const t = useTranslations('SearchTypes');
   const [open, setOpen] = useState(false);
-  const { data } = useGetCurrentUser();
+  const { user } = useCurrentUser();
 
-  const isLoggedIn = !!data?.data?.userId;
+  const isLoggedIn = !!user?.userId;
   const visibleFilters = SEARCH_FILTERS.filter(
     (f) => f.key !== 'Rozpracovaný' || isLoggedIn,
   );

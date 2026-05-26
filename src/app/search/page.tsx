@@ -9,9 +9,9 @@ import {
   SearchResultDto,
   SearchSource,
   SearchType as ApiSearchType,
-  useGetCurrentUser,
 } from '@/api/generated';
 import { useSearch } from '@/api/generated';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
 import { DictionaryCard } from '@/components/shared/DictionaryCard/DictionaryCard';
@@ -38,7 +38,7 @@ const Search = () => {
   const rawSource = searchParams.get('source');
   const activeSource = isSearchSource(rawSource) ? rawSource : undefined;
 
-  const { data: user } = useGetCurrentUser();
+  const { user } = useCurrentUser();
 
   const [offset, setOffset] = useState(0);
   const [results, setResults] = useState<SearchResultDto[]>([]);
@@ -136,7 +136,7 @@ const Search = () => {
               {activeType !== 'ONTOLOGY' &&
                 `[${data?.data?.totalConcepts ?? 0}]`}
             </GovButton>
-            {user?.success === true && (
+            {user?.userId && (
               <GovButton
                 type={
                   activeSource === SearchSource.UNPUBLISHED
