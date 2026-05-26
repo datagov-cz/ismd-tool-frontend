@@ -81,8 +81,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -765,6 +765,7 @@ export interface ResolvedLegalSourceDto {
   fragmentSegments?: FragmentSegment[];
   displayLabel?: string;
   fragmentCitation?: string;
+  fragmentBodyHtml?: string;
   versionValidUntil?: string;
   isLatestVersion?: boolean;
   enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
