@@ -21,5 +21,11 @@ export const IriRelatedTerm = ({ iri, resolved }: Props) => {
       : `/concept/nkd?iri=${iri}`;
 
   if (!label) return null;
-  return <RelatedTerm label={label} href={href} />;
+  return (
+    <RelatedTerm
+      label={label}
+      href={href}
+      ontologyLabel={resolvedConcept?.ontologyName?.cs}
+    />
+  );
 };

@@ -57,7 +57,7 @@ export const RelatedTerm = ({
             color="success"
             className="shrink-0 mt-1!"
           />
-          {label}
+          {ontologyLabel}
         </span>
       )}
     </>

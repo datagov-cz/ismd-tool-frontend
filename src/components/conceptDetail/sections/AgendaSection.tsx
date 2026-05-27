@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { RppAgenda, RppIsvs } from '@/api/generated';
+import { ResolvedLegalSourceDto, RppAgenda, RppIsvs } from '@/api/generated';
 import { Section } from '../Section';
 
 import { LegislativeSource } from './LegalSection';
@@ -12,7 +12,7 @@ export const AgendaSection = ({
 }: {
   agenda?: RppAgenda | string;
   agendovyInformacniSystem?: RppIsvs | string;
-  neverejnostUdaje?: string[];
+  neverejnostUdaje?: ResolvedLegalSourceDto[];
 }) => {
   const t = useTranslations('ConceptDetail');
 
@@ -46,9 +46,7 @@ export const AgendaSection = ({
         <Section title={t('Sections.ProvingNonPublicData')}>
           <div className="space-y-2">
             {neverejnostUdaje.map((item) => {
-              return (
-                <LegislativeSource item={{ fragmentIri: item }} key={item} />
-              );
+              return <LegislativeSource item={item} key={item.displayLabel} />;
             })}
           </div>
         </Section>
