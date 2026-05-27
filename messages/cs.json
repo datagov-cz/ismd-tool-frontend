@@ -359,7 +359,8 @@
       "CreateNewDictSyncError": "Chyba při syncrhonizaci slovníku, zkuste se znova přihlásit",
       "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
       "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení.",
-      "Or": "nebo"
+      "Or": "nebo",
+      "Back": "Zpět"
     },
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",

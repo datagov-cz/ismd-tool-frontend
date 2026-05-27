@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { useGetConceptsByIri } from '@/api/generated';
+import { CircularLoader } from '../shared/CircularLoader';
 
 export const OtherOntologyConcepts = ({
   ontology,
@@ -19,7 +20,7 @@ export const OtherOntologyConcepts = ({
   const [search, setSearch] = useState('');
   const t = useTranslations('ConceptDetail');
 
-  const { data } = useGetConceptsByIri({ iri: ontology, source });
+  const { data, isLoading } = useGetConceptsByIri({ iri: ontology, source });
 
   const concepts = data?.data;
 
@@ -44,23 +45,26 @@ export const OtherOntologyConcepts = ({
           </GovFormInput>
         </GovFormControl>
       </div>
-
-      <div className="flex flex-col overflow-y-auto mt-2">
-        {filtered?.map((item) => (
-          <Link
-            key={item.iri}
-            href={
-              item.slug && item.slug.length > 0
-                ? `/concept/${item.slug}`
-                : `/concept/nkd?iri=${item.iri}`
-            }
-            className="flex gap-3 items-center px-2 py-3 border-b border-gray-border hover:bg-border-primary-subtle/20"
-          >
-            <GovIcon slot="icon-start" name="card-heading" color="primary" />
-            {item.name?.cs ?? ''}
-          </Link>
-        ))}
-      </div>
+      {isLoading ? (
+        <CircularLoader />
+      ) : (
+        <div className="flex flex-col overflow-y-auto mt-2">
+          {filtered?.map((item) => (
+            <Link
+              key={item.iri}
+              href={
+                item.slug && item.slug.length > 0
+                  ? `/concept/${item.slug}`
+                  : `/concept/nkd?iri=${item.iri}`
+              }
+              className="flex gap-3 items-center px-2 py-3 border-b border-gray-border hover:bg-border-primary-subtle/20"
+            >
+              <GovIcon slot="icon-start" name="card-heading" color="primary" />
+              {item.name?.cs ?? ''}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -111,12 +111,10 @@ export const DictionaryCard = ({
         </div>
         <div className="flex gap-2 items-center">
           <CardIconButton icon="link" onClick={handleCopyLink} />
-          {id && (
-            <CardIconButton
-              icon="download"
-              onClick={() => setOpenDownload(true)}
-            />
-          )}
+          <CardIconButton
+            icon="download"
+            onClick={() => setOpenDownload(true)}
+          />
         </div>
       </div>
 
