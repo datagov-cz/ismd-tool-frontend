@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -556,6 +556,7 @@ export interface ConceptDetailModel {
   'agendový-informační-systém-resolved'?: RppIsvs;
   'agenda-resolved'?: RppAgenda;
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
+  'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
   'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
