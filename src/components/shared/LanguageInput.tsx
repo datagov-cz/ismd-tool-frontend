@@ -97,7 +97,7 @@ export const LanguageInput = <T extends FieldValues>({
               <GovFormInput
                 {...register(fieldPath)}
                 placeholder={placeholder}
-                className="[&_span]:border-0! border flex-1 [&_span]:pr-14!"
+                className="[&input]:border-0! flex-1 [&_span]:pr-14!"
                 multiline={multiline}
                 rows={multiline ? 4 : undefined}
               />

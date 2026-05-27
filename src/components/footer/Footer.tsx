@@ -118,28 +118,6 @@ export const Footer = ({ isGated = false }: Props) => {
           </ul>
         </div>
         <div className="space-y-4">
-          <ul className="flex gap-x-8 gap-y-3 flex-wrap">
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-          </ul>
           <hr className="border-t-footer-separator!" />
           <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-secondary text-xs">
             <p>{t('FooterCopySection.Copyright')}</p>

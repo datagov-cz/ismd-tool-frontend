@@ -1,16 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-
-import { ConceptForm } from '@/components/conceptForm/schema/conceptFormSchema';
+import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
 
 const DEBOUNCE_MS = 300;
 const MAX_HISTORY = 100;
 
-export function useFormHistory() {
-  const { reset, getValues } = useFormContext<ConceptForm>();
-  const currentValues = useWatch<ConceptForm>();
+export function useFormHistory<T extends FieldValues = FieldValues>() {
+  const { reset, getValues } = useFormContext<T>();
+  const currentValues = useWatch<T>();
 
-  const history = useRef<ConceptForm[]>([structuredClone(getValues())]);
+  const history = useRef<T[]>([structuredClone(getValues())]);
   const cursor = useRef(0);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isReplaying = useRef(false);

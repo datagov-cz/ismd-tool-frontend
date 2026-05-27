@@ -1,5 +1,6 @@
-import { GovButton, GovIcon, GovTag } from '@gov-design-system-ce/react';
+import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -13,6 +14,8 @@ import {
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
+import { FormSection } from '../conceptForm/components/FormSection';
+import { FormToolbar } from '../conceptForm/components/FormToolbar';
 import { LanguageInput } from '../shared/LanguageInput';
 
 export type DictionaryEditProps = {
@@ -55,6 +58,7 @@ export const DictionaryEditForm = ({
 }: DictionaryEditProps) => {
   const t = useTranslations('DictionaryDetail.EditOntology');
   const invalidator = useQueryInvalidator();
+  const router = useRouter();
 
   const buildValues = () => ({
     nameModel: buildLanguageEntries(detail.název?.cs, {
@@ -75,7 +79,7 @@ export const DictionaryEditForm = ({
 
   const { handleSubmit } = form;
 
-  const mutation = useEditOntology({
+  const { mutate: editOntology, isPending } = useEditOntology({
     mutation: {
       onSuccess: async () => {
         await invalidator.invalidateOntology(metadata.slug || '');
@@ -94,7 +98,7 @@ export const DictionaryEditForm = ({
       emptyLangs,
     ) as DescriptionModelDescription;
 
-    mutation.mutate({
+    editOntology({
       data: {
         nameModel: { name },
         descriptionModel: { description },
@@ -104,60 +108,55 @@ export const DictionaryEditForm = ({
   };
 
   return (
-    <div className="w-full h-full flex-1">
+    <div className="w-full h-full flex-1 bg-primary-subtlest">
       <div className="w-full relative max-w-250 mx-auto py-5">
         <div className="w-full space-y-6 relative">
           <div className="space-y-3 relative">
-            <div className="flex gap-2 items-center">
-              <GovButton
-                type="base"
-                color="primary"
-                size="s"
-                className="absolute top-2 left-0 -translate-x-full"
-                href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${metadata.slug}`}
+            <div className="relative">
+              <button
+                onClick={() => router.back()}
+                className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
               >
-                <GovIcon slot="icon-start" name="chevron-left" size="l" />
+                <GovIcon name="chevron-compact-left" size="s" color="primary" />
                 {t('Back')}
-              </GovButton>
+              </button>
+
+              <span className="font-medium text-md">
+                {t('EditedOntology')}:{' '}
+              </span>
+
               <GovTag
                 color="success"
-                size="xs"
                 type="subtle"
-                className="w-fit h-fit"
+                size="xs"
+                className="w-fit border bg-white!"
               >
                 <GovIcon
-                  slot="icon-start"
                   name="journal-text"
-                  size="l"
-                  className="text-white"
+                  slot="icon-start"
+                  type="components"
                 />
-                {t('Ontology')}
+                <span className="font-bold text-blue-primary">
+                  {detail?.['název']?.cs}
+                </span>
               </GovTag>
-              <h1 className="text-[32px] font-medium">{detail.název?.cs}</h1>
             </div>
             <FormProvider {...form}>
-              <form
-                className="flex flex-col gap-4 border rounded-2xl border-blue-border py-5 px-6 bg-primary-subtlest"
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                <LanguageInput<OntologyEditModel>
-                  name="nameModel"
-                  label={t('Labels.Name')}
-                  placeholder=""
-                />
-                <LanguageInput<OntologyEditModel>
-                  name="descriptionModel"
-                  label={t('Labels.Description')}
-                  placeholder=""
-                />
-                <GovButton
-                  nativeType="submit"
-                  color="primary"
-                  type="solid"
-                  className="self-end"
-                >
-                  {t('Save')}
-                </GovButton>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+                <FormSection label="Základní parametry" icon="tag">
+                  <LanguageInput<OntologyEditModel>
+                    name="nameModel"
+                    label={t('Labels.Name')}
+                    placeholder=""
+                  />
+                  <LanguageInput<OntologyEditModel>
+                    name="descriptionModel"
+                    label={t('Labels.Description')}
+                    placeholder=""
+                  />
+                </FormSection>
+
+                <FormToolbar<OntologyEditModel> isPending={isPending} />
               </form>
             </FormProvider>
           </div>

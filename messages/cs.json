@@ -197,6 +197,7 @@
     },
     "EditOntology": {
       "Title": "Upravit slovník",
+      "EditedOntology": "Upravovaný slovník",
       "Save": "Uložit",
       "Back": "Zpět",
       "Ontology": "Slovníky",

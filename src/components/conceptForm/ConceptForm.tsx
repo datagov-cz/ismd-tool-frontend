@@ -3,6 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
+import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
+
 import { FormToolbar } from './components/FormToolbar';
 import {
   type ConceptForm as ConceptFormValues,
@@ -105,7 +107,7 @@ export const ConceptForm = ({
         <RightsAndObligationsSection />
         <ProclamationSection />
         <OntologySection />
-        <FormToolbar isPending={isPending} />
+        <FormToolbar<ConceptFormType> isPending={isPending} />
       </form>
     </FormProvider>
   );

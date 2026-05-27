@@ -2,15 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import { useFormContext } from 'react-hook-form';
+import { FieldValues, useFormContext } from 'react-hook-form';
 
 import { useFormHistory } from '@/hooks/useFormHistory';
 
-export const FormToolbar = ({ isPending }: { isPending: boolean }) => {
+export const FormToolbar = <T extends FieldValues>({
+  isPending,
+}: {
+  isPending: boolean;
+}) => {
+  const { undo, redo, canUndo, canRedo } = useFormHistory<T>();
   const {
     formState: { isDirty },
   } = useFormContext();
-  const { undo, redo, canUndo, canRedo } = useFormHistory();
   const t = useTranslations('FormToolbar');
 
   const sentinelRef = useRef<HTMLDivElement>(null);
