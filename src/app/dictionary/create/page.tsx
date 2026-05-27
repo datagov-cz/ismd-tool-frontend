@@ -19,7 +19,7 @@ const CreateDictionary = () => {
       </div>
     );
 
-  if (user?.userId) return null;
+  if (!user?.userId) return null;
 
   return (
     <div className="w-full py-10">

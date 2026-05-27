@@ -144,9 +144,15 @@ export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
 
       {open && (
         <div className="pt-3">
-          <div className="border-y py-2 border-gray-border">
-            <p>{data?.data?.fragmentCitation}</p>
-          </div>
+          {data?.data?.fragmentBodyHtml && (
+            <div
+              className="border-y p-4 border-gray-border"
+              dangerouslySetInnerHTML={{
+                __html: data.data.fragmentBodyHtml,
+              }}
+            />
+          )}
+
           <GovButton
             color="primary"
             type="base"
