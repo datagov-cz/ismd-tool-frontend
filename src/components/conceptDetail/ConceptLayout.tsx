@@ -6,6 +6,7 @@ import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ConceptRelation } from './ConceptRelation';
 import { MissingConceptFields } from './MissingConceptFields';
+import { RangeItem } from './RangeItem';
 import { AgendaSection } from './sections/AgendaSection';
 import { AltNameSection } from './sections/AltNameSection';
 import { DefiningSection } from './sections/DefiningSection';
@@ -60,11 +61,10 @@ export const ConceptLayout = ({
                   resolvedRelations={resolvedRelations}
                 />
               )}
-              {conceptDetail['obor-hodnot'] && (
-                <ConceptRelation
-                  iri={conceptDetail['obor-hodnot']}
+              {conceptDetail['obor-hodnot-resolved'] && (
+                <RangeItem
                   title={t('Sections.Range')}
-                  resolvedRelations={resolvedRelations}
+                  item={conceptDetail['obor-hodnot-resolved']}
                 />
               )}
             </div>
@@ -106,7 +106,7 @@ export const ConceptLayout = ({
             conceptDetail['agendový-informační-systém']
           }
           neverejnostUdaje={
-            conceptDetail['ustanovení-dokládající-neveřejnost-údaje']
+            conceptDetail['ustanovení-dokládající-neveřejnost-údaje-resolved']
           }
         />
 

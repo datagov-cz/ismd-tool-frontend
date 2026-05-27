@@ -81,8 +81,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -538,6 +538,7 @@ export interface ConceptDetailModel {
   'ekvivalentní-pojem'?: string[];
   'definiční-obor'?: string;
   'obor-hodnot'?: string;
+  'obor-hodnot-resolved'?: DataTypeDto;
   'nadřazená-třída'?: string[];
   'nadřazený-vztah'?: string[];
   'nadřazená-vlastnost'?: string[];
@@ -564,12 +565,19 @@ export interface ConceptPropertiesModel {
   name?: string;
   iri?: string;
   ref?: string;
+  range?: string;
+  rangeResolved?: DataTypeDto;
 }
 
 export interface ConceptRelationshipsModel {
   name?: string;
   iri?: string;
   ref?: string;
+}
+
+export interface DataTypeDto {
+  code?: string;
+  label?: string;
 }
 
 export interface FragmentSegment {
@@ -918,6 +926,12 @@ export interface GetConceptDto {
 
 export interface ApiResponseDtoListConceptMetadataModel {
   data?: ConceptMetadataModel[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface ApiResponseDtoListDataTypeDto {
+  data?: DataTypeDto[];
   message?: string;
   success?: boolean;
 }
@@ -4821,6 +4835,161 @@ export function useGetConceptList<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetConceptListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací uzavřený seznam podporovaných datových typů (v1: 9 hodnot) v pořadí pro zobrazení v UI. Položky obsahují stabilní {code} a lokalizovaný {label}; IRI se na drátu neposílá.
+ * @summary Číselník datových typů pro vlastnosti
+ */
+export const propertyDatatypes = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListDataTypeDto>(
+    { url: `/api/codelist/property-datatypes`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getPropertyDatatypesQueryKey = () => {
+  return [`/api/codelist/property-datatypes`] as const;
+};
+
+export const getPropertyDatatypesQueryOptions = <
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof propertyDatatypes>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getPropertyDatatypesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof propertyDatatypes>>
+  > = ({ signal }) => propertyDatatypes(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof propertyDatatypes>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type PropertyDatatypesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof propertyDatatypes>>
+>;
+export type PropertyDatatypesQueryError = unknown;
+
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof propertyDatatypes>>,
+          TError,
+          Awaited<ReturnType<typeof propertyDatatypes>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof propertyDatatypes>>,
+          TError,
+          Awaited<ReturnType<typeof propertyDatatypes>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Číselník datových typů pro vlastnosti
+ */
+
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getPropertyDatatypesQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
