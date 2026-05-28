@@ -70,7 +70,7 @@
   "Home": {
     "MainControls": {
       "OpenDictFromFile": "Importovat ze souboru",
-      "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "SearchPlaceholder": "[Cmnd/Ctrl+K] Hledat pojmy a slovníky...",
       "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
