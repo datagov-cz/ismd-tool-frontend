@@ -1,6 +1,5 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
@@ -12,38 +11,21 @@ import { Section } from './Section';
 type Props = {
   ontology: string;
   conceptDetail: ConceptDetailModel;
-  conceptId?: number;
-  commentsCount: number;
-  isPublished?: boolean;
-  loggedIn?: boolean;
-  source?: 'NKD' | 'ISMD';
-  owner: boolean;
 };
 
-export const ConceptHeader = ({
-  ontology,
-  conceptDetail,
-  conceptId,
-  isPublished,
-  commentsCount,
-  loggedIn,
-  source,
-  owner,
-}: Props) => {
+export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
   const isPublic = conceptDetail['typ']?.includes('Veřejný údaj');
 
-  const router = useRouter();
-
   return (
     <div className="w-full bg-white">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
         <div className="flex items-center justify-between relative">
           <button
-            onClick={() => router.back()}
+            onClick={() => window.history.back()}
             className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
@@ -123,13 +105,12 @@ export const ConceptHeader = ({
           </div>
 
           <ControlPanelConcept
-            commentsCount={commentsCount}
-            conceptID={conceptId || 0}
-            isPublished={isPublished || false}
+            conceptID={0}
+            isPublished={true}
             name={conceptDetail.název?.cs || ''}
-            loggedIn={loggedIn}
-            source={source}
-            owner={owner}
+            source={'NKD'}
+            owner={false}
+            commentsCount={0}
           />
         </div>
       </div>

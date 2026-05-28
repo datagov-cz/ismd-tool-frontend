@@ -97,6 +97,7 @@ export const CreateForm = () => {
         );
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Sync failed:', error);
     }
   };
@@ -119,6 +120,7 @@ export const CreateForm = () => {
           t('Form.SavedOffline') || 'Saved offline. Will sync when online.',
         );
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to save offline:', error);
         toast(t('Form.CreateNewDictError'));
       }
@@ -136,6 +138,7 @@ export const CreateForm = () => {
           }
         },
         onError: (error) => {
+          // eslint-disable-next-line no-console
           console.error('Failed to create ontology:', error);
           toast(t('Form.CreateNewDictError'));
         },

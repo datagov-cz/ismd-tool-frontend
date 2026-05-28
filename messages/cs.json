@@ -101,9 +101,10 @@
   "ConceptDetail": {
     "Sections": {
       "AlternativeName": "Alternativní název",
+      "Agenda": "Agenda",
       "Definition": "Definice",
       "Description": "Popis",
-      "SupersededClass": "Nadřazena třída",
+      "SupersededClass": "Nadřazená třída",
       "SupersededConcepts": "Nadřazené pojmy",
       "SupersededRelation": "Nadřazený vztah",
       "SupersededProperty": "Nadřazená vlastnost",
@@ -114,7 +115,28 @@
       "RelatedResources": "Související ustanovení právního předpisu",
       "NonLegalResources": "Definující nelegislativní zdroj",
       "RelatedNonLegalResources": "Související nelegislativní zdroj",
-      "Range": "Obor hodnot"
+      "Range": "Obor hodnot",
+      "DefinicniObor": "Definiční obor",
+      "EquivalentConcept": "Ekvivalentní pojem",
+      "WaySharingData": "Způsob sdílení údajů",
+      "WayObtainingData": "Způsob získání údajů",
+      "DataContentType": "Typ obsahu údajů",
+      "IsPpdf": "Je v PPDF",
+      "AgendaInfoSystem": "Agendový informační systém",
+      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje"
+    },
+    "Groups": {
+      "TypesAndClassification": "Typy a zařazení",
+      "Naming": "Pojmenování",
+      "ConceptMeaning": "Význam pojmu",
+      "ConceptSources": "Zdroje pojmu",
+      "AgendaAndInfoSystems": "Agenda a informační systémy",
+      "PublicityAndPublication": "Veřejnost a publikace",
+      "AnotherConcepts": "Další pojmy ve slovníku",
+      "Search": "Hledat vyraz"
+    },
+    "UdajeKDoplneni": {
+      "Title": "Údaje k doplnění"
     },
     "Registry": {
       "Title": "Registr práv a povinností",
@@ -128,6 +150,18 @@
       "Aquire": "Způsob získání údaje",
       "Share": "Způsob sdílení údaje",
       "Type": "Typ obsahu údaje"
+    },
+    "Main": {
+      "ControlPanel": {
+        "Updated": "aktualizováno",
+        "Back": "Zpět",
+        "EditConcept": "Upravit pojem",
+        "ConceptComments": "Komentáře k pojmu"
+      },
+      "Public": "Veřejný",
+      "NonPublic": "Neveřejný",
+      "Name": "Název",
+      "OpenInESbirka": "Otevřít v e-sbírce"
     }
   },
   "Term": {
@@ -239,7 +273,9 @@
     "NoMoreResults": "Žádné další výsledky"
   },
   "Shared": {
-    "CloseAria": "Zavřít"
+    "CloseAria": "Zavřít",
+    "Yes": "Ano",
+    "No": "Ne"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
@@ -381,7 +417,18 @@
         "BroaderConcept": "Nadřazená třida"
       },
       "Options": {
-        "Undefined": "undefined"
+        "Undefined": "undefined",
+        "DataType": {
+          "Boolean": "Ano či ne",
+          "Date": "Datum",
+          "Time": "Čas",
+          "DateTime": "Datum a čas",
+          "Integer": "Celé číslo",
+          "Decimal": "Desetinné číslo",
+          "Uri": "URI, IRI, URL",
+          "String": "Řetězec",
+          "Text": "Text"
+        }
       }
     },
     "RelationshipConceptFields": {
@@ -416,5 +463,15 @@
       "Slovník": "Slovník",
       "Rozpracovaný": "Rozpracovaný"
     }
+  },
+  "ComingSoon": {
+    "Title": "Připravujeme",
+    "Description": "Nástroj pro tvorbu a správu sémantických slovníků v rámci Informačního systému pro modelování dat dokončujeme. Veřejně dostupný bude v nejbližší době.",
+    "Thanks": "Děkujeme za trpělivost."
+  },
+  "Maintenance": {
+    "Title": "Probíhá údržba",
+    "Description": "Aplikace je dočasně nedostupná z důvodu plánované údržby. Pracujeme na obnovení provozu.",
+    "Thanks": "Děkujeme za pochopení."
   }
 }

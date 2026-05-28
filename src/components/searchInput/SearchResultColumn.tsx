@@ -27,6 +27,21 @@ const TYPE_CONFIG = {
     emptyKey: 'NoConcepts' as const,
     hrefPrefix: '/concept',
   },
+  [SearchType.CLASS]: {
+    titleKey: 'Concepts' as const,
+    emptyKey: 'NoConcepts' as const,
+    hrefPrefix: '/concept',
+  },
+  [SearchType.PROPERTY]: {
+    titleKey: 'Concepts' as const,
+    emptyKey: 'NoConcepts' as const,
+    hrefPrefix: '/concept',
+  },
+  [SearchType.RELATIONSHIP]: {
+    titleKey: 'Concepts' as const,
+    emptyKey: 'NoConcepts' as const,
+    hrefPrefix: '/concept',
+  },
 };
 
 export const SearchResultColumn = ({

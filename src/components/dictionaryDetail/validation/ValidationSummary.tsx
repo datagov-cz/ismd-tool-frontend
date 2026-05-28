@@ -58,7 +58,6 @@ export const ValidationSummary = ({
   const [grouped, setGrouped] = useState<GroupedValidation>();
 
   const validate = useValidateOntology();
-  // const catalogReport = useRequestCatalogRecord();
   const openRule = useValidationSideboxStore((state) => state.openRule);
 
   const handleValidate = () => {

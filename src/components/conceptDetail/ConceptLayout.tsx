@@ -1,108 +1,129 @@
-import { GovAccordion } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
-import { ConceptDetailLink } from '@/components/conceptDetail/ConceptDetailLink';
-import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
-import { DecreeAccordion } from '@/components/conceptDetail/DecreeAccordion';
-import { LanguageSwitcher } from '@/components/conceptDetail/LanguageSwitcher';
-import { LinkList } from '@/components/conceptDetail/LinkList';
-import { RegistryAccordion } from '@/components/conceptDetail/RegistryAcordion';
 import { Section } from '@/components/conceptDetail/Section';
+import { useCurrentUser } from '../contexts/CurrentUserProvider';
+
+import { ConceptRelation } from './ConceptRelation';
+import { MissingConceptFields } from './MissingConceptFields';
+import { RangeItem } from './RangeItem';
+import { AgendaSection } from './sections/AgendaSection';
+import { AltNameSection } from './sections/AltNameSection';
+import { DefiningSection } from './sections/DefiningSection';
+import { LegalSection } from './sections/LegalSection';
+import { PropertiesRelationsSection } from './sections/PropertiesRelationsSection';
+import { SharingTypeSection } from './sections/SharingTypeSection';
+import { SuperClassList } from './SuperClassList';
 
 interface Props {
   conceptDetail: ConceptDetailModel;
-  ontology?: string;
-  definicniObor?: { name: string; link: string } | null;
+  conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   children?: React.ReactNode;
+  source: 'NKD' | 'ISMD';
 }
 
 export const ConceptLayout = ({
   conceptDetail,
-  ontology = '',
-  definicniObor,
+  conceptType,
   children,
+  source,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
-
-  const renderNonLegalSource = (
-    items: ConceptDetailModel['definující-nelegislativní-zdroj'],
-  ) =>
-    items?.map((item, index) =>
-      'název' in item ? (
-        <p key={index}>{item['název'].cs as string}</p>
-      ) : 'url' in item ? (
-        <ConceptDetailLink key={String(item.url)} href={String(item.url)} />
-      ) : null,
-    );
-
+  const { user } = useCurrentUser();
+  const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
-    <div className="w-full relative flex">
-      <div className="w-full pl-2 pr-8 space-y-6 relative">
-        <ConceptHeader
-          ontology={ontology}
-          conceptDetail={conceptDetail}
-          definicniObor={definicniObor}
+    <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start">
+      <div className="w-full py-6 col-span-6 flex flex-col gap-2">
+        <AltNameSection altName={conceptDetail['alternativní-název']} />
+        <DefiningSection
+          conceptType={conceptType}
+          definice={conceptDetail.definice}
+          popis={conceptDetail.popis}
+          ekvivalentniPojem={conceptDetail['ekvivalentní-pojem']}
+          nadrazenaTrida={conceptDetail['nadřazená-třída']}
+          resolved={resolvedRelations}
         />
 
-        <Section title={t('Sections.AlternativeName')}>
-          {conceptDetail['alternativní-název'] && (
-            <LanguageSwitcher item={conceptDetail['alternativní-název']} />
-          )}
-        </Section>
-
-        <Section title={t('Sections.Definition')}>
-          {conceptDetail.definice && (
-            <LanguageSwitcher item={conceptDetail.definice} />
-          )}
-        </Section>
-
-        <Section title={t('Sections.Description')}>
-          {conceptDetail.popis && (
-            <LanguageSwitcher item={conceptDetail.popis} />
-          )}
-        </Section>
-
-        <Section title="Ekvivalentni pojem">
-          {conceptDetail['ekvivalentní-pojem']?.map((item) => (
-            <ConceptDetailLink key={item} href={item || ''} />
-          ))}
-        </Section>
-
-        <Section title={t('Sections.Resource')}>
-          <LinkList
-            items={conceptDetail['definující-ustanovení-právního-předpisu']}
+        {conceptType === 'TRIDA' && (
+          <PropertiesRelationsSection
+            properties={conceptDetail.conceptProperties}
+            relationships={conceptDetail.conceptRelationships}
           />
-        </Section>
+        )}
 
-        <Section title={t('Sections.RelatedResources')}>
-          <LinkList
-            items={conceptDetail['související-ustanovení-právního-předpisu']}
+        {conceptType !== 'TRIDA' &&
+          (conceptDetail['definiční-obor'] || conceptDetail['obor-hodnot']) && (
+            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+              {conceptDetail['definiční-obor'] && (
+                <ConceptRelation
+                  title={t('Sections.DefinicniObor')}
+                  iri={conceptDetail['definiční-obor']}
+                  resolvedRelations={resolvedRelations}
+                />
+              )}
+              {conceptDetail['obor-hodnot-resolved'] && (
+                <RangeItem
+                  title={t('Sections.Range')}
+                  item={conceptDetail['obor-hodnot-resolved']}
+                />
+              )}
+            </div>
+          )}
+
+        {conceptType === 'VLASTNOST' &&
+          conceptDetail['nadřazená-vlastnost'] && (
+            <Section title={t('Sections.SupersededProperty')}>
+              <SuperClassList
+                items={conceptDetail['nadřazená-vlastnost']}
+                resolved={resolvedRelations}
+              />
+            </Section>
+          )}
+
+        {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (
+          <Section title={t('Sections.SupersededRelation')}>
+            <SuperClassList
+              items={conceptDetail['nadřazený-vztah']}
+              resolved={resolvedRelations}
+            />
+          </Section>
+        )}
+        <LegalSection
+          definujiciUstanoveni={
+            conceptDetail['definující-ustanovení-právního-předpisu-resolved']
+          }
+          souvisejiciUstanoveni={
+            conceptDetail['související-ustanovení-právního-předpisu-resolved']
+          }
+          definujícíZdroj={conceptDetail['definující-nelegislativní-zdroj']}
+          souvisejícíZdroj={conceptDetail['související-nelegislativní-zdroj']}
+        />
+
+        <AgendaSection
+          agenda={conceptDetail['agenda-resolved'] ?? conceptDetail.agenda}
+          agendovyInformacniSystem={
+            conceptDetail['agendový-informační-systém-resolved'] ??
+            conceptDetail['agendový-informační-systém']
+          }
+          neverejnostUdaje={
+            conceptDetail['ustanovení-dokládající-neveřejnost-údaje-resolved']
+          }
+        />
+
+        <SharingTypeSection
+          typObsahuUdaje={conceptDetail['typ-obsahu-údaje']}
+          zpusobSdileniUdaje={conceptDetail['způsob-sdílení-údaje']}
+          zpusobZiskaniUdaje={conceptDetail['způsob-získání-údaje']}
+        />
+
+        {source === 'ISMD' && user?.userId && (
+          <MissingConceptFields
+            conceptDetail={conceptDetail}
+            conceptType={conceptType}
           />
-        </Section>
-
-        <Section title={t('Sections.NonLegalResources')}>
-          {renderNonLegalSource(
-            conceptDetail['definující-nelegislativní-zdroj'],
-          )}
-        </Section>
-
-        <Section title={t('Sections.RelatedNonLegalResources')}>
-          {renderNonLegalSource(
-            conceptDetail['související-nelegislativní-zdroj'],
-          )}
-        </Section>
-
-        {/* ISMD-only: range, superclass/property/relation sections, etc. */}
-        {children}
-
-        <div className="w-full pt-10">
-          <GovAccordion noBorder={false}>
-            <RegistryAccordion conceptDetail={conceptDetail} />
-            <DecreeAccordion conceptDetail={conceptDetail} />
-          </GovAccordion>
-        </div>
+        )}
       </div>
+      <div className="w-full pl-10 col-span-4">{children}</div>
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 
-import { GridContainer } from '../dictionaryDetail/GridContainer';
-
 export const Section = ({
   title,
   children,
@@ -9,8 +7,8 @@ export const Section = ({
   title: string;
   children: ReactNode;
 }) => (
-  <GridContainer>
-    <p className="font-medium text-xl col-span-2">{title}</p>
-    <div className="col-span-3 space-y-2">{children}</div>
-  </GridContainer>
+  <div className="border-b border-border-primary-subtle/20 pb-3 flex gap-2 last:border-0 pt-3 first:pt-0 last:pb-0">
+    <span className="font-medium text-sm min-w-40 max-w-40">{title}</span>
+    <div className="col-span-3 space-y-2 w-full">{children}</div>
+  </div>
 );

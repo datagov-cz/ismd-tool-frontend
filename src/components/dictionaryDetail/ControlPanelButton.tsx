@@ -6,6 +6,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   ariaLabel: string;
   onClick: () => void;
   danger?: boolean;
+  label?: string;
 }
 
 export const ControlPanelButton = ({
@@ -13,19 +14,23 @@ export const ControlPanelButton = ({
   ariaLabel,
   danger,
   onClick,
+  label,
 }: Props) => {
   return (
     <GovButton
       color={danger ? 'error' : 'primary'}
       type="base"
       onGovClick={onClick}
+      size="m"
+      className="h-8! [&_button]:h-8!"
     >
       <GovIcon
         name={iconName}
-        size="l"
+        size="m"
         aria-label={ariaLabel}
         className="text-white"
       />
+      {label}
     </GovButton>
   );
 };
