@@ -93,7 +93,9 @@ export const SearchInput = () => {
   );
 
   const showResults =
-    (!!data?.data && debouncedQuery.trim().length > 3) || isLoading;
+    (!!data?.data && debouncedQuery.trim().length > 3) ||
+    isLoading ||
+    (query.trim().length > 0 && query.trim().length <= 3);
 
   return (
     <div className="w-full max-w-150 relative" ref={ref}>

@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import {
   GovButton,
   GovChip,
-  GovDropdown,
   GovFormInput,
   GovFormLabel,
   GovIcon,
@@ -13,6 +13,12 @@ import {
   useFieldArray,
   useFormContext,
 } from 'react-hook-form';
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shared/Popover';
 
 type Language = 'cs' | 'sk' | 'en';
 
@@ -74,12 +80,12 @@ export const LanguageInput = <T extends FieldValues>({
         return (
           <div
             key={field.id}
-            className="w-full grid grid-cols-7 gap-y-4 gap-x-2 relative"
+            className="w-full grid grid-cols-7 gap-y-4 gap-x-2"
           >
             <GovFormLabel className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>
             </GovFormLabel>
-            <div className="col-span-6 relative flex items-center gap-2">
+            <div className="col-span-6 relative flex items-center gap-2 ml-10">
               <GovChip
                 type="outlined"
                 color="primary"
@@ -91,7 +97,7 @@ export const LanguageInput = <T extends FieldValues>({
               <GovFormInput
                 {...register(fieldPath)}
                 placeholder={placeholder}
-                className="border-0! flex-1"
+                className="[&input]:border-0! flex-1 [&_span]:pr-14!"
                 multiline={multiline}
                 rows={multiline ? 4 : undefined}
               />
@@ -100,31 +106,36 @@ export const LanguageInput = <T extends FieldValues>({
                   {fieldError}
                 </span>
               )}
+
+              {index === 0 && (
+                <div className="absolute right-1 top-1/2 -translate-y-1/2">
+                  <LanguageDropDownSelect
+                    availableLanguages={remainingLanguages}
+                    onClick={(lang) =>
+                      append({
+                        name: '',
+                        languageTag: lang,
+                      } as unknown as FieldArray<T, ArrayPath<T>>)
+                    }
+                  />
+                </div>
+              )}
+
+              {index > 0 && (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
+                  onClick={() => remove(index)}
+                >
+                  <GovIcon
+                    type="components"
+                    name="x"
+                    slot="icon-start"
+                    size="2xl"
+                  />
+                </button>
+              )}
             </div>
-
-            {index === 0 && (
-              <LanguageDropDownSelect
-                availableLanguages={remainingLanguages}
-                onClick={(lang) =>
-                  append({
-                    name: '',
-                    languageTag: lang,
-                  } as unknown as FieldArray<T, ArrayPath<T>>)
-                }
-              />
-            )}
-
-            {index > 0 && (
-              <GovButton
-                className="absolute! right-1 top-1/2 -translate-y-1/2"
-                type="base"
-                color="error"
-                size="s"
-                onGovClick={() => remove(index)}
-              >
-                <GovIcon type="components" name="trash" slot="icon-start" />
-              </GovButton>
-            )}
           </div>
         );
       })}
@@ -139,32 +150,46 @@ export const LanguageDropDownSelect = ({
   availableLanguages: Language[];
   onClick: (_lang: Language) => void;
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <GovDropdown className="absolute! right-1 top-1/2 -translate-y-1/2 z-100!">
-      <GovButton color="primary" type="base" size="s">
-        <GovIcon type="components" name="translate" slot="icon-start" />
-        <GovIcon type="components" name="plus" slot="icon-end" />
-      </GovButton>
-      <ul slot="list" className="p-0!">
-        {availableLanguages.map((item) => (
-          <li key={item}>
-            <GovButton
-              expanded={true}
-              type="base"
-              color="neutral"
-              onGovClick={() => onClick(item)}
-            >
-              <GovIcon
-                type="components"
-                name={item}
-                slot="icon-start"
-                size="2xl"
-              />
-              {item}
-            </GovButton>
-          </li>
-        ))}
-      </ul>
-    </GovDropdown>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <GovButton
+          color="primary"
+          type="base"
+          size="s"
+          onGovClick={() => setOpen(true)}
+        >
+          <GovIcon type="components" name="translate" slot="icon-start" />
+          <GovIcon type="components" name="plus" slot="icon-end" />
+        </GovButton>
+      </PopoverTrigger>
+      <PopoverContent className="w-fit p-0 bg-white" align="end">
+        <ul className="p-0 m-0 list-none">
+          {availableLanguages.map((item) => (
+            <li key={item}>
+              <GovButton
+                expanded={true}
+                type="base"
+                color="neutral"
+                onGovClick={() => {
+                  onClick(item);
+                  setOpen(false);
+                }}
+              >
+                <GovIcon
+                  type="components"
+                  name={item}
+                  slot="icon-start"
+                  size="2xl"
+                />
+                {item}
+              </GovButton>
+            </li>
+          ))}
+        </ul>
+      </PopoverContent>
+    </Popover>
   );
 };

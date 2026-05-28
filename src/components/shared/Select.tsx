@@ -1,66 +1,48 @@
-import { SelectHTMLAttributes } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
+import { GovFormLabel, GovFormSelect } from '@gov-design-system-ce/react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { ErrorText } from './ErrorText';
-
-interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
+interface Props {
   label: string;
   name: string;
-  options: string[];
+  options: { value: string; label: string }[];
+  changeMultiple?: string;
 }
 
-export const Select = ({
-  label,
-  name,
-  options,
-  className,
-  ...props
-}: Props) => {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext();
-
+export const Select = ({ label, name, options, changeMultiple }: Props) => {
+  const form = useFormContext();
   return (
-    <div className={`relative w-full space-y-0.5 ${className}`}>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <div className="flex flex-col gap-0.5">
-            <label
-              htmlFor={field.name}
-              className={`text-sm cursor-pointer ${errors[name] ? 'text-status-error-700 dark:text-status-error-200' : 'text-gray-label dark:text-dark-label'}`}
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+          <GovFormLabel className="w-fit! pt-2.5">
+            <span className="font-bold">{label}</span>
+          </GovFormLabel>
+          <div className="col-span-6 relative ml-10">
+            <GovFormSelect
+              value={field.value}
+              onGovChange={(e) => {
+                const val = e.target.value;
+                field.onChange(val);
+                field.onBlur();
+                if (changeMultiple) {
+                  form.setValue(changeMultiple, val);
+                }
+              }}
             >
-              {label}
-            </label>
-            <div
-              className={`bg-white relative flex dark:bg-dark-primary border rounded-lg focus-within:outline-2 focus-within:outline-status-focus hover:bg-field-hover dark:hover:bg-dark-field-hover ${errors[name] ? 'border-status-error-700 dark:border-status-error-200' : 'border-gray-border dark:border-dark-border'}`}
-            >
-              <select
-                {...props}
-                id={field.name}
-                value={field.value ?? ''}
-                onChange={field.onChange}
-                className="w-full appearance-none overflow-hidden text-ellipsis whitespace-nowrap border-none bg-transparent text-left outline-none py-2 px-3"
-              >
-                {options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <GovIcon
-                name="chevron-down"
-                slot="icon-end"
-                className="size-3 transition-transform duration-200 absolute top-1/2 -translate-y-1/2 right-2 pointer-events-none"
-              />
-            </div>
+              {options.map(({ value, label }) => (
+                <option key={value} value={value} label={label} />
+              ))}
+            </GovFormSelect>
+            {form.formState.errors[name] && (
+              <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">
+                {String(form.formState.errors[name]?.message)}
+              </span>
+            )}
           </div>
-        )}
-      />
-      {errors[name] && <ErrorText text={errors[name]?.message as string} />}
-    </div>
+        </div>
+      )}
+    />
   );
 };

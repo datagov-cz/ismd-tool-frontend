@@ -1,5 +1,3 @@
-import { ConceptDetailModel } from '@/api/generated';
-
 export const extractOntologyFromUrl = (graphName: string): string => {
   const url = new URL(graphName);
   return decodeURIComponent(url.pathname)
@@ -8,16 +6,18 @@ export const extractOntologyFromUrl = (graphName: string): string => {
 };
 
 export const extractDefinicniObor = (
-  conceptDetail: ConceptDetailModel,
+  source: unknown,
   pathname: string,
 ): { name: string; link: string } | null => {
-  const definicniOborValue = conceptDetail['definiční-obor'];
-  if (!definicniOborValue) return null;
+  if (!source) return null;
 
-  const name = String(
-    definicniOborValue.split('/pojem/')[1]?.replace(/-/g, ' '),
-  );
-  const link = `${pathname.replace(/^\/|\/$/g, '')}-${definicniOborValue.split('/pojem/')[1]}`;
+  const sourceStr = typeof source === 'string' ? source : String(source);
+  const pojem = sourceStr.split('/pojem/')[1];
+
+  if (!pojem) return null;
+
+  const name = pojem.replace(/-/g, ' ');
+  const link = `${pathname.replace(/^\/|\/$/g, '')}-${pojem}`;
 
   return { name, link };
 };

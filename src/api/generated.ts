@@ -81,8 +81,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -132,6 +132,48 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
+}
+
+export interface ResolveConceptsRequest {
+  iris: string[];
+}
+
+export interface ApiResponseDtoResolveConceptsResponse {
+  data?: ResolveConceptsResponse;
+  message?: string;
+  success?: boolean;
+}
+
+export type ResolveConceptsResponseResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export interface ResolveConceptsResponse {
+  resolved?: ResolveConceptsResponseResolved;
+}
+
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
 }
 
 export type AltNameModelAltName = { [key: string]: string };
@@ -175,9 +217,9 @@ export interface ConceptCreateModel {
   altNameModel?: AltNameModel;
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
-  definingNonLegalSource?: string[];
+  definingNonLegalSource?: DigitalObjectModel[];
   definingLegalSource?: string[];
-  relatedNonLegalSource?: string[];
+  relatedNonLegalSource?: DigitalObjectModel[];
   relatedLegalSource?: string[];
   exactMatch?: string[];
   inTezaurus?: boolean;
@@ -188,6 +230,12 @@ export type DefinitionModelDefinition = { [key: string]: string };
 
 export interface DefinitionModel {
   definition?: DefinitionModelDefinition;
+}
+
+export interface DigitalObjectModel {
+  name?: string;
+  description?: string;
+  url?: string;
 }
 
 export type PropertyConceptModelAllOf = {
@@ -284,9 +332,9 @@ export interface ConceptEditModel {
   altNameModel?: AltNameModel;
   descriptionModel?: DescriptionModel;
   definitionModel?: DefinitionModel;
-  definingNonLegalSource?: string[];
+  definingNonLegalSource?: DigitalObjectModel[];
   definingLegalSource?: string[];
-  relatedNonLegalSource?: string[];
+  relatedNonLegalSource?: DigitalObjectModel[];
   relatedLegalSource?: string[];
   exactMatch?: string[];
   inTezaurus?: boolean;
@@ -369,6 +417,9 @@ export type SearchResultDtoType =
 export const SearchResultDtoType = {
   ONTOLOGY: 'ONTOLOGY',
   CONCEPT: 'CONCEPT',
+  CLASS: 'CLASS',
+  PROPERTY: 'PROPERTY',
+  RELATIONSHIP: 'RELATIONSHIP',
 } as const;
 
 export type SearchResultDtoSource =
@@ -403,6 +454,7 @@ export const SearchResultDtoMatchedBy = {
 } as const;
 
 export interface SearchResultDto {
+  id?: number;
   iri?: string;
   slug?: string;
   label?: string;
@@ -469,12 +521,8 @@ export type ConceptDetailModelDefinice = { [key: string]: string };
 
 export type ConceptDetailModelPopis = { [key: string]: string };
 
-export type ConceptDetailModelDefinujícíNelegislativníZdrojItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export type ConceptDetailModelSouvisejícíNelegislativníZdrojItem = {
-  [key: string]: { [key: string]: unknown };
+export type ConceptDetailModelReferencovanéPojmyResolved = {
+  [key: string]: ResolvedConceptDto;
 };
 
 export interface ConceptDetailModel {
@@ -490,30 +538,51 @@ export interface ConceptDetailModel {
   'ekvivalentní-pojem'?: string[];
   'definiční-obor'?: string;
   'obor-hodnot'?: string;
+  'obor-hodnot-resolved'?: DataTypeDto;
   'nadřazená-třída'?: string[];
   'nadřazený-vztah'?: string[];
   'nadřazená-vlastnost'?: string[];
   'definující-ustanovení-právního-předpisu'?: string[];
   'související-ustanovení-právního-předpisu'?: string[];
-  'definující-nelegislativní-zdroj'?: ConceptDetailModelDefinujícíNelegislativníZdrojItem[];
-  'související-nelegislativní-zdroj'?: ConceptDetailModelSouvisejícíNelegislativníZdrojItem[];
+  'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'definující-nelegislativní-zdroj'?: NonLegalSourceDto[];
+  'související-nelegislativní-zdroj'?: NonLegalSourceDto[];
   'způsob-sdílení-údaje'?: string[];
   'způsob-získání-údaje'?: string;
   'typ-obsahu-údaje'?: string;
   'je-ppdf'?: boolean;
   'agendový-informační-systém'?: string;
   agenda?: string;
+  'agendový-informační-systém-resolved'?: RppIsvs;
+  'agenda-resolved'?: RppAgenda;
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
+  'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
+  'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
 export interface ConceptPropertiesModel {
   name?: string;
+  iri?: string;
   ref?: string;
+  range?: string;
+  rangeResolved?: DataTypeDto;
 }
 
 export interface ConceptRelationshipsModel {
   name?: string;
+  iri?: string;
   ref?: string;
+}
+
+export interface DataTypeDto {
+  code?: string;
+  label?: string;
+}
+
+export interface FragmentSegment {
+  kind?: string;
+  number?: string;
 }
 
 export type GetOntologyDtoPublishedConceptDeviations = {
@@ -525,6 +594,18 @@ export interface GetOntologyDto {
   ontologyDetail?: OntologyDetailModel;
   publishedOntologyDeviationModel?: PublishedOntologyDeviationModel;
   publishedConceptDeviations?: GetOntologyDtoPublishedConceptDeviations;
+}
+
+export type NonLegalSourceDtoNázev = { [key: string]: string };
+
+export type NonLegalSourceDtoPopis = { [key: string]: string };
+
+export interface NonLegalSourceDto {
+  iri?: string;
+  url?: string;
+  typ?: string;
+  název?: NonLegalSourceDtoNázev;
+  popis?: NonLegalSourceDtoPopis;
 }
 
 export type OntologyDetailModelNázev = { [key: string]: string };
@@ -549,17 +630,9 @@ export interface PropertyDeviationBoolean {
   different?: boolean;
 }
 
-export type PropertyDeviationListMapStringObjectLocalValueItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export type PropertyDeviationListMapStringObjectPublishedValueItem = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export interface PropertyDeviationListMapStringObject {
-  localValue?: PropertyDeviationListMapStringObjectLocalValueItem[];
-  publishedValue?: PropertyDeviationListMapStringObjectPublishedValueItem[];
+export interface PropertyDeviationListNonLegalSourceDto {
+  localValue?: NonLegalSourceDto[];
+  publishedValue?: NonLegalSourceDto[];
   different?: boolean;
 }
 
@@ -632,8 +705,8 @@ export interface PublishedConceptDeviationModel {
   'ekvivalentní-pojem'?: PropertyDeviationListString;
   'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
   'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
-  'definující-nelegislativní-zdroj'?: PropertyDeviationListMapStringObject;
-  'související-nelegislativní-zdroj'?: PropertyDeviationListMapStringObject;
+  'definující-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
+  'související-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
   'způsob-sdílení-údajů'?: PropertyDeviationListString;
   'způsob-získání-údajů'?: PropertyDeviationString;
   'typ-obsahu-údajů'?: PropertyDeviationString;
@@ -663,10 +736,81 @@ export interface PublishedOntologyDeviationModel {
   popis?: PropertyDeviationMapStringString;
 }
 
+export type ResolvedLegalSourceDtoLevel =
+  (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoLevel = {
+  LAW: 'LAW',
+  VERSION: 'VERSION',
+  FRAGMENT: 'FRAGMENT',
+} as const;
+
+export type ResolvedLegalSourceDtoEnrichmentStatus =
+  (typeof ResolvedLegalSourceDtoEnrichmentStatus)[keyof typeof ResolvedLegalSourceDtoEnrichmentStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoEnrichmentStatus = {
+  OK: 'OK',
+  PENDING: 'PENDING',
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_FOUND: 'NOT_FOUND',
+  SKIPPED_NON_FRAGMENT: 'SKIPPED_NON_FRAGMENT',
+  INVALID_IRI: 'INVALID_IRI',
+} as const;
+
+export interface ResolvedLegalSourceDto {
+  originalUrl?: string;
+  eliPath?: string;
+  domain?: string;
+  level?: ResolvedLegalSourceDtoLevel;
+  lawIri?: string;
+  versionIri?: string;
+  fragmentIri?: string;
+  lawNumber?: string;
+  lawYear?: number;
+  sbirkaCode?: string;
+  versionDate?: string;
+  fragmentSegments?: FragmentSegment[];
+  displayLabel?: string;
+  fragmentCitation?: string;
+  fragmentBodyHtml?: string;
+  versionValidUntil?: string;
+  isLatestVersion?: boolean;
+  enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
+}
+
+export interface RppAgenda {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+}
+
+export interface RppIsvs {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+  agendaIris?: string[];
+}
+
 export interface ApiResponseDtoListOntologyMetadataModel {
   data?: OntologyMetadataModel[];
   message?: string;
   success?: boolean;
+}
+
+export interface ApiResponseDtoListMinimalConceptDto {
+  data?: MinimalConceptDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export type MinimalConceptDtoName = { [key: string]: string };
+
+export interface MinimalConceptDto {
+  iri?: string;
+  slug?: string;
+  name?: MinimalConceptDtoName;
 }
 
 export interface ApiResponseDtoGetNkdOntologyListDto {
@@ -716,6 +860,58 @@ export interface GetNkdConceptDto {
   ontologyIri?: string;
 }
 
+export interface ApiResponseDtoResolvedLegalSourceDto {
+  data?: ResolvedLegalSourceDto;
+  message?: string;
+  success?: boolean;
+}
+
+export interface ApiResponseDtoListLawVersionDto {
+  data?: LawVersionDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface LawVersionDto {
+  iri?: string;
+  eliPath?: string;
+  ucinnostOd?: string;
+  ucinnostDo?: string;
+  versionType?: string;
+  latest?: boolean;
+}
+
+export interface ApiResponseDtoListLawDto {
+  data?: LawDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface LawDto {
+  iri?: string;
+  eliPath?: string;
+  domain?: string;
+  citace?: string;
+  displayName?: string;
+  cislo?: string;
+  rok?: number;
+  sbirka?: string;
+}
+
+export interface ApiResponseDtoListFragmentDto {
+  data?: FragmentDto[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface FragmentDto {
+  iri?: string;
+  eliPath?: string;
+  kind?: string;
+  citation?: string;
+  order?: string;
+}
+
 export interface ApiResponseDtoGetConceptDto {
   data?: GetConceptDto;
   message?: string;
@@ -730,6 +926,12 @@ export interface GetConceptDto {
 
 export interface ApiResponseDtoListConceptMetadataModel {
   data?: ConceptMetadataModel[];
+  message?: string;
+  success?: boolean;
+}
+
+export interface ApiResponseDtoListDataTypeDto {
+  data?: DataTypeDto[];
   message?: string;
   success?: boolean;
 }
@@ -762,11 +964,11 @@ export type EditConceptBody =
 
 export type SearchParams = {
   /**
-   * Vyhledávací dotaz (min. 2 znaky)
+   * Vyhledávací dotaz (min. 4 znaky — odpovídá frontendové validaci a Virtuoso FT370 minimální délce zástupného znaku pro NKD)
    */
   q: string;
   /**
-   * Typ výsledku: ONTOLOGY, CONCEPT
+   * Typ výsledku: ONTOLOGY, CONCEPT, CLASS, PROPERTY, RELATIONSHIP (CLASS/PROPERTY/RELATIONSHIP narrow to concepts of the given role)
    */
   type?: SearchType;
   /**
@@ -801,6 +1003,9 @@ export type SearchType = (typeof SearchType)[keyof typeof SearchType];
 export const SearchType = {
   ONTOLOGY: 'ONTOLOGY',
   CONCEPT: 'CONCEPT',
+  CLASS: 'CLASS',
+  PROPERTY: 'PROPERTY',
+  RELATIONSHIP: 'RELATIONSHIP',
 } as const;
 
 export type SearchSource = (typeof SearchSource)[keyof typeof SearchSource];
@@ -845,6 +1050,28 @@ export type GetOntologyListParams = {
   isPublished?: boolean;
   slugs?: string[];
 };
+
+export type GetConceptsByIriParams = {
+  /**
+   * IRI slovníku
+   */
+  iri: string;
+  /**
+   * Zdroj: ISMD nebo NKD
+   */
+  source: GetConceptsByIriSource;
+};
+
+export type GetConceptsByIriSource =
+  (typeof GetConceptsByIriSource)[keyof typeof GetConceptsByIriSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetConceptsByIriSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
 
 export type GetNkdOntologyListParams = {
   /**
@@ -895,6 +1122,23 @@ export type GetNkdConceptDetailParams = {
    * IRI slovníku, do kterého pojem patří (volitelné)
    */
   ontologyIri?: string;
+};
+
+export type ResolveLegalSourceParams = {
+  iri: string;
+};
+
+export type GetVersionsParams = {
+  lawIri: string;
+};
+
+export type SearchLawsParams = {
+  q?: string;
+  limit?: number;
+};
+
+export type GetFragmentsParams = {
+  versionIri: string;
 };
 
 export type GetConceptListParams = {
@@ -1178,6 +1422,99 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Pro pole IRI pojmů vrací mapu IRI → {conceptName, conceptSlug, ontologyIri, ontologyName, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. {@code conceptSlug} je vyplněn pouze pro ISMD pojmy; NKD pojmy se navigují podle IRI. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
+ * @summary Získání metadat referencovaných pojmů
+ */
+export const resolveConceptReferences = (
+  resolveConceptsRequest: ResolveConceptsRequest,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoResolveConceptsResponse>(
+    {
+      url: `/api/ontology/concepts/resolve`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: resolveConceptsRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getResolveConceptReferencesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resolveConceptReferences>>,
+    TError,
+    { data: ResolveConceptsRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resolveConceptReferences>>,
+  TError,
+  { data: ResolveConceptsRequest },
+  TContext
+> => {
+  const mutationKey = ['resolveConceptReferences'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resolveConceptReferences>>,
+    { data: ResolveConceptsRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resolveConceptReferences(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ResolveConceptReferencesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resolveConceptReferences>>
+>;
+export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
+export type ResolveConceptReferencesMutationError = unknown;
+
+/**
+ * @summary Získání metadat referencovaných pojmů
+ */
+export const useResolveConceptReferences = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resolveConceptReferences>>,
+      TError,
+      { data: ResolveConceptsRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof resolveConceptReferences>>,
+  TError,
+  { data: ResolveConceptsRequest },
+  TContext
+> => {
+  const mutationOptions = getResolveConceptReferencesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -2602,6 +2939,172 @@ export function useGetOntologyList<
 }
 
 /**
+ * Vrací minimalistický seznam pojmů slovníku (iri, slug, název) podle IRI slovníku. Parametr source určuje zdroj: ISMD (lokální úložiště – položky obsahují slug pro navigaci) nebo NKD (Národní katalog dat – položky obsahují pouze IRI). Veřejný endpoint.
+ * @summary Minimalistický seznam pojmů slovníku podle IRI
+ */
+export const getConceptsByIri = (
+  params: GetConceptsByIriParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListMinimalConceptDto>(
+    { url: `/api/ontology/concepts`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetConceptsByIriQueryKey = (
+  params?: GetConceptsByIriParams,
+) => {
+  return [`/api/ontology/concepts`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetConceptsByIriQueryOptions = <
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetConceptsByIriQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getConceptsByIri>>
+  > = ({ signal }) => getConceptsByIri(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getConceptsByIri>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetConceptsByIriQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getConceptsByIri>>
+>;
+export type GetConceptsByIriQueryError = unknown;
+
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptsByIri>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptsByIri>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getConceptsByIri>>,
+          TError,
+          Awaited<ReturnType<typeof getConceptsByIri>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Minimalistický seznam pojmů slovníku podle IRI
+ */
+
+export function useGetConceptsByIri<
+  TData = Awaited<ReturnType<typeof getConceptsByIri>>,
+  TError = unknown,
+>(
+  params: GetConceptsByIriParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getConceptsByIri>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetConceptsByIriQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací zkrácené metadata slovníků publikovaných v Národním katalogu dat (NKD) pro zadaný seznam IRI. Slouží například k zobrazení naposledy navštívených slovníků, kde frontend uchovává seznam IRI v localStorage. IRI, které se nepodaří načíst nebo v NKD neexistují, jsou v odpovědi vynechány. Maximálně 50 IRI v jedné žádosti. Veřejný endpoint.
  * @summary Seznam slovníků z NKD podle IRI
  */
@@ -3438,6 +3941,601 @@ export function useGetNkdConceptDetail<
 }
 
 /**
+ * Parses the URL synchronously, and for fragment-level URLs fetches the official citation + version metadata via SPARQL (cached 24h). Forgiving: invalid URLs return HTTP 200 with enrichmentStatus=INVALID_IRI. Public endpoint — used by concept detail rendering for unauthenticated viewers.
+ * @summary Resolve e-Sbírka ELI URL to a display object
+ */
+export const resolveLegalSource = (
+  params: ResolveLegalSourceParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoResolvedLegalSourceDto>(
+    { url: `/api/eli/resolve`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getResolveLegalSourceQueryKey = (
+  params?: ResolveLegalSourceParams,
+) => {
+  return [`/api/eli/resolve`, ...(params ? [params] : [])] as const;
+};
+
+export const getResolveLegalSourceQueryOptions = <
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getResolveLegalSourceQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof resolveLegalSource>>
+  > = ({ signal }) => resolveLegalSource(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof resolveLegalSource>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ResolveLegalSourceQueryResult = NonNullable<
+  Awaited<ReturnType<typeof resolveLegalSource>>
+>;
+export type ResolveLegalSourceQueryError = unknown;
+
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof resolveLegalSource>>,
+          TError,
+          Awaited<ReturnType<typeof resolveLegalSource>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof resolveLegalSource>>,
+          TError,
+          Awaited<ReturnType<typeof resolveLegalSource>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Resolve e-Sbírka ELI URL to a display object
+ */
+
+export function useResolveLegalSource<
+  TData = Awaited<ReturnType<typeof resolveLegalSource>>,
+  TError = unknown,
+>(
+  params: ResolveLegalSourceParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof resolveLegalSource>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getResolveLegalSourceQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací všechna znění zadaného právního aktu, řazeno od nejnovějšího; pole "latest" označuje aktuálně poslední znění.
+ * @summary Seznam znění daného právního aktu
+ */
+export const getVersions = (
+  params: GetVersionsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListLawVersionDto>(
+    { url: `/api/eli/law/versions`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetVersionsQueryKey = (params?: GetVersionsParams) => {
+  return [`/api/eli/law/versions`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetVersionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetVersionsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVersions>>> = ({
+    signal,
+  }) => getVersions(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVersions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVersionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVersions>>
+>;
+export type GetVersionsQueryError = unknown;
+
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVersions>>,
+          TError,
+          Awaited<ReturnType<typeof getVersions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVersions>>,
+          TError,
+          Awaited<ReturnType<typeof getVersions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Seznam znění daného právního aktu
+ */
+
+export function useGetVersions<
+  TData = Awaited<ReturnType<typeof getVersions>>,
+  TError = unknown,
+>(
+  params: GetVersionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getVersions>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetVersionsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací seznam právních aktů filtrovaný podle citace (např. "187/2006"). Při prázdném dotazu se vrací nejnovější akty (rok desc, číslo asc).
+ * @summary Vyhledávání právních aktů v e-Sbírce
+ */
+export const searchLaws = (
+  params?: SearchLawsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListLawDto>(
+    { url: `/api/eli/law/search`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getSearchLawsQueryKey = (params?: SearchLawsParams) => {
+  return [`/api/eli/law/search`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchLawsQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getSearchLawsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof searchLaws>>> = ({
+    signal,
+  }) => searchLaws(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof searchLaws>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchLawsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchLaws>>
+>;
+export type SearchLawsQueryError = unknown;
+
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params: undefined | SearchLawsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchLaws>>,
+          TError,
+          Awaited<ReturnType<typeof searchLaws>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchLaws>>,
+          TError,
+          Awaited<ReturnType<typeof searchLaws>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vyhledávání právních aktů v e-Sbírce
+ */
+
+export function useSearchLaws<
+  TData = Awaited<ReturnType<typeof searchLaws>>,
+  TError = unknown,
+>(
+  params?: SearchLawsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof searchLaws>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchLawsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací rekurzivní strom fragmentů zadaného znění (jeden SPARQL dotaz, stromová struktura sestavena na serveru).
+ * @summary Strom fragmentů daného znění právního aktu
+ */
+export const getFragments = (
+  params: GetFragmentsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListFragmentDto>(
+    { url: `/api/eli/law/fragments`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetFragmentsQueryKey = (params?: GetFragmentsParams) => {
+  return [`/api/eli/law/fragments`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetFragmentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetFragmentsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFragments>>> = ({
+    signal,
+  }) => getFragments(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFragments>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetFragmentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFragments>>
+>;
+export type GetFragmentsQueryError = unknown;
+
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFragments>>,
+          TError,
+          Awaited<ReturnType<typeof getFragments>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFragments>>,
+          TError,
+          Awaited<ReturnType<typeof getFragments>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Strom fragmentů daného znění právního aktu
+ */
+
+export function useGetFragments<
+  TData = Awaited<ReturnType<typeof getFragments>>,
+  TError = unknown,
+>(
+  params: GetFragmentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFragments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetFragmentsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací kompletní detail pojmu včetně všech vlastností, vztahů, definic a dalších metadat. Obsahuje také informace o odchylkách od publikované verze. Veřejný endpoint.
  * @summary Detail pojmu
  */
@@ -3737,6 +4835,161 @@ export function useGetConceptList<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetConceptListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací uzavřený seznam podporovaných datových typů (v1: 9 hodnot) v pořadí pro zobrazení v UI. Položky obsahují stabilní {code} a lokalizovaný {label}; IRI se na drátu neposílá.
+ * @summary Číselník datových typů pro vlastnosti
+ */
+export const propertyDatatypes = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListDataTypeDto>(
+    { url: `/api/codelist/property-datatypes`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getPropertyDatatypesQueryKey = () => {
+  return [`/api/codelist/property-datatypes`] as const;
+};
+
+export const getPropertyDatatypesQueryOptions = <
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof propertyDatatypes>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getPropertyDatatypesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof propertyDatatypes>>
+  > = ({ signal }) => propertyDatatypes(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof propertyDatatypes>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type PropertyDatatypesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof propertyDatatypes>>
+>;
+export type PropertyDatatypesQueryError = unknown;
+
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof propertyDatatypes>>,
+          TError,
+          Awaited<ReturnType<typeof propertyDatatypes>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof propertyDatatypes>>,
+          TError,
+          Awaited<ReturnType<typeof propertyDatatypes>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Číselník datových typů pro vlastnosti
+ */
+
+export function usePropertyDatatypes<
+  TData = Awaited<ReturnType<typeof propertyDatatypes>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof propertyDatatypes>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getPropertyDatatypesQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

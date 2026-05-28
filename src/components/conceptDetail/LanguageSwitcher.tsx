@@ -1,6 +1,5 @@
-'use client';
-import { useState } from 'react';
-import { GovButton } from '@gov-design-system-ce/react';
+import { GovChip } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 
 interface LanguageSwitcherProps {
   item: {
@@ -9,26 +8,37 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher = ({ item }: LanguageSwitcherProps) => {
-  const [language, setLanguage] = useState(
-    Object.keys(item).includes('cs') ? 'cs' : Object.keys(item)[0],
-  );
   if (Object.keys(item).length === 0) return;
   return (
     <div className="flex justify-between w-full gap-4">
-      <p className="font-sm text-md">{String(item[language])}</p>
-      <div className="flex gap-0.5">
+      <div className="flex flex-col w-full">
         {Object.keys(item)
-          .sort()
-          .map((item) => (
-            <GovButton
-              color="primary"
-              key={item}
-              type={item === language ? 'solid' : 'outlined'}
-              size="xs"
-              onGovClick={() => setLanguage(item)}
+          .sort((a, b) => (a === 'cs' ? -1 : b === 'cs' ? 1 : 0))
+          .map((lang) => (
+            <div
+              key={lang}
+              className="flex gap-2 border-b last:border-0 w-full pb-2 pt-2 last:pb-0 first:pt-0 border-border-subtlest relative"
             >
-              {item}
-            </GovButton>
+              {lang !== 'cs' && (
+                <GovChip
+                  key={lang}
+                  color="primary"
+                  size="xs"
+                  type="outlined"
+                  className="h-fit cursor-pointer! absolute -left-10 border-0!"
+                >
+                  {lang.toLocaleUpperCase()}
+                </GovChip>
+              )}
+              <p
+                className={clsx(
+                  'font-sm text-md',
+                  lang !== 'cs' && 'opacity-60',
+                )}
+              >
+                {String(item[lang])}
+              </p>
+            </div>
           ))}
       </div>
     </div>

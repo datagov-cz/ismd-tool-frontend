@@ -10,6 +10,7 @@ import {
   UploadFromFileBody,
   useUploadFromFile,
 } from '@/api/generated';
+import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ErrorText } from '@/components/shared/ErrorText';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -129,34 +130,28 @@ export const UploadDialog = ({ setSuccess }: UploadDialogProps) => {
   };
 
   return (
-    <>
-      <div className="w-full space-y-10 bg-page-background p-6 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)] flex flex-col items-center">
-        <h2 slot="title" className="font-medium text-lg w-fit">
-          {t('Dialog.Title')}
-        </h2>
+    <FormSection label={t('Dialog.Title')} icon="file-earmark-ruled">
+      {mutation.isPending ? (
+        <div className="flex items-center justify-center">
+          <CircularLoader />
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4 items-center justify-center"
+        >
+          <FileController
+            name="file"
+            form={form}
+            translationNamespace="UploadOntology"
+          />
+          {submitError && <ErrorText text={submitError} />}
 
-        {mutation.isPending ? (
-          <div className="flex items-center justify-center">
-            <CircularLoader />
-          </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 items-center justify-center"
-          >
-            <FileController
-              name="file"
-              form={form}
-              translationNamespace="UploadOntology"
-            />
-            {submitError && <ErrorText text={submitError} />}
-
-            <GovButton type="solid" color="primary" nativeType="submit">
-              {t('Dialog.SubmitButton')}
-            </GovButton>
-          </form>
-        )}
-      </div>
-    </>
+          <GovButton type="solid" color="primary" nativeType="submit">
+            {t('Dialog.SubmitButton')}
+          </GovButton>
+        </form>
+      )}
+    </FormSection>
   );
 };

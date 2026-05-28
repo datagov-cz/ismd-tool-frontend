@@ -67,6 +67,7 @@ async function refreshAccessToken(
       error: undefined,
     };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Failed to refresh access token', error);
     return { ...token, error: 'RefreshAccessTokenError' };
   }
