@@ -33,10 +33,17 @@
     "MenuButtonAria": "Otevřít navigaci",
     "Hintbox": {
       "Title": "Nápověda",
+      "ISMD": "Nápověda ISMD",
       "CloseAria": "Zavřít nápovědu",
       "FileExplorer": "Procházet soubory",
       "SelectFile": "Vyberte soubor pro zobrazení jeho obsahu",
-      "SearchPlaceholder": "Hledat v nápovědě..."
+      "SearchPlaceholder": "Hledat v nápovědě...",
+      "Loading": "Načítání…",
+      "Recommended": "Doporučené pro tuto stránku",
+      "All": "Všechna témata",
+      "EnterSearch": "Zadejte hledaný výraz…",
+      "NoResults": "Žádné výsledky pro ",
+      "Search": "Vyhledávání"
     }
   },
   "Footer": {

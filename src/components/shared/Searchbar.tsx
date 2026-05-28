@@ -1,5 +1,4 @@
 import {
-  GovButton,
   GovFormControl,
   GovFormGroup,
   GovFormInput,
@@ -16,27 +15,21 @@ interface Props {
 
 type GovInputEventType = CustomEvent<{ value: string }>;
 
-export const Searchbar = ({
-  placeholder,
-  hasSearchIcon,
-  size = 'm',
-  onChange,
-}: Props) => {
+export const Searchbar = ({ placeholder, size = 'm', onChange }: Props) => {
   return (
-    <GovFormControl className="w-full">
+    <GovFormControl>
       <GovFormGroup>
         <GovFormSearch size={size}>
           <GovFormInput
             slot="input"
+            size="s"
             placeholder={placeholder}
-            size={size}
             onGovInput={(e: GovInputEventType) => {
               onChange?.(e.detail.value ?? '');
             }}
-          />
-          <GovButton slot="button" className={hasSearchIcon ? '' : 'hidden'}>
-            <GovIcon name="search" slot="icon-start" />
-          </GovButton>
+          >
+            <GovIcon name="search" slot="icon-start" type="components" />
+          </GovFormInput>
         </GovFormSearch>
       </GovFormGroup>
     </GovFormControl>
