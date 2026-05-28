@@ -70,7 +70,7 @@
   "Home": {
     "MainControls": {
       "OpenDictFromFile": "Importovat ze souboru",
-      "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "SearchPlaceholder": "[Cmnd/Ctrl+K] Hledat pojmy a slovníky...",
       "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
@@ -82,7 +82,7 @@
     "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
     "LoginButton": "Přihlásit",
     "WelcomeSection": {
-      "Title": "Vítejte v nástroji pro tvorbu správu a tvorbu datových slovníku",
+      "Title": "Vítejte v nástroji pro tvorbu a správu datových slovníku",
       "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
       "BrowseDictionaries": "Procházet slovníky"
     },
@@ -97,6 +97,17 @@
       "Title": "Co je nového?",
       "ToDetailButton": "Více"
     }
+  },
+  "ConceptCreateWrapper": {
+    "NewConceptFor": "Nový pojem k:",
+    "ToastSuccess": "Koncept byl úspěšně vytvořen.",
+    "ToastError": "Při ukládání konceptu došlo k chybě."
+  },
+  "ConceptEditWrapper": {
+    "EditConcept": "Upravit pojem:",
+    "Loading": "Načítání pojmu…",
+    "ToastSuccess": "Koncept byl úspěšně upraven.",
+    "ToastError": "Při ukládání konceptu došlo k chybě."
   },
   "ConceptDetail": {
     "Sections": {
@@ -122,8 +133,12 @@
       "WayObtainingData": "Způsob získání údajů",
       "DataContentType": "Typ obsahu údajů",
       "IsPpdf": "Je v PPDF",
+      "IsPublic": "Je veřejný",
       "AgendaInfoSystem": "Agendový informační systém",
-      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje"
+      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
+      "ConceptSource": "Zdroje pojmu",
+      "DefiningNonLegislative": "Definujice nelegislativni zdroj",
+      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj"
     },
     "Groups": {
       "TypesAndClassification": "Typy a zařazení",
@@ -156,12 +171,17 @@
         "Updated": "aktualizováno",
         "Back": "Zpět",
         "EditConcept": "Upravit pojem",
-        "ConceptComments": "Komentáře k pojmu"
+        "ConceptComments": "Komentáře k pojmu",
+        "NotFound": "Pojem nenalezen",
+        "InOntology": "Ve slovníku"
       },
       "Public": "Veřejný",
       "NonPublic": "Neveřejný",
       "Name": "Název",
-      "OpenInESbirka": "Otevřít v e-sbírce"
+      "OpenInESbirka": "Otevřít v e-sbírce",
+      "Loading": "Načítání...",
+      "NoResults": "Pro tohle nemáme žádné výsledky",
+      "AddConcept": "+ Přidat další pojem"
     }
   },
   "Term": {
@@ -177,6 +197,7 @@
     },
     "EditOntology": {
       "Title": "Upravit slovník",
+      "EditedOntology": "Upravovaný slovník",
       "Save": "Uložit",
       "Back": "Zpět",
       "Ontology": "Slovníky",
@@ -338,7 +359,8 @@
       "CreateNewDictSyncError": "Chyba při syncrhonizaci slovníku, zkuste se znova přihlásit",
       "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
       "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení.",
-      "Or": "nebo"
+      "Or": "nebo",
+      "Back": "Zpět"
     },
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",
@@ -398,9 +420,11 @@
       }
     },
     "ClassCreateFields": {
+      "Label": "Typy a zařazení",
       "Labels": {
         "ClassType": "Typ třídy",
-        "BroaderConcept": "Nadřazená třída"
+        "BroaderConcept": "Nadřazená třída",
+        "ConceptType": "Typ pojmu"
       },
       "Options": {
         "ClassType": {
@@ -440,6 +464,52 @@
       "Options": {
         "Undefined": "undefined"
       }
+    },
+    "NamingSection": {
+      "Label": "Pojmenování",
+      "NameLabel": "Název",
+      "NamePlaceholder": "Zadejte název pojmu",
+      "AltNameLabel": "Alternativní název",
+      "AltNamePlaceholder": "Zadejte alternativní název pojmu"
+    },
+    "TypesSection": {
+      "PropertyDomainLabel": "Patří k pojmu",
+      "PropertyDomainPlaceholder": "Vyhledejte pojem",
+      "PropertyDataTypeLabel": "Datový typ hodnoty",
+      "PropertyDataTypePlaceholder": "Vyberte typ hodnoty",
+      "RelationDomainLabel": "Výchozí pojem",
+      "RelationDomainPlaceholder": "Vyhledejte pojem",
+      "RelationRangeLabel": "Cílový pojem",
+      "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptMeaningSection": {
+      "Label": "Význam pojmu",
+      "DefinitionLabel": "Definice",
+      "DefinitionPlaceholder": "Definice",
+      "DescriptionLabel": "Popis",
+      "DescriptionPlaceholder": "Popis",
+      "BroaderConceptLabel": "Nadřazená třída",
+      "SearchPlaceholder": "Hledat",
+      "SuperRelationLabel": "Nadřazený vztah",
+      "SuperPropertyLabel": "Nadřazená vlastnost",
+      "EquivalentConceptLabel": "Ekvivalentní pojem"
+    },
+    "RightsAndObligationsSection": {
+      "AgendaPlaceholder": "Vyhledat agendu RPP",
+      "AISPlaceholder": "Vyhledat AIS"
+    },
+    "ProclamationSection": {
+      "Label": "Kategorizace dle vyhlášky 360/2023",
+      "ContentTypeLabel": "Typ obsahu údajů",
+      "AcquisitionMethodLabel": "Způsob získání údajů",
+      "SharingMethodLabel": "Způsob sdílení údajů"
+    },
+    "OntologySection": {
+      "Label": "Technické údaje",
+      "OntologyLabel": "Slovník",
+      "OntologyPlaceholder": "Zadejte IRI slovníku",
+      "NamespaceLabel": "Adresa lokálního katalogu dat",
+      "NamespacePlaceholder": "Zadejte IRI slovníku"
     }
   },
   "Search": {
@@ -452,7 +522,8 @@
     "SearchesFor": "Výsledky hledání pro",
     "FilterLabel": "Filtrování:",
     "Unpublished": "Rozpracované",
-    "NoMoreResults": "Žádné další výsledky"
+    "NoMoreResults": "Žádné další výsledky",
+    "ShortQuery": "Hledaný výraz musí mít alspoň 4 znaky"
   },
   "SearchTypes": {
     "AllTypes": "Všechny typy",
@@ -473,5 +544,14 @@
     "Title": "Probíhá údržba",
     "Description": "Aplikace je dočasně nedostupná z důvodu plánované údržby. Pracujeme na obnovení provozu.",
     "Thanks": "Děkujeme za pochopení."
+  },
+  "FormToolbar": {
+    "UnsavedChanges": "Neuložené změny",
+    "Undo": "Zpět",
+    "UndoTitle": "Zpět (Ctrl+Z)",
+    "Redo": "Znovu",
+    "RedoTitle": "Znovu (Ctrl+Y)",
+    "Cancel": "Zrušit",
+    "Save": "Uložit"
   }
 }

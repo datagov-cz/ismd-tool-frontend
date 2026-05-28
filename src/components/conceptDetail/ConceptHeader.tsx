@@ -18,6 +18,7 @@ type Props = {
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
   owner: boolean;
+  slug: string;
 };
 
 export const ConceptHeader = ({
@@ -29,6 +30,7 @@ export const ConceptHeader = ({
   loggedIn,
   source,
   owner,
+  slug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
@@ -50,7 +52,9 @@ export const ConceptHeader = ({
             {t('Main.ControlPanel.Back')}
           </button>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm">Ve slovníku:</span>
+            <span className="font-bold text-sm">
+              {t('Main.ControlPanel.InOntology')}:
+            </span>
             <Link
               href={`/dictionary/${ontology.split(' ').join('-')}`}
               className="cursor-pointer"
@@ -130,6 +134,7 @@ export const ConceptHeader = ({
             loggedIn={loggedIn}
             source={source}
             owner={owner}
+            slug={slug}
           />
         </div>
       </div>

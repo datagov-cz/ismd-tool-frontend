@@ -45,7 +45,7 @@ export const SearchResultItem = ({
         size="s"
         className="mt-0.5!"
       />
-      <span className="text-sm text-blue">
+      <span className="text-sm text-blue text-left">
         {label && <SearchHighlightMatch label={label} query={query} />}
       </span>
     </Link>

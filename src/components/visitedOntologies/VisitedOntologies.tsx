@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { useGetNkdOntologyList, useGetOntologyList } from '@/api/generated';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
+import { CircularLoader } from '../shared/CircularLoader';
 import {
   DictionaryCard,
   DictionaryCardProps,
@@ -59,12 +60,12 @@ export const VisitedOntologies = () => {
     .filter((e) => e.source === 'NKD' && e.slug)
     .map((e) => e.slug);
 
-  const { data: ismd } = useGetOntologyList(
+  const { data: ismd, isLoading: isLoadingISMD } = useGetOntologyList(
     { slugs: ismdSlugs },
     { query: { enabled: ismdSlugs.length > 0 } },
   );
 
-  const { data: nkd } = useGetNkdOntologyList(
+  const { data: nkd, isLoading: isLoadingNKD } = useGetNkdOntologyList(
     { iris: nkdIris },
     { query: { enabled: nkdIris.length > 0 } },
   );
@@ -120,6 +121,7 @@ export const VisitedOntologies = () => {
         {visitedOntologies.map((item) => (
           <DictionaryCard {...item} key={item.title} />
         ))}
+        {(isLoadingISMD || isLoadingNKD) && <CircularLoader />}
       </div>
     </div>
   );

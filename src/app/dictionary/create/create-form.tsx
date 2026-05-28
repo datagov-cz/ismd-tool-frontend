@@ -8,7 +8,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
-import { Button } from '@/components/shared/Button';
+import { FormSection } from '@/components/conceptForm/components/FormSection';
+import { FormToolbar } from '@/components/conceptForm/components/FormToolbar';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -54,11 +55,7 @@ export const CreateForm = () => {
   });
 
   const { mutate, isPending } = useCreateOntology();
-  const {
-    handleSubmit,
-    getValues,
-    formState: { isSubmitting },
-  } = form;
+  const { handleSubmit, getValues } = form;
 
   useEffect(() => {
     const subscription = form.watch(() => {
@@ -148,11 +145,8 @@ export const CreateForm = () => {
 
   return (
     <FormProvider {...form}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full space-y-10 bg-page-background p-6 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)]"
-      >
-        <div className="w-full space-y-7">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+        <FormSection label="Základní parametry" icon="tag">
           <Input
             register={form.register}
             name="namespace"
@@ -169,15 +163,8 @@ export const CreateForm = () => {
             label={t('Form.DescriptionLabel')}
             placeholder={t('Form.DescriptionPlaceholder')}
           />
-        </div>
-        <Button
-          styleType="solid"
-          color="primary"
-          disabled={isSubmitting || isPending}
-          type="submit"
-        >
-          {t('Form.SubmitButton')}
-        </Button>
+        </FormSection>
+        <FormToolbar<OntologySchemaType> isPending={isPending} />
       </form>
     </FormProvider>
   );

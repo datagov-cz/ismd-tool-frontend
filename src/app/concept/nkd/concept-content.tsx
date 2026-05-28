@@ -2,6 +2,7 @@
 
 import { GovButton } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { useGetNkdConceptDetail } from '@/api/generated';
 import { ConceptHeaderNKD } from '@/components/conceptDetail/ConceptHeaderNKD';
@@ -16,6 +17,7 @@ interface Props {
 export const ConceptContentNKD = ({ slug }: Props) => {
   const concept = useGetNkdConceptDetail({ iri: slug });
   const router = useRouter();
+  const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
   if (concept.isLoading)
     return (
@@ -27,13 +29,13 @@ export const ConceptContentNKD = ({ slug }: Props) => {
   if (!concept.data)
     return (
       <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
-        <h1 className="text-2xl">Pojem nenalezen</h1>
+        <h1 className="text-2xl">{t('NotFound')}</h1>
         <GovButton
           type="solid"
           color="primary"
           onGovClick={() => router.back()}
         >
-          Zpět
+          {t('Back')}
         </GovButton>
       </div>
     );
@@ -49,7 +51,10 @@ export const ConceptContentNKD = ({ slug }: Props) => {
 
   return (
     <>
-      <ConceptHeaderNKD ontology={''} conceptDetail={conceptDetail} />
+      <ConceptHeaderNKD
+        ontology={concept.data.data?.ontologyIri || ''}
+        conceptDetail={conceptDetail}
+      />
       <ConceptLayout
         source="NKD"
         conceptDetail={conceptDetail}

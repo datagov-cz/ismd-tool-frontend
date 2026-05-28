@@ -2,11 +2,13 @@
 
 import { GovButton } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-import { useGetConceptDetail, useGetCurrentUser } from '@/api/generated';
+import { useGetConceptDetail } from '@/api/generated';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { extractOntologyFromUrl } from '@/utils/conceptDetailUtils';
@@ -17,7 +19,8 @@ interface Props {
 
 export const ConceptContent = ({ slug }: Props) => {
   const concept = useGetConceptDetail(slug);
-  const { data: user } = useGetCurrentUser();
+  const { user } = useCurrentUser();
+  const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
   const router = useRouter();
 
@@ -31,13 +34,13 @@ export const ConceptContent = ({ slug }: Props) => {
   if (!concept.data)
     return (
       <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
-        <h1 className="text-2xl">Pojem nenalezen</h1>
+        <h1 className="text-2xl">{t('NotFound')}</h1>
         <GovButton
           type="solid"
           color="primary"
           onGovClick={() => router.back()}
         >
-          Zpět
+          {t('Back')}
         </GovButton>
       </div>
     );
@@ -61,9 +64,10 @@ export const ConceptContent = ({ slug }: Props) => {
         conceptId={conceptMetadata.id}
         isPublished={conceptMetadata.isPublished}
         commentsCount={conceptMetadata.comments?.length ?? 0}
-        loggedIn={user?.success === true}
-        owner={conceptMetadata.user?.userId === user?.data?.userId}
+        loggedIn={!!user?.userId}
+        owner={conceptMetadata.user?.userId === user?.userId}
         source={'ISMD'}
+        slug={slug}
       />
 
       <ConceptLayout
@@ -77,12 +81,12 @@ export const ConceptContent = ({ slug }: Props) => {
         />
       </ConceptLayout>
 
-      {user?.data?.userId && (
+      {user?.userId && (
         <CommentSidebox
           conceptIRI={conceptDetail.iri}
           comments={conceptMetadata.comments}
           refetch={() => concept.refetch()}
-          userId={user?.data?.userId}
+          userId={user?.userId}
         />
       )}
     </>

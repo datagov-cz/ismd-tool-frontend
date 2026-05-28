@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, OntologyMetadataModel } from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
+import { LanguageSwitcher } from '../conceptDetail/LanguageSwitcher';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ValidationSummary } from './validation/ValidationSummary';
@@ -134,9 +135,11 @@ export const OntologyLayout = ({
                 </GovTag>
               </div>
               <h1 className="text-[32px] font-medium">{title}</h1>
-              <div>
-                <p className="text-md">{popis?.cs ?? fallbackPopis}</p>
-              </div>
+              {popis ? (
+                <LanguageSwitcher item={popis} />
+              ) : (
+                <p className="text-md">{fallbackPopis}</p>
+              )}
             </div>
             {children}
           </div>
@@ -153,7 +156,12 @@ export const OntologyLayout = ({
             </p>
             <div className="flex justify-between pb-2 items-end">
               {!isLoggedOutOrNKD && (
-                <GovButton type="solid" color="primary" size="s">
+                <GovButton
+                  type="solid"
+                  color="primary"
+                  size="s"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/create?ontology=${slug}`}
+                >
                   <GovIcon
                     slot="icon-start"
                     name="plus"

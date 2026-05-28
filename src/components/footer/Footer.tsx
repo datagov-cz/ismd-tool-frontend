@@ -30,13 +30,13 @@ export const Footer = ({ isGated = false }: Props) => {
             <p className="text-sm">{t('ThanksSection.Text')}</p>
             <ul className="flex gap-y-4 gap-x-6 flex-wrap">
               <li>
+                <GovIcon name="logo-dia" />
+              </li>
+              <li>
                 <GovIcon name="logo-eu" />
               </li>
               <li>
                 <GovIcon name="logo-npo" />
-              </li>
-              <li>
-                <GovIcon name="logo-dia" />
               </li>
             </ul>
           </div>
@@ -105,41 +105,19 @@ export const Footer = ({ isGated = false }: Props) => {
         <div className="space-y-4">
           <h6 className="text-lg font-medium">{t('ThanksSection.Title')}</h6>
           <p className="text-sm">{t('ThanksSection.Text')}</p>
-          <ul className="flex gap-y-4 gap-x-6 flex-wrap">
+          <ul className="flex gap-y-4 gap-x-6 flex-wrap items-center">
+            <li>
+              <GovIcon name="logo-dia" />
+            </li>
             <li>
               <GovIcon name="logo-eu" />
             </li>
             <li>
               <GovIcon name="logo-npo" />
             </li>
-            <li>
-              <GovIcon name="logo-dia" />
-            </li>
           </ul>
         </div>
         <div className="space-y-4">
-          <ul className="flex gap-x-8 gap-y-3 flex-wrap">
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-            <li>
-              <GovLink href="#" size="s">
-                Link
-              </GovLink>
-            </li>
-          </ul>
           <hr className="border-t-footer-separator!" />
           <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-secondary text-xs">
             <p>{t('FooterCopySection.Copyright')}</p>

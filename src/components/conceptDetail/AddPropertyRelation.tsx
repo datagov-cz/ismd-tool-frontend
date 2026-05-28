@@ -11,7 +11,7 @@ type Props = {
 export const AddPropertyRelation = ({ title, concepts }: Props) => {
   return (
     <Section title={title}>
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         {concepts?.map((item) => (
           <RelatedTerm
             key={item.name}
