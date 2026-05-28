@@ -25,11 +25,11 @@ export const OtherOntologyConcepts = ({
   const concepts = data?.data;
 
   const filtered = concepts?.filter((item) => {
-    return item.name?.cs?.includes(search.toLowerCase());
+    return item.name?.cs?.toLowerCase().includes(search.toLowerCase());
   });
 
   return (
-    <div className="pt-6 flex flex-col max-h-[50vh]">
+    <div className="py-6 flex flex-col max-h-[50vh]">
       <div>
         <span className="font-bold mb-4 block">
           {t('Groups.AnotherConcepts')}

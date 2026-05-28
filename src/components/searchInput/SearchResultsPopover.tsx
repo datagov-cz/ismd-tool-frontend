@@ -28,6 +28,14 @@ export const SearchResultsPopover = ({
 
   const base = process.env.NEXT_PUBLIC_BASE_PATH;
 
+  if (query.length < 4) {
+    return (
+      <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-10 text-status-error-600">
+        {t('ShortQuery')}
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">

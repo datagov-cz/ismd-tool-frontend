@@ -82,7 +82,7 @@
     "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
     "LoginButton": "Přihlásit",
     "WelcomeSection": {
-      "Title": "Vítejte v nástroji pro tvorbu správu a tvorbu datových slovníku",
+      "Title": "Vítejte v nástroji pro tvorbu a správu datových slovníku",
       "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
       "BrowseDictionaries": "Procházet slovníky"
     },
@@ -522,7 +522,8 @@
     "SearchesFor": "Výsledky hledání pro",
     "FilterLabel": "Filtrování:",
     "Unpublished": "Rozpracované",
-    "NoMoreResults": "Žádné další výsledky"
+    "NoMoreResults": "Žádné další výsledky",
+    "ShortQuery": "Hledaný výraz musí mít alspoň 4 znaky"
   },
   "SearchTypes": {
     "AllTypes": "Všechny typy",
