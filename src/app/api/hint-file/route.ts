@@ -12,8 +12,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Missing filePath' }, { status: 400 });
   }
 
-  const absPath = path.join(CONTENT_PATH, filePath);
-  if (!fs.existsSync(absPath)) {
+  const absPath = path.resolve(CONTENT_PATH, `.${path.sep}${filePath}`);
+  const rootWithSep = CONTENT_PATH.endsWith(path.sep)
+    ? CONTENT_PATH
+    : `${CONTENT_PATH}${path.sep}`;
+  if (!absPath.startsWith(rootWithSep)) {
+    return NextResponse.json({ error: 'Invalid filePath' }, { status: 400 });
+  }
+
+  if (!fs.existsSync(absPath) || !fs.statSync(absPath).isFile()) {
     return NextResponse.json({ error: 'File not found' }, { status: 404 });
   }
 
