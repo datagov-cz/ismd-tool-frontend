@@ -77,24 +77,21 @@ export const NavItems = ({ session }: Props) => {
           />
         </GovDropdown>
       )}
+      <ConditionalTooltip active={!!session} message={'Dokumentace API'}>
+        <GovButton
+          color="primary"
+          size="m"
+          type="solid"
+          className="no-underline"
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/swagger-ui/index.html`}
+          target="_blank"
+        >
+          <GovIcon type="components" name="book" size="xl" slot="icon-start" />
+          {!session && 'Dokumentace API'}
+        </GovButton>
+      </ConditionalTooltip>
 
-      <GovButton
-        color="primary"
-        size="m"
-        type="solid"
-        className="no-underline"
-        href={`${process.env.NEXT_PUBLIC_BASE_PATH}/swagger-ui/index.html`}
-        target="_blank"
-      >
-        <GovIcon type="components" name="book" size="xl" slot="icon-start" />
-        {!session && 'Dokumentace API'}
-      </GovButton>
-
-      <ConditionalTooltip
-        active={!!session}
-        message={t(`${prefix}.Link1`)}
-        key={t(`${prefix}.Link1`)}
-      >
+      <ConditionalTooltip active={!!session} message={t(`${prefix}.Link1`)}>
         <GovButton
           color="primary"
           size="m"

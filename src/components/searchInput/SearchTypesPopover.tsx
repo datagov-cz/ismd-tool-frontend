@@ -6,6 +6,7 @@ import {
   GovDropdown,
   GovIcon,
   GovTooltip,
+  GovTooltipContent,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -120,10 +121,13 @@ export const SearchTypesPopover = ({ value, onChange }: Props) => {
               .map((f) => (
                 <GovTooltip
                   key={f.key}
-                  position="bottom"
+                  position="right"
                   className="border-0! mt-1"
                   message={t(`Types.${f.key}`)}
                 >
+                  <GovTooltipContent className="z-1000!">
+                    {t(`Types.${f.key}`)}
+                  </GovTooltipContent>
                   <GovIcon
                     type={f.iconType}
                     name={f.icon}

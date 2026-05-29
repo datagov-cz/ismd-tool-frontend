@@ -1,4 +1,4 @@
-import { GovTooltip } from '@gov-design-system-ce/react';
+import { GovTooltip, GovTooltipContent } from '@gov-design-system-ce/react';
 
 export const ConditionalTooltip = ({
   active,
@@ -8,11 +8,13 @@ export const ConditionalTooltip = ({
   active: boolean;
   message: string;
   children: React.ReactNode;
-}) =>
-  active && message ? (
+}) => {
+  return active && message ? (
     <GovTooltip position="bottom" className="border-0! mt-1" message={message}>
+      <GovTooltipContent className="z-2000!">{message}</GovTooltipContent>
       {children}
     </GovTooltip>
   ) : (
     children
   );
+};
