@@ -1,10 +1,14 @@
 const CACHE_NAME = 'ismd-tool-v1';
 
+// Derive the app base path from the registration scope (e.g. "/popisujeme")
+// so the worker works whether or not a Next.js basePath is set.
+const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, '');
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.add('/');
+      return cache.add(`${BASE}/`);
     }),
   );
 });
@@ -29,11 +33,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  if (event.request.method !== 'GET' || url.pathname.startsWith('/api/')) {
+  if (
+    event.request.method !== 'GET' ||
+    url.pathname.startsWith(`${BASE}/api/`)
+  ) {
     return;
   }
 
-  const isStaticAsset = url.pathname.startsWith('/_next/static/');
+  const isStaticAsset = url.pathname.startsWith(`${BASE}/_next/static/`);
 
   if (isStaticAsset) {
     event.respondWith(
@@ -65,7 +72,7 @@ self.addEventListener('fetch', (event) => {
           if (cachedResponse) return cachedResponse;
 
           if (event.request.mode === 'navigate') {
-            return caches.match('/');
+            return caches.match(`${BASE}/`);
           }
         });
       }),
