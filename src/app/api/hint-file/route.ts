@@ -20,10 +20,19 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Invalid filePath' }, { status: 400 });
   }
 
-  if (!fs.existsSync(absPath) || !fs.statSync(absPath).isFile()) {
-    return NextResponse.json({ error: 'File not found' }, { status: 404 });
+  // Attempt the read directly rather than checking existence/type first:
+  // a check-then-read sequence is a TOCTOU race. Missing file (ENOENT) and
+  // directory (EISDIR) both map to 404.
+  try {
+    const content = await fs.promises.readFile(absPath, 'utf-8');
+    return NextResponse.json({ content });
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT' || code === 'EISDIR') {
+      return NextResponse.json({ error: 'File not found' }, { status: 404 });
+    }
+    // eslint-disable-next-line no-console
+    console.error('Failed to read hint file:', e);
+    return NextResponse.json({ error: 'Failed to read file' }, { status: 500 });
   }
-
-  const content = fs.readFileSync(absPath, 'utf-8');
-  return NextResponse.json({ content });
 }
