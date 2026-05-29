@@ -32,12 +32,16 @@ export default function Providers({
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      // Service worker lives in /public, which Next serves under basePath.
+      // Registering '/sw.js' at root 404s when basePath is set.
       navigator.serviceWorker
-        .register('/sw.js')
+        .register(`${normalizedBasePath}/sw.js`, {
+          scope: `${normalizedBasePath}/`,
+        })
         .then(() => {})
         .catch(() => {});
     }
-  }, []);
+  }, [normalizedBasePath]);
 
   return (
     <ThemeProvider>
