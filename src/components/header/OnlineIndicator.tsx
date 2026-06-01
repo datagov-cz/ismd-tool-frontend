@@ -1,0 +1,62 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { GovIcon } from '@gov-design-system-ce/react';
+import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+
+import { useIsOnline } from '@/hooks/useIsOnline';
+
+export const OnlineIndicator = () => {
+  const t = useTranslations('Header.NavLogged');
+  const isOnline = useIsOnline();
+  const pathname = usePathname();
+
+  const [autoVisible, setAutoVisible] = useState(false);
+
+  useEffect(() => {
+    setAutoVisible(true);
+
+    const timer = window.setTimeout(() => {
+      setAutoVisible(false);
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isOnline]);
+
+  useEffect(() => {
+    setAutoVisible(false);
+  }, [pathname]);
+
+  const title = isOnline
+    ? t('OnlineIndicator.Online')
+    : t('OnlineIndicator.Offline');
+
+  return (
+    <div className="relative flex items-center group px-4 gap-x-2 desktop:px-0">
+      <div className="relative flex items-center">
+        <GovIcon
+          name="cloud"
+          size="xl"
+          aria-label={title}
+          className={`${isOnline ? 'text-green' : 'text-gray'} transition-colors duration-150`}
+        />
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-px rotate-45 dark:bg-white bg-dark-border h-full transition-opacity duration-300 ${isOnline ? 'opacity-0' : 'opacity-100'}`}
+        />
+      </div>
+      <span
+        role="tooltip"
+        className={`pointer-events-none desktop:absolute desktop:left-1/2 desktop:-translate-x-1/2 desktop:-bottom-6 z-2 w-max h-max max-w-xs rounded bg-blue text-white text-xs py-1 px-2 transition-opacity duration-150 ${
+          autoVisible
+            ? 'opacity-100'
+            : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100'
+        }`}
+      >
+        {title}
+      </span>
+    </div>
+  );
+};

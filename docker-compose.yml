@@ -1,0 +1,43 @@
+# ==============================================
+# ISMD Tool Frontend - Docker Compose
+# ==============================================
+# Standalone use:
+#   docker compose up                                      # pull dev image from GHCR
+#   docker compose -f docker-compose.yml \
+#                  -f docker-compose.build.yml up --build  # build from local source
+#
+# Aggregated use:
+#   See ../infrastructure/docker-compose.frontends.yml
+# ==============================================
+
+services:
+  ismd-tool-frontend:
+    image: ${TOOL_FRONTEND_IMAGE:-ghcr.io/datagov-cz/ismd-tool-frontend-dev:latest}
+    container_name: ismd-tool-frontend
+    pull_policy: ${TOOL_FRONTEND_PULL_POLICY:-missing}
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH:-/popisujeme}
+      # Inside the docker network, reach tool BE by its service name on its
+      # internal port (8080), not the host-side 8081.
+      - BE_URL=${TOOL_BE_URL:-http://ismd-tool-backend:8080/popisujeme}
+      # NextAuth / Keycloak configuration
+      - NEXTAUTH_URL=http://localhost:3001/popisujeme/api/auth
+      - NEXTAUTH_SECRET=dev-secret
+      # localhost:8080 resolves to host gateway so NextAuth server-side can
+      # reach Keycloak OIDC discovery; browser also uses localhost:8080.
+      - KEYCLOAK_ISSUER=http://localhost:8080/realms/ismd
+      - KEYCLOAK_CLIENT_ID=ismd-app
+      - KEYCLOAK_CLIENT_SECRET=secret123
+    ports:
+      - "3001:3000"
+    extra_hosts:
+      - "localhost:host-gateway"
+    networks:
+      - ismd-network
+    restart: unless-stopped
+
+networks:
+  ismd-network:
+    name: ismd-network
+    driver: bridge

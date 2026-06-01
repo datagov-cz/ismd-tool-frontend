@@ -1,0 +1,15 @@
+# Build override for tool frontend.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.build.yml up --build
+
+services:
+  ismd-tool-frontend:
+    image: ismd-tool-frontend:local
+    pull_policy: never
+    build:
+      # Default `.` works when running from this directory directly.
+      # When composed from ismd-infrastructure via `-f`, set TOOL_FRONTEND_PATH
+      # to the path of this repo (e.g. ../ismd-tool-frontend).
+      context: ${TOOL_FRONTEND_PATH:-.}
+      args:
+        NODE_ENV: ${NODE_ENV:-development}
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/popisujeme}

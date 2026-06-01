@@ -1,0 +1,564 @@
+{
+  "Header": {
+    "ThemeSwitchAria": {
+      "ToLight": "Přepnout na světlý režim",
+      "ToDark": "Přepnout na tmavý režim"
+    },
+    "Ontology": "Slovník",
+    "LogoTitle": "Informační systém pro modelování dat",
+    "LogoTitleMobile": "ISMD",
+    "LoginButton": "Přihlásit se přes CAAIS",
+    "Nav": {
+      "Link1": "Nápověda",
+      "Dropdown": {
+        "Label": "Zpětná vazba",
+        "Link1": "Nahlásit chybu",
+        "Link2": "Navrhnout vylepšení"
+      }
+    },
+    "NavLogged": {
+      "OnlineIndicator": {
+        "Online": "Připojeno",
+        "Offline": "Odpojeno"
+      },
+      "Link1": "Nápověda",
+      "Dropdown": {
+        "Label": "Zpětná vazba",
+        "Link1": "Nahlásit chybu",
+        "Link2": "Navrhnout vylepšení"
+      },
+      "Logout": "Odhlásit",
+      "Settings": "Obecné nastavení"
+    },
+    "MenuButtonAria": "Otevřít navigaci",
+    "Hintbox": {
+      "Title": "Nápověda",
+      "ISMD": "Nápověda ISMD",
+      "CloseAria": "Zavřít nápovědu",
+      "FileExplorer": "Procházet soubory",
+      "SelectFile": "Vyberte soubor pro zobrazení jeho obsahu",
+      "SearchPlaceholder": "Hledat v nápovědě...",
+      "Loading": "Načítání…",
+      "Recommended": "Doporučené pro tuto stránku",
+      "All": "Všechna témata",
+      "EnterSearch": "Zadejte hledaný výraz…",
+      "NoResults": "Žádné výsledky pro ",
+      "Search": "Vyhledávání"
+    }
+  },
+  "Footer": {
+    "LinkColumn": {
+      "Title": "Odkazy",
+      "Link1": "Portál o datech",
+      "Link2": "Popis dat na portálu o datech",
+      "Link3": "Repozitář na GitHubu"
+    },
+    "ContactColumn": {
+      "Title": "Kontakt",
+      "Email": "data@dia.gov.cz"
+    },
+    "ThanksSection": {
+      "Title": "Poděkování",
+      "Text": "Informační systém pro modelování dat vznikl v rámci projektu Zajištění podmínek pro kvalitní správu datového fondu a zajištění řízeného přístupu k datům, reg.č.: CZ.31.1.01/MV/23_62/0000062."
+    },
+    "BottomLinksSection": {
+      "Link1": "Link",
+      "Link2": "Link",
+      "Link3": "Link",
+      "Link4": "Link"
+    },
+    "FooterCopySection": {
+      "Copyright": "2025 © Digitální a informační agentura • Informace jsou poskytovány v souladu se zákonem č. 106/1999 Sb., o svobodném přístupu k informacím.",
+      "Version": "Verze 2.0.2105.9856",
+      "DesignSystem": "Využit Design system 4.0"
+    },
+    "BackToTopAria": "Na začátek stránky"
+  },
+  "Home": {
+    "MainControls": {
+      "OpenDictFromFile": "Importovat ze souboru",
+      "SearchPlaceholder": "[Cmnd/Ctrl+K] Hledat pojmy a slovníky...",
+      "CreateNewDict": "Vytvořit nový slovník",
+      "Logged": {
+        "DraftDictionaries": "Rozpracované slovníky",
+        "PublishedDictionaries": "Publikované slovníky",
+        "Definitions": "Pojmy",
+        "Diagrams": "Diagramy"
+      }
+    },
+    "LoginToProceed": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
+    "LoginButton": "Přihlásit",
+    "WelcomeSection": {
+      "Title": "Vítejte v nástroji pro tvorbu a správu datových slovníku",
+      "Description": "Bez přihlášení si můžete procházet publikované slovníky z Národního katalogu dat. Pro tvorbu slovníků se musíte přihlásit.",
+      "BrowseDictionaries": "Procházet slovníky"
+    },
+    "LastVisited": {
+      "Title": "Naposledy navštívené"
+    },
+    "DraftDictionariesSection": {
+      "Title": "Rozpracované slovníky",
+      "ShowAll": "Zobrazit všechny rozpracované slovníky"
+    },
+    "News": {
+      "Title": "Co je nového?",
+      "ToDetailButton": "Více"
+    }
+  },
+  "ConceptCreateWrapper": {
+    "NewConceptFor": "Nový pojem k:",
+    "ToastSuccess": "Koncept byl úspěšně vytvořen.",
+    "ToastError": "Při ukládání konceptu došlo k chybě."
+  },
+  "ConceptEditWrapper": {
+    "EditConcept": "Upravit pojem:",
+    "Loading": "Načítání pojmu…",
+    "ToastSuccess": "Koncept byl úspěšně upraven.",
+    "ToastError": "Při ukládání konceptu došlo k chybě."
+  },
+  "ConceptDetail": {
+    "Sections": {
+      "AlternativeName": "Alternativní název",
+      "Agenda": "Agenda",
+      "Definition": "Definice",
+      "Description": "Popis",
+      "SupersededClass": "Nadřazená třída",
+      "SupersededConcepts": "Nadřazené pojmy",
+      "SupersededRelation": "Nadřazený vztah",
+      "SupersededProperty": "Nadřazená vlastnost",
+      "SubordinateConcepts": "Podřazené pojmy",
+      "Properties": "Vlastnosti",
+      "Relations": "Vztahy",
+      "Resource": "Definující ustanovení právního předpisu",
+      "RelatedResources": "Související ustanovení právního předpisu",
+      "NonLegalResources": "Definující nelegislativní zdroj",
+      "RelatedNonLegalResources": "Související nelegislativní zdroj",
+      "Range": "Obor hodnot",
+      "DefinicniObor": "Definiční obor",
+      "EquivalentConcept": "Ekvivalentní pojem",
+      "WaySharingData": "Způsob sdílení údajů",
+      "WayObtainingData": "Způsob získání údajů",
+      "DataContentType": "Typ obsahu údajů",
+      "IsPpdf": "Je v PPDF",
+      "IsPublic": "Je veřejný",
+      "AgendaInfoSystem": "Agendový informační systém",
+      "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
+      "ConceptSource": "Zdroje pojmu",
+      "DefiningNonLegislative": "Definujice nelegislativni zdroj",
+      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj"
+    },
+    "Groups": {
+      "TypesAndClassification": "Typy a zařazení",
+      "Naming": "Pojmenování",
+      "ConceptMeaning": "Význam pojmu",
+      "ConceptSources": "Zdroje pojmu",
+      "AgendaAndInfoSystems": "Agenda a informační systémy",
+      "PublicityAndPublication": "Veřejnost a publikace",
+      "AnotherConcepts": "Další pojmy ve slovníku",
+      "Search": "Hledat vyraz"
+    },
+    "UdajeKDoplneni": {
+      "Title": "Údaje k doplnění"
+    },
+    "Registry": {
+      "Title": "Registr práv a povinností",
+      "PPDF": "údaj je sdílen v PPDF",
+      "NonPublic": "údaj je veřejný",
+      "AIS": "AIS",
+      "Agenda": "Agenda"
+    },
+    "Decree": {
+      "Title": "Vyhláška 360/2023",
+      "Aquire": "Způsob získání údaje",
+      "Share": "Způsob sdílení údaje",
+      "Type": "Typ obsahu údaje"
+    },
+    "Main": {
+      "ControlPanel": {
+        "Updated": "aktualizováno",
+        "Back": "Zpět",
+        "EditConcept": "Upravit pojem",
+        "ConceptComments": "Komentáře k pojmu",
+        "NotFound": "Pojem nenalezen",
+        "InOntology": "Ve slovníku"
+      },
+      "Public": "Veřejný",
+      "NonPublic": "Neveřejný",
+      "Name": "Název",
+      "OpenInESbirka": "Otevřít v e-sbírce",
+      "Loading": "Načítání...",
+      "NoResults": "Pro tohle nemáme žádné výsledky",
+      "AddConcept": "+ Přidat další pojem"
+    }
+  },
+  "Term": {
+    "Properties": "Vlastnosti",
+    "Relations": "Vztahy",
+    "ShowLess": "[méně]",
+    "ShowMore": "[více]"
+  },
+  "DictionaryDetail": {
+    "CreateConcept": {
+      "Title": "Nový pojem",
+      "Save": "Uložit"
+    },
+    "EditOntology": {
+      "Title": "Upravit slovník",
+      "EditedOntology": "Upravovaný slovník",
+      "Save": "Uložit",
+      "Back": "Zpět",
+      "Ontology": "Slovníky",
+      "Comments": "Komentáře ke slovníku",
+      "Labels": {
+        "Name": "Název",
+        "Language": "Jazyk",
+        "Description": "Popis"
+      },
+      "SuccessMessage": "Slovník byl úspěšně upraven",
+      "ErrorMessage": "Chyba při úpravě slovníku"
+    },
+    "ValidationSidebox": {
+      "Title": "Výsledky kontroly",
+      "DateOfControl": "Datum kontroly: ",
+      "DownloadSuccess": "Stahování reportu proběhlo úspěšně",
+      "DownloadError": "Report se nepodařilo stáhnout",
+      "Download": "Stáhnout nekompletní katalogizační záznam",
+      "Revalidate": "Znovu zkontrolovat",
+      "ERROR": "Chyba",
+      "WARNING": "Varování",
+      "INFO": "Informace",
+      "UpdatedAt": "Aktualizováno",
+      "PriorityHigh": "Vysoká priorita",
+      "PriorityMedium": "Střední priorita",
+      "PriorityLow": "Nízká priorita",
+      "NotValidated": "Slovník ještě nebyl zvalidován",
+      "RunValidation": "Spustit validaci",
+      "ValidationResult": "Výsledek kontroly",
+      "RevalidateShort": "Znovu ověřit",
+      "IncompleteCatalogRecord": "Nekompletní katalogizační záznam",
+      "OpenConcept": "Otevřít",
+      "ShowConcepts": "Zobrazit pojmy"
+    },
+    "Sidebar": {
+      "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
+      "DictTerms": "pojmy slovníku",
+      "RelatedConcepts": "pojmy navázané na tento pojem",
+      "AllResults": "všechny výsledky",
+      "DraftDictsHeadline": "Z rozpracovaných slovníků",
+      "PublishedDictsHeadline": "Z publikovaných slovníků"
+    },
+    "CommentSidebox": {
+      "Title": "Komentáře",
+      "TextareaPlaceholder": "Napište komentář...",
+      "SendButtonAria": "Odeslat komentář",
+      "ErrorSendingComment": "Chyba při odesílání komentáře",
+      "MessageRequired": "Zpráva je povinná",
+      "DeleteSuccess": "Komentář odstraněn",
+      "DeleteCommentConfirmModal": {
+        "Title": "Smazat komentář",
+        "Description": "Opravdu chcete smazat komentář?",
+        "ConfirmButton": "Potvrdit",
+        "CancelButton": "Zrušit"
+      },
+      "OwnComment": "Vlastní komentář",
+      "Send": "Odeslat"
+    },
+    "Main": {
+      "DictionaryStatus": {
+        "Draft": "Rozpracovaný slovník",
+        "Published": "Publikovaný slovník"
+      },
+      "Sections": {
+        "Definition": "Definice",
+        "Description": "Popis",
+        "RelatedResources": "Související zdroje",
+        "Terms": "Pojmy"
+      },
+      "ControlPanel": {
+        "GetLink": "Získání odkazu",
+        "CopyLink": "Kopírovat odkaz",
+        "LinkCopied": "Odkaz zkopírován",
+        "Comments": "Komentáře",
+        "ValidationPassed": "Validace proběhla úspěšně",
+        "ValidationFailed": "Validace neprošla",
+        "Download": "Stáhnout",
+        "Delete": "Smazat",
+        "Add": "Přidat",
+        "Concepts": "pojmů",
+        "Updated": "aktualizováno",
+        "CreateDiagram": "Vytvořit diagram"
+      },
+      "BackToHome": "Zpět",
+      "AddConcept": "Přidat pojem",
+      "SearchConcepts": "Hledat výraz",
+      "Ontology": "Slovníky"
+    }
+  },
+  "OntologyList": {
+    "NKDTitle": "Publikované slovníky",
+    "ISMDTitle": "Moje rozpracované slovníky",
+    "SearchOntologies": "Hledat slovníky",
+    "NoMoreResults": "Žádné další výsledky"
+  },
+  "Shared": {
+    "CloseAria": "Zavřít",
+    "Yes": "Ano",
+    "No": "Ne"
+  },
+  "DownloadDialog": {
+    "Title": "Vyberte formát souboru",
+    "Success": "Úspěšně stažený sobor",
+    "Error": "Soubor se nepodařilo stáhnout"
+  },
+  "DeleteDialog": {
+    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Name": "Název",
+    "No": "Ne",
+    "Yes": "Ano"
+  },
+  "UploadOntology": {
+    "Dialog": {
+      "Title": "Importovat ze souboru",
+      "FileInputLabel": "Vyberte soubor",
+      "CancelButton": "Zrušit",
+      "SubmitButton": "Importovat slovník",
+      "OfflineUploadSuccess": "Slovník byl úspěšně vytvořen offline. Pro uložení do Národního katalogu dat se musíte obnovit vaše spojení.",
+      "OfflineUploadError": "Chyba při vytváření slovníku offline",
+      "SyncSuccess": "Slovník byl úspěšně vytvořen a synchronizován s Národním katalogem dat",
+      "SyncError": "Chyba při synchronizaci slovníku s Národním katalogem dat. Zkuste se znova přihlásit.",
+      "DuplicateIRIRemoved": "Duplicitní IRI soubory byly odstraněny z lokální databáze"
+    },
+    "FileUpload": {
+      "Drag": "Přetáhnětě soubor nebo",
+      "Upload": "Nahrát ze zařízení",
+      "Supported": "Podporované formáty: OFN, XLSX, CSV, TTL"
+    },
+    "ConfirmCancelDialog": {
+      "Title": "Máte neuložené změny, chcete ukončit vytváření slovníku?",
+      "NoButton": "Ne",
+      "YesButton": "Ano"
+    },
+    "SuccessDialog": {
+      "Title": "Úspěšně jste vytvořili slovní ze souboru",
+      "GraphName": "Název slovníku",
+      "ViewOntology": "Zobrazit slovník",
+      "CloseDialog": "Zavřít"
+    }
+  },
+  "Errors": {
+    "UnknownError": "Neznámý error"
+  },
+  "CreateOntology": {
+    "Form": {
+      "Title": "Vytvořit nový slovník",
+      "NamespaceLabel": "Prostor názvů",
+      "NamespacePlaceholder": "Zadejte prostor názvů...",
+      "NameLabel": "Název slovníku",
+      "NamePlaceholder": "Zadejte název slovníku v češtině",
+      "LanguageTagLabel": "Jazykový tag",
+      "DescriptionLabel": "Popis slovníku",
+      "DescriptionPlaceholder": "Zadejte popis slovníku v češtině",
+      "CreateButton": "Vytvořit slovník",
+      "CreatingButton": "Vytváří se...",
+      "SubmitButton": "Vytvořit",
+      "CreateNewDict": "Vytvořit nový slovník...",
+      "CreateNewDictError": "Chyba při vytváření nového slovníku",
+      "CreateNewDictSyncError": "Chyba při syncrhonizaci slovníku, zkuste se znova přihlásit",
+      "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
+      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení.",
+      "Or": "nebo",
+      "Back": "Zpět"
+    },
+    "FormSchema": {
+      "NamespaceRequired": "Prostor názvů je povinný",
+      "NameRequired": "Název je povinný",
+      "DescriptionRequired": "Popis je povinný",
+      "LanguageTagRequired": "Jazykový tag je povinný"
+    }
+  },
+  "CreateConcept": {
+    "Title": "Pojem",
+    "Save": "Uložit",
+    "Success": "Úspěšně uložený pojem",
+    "Error": "Pojem se nepodařilo uložit",
+    "CommonConceptFields": {
+      "Labels": {
+        "Name": "Název",
+        "Language": "Jazyk",
+        "AlternativeName": "Alternativní název",
+        "Dictionary": "Slovník",
+        "Namespace": "Adresa lokalního katalogu dat",
+        "Identifier": "Identifikátor",
+        "Description": "Popis",
+        "Definition": "Definice",
+        "DefiningLegalSource": "Definující ustanovení právního předpisu",
+        "DefiningNonLegalSource": "Definující nelegislativní zdroj",
+        "RelatedLegalSource": "Související ustanovení právního předpisu",
+        "RelatedNonLegalSource": "Související nelegislativní zdroj",
+        "ExactMatch": "Ekvivalentní pojem",
+        "InThesaurus": "V Tezaurus",
+        "AgendaCode": "Agenda",
+        "AgendaSystemCode": "Agendový informační systém",
+        "ContentType": "Typ obsahu údajů",
+        "AcquisitionMethod": "Způsob získání údajů",
+        "SharingMethod": "Způsob sdílení údajů",
+        "IsPublic": "Je veřejný",
+        "PrivacyProvision": "Ustanovení dokládající neveřejnost údaje",
+        "IsInPPDF": "Je v PPDF"
+      },
+      "Options": {
+        "Yes": "Ano",
+        "No": "Ne",
+        "ContentType": {
+          "Identification": "Identifikační",
+          "Registration": "Evidenční",
+          "Statistical": "Statistické"
+        },
+        "AcquisitionMethod": {
+          "FromOtherAgendas": "Jiných agend",
+          "Own": "Vlastní",
+          "Operational": "Provozní"
+        },
+        "SharingMethod": {
+          "PubliclyAccessible": "Veřejně přístupné",
+          "ProvidedOnRequest": "Poskytované na žádost",
+          "AccessibleForAgendaExecution": "Zpřístupňované pro výkon agendy"
+        }
+      }
+    },
+    "ClassCreateFields": {
+      "Label": "Typy a zařazení",
+      "Labels": {
+        "ClassType": "Typ třídy",
+        "BroaderConcept": "Nadřazená třída",
+        "ConceptType": "Typ pojmu"
+      },
+      "Options": {
+        "ClassType": {
+          "SubjectOfLawType": "Typ subjektu práva",
+          "ObjectOfLawType": "Typ objektu práva"
+        }
+      }
+    },
+    "PropertyCreateFields": {
+      "Labels": {
+        "Domain": "Definiční obor",
+        "SuperProperty": "Nadřazená vlastnost",
+        "DataType": "Obor hodnot",
+        "BroaderConcept": "Nadřazená třida"
+      },
+      "Options": {
+        "Undefined": "undefined",
+        "DataType": {
+          "Boolean": "Ano či ne",
+          "Date": "Datum",
+          "Time": "Čas",
+          "DateTime": "Datum a čas",
+          "Integer": "Celé číslo",
+          "Decimal": "Desetinné číslo",
+          "Uri": "URI, IRI, URL",
+          "String": "Řetězec",
+          "Text": "Text"
+        }
+      }
+    },
+    "RelationshipConceptFields": {
+      "Labels": {
+        "Domain": "Definiční obor",
+        "Range": "Obor hodnot",
+        "SuperRelation": "Nadřazený vztah"
+      },
+      "Options": {
+        "Undefined": "undefined"
+      }
+    },
+    "NamingSection": {
+      "Label": "Pojmenování",
+      "NameLabel": "Název",
+      "NamePlaceholder": "Zadejte název pojmu",
+      "AltNameLabel": "Alternativní název",
+      "AltNamePlaceholder": "Zadejte alternativní název pojmu"
+    },
+    "TypesSection": {
+      "PropertyDomainLabel": "Patří k pojmu",
+      "PropertyDomainPlaceholder": "Vyhledejte pojem",
+      "PropertyDataTypeLabel": "Datový typ hodnoty",
+      "PropertyDataTypePlaceholder": "Vyberte typ hodnoty",
+      "RelationDomainLabel": "Výchozí pojem",
+      "RelationDomainPlaceholder": "Vyhledejte pojem",
+      "RelationRangeLabel": "Cílový pojem",
+      "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptMeaningSection": {
+      "Label": "Význam pojmu",
+      "DefinitionLabel": "Definice",
+      "DefinitionPlaceholder": "Definice",
+      "DescriptionLabel": "Popis",
+      "DescriptionPlaceholder": "Popis",
+      "BroaderConceptLabel": "Nadřazená třída",
+      "SearchPlaceholder": "Hledat",
+      "SuperRelationLabel": "Nadřazený vztah",
+      "SuperPropertyLabel": "Nadřazená vlastnost",
+      "EquivalentConceptLabel": "Ekvivalentní pojem"
+    },
+    "RightsAndObligationsSection": {
+      "AgendaPlaceholder": "Vyhledat agendu RPP",
+      "AISPlaceholder": "Vyhledat AIS"
+    },
+    "ProclamationSection": {
+      "Label": "Kategorizace dle vyhlášky 360/2023",
+      "ContentTypeLabel": "Typ obsahu údajů",
+      "AcquisitionMethodLabel": "Způsob získání údajů",
+      "SharingMethodLabel": "Způsob sdílení údajů"
+    },
+    "OntologySection": {
+      "Label": "Technické údaje",
+      "OntologyLabel": "Slovník",
+      "OntologyPlaceholder": "Zadejte IRI slovníku",
+      "NamespaceLabel": "Adresa lokálního katalogu dat",
+      "NamespacePlaceholder": "Zadejte IRI slovníku"
+    }
+  },
+  "Search": {
+    "More": "Další",
+    "Ontologies": "Slovníky",
+    "Concepts": "Pojmy",
+    "DetailSearch": "Detailní vyhledávání",
+    "NoOntologies": "Žádné slovníky nenalezeny",
+    "NoConcepts": "Žádné pojmy nenalezeny",
+    "SearchesFor": "Výsledky hledání pro",
+    "FilterLabel": "Filtrování:",
+    "Unpublished": "Rozpracované",
+    "NoMoreResults": "Žádné další výsledky",
+    "ShortQuery": "Hledaný výraz musí mít alspoň 4 znaky"
+  },
+  "SearchTypes": {
+    "AllTypes": "Všechny typy",
+    "Selected": "Vybrané:",
+    "Types": {
+      "Pojem": "Pojem",
+      "Diagram": "Diagram",
+      "Slovník": "Slovník",
+      "Rozpracovaný": "Rozpracovaný"
+    }
+  },
+  "ComingSoon": {
+    "Title": "Připravujeme",
+    "Description": "Nástroj pro tvorbu a správu sémantických slovníků v rámci Informačního systému pro modelování dat dokončujeme. Veřejně dostupný bude v nejbližší době.",
+    "Thanks": "Děkujeme za trpělivost."
+  },
+  "Maintenance": {
+    "Title": "Probíhá údržba",
+    "Description": "Aplikace je dočasně nedostupná z důvodu plánované údržby. Pracujeme na obnovení provozu.",
+    "Thanks": "Děkujeme za pochopení."
+  },
+  "FormToolbar": {
+    "UnsavedChanges": "Neuložené změny",
+    "Undo": "Zpět",
+    "UndoTitle": "Zpět (Ctrl+Z)",
+    "Redo": "Znovu",
+    "RedoTitle": "Znovu (Ctrl+Y)",
+    "Cancel": "Zrušit",
+    "Save": "Uložit"
+  }
+}
