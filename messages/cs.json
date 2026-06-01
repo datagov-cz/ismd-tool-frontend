@@ -407,6 +407,9 @@
         "IsInPPDF": "Je v PPDF"
       },
       "Options": {
+        "Class": "Třída",
+        "Property": "Vlastnost",
+        "Relation": "Vztah",
         "Yes": "Ano",
         "No": "Ne",
         "ContentType": {

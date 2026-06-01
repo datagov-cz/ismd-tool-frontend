@@ -20,6 +20,8 @@ interface Props {
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   children?: React.ReactNode;
   source: 'NKD' | 'ISMD';
+  slug: string;
+  isOwnerLoggedIn?: boolean;
 }
 
 export const ConceptLayout = ({
@@ -27,6 +29,8 @@ export const ConceptLayout = ({
   conceptType,
   children,
   source,
+  slug,
+  isOwnerLoggedIn,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const { user } = useCurrentUser();
@@ -44,10 +48,14 @@ export const ConceptLayout = ({
           resolved={resolvedRelations}
         />
 
-        {conceptType === 'TRIDA' && (
+        {conceptType === 'TRIDA' && conceptDetail.iri && (
           <PropertiesRelationsSection
             properties={conceptDetail.conceptProperties}
             relationships={conceptDetail.conceptRelationships}
+            iri={conceptDetail.iri}
+            conceptName={conceptDetail['název']?.cs}
+            slug={slug}
+            isOwnerLoggedIn={isOwnerLoggedIn}
           />
         )}
 
@@ -61,12 +69,18 @@ export const ConceptLayout = ({
                   resolvedRelations={resolvedRelations}
                 />
               )}
-              {conceptDetail['obor-hodnot-resolved'] && (
+              {conceptDetail['obor-hodnot-resolved'] ? (
                 <RangeItem
                   title={t('Sections.Range')}
                   item={conceptDetail['obor-hodnot-resolved']}
                 />
-              )}
+              ) : conceptDetail['obor-hodnot'] ? (
+                <ConceptRelation
+                  title={t('Sections.Range')}
+                  iri={conceptDetail['obor-hodnot']}
+                  resolvedRelations={resolvedRelations}
+                />
+              ) : undefined}
             </div>
           )}
 
@@ -81,12 +95,14 @@ export const ConceptLayout = ({
           )}
 
         {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (
-          <Section title={t('Sections.SupersededRelation')}>
-            <SuperClassList
-              items={conceptDetail['nadřazený-vztah']}
-              resolved={resolvedRelations}
-            />
-          </Section>
+          <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+            <Section title={t('Sections.SupersededRelation')}>
+              <SuperClassList
+                items={conceptDetail['nadřazený-vztah']}
+                resolved={resolvedRelations}
+              />
+            </Section>
+          </div>
         )}
         <LegalSection
           definujiciUstanoveni={
@@ -100,6 +116,7 @@ export const ConceptLayout = ({
         />
 
         <AgendaSection
+          ppdf={conceptDetail['je-ppdf']}
           agenda={conceptDetail['agenda-resolved'] ?? conceptDetail.agenda}
           agendovyInformacniSystem={
             conceptDetail['agendový-informační-systém-resolved'] ??
@@ -118,6 +135,7 @@ export const ConceptLayout = ({
 
         {source === 'ISMD' && user?.userId && (
           <MissingConceptFields
+            slug={slug}
             conceptDetail={conceptDetail}
             conceptType={conceptType}
           />

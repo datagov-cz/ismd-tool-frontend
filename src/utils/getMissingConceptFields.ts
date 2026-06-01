@@ -6,6 +6,7 @@ export interface FieldConfig {
   key: keyof ConceptDetailModel;
   labelKey: string;
   types?: ConceptType[];
+  anchor: string;
 }
 
 export interface FieldGroup {
@@ -20,52 +21,56 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'nadřazená-třída',
         labelKey: 'Sections.SupersededClass',
+
         types: ['TRIDA'],
+        anchor: '#meaning',
       },
       {
         key: 'nadřazená-vlastnost',
         labelKey: 'Sections.SupersededProperty',
         types: ['VLASTNOST'],
+        anchor: '#meaning',
       },
       {
         key: 'nadřazený-vztah',
         labelKey: 'Sections.SupersededRelation',
         types: ['VZTAH'],
+        anchor: '#meaning',
       },
       {
         key: 'definiční-obor',
         labelKey: 'Sections.DefinicniObor',
         types: ['VLASTNOST', 'VZTAH', undefined],
+        anchor: '#types',
       },
       {
         key: 'obor-hodnot',
         labelKey: 'Sections.Range',
         types: ['VLASTNOST', 'VZTAH', undefined],
-      },
-      {
-        key: 'conceptProperties',
-        labelKey: 'Sections.Properties',
-        types: ['TRIDA'],
-      },
-      {
-        key: 'conceptRelationships',
-        labelKey: 'Sections.Relations',
-        types: ['TRIDA'],
+        anchor: '#types',
       },
     ],
   },
   {
     groupLabelKey: 'Groups.Naming',
     fields: [
-      { key: 'alternativní-název', labelKey: 'Sections.AlternativeName' },
-      { key: 'definice', labelKey: 'Sections.Definition' },
-      { key: 'popis', labelKey: 'Sections.Description' },
+      {
+        key: 'alternativní-název',
+        labelKey: 'Sections.AlternativeName',
+        anchor: '#naming',
+      },
+      { key: 'definice', labelKey: 'Sections.Definition', anchor: '#meaning' },
+      { key: 'popis', labelKey: 'Sections.Description', anchor: '#meaning' },
     ],
   },
   {
     groupLabelKey: 'Groups.ConceptMeaning',
     fields: [
-      { key: 'ekvivalentní-pojem', labelKey: 'Sections.EquivalentConcept' },
+      {
+        key: 'ekvivalentní-pojem',
+        labelKey: 'Sections.EquivalentConcept',
+        anchor: '#meaning',
+      },
     ],
   },
   {
@@ -74,32 +79,53 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'definující-ustanovení-právního-předpisu-resolved',
         labelKey: 'Sections.Resource',
+        anchor: '#sources',
       },
       {
         key: 'související-ustanovení-právního-předpisu-resolved',
         labelKey: 'Sections.RelatedResources',
+        anchor: '#sources',
       },
       {
         key: 'definující-nelegislativní-zdroj',
         labelKey: 'Sections.NonLegalResources',
+        anchor: '#sources',
       },
       {
         key: 'související-nelegislativní-zdroj',
         labelKey: 'Sections.RelatedNonLegalResources',
+        anchor: '#sources',
       },
     ],
   },
   {
     groupLabelKey: 'Groups.AgendaAndInfoSystems',
     fields: [
-      { key: 'agenda-resolved', labelKey: 'Sections.Agenda' },
+      {
+        key: 'agenda-resolved',
+        labelKey: 'Sections.Agenda',
+        anchor: '#rights',
+      },
       {
         key: 'agendový-informační-systém-resolved',
         labelKey: 'Sections.AgendaInfoSystem',
+        anchor: '#rights',
       },
-      { key: 'typ-obsahu-údaje', labelKey: 'Sections.DataContentType' },
-      { key: 'způsob-získání-údaje', labelKey: 'Sections.WayObtainingData' },
-      { key: 'způsob-sdílení-údaje', labelKey: 'Sections.WaySharingData' },
+      {
+        key: 'typ-obsahu-údaje',
+        labelKey: 'Sections.DataContentType',
+        anchor: '#proclamation',
+      },
+      {
+        key: 'způsob-získání-údaje',
+        labelKey: 'Sections.WayObtainingData',
+        anchor: '#proclamation',
+      },
+      {
+        key: 'způsob-sdílení-údaje',
+        labelKey: 'Sections.WaySharingData',
+        anchor: '#proclamation',
+      },
     ],
   },
   {
@@ -108,8 +134,9 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'ustanovení-dokládající-neveřejnost-údaje',
         labelKey: 'Sections.ProvingNonPublicData',
+        anchor: '#rights',
       },
-      { key: 'je-ppdf', labelKey: 'Sections.IsPpdf' },
+      { key: 'je-ppdf', labelKey: 'Sections.IsPpdf', anchor: '#rights' },
     ],
   },
 ];

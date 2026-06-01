@@ -97,6 +97,19 @@ export const ConceptForm = ({
     }
   }, [errors]);
 
+  useEffect(() => {
+    if (!externalDefaults) return;
+
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById(hash)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [externalDefaults]);
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">

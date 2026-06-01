@@ -11,7 +11,7 @@ export const ConceptMeaningSection = () => {
   const t = useTranslations('CreateConcept.ConceptMeaningSection');
 
   return (
-    <FormSection icon="journal-text" label={t('Label')}>
+    <FormSection icon="journal-text" label={t('Label')} anchor="meaning">
       <LanguageInput<ConceptForm>
         name="definitionModel.definition"
         label={t('DefinitionLabel')}
@@ -27,6 +27,8 @@ export const ConceptMeaningSection = () => {
           name="broaderConcept"
           label={t('BroaderConceptLabel')}
           placeholder={t('SearchPlaceholder')}
+          searchType="CLASS"
+          searchSource="ALL"
         />
       )}
       {form.watch('conceptType') === 'VZTAH' && (
@@ -34,6 +36,9 @@ export const ConceptMeaningSection = () => {
           name="superRelation"
           label={t('SuperRelationLabel')}
           placeholder={t('SearchPlaceholder')}
+          searchType="RELATIONSHIP"
+          searchSource="ALL"
+          single
         />
       )}
       {form.watch('conceptType') === 'VLASTNOST' && (
@@ -41,12 +46,16 @@ export const ConceptMeaningSection = () => {
           name="superProperty"
           label={t('SuperPropertyLabel')}
           placeholder={t('SearchPlaceholder')}
+          searchType="PROPERTY"
+          searchSource="ALL"
         />
       )}
       <ConceptInput
         name="exactMatch"
         label={t('EquivalentConceptLabel')}
         placeholder={t('SearchPlaceholder')}
+        searchType="CONCEPT"
+        searchSource="ALL"
       />
     </FormSection>
   );

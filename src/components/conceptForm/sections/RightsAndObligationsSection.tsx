@@ -11,7 +11,7 @@ export const RightsAndObligationsSection = () => {
   const tSection = useTranslations('CreateConcept.RightsAndObligationsSection');
 
   return (
-    <FormSection label={tRegistry('Title')} icon="shield-check">
+    <FormSection label={tRegistry('Title')} icon="shield-check" anchor="rights">
       <RPPInput
         label={tRegistry('Agenda')}
         name="agendaCode"

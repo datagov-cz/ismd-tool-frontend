@@ -5,7 +5,12 @@ const NameModelSchema = z.object({
   name: z.record(z.string(), z.string().min(1, 'Název je povinný')),
 });
 
-const ConceptRef = z.object({ iri: z.string(), label: z.string() });
+const ConceptRef = z.object({
+  iri: z.string(),
+  label: z.string(),
+  ontologyLabel: z.string().optional(),
+  id: z.number().optional(),
+});
 const AgendaRef = z.object({
   iri: z.string().optional(),
   nazev: z.string().optional(),
@@ -140,6 +145,10 @@ const ConceptFormSchema = z.object({
   codeListDataset: z.string().optional(),
 });
 
+const AddPropertyRelationModelSchema = z.object({
+  concept: ConceptRef.nullable(),
+});
+
 // Inferred types
 export type NameModel = z.infer<typeof NameModelSchema>;
 export type ConceptCreateModel = z.infer<typeof ConceptCreateModelSchema>;
@@ -159,4 +168,5 @@ export {
   RelationshipConceptModelSchema,
   CreateConceptBodySchema,
   ConceptFormSchema,
+  AddPropertyRelationModelSchema,
 };

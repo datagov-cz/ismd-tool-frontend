@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 import {
   ConceptDetailModel,
+  ConceptDetailModelReferencovanéPojmyResolved,
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
@@ -26,18 +27,75 @@ function toMultiLang(
   }));
 }
 
-function toConceptRef(
-  iri?: string,
-): { iri: string; label: string } | undefined {
-  return iri ? { iri, label: iri } : undefined;
+// Add these helpers near the top of ConceptEditWrapper.tsx
+
+const SHARING_METHOD_IRI_MAP: Record<string, string> = {
+  'veřejně-přístupné': 'veřejně přístupné',
+  'poskytované-na-žádost': 'poskytované na žádost',
+  'zpřístupňované-pro-výkon-agendy': 'zpřístupňované pro výkon agendy',
+};
+
+const ACQUISITION_METHOD_IRI_MAP: Record<string, string> = {
+  'jiných-agend': 'jiných agend',
+  provozní: 'provozní',
+};
+
+const CONTENT_TYPE_IRI_MAP: Record<string, string> = {
+  identifikační: 'identifikační',
+  evidenční: 'evidenční',
+  statistické: 'statistické',
+};
+
+function iriToSlug(iri: string): string {
+  return iri.split('/').pop() ?? '';
 }
 
-function toConceptRefs(iris?: string[]): { iri: string; label: string }[] {
+function mapSharingMethods(iris?: string[]): string[] {
+  return (iris ?? [])
+    .map((iri) => SHARING_METHOD_IRI_MAP[iriToSlug(iri)] ?? '')
+    .filter(Boolean);
+}
+
+function mapAcquisitionMethod(iri?: string): string {
+  if (!iri) return '';
+  return ACQUISITION_METHOD_IRI_MAP[iriToSlug(iri)] ?? '';
+}
+
+function mapContentType(iri?: string): string {
+  if (!iri) return '';
+  return CONTENT_TYPE_IRI_MAP[iriToSlug(iri)] ?? '';
+}
+
+function toConceptRef(
+  iri?: string,
+  resolved?: ConceptDetailModelReferencovanéPojmyResolved,
+): { iri: string; label: string; ontologyLabel: string } | undefined {
+  if (!iri) return undefined;
+  const resolvedItem = resolved?.[iri];
+  if (resolvedItem) {
+    return {
+      iri: iri,
+      label: resolvedItem.conceptName?.cs ?? '',
+      ontologyLabel: resolvedItem.ontologyName?.cs ?? '',
+    };
+  }
+  return iri
+    ? {
+        iri,
+        label: iri.split('pojem/')[1].replace(/-/g, ' '),
+        ontologyLabel: '',
+      }
+    : undefined;
+}
+
+function toConceptRefs(
+  iris?: string[],
+  resolved?: ConceptDetailModelReferencovanéPojmyResolved,
+): { iri: string; label: string; ontologyLabel: string }[] {
   return (
-    iris?.map((iri) => ({
-      iri,
-      label: iri.split('pojem/')[1].replace(/-/g, ' '),
-    })) ?? []
+    iris
+      ?.map((iri) => toConceptRef(iri, resolved))
+      .filter((ref) => ref !== undefined) ?? []
   );
 }
 
@@ -74,9 +132,24 @@ export function mapDetailToFormValues(
         cs: '',
       },
     },
-    altNameModel: { altName: toMultiLang(altNameRecord) },
-    definitionModel: { definition: toMultiLang(detail['definice']) },
-    descriptionModel: { description: toMultiLang(detail['popis']) },
+    altNameModel: {
+      altName:
+        toMultiLang(altNameRecord).length > 0
+          ? toMultiLang(altNameRecord)
+          : [{ languageTag: 'cs', name: '' }],
+    },
+    definitionModel: {
+      definition:
+        toMultiLang(detail['definice']).length > 0
+          ? toMultiLang(detail['definice'])
+          : [{ languageTag: 'cs', name: '' }],
+    },
+    descriptionModel: {
+      description:
+        toMultiLang(detail['popis']).length > 0
+          ? toMultiLang(detail['popis'])
+          : [{ languageTag: 'cs', name: '' }],
+    },
     definingLegalSource:
       detail['definující-ustanovení-právního-předpisu'] ?? [],
     relatedLegalSource:
@@ -93,19 +166,37 @@ export function mapDetailToFormValues(
         description: s.popis?.cs,
         url: s.url,
       })) ?? [],
-    exactMatch: toConceptRefs(detail['ekvivalentní-pojem']),
-    broaderConcept: toConceptRefs(detail['nadřazená-třída']),
-    superProperty: toConceptRefs(detail['nadřazená-vlastnost']),
-    superRelation: toConceptRefs(detail['nadřazený-vztah']),
-    domain: toConceptRef(detail['definiční-obor']),
-    range: toConceptRef(detail['obor-hodnot']),
+    exactMatch: toConceptRefs(
+      detail['ekvivalentní-pojem'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    broaderConcept: toConceptRefs(
+      detail['nadřazená-třída'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    superProperty: toConceptRefs(
+      detail['nadřazená-vlastnost'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    superRelation: toConceptRefs(
+      detail['nadřazený-vztah'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    domain: toConceptRef(
+      detail['definiční-obor'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    range: toConceptRef(
+      detail['obor-hodnot'],
+      detail['referencované-pojmy-resolved'],
+    ),
     agendaCode: detail['agenda-resolved'],
     agendaSystemCode: detail['agendový-informační-systém-resolved'],
-    contentType: detail['typ-obsahu-údaje'] ?? '',
-    acquisitionMethod: detail['způsob-získání-údaje'] ?? '',
-    sharingMethod: detail['způsob-sdílení-údaje'] ?? [],
+    contentType: mapContentType(detail['typ-obsahu-údaje']),
+    acquisitionMethod: mapAcquisitionMethod(detail['způsob-získání-údaje']),
+    sharingMethod: mapSharingMethods(detail['způsob-sdílení-údaje']),
     isInPPDF: detail['je-ppdf'] ?? false,
-    isPublic: false,
+    isPublic: detail.typ?.includes('Veřejný údaj'),
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
   };
 }

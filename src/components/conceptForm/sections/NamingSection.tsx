@@ -11,7 +11,7 @@ export const NamingSection = () => {
   const t = useTranslations('CreateConcept.NamingSection');
 
   return (
-    <FormSection icon="tag" label={t('Label')}>
+    <FormSection icon="tag" label={t('Label')} anchor="naming">
       <Input
         register={form.register}
         name="nameModel.name.cs"
