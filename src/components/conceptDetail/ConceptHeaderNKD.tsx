@@ -23,10 +23,10 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
   return (
     <div className="w-full bg-white">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
-        <div className="flex items-center justify-between relative">
+        <div className="flex items-center lg:justify-between relative gap-5">
           <button
             onClick={() => window.history.back()}
-            className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+            className="lg:absolute top-0 lg:-left-5 lg:pt-1 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
             {t('Main.ControlPanel.Back')}

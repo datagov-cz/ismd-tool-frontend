@@ -9,15 +9,17 @@ import { useTranslations } from 'next-intl';
 import { useHintboxStore } from '@/store/hintboxStore';
 import { ConditionalTooltip } from '../shared/ConditionalTooltip';
 
+import { LoginButton } from './LoginButton';
 import { NavDropdownItem, NavDropdownList } from './NavDropdownList';
 
 const GITHUB_BASE = 'https://github.com/datagov-cz/ismd-org/issues/new';
 
 interface Props {
   session: Session | null;
+  handleLogin: () => void;
 }
 
-export const NavItems = ({ session }: Props) => {
+export const NavItems = ({ session, handleLogin }: Props) => {
   const t = useTranslations('Header');
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isFeedbackDropdownOpen, setIsFeedbackDropdownOpen] = useState(false);
@@ -39,6 +41,11 @@ export const NavItems = ({ session }: Props) => {
 
   return (
     <>
+      {!session && (
+        <div className="xl:hidden">
+          <LoginButton size="m" onLogin={handleLogin} />
+        </div>
+      )}
       {session && (
         <GovDropdown
           id="nav-dropdown-user"

@@ -6,7 +6,7 @@ export const LoginButton = ({
   className,
   onLogin,
 }: {
-  size: 's' | 'l';
+  size: 's' | 'l' | 'm';
   className?: string;
   onLogin: () => void;
 }) => {
