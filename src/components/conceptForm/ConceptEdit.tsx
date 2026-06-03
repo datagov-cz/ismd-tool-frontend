@@ -237,11 +237,11 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   };
 
   return (
-    <div className="w-full max-w-250 mx-auto flex flex-col gap-5 py-5">
+    <div className="w-full max-w-250 mx-auto flex flex-col gap-5 p-5">
       <div className="relative">
         <button
           onClick={() => router.back()}
-          className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+          className="lg:absolute top-0 lg:-left-5 pt-1 pb-4 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}

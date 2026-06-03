@@ -43,6 +43,9 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/next.config.ts ./
 COPY --from=build /app/messages ./messages
+# Hint API routes read these markdown files from disk at runtime via
+# process.cwd()/src/app/hints, so the source content must ship in the image.
+COPY --from=build /app/src/app/hints ./src/app/hints
 
 EXPOSE 3000
 

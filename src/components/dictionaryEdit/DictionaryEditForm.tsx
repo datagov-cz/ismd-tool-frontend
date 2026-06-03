@@ -108,14 +108,14 @@ export const DictionaryEditForm = ({
   };
 
   return (
-    <div className="w-full h-full flex-1 bg-primary-subtlest">
+    <div className="w-full h-full flex-1 bg-primary-subtlest px-5">
       <div className="w-full relative max-w-250 mx-auto py-5">
         <div className="w-full space-y-6 relative">
           <div className="space-y-3 relative">
             <div className="relative">
               <button
                 onClick={() => router.back()}
-                className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+                className="lg:absolute lg:top-0 lg:-left-5 pt-1 pb-3 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
               >
                 <GovIcon name="chevron-compact-left" size="s" color="primary" />
                 {t('Back')}

@@ -90,7 +90,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
           )}
 
           {showFullHeader && (
-            <div className="flex-2 2xl:flex-2 flex justify-center items-center gap-4">
+            <div className="flex-auto 2xl:flex-2 flex justify-center items-center gap-4">
               {!isHomepage && (
                 <GovButton
                   size="m"
@@ -126,7 +126,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                     onLogin={handleLogin}
                   />
                 )}
-                <NavItems session={session} />
+                <NavItems session={session} handleLogin={handleLogin} />
               </ul>
             </nav>
             <div className="flex gap-x-4 items-center">
@@ -139,7 +139,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 className="desktop:hidden!"
                 onGovClick={() => setIsMenuOpen((prev) => !prev)}
               >
-                <GovIcon slot="icon-start" name="list" />
+                <GovIcon slot="icon-start" name="list" color="white" />
               </GovButton>
             </div>
           </div>
@@ -169,19 +169,19 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
 
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-20"
+          className="fixed inset-0 bg-black/40 z-2000"
           onClick={() => setIsMenuOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed top-18 left-0 h-full w-64 bg-white shadow-lg z-30 transform transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-3000 transform transition-all duration-300 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } desktop:hidden`}
       >
         <nav>
           <ul className="flex flex-col p-4 gap-3">
-            <NavItems session={session} />
+            <NavItems session={session} handleLogin={handleLogin} />
           </ul>
         </nav>
       </aside>

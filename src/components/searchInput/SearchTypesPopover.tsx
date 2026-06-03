@@ -102,7 +102,7 @@ export const SearchTypesPopover = ({ value, onChange }: Props) => {
         type="base"
         color="neutral"
         size="s"
-        className="no-underline hover:bg-transparent! font-normal!"
+        className="no-underline hover:bg-transparent! font-normal"
       >
         <GovIcon
           type="components"
@@ -112,10 +112,12 @@ export const SearchTypesPopover = ({ value, onChange }: Props) => {
           className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         />
         {allOrNone ? (
-          <span className="font-normal">{t('AllTypes')}</span>
+          <span className="font-normal hidden md:text-xs lg:text-sm lg:block">
+            {t('AllTypes')}
+          </span>
         ) : (
-          <span className="flex items-center gap-2 font-normal">
-            {t('Selected')}
+          <span className="flex items-center gap-2 font-normal bg-white">
+            <span className="hidden lg:block"> {t('Selected')}</span>
             {visibleFilters
               .filter((f) => value.includes(f.key))
               .map((f) => (

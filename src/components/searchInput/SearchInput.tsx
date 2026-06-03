@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 
 import { useSearch } from '@/api/generated';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { useScreenSize } from '@/hooks/useScreenSize';
 
 import { SearchResultsPopover } from './SearchResultsPopover';
 import {
@@ -29,6 +30,8 @@ export const SearchInput = () => {
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLGovFormInputElement | null>(null);
+
+  const size = useScreenSize();
 
   const focusInput = useCallback(() => {
     (
@@ -82,7 +85,7 @@ export const SearchInput = () => {
     (e: KeyboardEvent) => {
       if (e.key !== 'Enter') return;
       const trimmed = query.trim();
-      if (trimmed.length < 2) return;
+      if (trimmed.length < 4) return;
 
       const params = new URLSearchParams({ q: trimmed });
       if (type) params.set('type', type);
@@ -102,8 +105,10 @@ export const SearchInput = () => {
       <GovFormGroup className="relative">
         <GovFormInput
           ref={inputRef}
-          placeholder={t('SearchPlaceholder')}
-          size="l"
+          placeholder={t(
+            size === 'l' ? 'SearchPlaceholder' : 'SearchPlaceholderMobile',
+          )}
+          size={size}
           value={query}
           onGovInput={handleInput}
           onGovKeydown={(e) =>

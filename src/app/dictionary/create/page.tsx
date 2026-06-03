@@ -25,7 +25,7 @@ const CreateDictionary = () => {
   if (!user?.userId) return null;
 
   return (
-    <div className="w-full pt-5 pb-10 bg-primary-subtlest">
+    <div className="w-full pt-5 pb-10 bg-primary-subtlest px-5">
       <div className="max-w-250 mx-auto space-y-5">
         <div className="relative">
           <button

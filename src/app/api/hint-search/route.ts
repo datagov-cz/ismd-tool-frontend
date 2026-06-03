@@ -5,6 +5,9 @@ import path from 'path';
 const CONTENT_PATH = path.join(process.cwd(), 'src/app/hints');
 
 function walkDir(dir: string, fileList: string[] = []) {
+  if (!fs.existsSync(dir)) {
+    return fileList;
+  }
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
