@@ -32,7 +32,7 @@ export const ConceptLayout = ({
   const { user } = useCurrentUser();
   const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
-    <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start">
+    <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start px-5">
       <div className="w-full py-6 col-span-6 flex flex-col gap-2">
         <AltNameSection altName={conceptDetail['alternativní-název']} />
         <DefiningSection
