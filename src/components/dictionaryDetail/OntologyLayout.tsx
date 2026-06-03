@@ -7,6 +7,7 @@ import {
   GovTag,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, OntologyMetadataModel } from '@/api/generated';
@@ -56,6 +57,8 @@ export const OntologyLayout = ({
 
   const [filterQuery, setFilterQuery] = useState('');
 
+  const router = useRouter();
+
   const filteredParentTerms = useMemo(() => {
     const conceptIris = new Set(concepts?.map((c) => c.iri).filter(Boolean));
 
@@ -101,8 +104,7 @@ export const OntologyLayout = ({
 
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full bg-primary-subtlest"></div>
-      <div className="w-full relative max-w-250 mx-auto py-5">
+      <div className="w-full relative max-w-250 mx-auto p-5">
         <div className="w-full space-y-6 relative">
           <div className="space-y-3 flex gap-5">
             <div className="flex flex-col gap-2 flex-1 relative">
@@ -110,8 +112,8 @@ export const OntologyLayout = ({
                 type="base"
                 color="primary"
                 size="s"
-                href={process.env.NEXT_PUBLIC_BASE_PATH}
-                className="absolute -top-1 left-0 -translate-x-full"
+                onGovClick={() => router.back()}
+                className="lg:absolute lg:-top-1 lg:left-0 lg:-translate-x-full px-0! lg:px-4!"
               >
                 <GovIcon slot="icon-start" name="chevron-left" size="m" />
                 {t('Main.BackToHome')}
@@ -145,7 +147,7 @@ export const OntologyLayout = ({
           </div>
         </div>
       </div>
-      <div className="w-full bg-primary-subtlest flex-1 h-full">
+      <div className="w-full bg-primary-subtlest flex-1 h-full px-5">
         <div className="w-full relative max-w-250 mx-auto py-3 grid grid-cols-10 ">
           <div
             className={clsx(isLoggedOutOrNKD ? 'col-span-10' : 'col-span-6')}

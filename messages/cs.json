@@ -68,7 +68,7 @@
       "Link4": "Link"
     },
     "FooterCopySection": {
-      "Copyright": "2025 © Digitální a informační agentura • Informace jsou poskytovány v souladu se zákonem č. 106/1999 Sb., o svobodném přístupu k informacím.",
+      "Copyright": "2026 © Digitální a informační agentura • Informace jsou poskytovány v souladu se zákonem č. 106/1999 Sb., o svobodném přístupu k informacím.",
       "Version": "Verze 2.0.2105.9856",
       "DesignSystem": "Využit Design system 4.0"
     },
@@ -78,6 +78,7 @@
     "MainControls": {
       "OpenDictFromFile": "Importovat ze souboru",
       "SearchPlaceholder": "[Cmnd/Ctrl+K] Hledat pojmy a slovníky...",
+      "SearchPlaceholderMobile": "Hledat pojmy a slovníky",
       "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",

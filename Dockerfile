@@ -2,9 +2,6 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Set environment variable
-ARG NODE_ENV=production
-
 # Copy package files
 COPY package.json package-lock.json* ./
 RUN npm ci --ignore-scripts
@@ -14,7 +11,12 @@ COPY . .
 
 # Build arguments for basePath
 ARG NEXT_PUBLIC_BASE_PATH=/popisujeme
-ENV NODE_ENV=${NODE_ENV}
+# `next build` MUST run in production. Building with NODE_ENV=development
+# produces a broken static export of the error pages and fails with the
+# misleading "<Html> should not be imported outside of pages/_document" error.
+# This is intentionally NOT driven by the NODE_ENV build arg (which may be
+# `development` when composed) — the build is always production.
+ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
 
 # Build the application
@@ -43,9 +45,11 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/next.config.ts ./
 COPY --from=build /app/messages ./messages
-# Hint API routes read these markdown files from disk at runtime via
-# process.cwd()/src/app/hints, so the source content must ship in the image.
+# Hint and blog API routes read these markdown/MDX files from disk at runtime
+# via process.cwd()/src/app/{hints,blogs}, so the source content must ship in
+# the image.
 COPY --from=build /app/src/app/hints ./src/app/hints
+COPY --from=build /app/src/app/blogs ./src/app/blogs
 
 EXPOSE 3000
 

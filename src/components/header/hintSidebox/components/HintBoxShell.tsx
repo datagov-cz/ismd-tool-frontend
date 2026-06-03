@@ -20,7 +20,7 @@ export function HintboxShell({ isOpen, onClose, children }: HintboxShellProps) {
       <aside
         className={clsx(
           'fixed top-1/2 -translate-y-1/2 right-0 h-[90vh] bg-white rounded-l-xl shadow-2xl z-1000',
-          'w-full md:w-1/2 2xl:w-1/3',
+          'w-full md:w-2/3 2xl:w-1/3',
           'flex flex-col',
           'border border-r-0 border-blue-200',
           'transform transition-all duration-300 ease-in-out',
