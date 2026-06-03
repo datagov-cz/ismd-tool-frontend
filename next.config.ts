@@ -8,9 +8,6 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   basePath,
   pageExtensions: ['ts', 'tsx', 'mdx'],
-  experimental: {
-    mdxRs: true,
-  },
   async rewrites() {
     return [
       // NOTE: the root /favicon.ico 404 (browsers probe the origin root,
