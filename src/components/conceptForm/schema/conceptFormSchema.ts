@@ -145,10 +145,6 @@ const ConceptFormSchema = z.object({
   codeListDataset: z.string().optional(),
 });
 
-const AddPropertyRelationModelSchema = z.object({
-  concept: ConceptRef.nullable(),
-});
-
 // Inferred types
 export type NameModel = z.infer<typeof NameModelSchema>;
 export type ConceptCreateModel = z.infer<typeof ConceptCreateModelSchema>;
@@ -168,5 +164,9 @@ export {
   RelationshipConceptModelSchema,
   CreateConceptBodySchema,
   ConceptFormSchema,
-  AddPropertyRelationModelSchema,
 };
+
+export {
+  AddPropertyModelSchema,
+  AddRelationModelSchema,
+} from '../../conceptDetail/AddPropertyRelation/addPropertyRelationSchema';

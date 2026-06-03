@@ -21,6 +21,7 @@ interface Props<T extends FieldValues> {
   multiline?: boolean;
   disabled?: boolean;
   required?: boolean;
+  anchor?: string;
 }
 
 export const Input = <T extends FieldValues>({
@@ -30,6 +31,7 @@ export const Input = <T extends FieldValues>({
   register,
   multiline,
   disabled,
+  anchor,
   required,
 }: Props<T>) => {
   const {
@@ -40,36 +42,38 @@ export const Input = <T extends FieldValues>({
   const error = get(errors, name);
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
-          <GovFormLabel className="w-fit! pt-2.5">
-            <span className="font-bold">
-              {label}
-              {required && <span className="text-status-error-700"> *</span>}
-            </span>
-          </GovFormLabel>
-          <div className="col-span-6 relative ml-10">
-            <GovFormInput
-              {...register(name)}
-              id={field.name}
-              placeholder={placeholder}
-              className={clsx('border-0!')}
-              invalid={!!error?.message}
-              multiline={multiline}
-              rows={4}
-              disabled={disabled}
-            />
-            {error?.message && (
-              <GovFormMessage color="error" slot="bottom">
-                {String(error.message)}
-              </GovFormMessage>
-            )}
+    <div id={anchor}>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+            <GovFormLabel className="w-fit! pt-2.5">
+              <span className="font-bold">
+                {label}
+                {required && <span className="text-status-error-700"> *</span>}
+              </span>
+            </GovFormLabel>
+            <div className="col-span-6 relative ml-10">
+              <GovFormInput
+                {...register(name)}
+                id={field.name}
+                placeholder={placeholder}
+                className={clsx('border-0!')}
+                invalid={!!error?.message}
+                multiline={multiline}
+                rows={4}
+                disabled={disabled}
+              />
+              {error?.message && (
+                <GovFormMessage color="error" slot="bottom">
+                  {String(error.message)}
+                </GovFormMessage>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    />
+        )}
+      />
+    </div>
   );
 };

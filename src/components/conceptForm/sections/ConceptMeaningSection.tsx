@@ -16,15 +16,18 @@ export const ConceptMeaningSection = () => {
         name="definitionModel.definition"
         label={t('DefinitionLabel')}
         placeholder={t('DefinitionPlaceholder')}
+        anchor="definition"
       />
       <LanguageInput<ConceptForm>
         name="descriptionModel.description"
         label={t('DescriptionLabel')}
+        anchor="description"
         placeholder={t('DescriptionPlaceholder')}
       />
       {form.watch('conceptType') === 'TRIDA' && (
         <ConceptInput
           name="broaderConcept"
+          anchor="broaderConcept"
           label={t('BroaderConceptLabel')}
           placeholder={t('SearchPlaceholder')}
           searchType="CLASS"
@@ -34,6 +37,7 @@ export const ConceptMeaningSection = () => {
       {form.watch('conceptType') === 'VZTAH' && (
         <ConceptInput
           name="superRelation"
+          anchor="superRelation"
           label={t('SuperRelationLabel')}
           placeholder={t('SearchPlaceholder')}
           searchType="RELATIONSHIP"
@@ -44,6 +48,7 @@ export const ConceptMeaningSection = () => {
       {form.watch('conceptType') === 'VLASTNOST' && (
         <ConceptInput
           name="superProperty"
+          anchor="superProperty"
           label={t('SuperPropertyLabel')}
           placeholder={t('SearchPlaceholder')}
           searchType="PROPERTY"
@@ -52,6 +57,7 @@ export const ConceptMeaningSection = () => {
       )}
       <ConceptInput
         name="exactMatch"
+        anchor="exactMatch"
         label={t('EquivalentConceptLabel')}
         placeholder={t('SearchPlaceholder')}
         searchType="CONCEPT"

@@ -25,7 +25,10 @@ export const RightsAndObligationsSection = () => {
         type="AIS"
       />
       <div className="grid-cols-7 grid">
-        <div className="flex gap-2 col-start-2 ml-10 col-span-5">
+        <div
+          className="flex gap-2 col-start-2 ml-10 col-span-5"
+          id={'isPublic'}
+        >
           <input type="checkbox" {...register('isPublic')} className="w-fit" />
           <GovFormLabel size="m" className="w-fit mb-0!">
             <span className="font-bold">{tRegistry('NonPublic')}</span>
@@ -35,7 +38,10 @@ export const RightsAndObligationsSection = () => {
 
       {/* TODO add Ustanoveni dokladajici neverejnost udaje */}
       <div className="grid-cols-7 grid">
-        <div className="flex gap-2 col-start-2 ml-10 col-span-5">
+        <div
+          className="flex gap-2 col-start-2 ml-10 col-span-5"
+          id={'isInPPDF'}
+        >
           <input type="checkbox" {...register('isInPPDF')} className="w-fit" />
           <GovFormLabel size="m" className="w-fit mb-0!">
             <span className="font-bold">{tRegistry('PPDF')}</span>

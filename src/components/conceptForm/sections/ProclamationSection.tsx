@@ -63,16 +63,19 @@ export const ProclamationSection = () => {
     >
       <Select
         name="contentType"
+        anchor="contentType"
         label={t('ProclamationSection.ContentTypeLabel')}
         options={CONTENT_TYPE_OPTIONS}
       />
       <Select
         name="acquisitionMethod"
+        anchor="acquisitionMethod"
         label={t('ProclamationSection.AcquisitionMethodLabel')}
         options={ACQUISITION_METHOD_OPTIONS}
       />
       <MultiSelect
         name="sharingMethod"
+        anchor="sharingMethod"
         label={t('ProclamationSection.SharingMethodLabel')}
         options={SHARING_METHOD_OPTIONS}
       />

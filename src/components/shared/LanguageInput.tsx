@@ -36,6 +36,7 @@ interface Props<T extends FieldValues> {
   placeholder: string;
   name: LanguageArrayPath<T>;
   multiline?: boolean;
+  anchor?: string;
 }
 
 export const LanguageInput = <T extends FieldValues>({
@@ -43,6 +44,7 @@ export const LanguageInput = <T extends FieldValues>({
   placeholder,
   name,
   multiline,
+  anchor,
 }: Props<T>) => {
   const {
     control,
@@ -64,7 +66,7 @@ export const LanguageInput = <T extends FieldValues>({
   );
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-2" id={anchor}>
       {fields.map((field, index) => {
         const lang = (field as unknown as LanguageEntry).languageTag;
         const fieldPath = `${name}.${index}.name` as Parameters<

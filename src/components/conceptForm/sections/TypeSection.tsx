@@ -48,6 +48,7 @@ export const TypesSection = () => {
     >
       <Select
         name="conceptTypeEnum"
+        anchor="conceptTypeEnum"
         label={t('ClassCreateFields.Labels.ConceptType')}
         options={CONCEPT_TYPE_OPTIONS}
         changeMultiple="conceptType"
@@ -55,6 +56,7 @@ export const TypesSection = () => {
       {type === 'TRIDA' && (
         <Select
           name="type"
+          anchor="type"
           label={t('ClassCreateFields.Labels.ClassType')}
           options={TYPE_OPTIONS}
         />
@@ -63,6 +65,7 @@ export const TypesSection = () => {
         <>
           <ConceptInput
             name="domain"
+            anchor="domain"
             label={t('TypesSection.PropertyDomainLabel')}
             placeholder={t('TypesSection.PropertyDomainPlaceholder')}
             searchSource="ALL"
@@ -70,8 +73,9 @@ export const TypesSection = () => {
             single
           />
           <Input<ConceptForm>
-            name="dataType"
             placeholder={t('TypesSection.PropertyDataTypePlaceholder')}
+            name="dataType"
+            anchor="dataType"
             register={register}
             label={t('TypesSection.PropertyDataTypeLabel')}
           />
@@ -81,6 +85,7 @@ export const TypesSection = () => {
         <>
           <ConceptInput
             name="domain"
+            anchor="domain"
             label={t('TypesSection.RelationDomainLabel')}
             placeholder={t('TypesSection.RelationDomainPlaceholder')}
             searchType="CONCEPT"
@@ -89,6 +94,7 @@ export const TypesSection = () => {
           />
           <ConceptInput
             name="range"
+            anchor="range"
             label={t('TypesSection.RelationRangeLabel')}
             placeholder={t('TypesSection.RelationRangePlaceholder')}
             searchType="CONCEPT"

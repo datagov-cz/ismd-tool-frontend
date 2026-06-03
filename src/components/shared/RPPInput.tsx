@@ -55,7 +55,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   };
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-2" id={name}>
       <div className="w-full grid grid-cols-7 gap-x-2 gap-y-4">
         <GovFormLabel className="w-fit! pt-2.5">
           <span className="font-bold">{label}</span>

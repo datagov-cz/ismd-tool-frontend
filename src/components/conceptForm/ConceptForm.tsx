@@ -4,6 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
+import { useScrollToAnchor } from '@/hooks/useScrollToAnchor';
 
 import { FormToolbar } from './components/FormToolbar';
 import {
@@ -88,6 +89,7 @@ export const ConceptForm = ({
 
   const { errors } = form.formState;
 
+  useScrollToAnchor(!!externalDefaults);
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {

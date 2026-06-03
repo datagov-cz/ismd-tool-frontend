@@ -33,6 +33,7 @@ interface Props {
   nonFloatingDropDown?: boolean;
   searchType: SearchType;
   searchSource: SearchSource;
+  anchor?: string;
 }
 
 export const ConceptInput = ({
@@ -43,6 +44,7 @@ export const ConceptInput = ({
   nonFloatingDropDown,
   searchType,
   searchSource,
+  anchor,
 }: Props) => {
   const [query, setQuery] = useState('');
   const [showInput, setShowInput] = useState(true);
@@ -152,7 +154,7 @@ export const ConceptInput = ({
     (isFetching || allResults.length > 0 || search !== undefined);
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-2" id={anchor}>
       <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
         {label && (
           <GovFormLabel className="w-fit! pt-2.5">
@@ -224,7 +226,6 @@ export const ConceptInput = ({
                           key={item.slug}
                           type="button"
                           onClick={() => {
-                            console.log('Selected item:', item);
                             handleSelect({
                               iri: item.iri || '',
                               label: item.label || '',

@@ -52,7 +52,7 @@ export const ConceptLayout = ({
           <PropertiesRelationsSection
             properties={conceptDetail.conceptProperties}
             relationships={conceptDetail.conceptRelationships}
-            iri={conceptDetail.iri}
+            iri={conceptDetail.iri || ''}
             conceptName={conceptDetail['název']?.cs}
             slug={slug}
             isOwnerLoggedIn={isOwnerLoggedIn}
@@ -86,12 +86,14 @@ export const ConceptLayout = ({
 
         {conceptType === 'VLASTNOST' &&
           conceptDetail['nadřazená-vlastnost'] && (
-            <Section title={t('Sections.SupersededProperty')}>
-              <SuperClassList
-                items={conceptDetail['nadřazená-vlastnost']}
-                resolved={resolvedRelations}
-              />
-            </Section>
+            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+              <Section title={t('Sections.SupersededProperty')}>
+                <SuperClassList
+                  items={conceptDetail['nadřazená-vlastnost']}
+                  resolved={resolvedRelations}
+                />
+              </Section>
+            </div>
           )}
 
         {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (

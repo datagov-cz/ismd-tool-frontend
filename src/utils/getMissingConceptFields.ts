@@ -21,33 +21,32 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'nadřazená-třída',
         labelKey: 'Sections.SupersededClass',
-
         types: ['TRIDA'],
-        anchor: '#meaning',
+        anchor: '#broaderConcept',
       },
       {
         key: 'nadřazená-vlastnost',
         labelKey: 'Sections.SupersededProperty',
         types: ['VLASTNOST'],
-        anchor: '#meaning',
+        anchor: '#superProperty',
       },
       {
         key: 'nadřazený-vztah',
         labelKey: 'Sections.SupersededRelation',
         types: ['VZTAH'],
-        anchor: '#meaning',
+        anchor: '#superRelation',
       },
       {
         key: 'definiční-obor',
         labelKey: 'Sections.DefinicniObor',
         types: ['VLASTNOST', 'VZTAH', undefined],
-        anchor: '#types',
+        anchor: '#domain',
       },
       {
         key: 'obor-hodnot',
         labelKey: 'Sections.Range',
         types: ['VLASTNOST', 'VZTAH', undefined],
-        anchor: '#types',
+        anchor: '#range',
       },
     ],
   },
@@ -57,7 +56,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'alternativní-název',
         labelKey: 'Sections.AlternativeName',
-        anchor: '#naming',
+        anchor: '#altName',
       },
       { key: 'definice', labelKey: 'Sections.Definition', anchor: '#meaning' },
       { key: 'popis', labelKey: 'Sections.Description', anchor: '#meaning' },
@@ -89,12 +88,12 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'definující-nelegislativní-zdroj',
         labelKey: 'Sections.NonLegalResources',
-        anchor: '#sources',
+        anchor: '#definingNonLegalSource',
       },
       {
         key: 'související-nelegislativní-zdroj',
         labelKey: 'Sections.RelatedNonLegalResources',
-        anchor: '#sources',
+        anchor: '#relatedNonLegalSource',
       },
     ],
   },
@@ -104,27 +103,27 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'agenda-resolved',
         labelKey: 'Sections.Agenda',
-        anchor: '#rights',
+        anchor: '#agendaCode',
       },
       {
         key: 'agendový-informační-systém-resolved',
         labelKey: 'Sections.AgendaInfoSystem',
-        anchor: '#rights',
+        anchor: '#agendaSystemCode',
       },
       {
         key: 'typ-obsahu-údaje',
         labelKey: 'Sections.DataContentType',
-        anchor: '#proclamation',
+        anchor: '#contentType',
       },
       {
         key: 'způsob-získání-údaje',
         labelKey: 'Sections.WayObtainingData',
-        anchor: '#proclamation',
+        anchor: '#acquisitionMethod',
       },
       {
         key: 'způsob-sdílení-údaje',
         labelKey: 'Sections.WaySharingData',
-        anchor: '#proclamation',
+        anchor: '#sharingMethod',
       },
     ],
   },
@@ -134,9 +133,9 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'ustanovení-dokládající-neveřejnost-údaje',
         labelKey: 'Sections.ProvingNonPublicData',
-        anchor: '#rights',
+        anchor: '#isPublic',
       },
-      { key: 'je-ppdf', labelKey: 'Sections.IsPpdf', anchor: '#rights' },
+      { key: 'je-ppdf', labelKey: 'Sections.IsPpdf', anchor: '#isInPPDF' },
     ],
   },
 ];

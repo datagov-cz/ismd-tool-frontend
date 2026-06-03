@@ -78,14 +78,15 @@ function toConceptRef(
       label: resolvedItem.conceptName?.cs ?? '',
       ontologyLabel: resolvedItem.ontologyName?.cs ?? '',
     };
+  } else if (iri && iri.includes('pojem/')) {
+    return {
+      iri,
+      label: (iri.split('pojem/')[1] ?? '').replace(/-/g, ' '),
+      ontologyLabel: '',
+    };
+  } else {
+    return undefined;
   }
-  return iri
-    ? {
-        iri,
-        label: iri.split('pojem/')[1].replace(/-/g, ' '),
-        ontologyLabel: '',
-      }
-    : undefined;
 }
 
 function toConceptRefs(

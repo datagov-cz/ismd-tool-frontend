@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 import { AddPropertyRelation } from '../AddPropertyRelation/AddPropertyRelation';
+import { AddPropertyRelationModal } from '../AddPropertyRelation/AddPropertyRelationModal';
 
 interface Props {
   properties?: ConceptDetailModel['conceptProperties'];
@@ -21,6 +23,10 @@ export const PropertiesRelationsSection = ({
   isOwnerLoggedIn,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
+  const [open, setOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<'property' | 'relation'>(
+    'property',
+  );
   if (
     properties.length === 0 &&
     relationships.length === 0 &&
@@ -34,20 +40,32 @@ export const PropertiesRelationsSection = ({
         title={t('Sections.Properties')}
         concepts={properties}
         type="property"
-        iri={iri}
-        conceptName={conceptName}
-        slug={slug}
         isOwnerLoggedIn={isOwnerLoggedIn}
+        openModal={() => {
+          setSelectedType('property');
+          setOpen(true);
+        }}
       />
       <AddPropertyRelation
         title={t('Sections.Relations')}
         concepts={relationships}
         type="relation"
-        iri={iri}
-        conceptName={conceptName}
-        slug={slug}
         isOwnerLoggedIn={isOwnerLoggedIn}
+        openModal={() => {
+          setSelectedType('relation');
+          setOpen(true);
+        }}
       />
+      {conceptName && isOwnerLoggedIn && (
+        <AddPropertyRelationModal
+          iri={iri}
+          type={selectedType}
+          conceptName={conceptName}
+          open={open}
+          setOpen={setOpen}
+          slug={slug}
+        />
+      )}
     </div>
   );
 };
