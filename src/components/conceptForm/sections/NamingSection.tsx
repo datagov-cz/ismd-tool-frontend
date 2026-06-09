@@ -18,11 +18,13 @@ export const NamingSection = () => {
         label={t('NameLabel')}
         placeholder={t('NamePlaceholder')}
         required
+        anchor="name"
       />
       <LanguageInput<ConceptForm>
         name="altNameModel.altName"
         label={t('AltNameLabel')}
         placeholder={t('AltNamePlaceholder')}
+        anchor="altName"
       />
     </FormSection>
   );

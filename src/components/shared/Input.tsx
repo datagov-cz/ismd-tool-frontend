@@ -13,6 +13,8 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
+
 interface Props<T extends FieldValues> {
   label: string;
   placeholder: string;
@@ -21,6 +23,7 @@ interface Props<T extends FieldValues> {
   multiline?: boolean;
   disabled?: boolean;
   required?: boolean;
+  anchor?: string;
 }
 
 export const Input = <T extends FieldValues>({
@@ -30,6 +33,7 @@ export const Input = <T extends FieldValues>({
   register,
   multiline,
   disabled,
+  anchor,
   required,
 }: Props<T>) => {
   const {
@@ -38,13 +42,20 @@ export const Input = <T extends FieldValues>({
   } = useFormContext<T>();
 
   const error = get(errors, name);
+  const isActive = useActiveAnchor(anchor);
 
   return (
     <Controller
       control={control}
       name={name}
       render={({ field }) => (
-        <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+        <div
+          className={clsx(
+            'w-full grid grid-cols-7 gap-y-4 gap-x-2 p-2.5 rounded-lg',
+            isActive && 'bg-blue-subtle',
+          )}
+          id={anchor}
+        >
           <GovFormLabel className="w-fit! pt-2.5">
             <span className="font-bold">
               {label}

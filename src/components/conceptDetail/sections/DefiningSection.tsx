@@ -32,7 +32,6 @@ export const DefiningSection = ({
   if (!definice && !popis && !ekvivalentniPojem && !hasNadrazenaTrida) {
     return null;
   }
-  console.log(nadrazenaTrida, 'test trida');
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
       {definice && (

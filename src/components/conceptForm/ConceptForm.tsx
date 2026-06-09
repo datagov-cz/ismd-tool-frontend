@@ -68,6 +68,7 @@ interface ConceptFormProps {
   onSubmit: (_data: ConceptFormValues) => void;
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
+  editing?: boolean;
 }
 
 export const ConceptForm = ({
@@ -75,6 +76,7 @@ export const ConceptForm = ({
   onSubmit,
   isPending,
   defaultValues: externalDefaults,
+  editing,
 }: ConceptFormProps) => {
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
@@ -97,11 +99,24 @@ export const ConceptForm = ({
     }
   }, [errors]);
 
+  useEffect(() => {
+    if (!externalDefaults) return;
+
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById(hash)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [externalDefaults]);
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">
         <NamingSection />
-        <TypesSection />
+        <TypesSection editing={editing} />
         <ConceptMeaningSection />
         <SourcesSection />
         <RightsAndObligationsSection />

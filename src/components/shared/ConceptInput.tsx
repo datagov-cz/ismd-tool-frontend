@@ -4,10 +4,17 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { SearchResultDto, useSearch } from '@/api/generated';
+import {
+  SearchResultDto,
+  SearchSource,
+  SearchType,
+  useSearch,
+} from '@/api/generated';
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 import { RelatedTerm } from '../conceptDetail/Term/RelatedTerm';
 
 const LIMIT = 20;
@@ -15,16 +22,31 @@ const LIMIT = 20;
 interface Concept {
   iri: string;
   label: string;
+  ontologyLabel?: string;
+  id?: number;
 }
 
 interface Props {
-  label: string;
+  label?: string;
   placeholder: string;
   name: string;
   single?: boolean;
+  nonFloatingDropDown?: boolean;
+  searchType: SearchType;
+  searchSource: SearchSource;
+  anchor?: string;
 }
 
-export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
+export const ConceptInput = ({
+  label,
+  placeholder,
+  name,
+  single,
+  nonFloatingDropDown,
+  searchType,
+  searchSource,
+  anchor,
+}: Props) => {
   const [query, setQuery] = useState('');
   const [showInput, setShowInput] = useState(true);
   const [offset, setOffset] = useState(0);
@@ -32,6 +54,8 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('ConceptDetail.Main');
+
+  const isActive = useActiveAnchor(anchor);
 
   const { setValue } = useFormContext();
 
@@ -58,7 +82,7 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
   }, [query]);
 
   const { data: search, isFetching } = useSearch(
-    { q: query, type: 'CONCEPT', offset, limit: LIMIT },
+    { q: query, type: searchType, source: searchSource, offset, limit: LIMIT },
     { query: { enabled: query.length > 3 } },
   );
 
@@ -133,13 +157,26 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
     (isFetching || allResults.length > 0 || search !== undefined);
 
   return (
-    <div className="w-full space-y-2">
+    <div
+      className={clsx(
+        'w-full space-y-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={anchor}
+    >
       <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
-        <GovFormLabel className="w-fit! pt-2.5">
-          <span className="font-bold">{label}</span>
-        </GovFormLabel>
+        {label && (
+          <GovFormLabel className="w-fit! pt-2.5">
+            <span className="font-bold">{label}</span>
+          </GovFormLabel>
+        )}
 
-        <div className="col-span-6 flex flex-col gap-2 ml-10">
+        <div
+          className={clsx(
+            'flex flex-col gap-2',
+            label ? 'col-span-6 ml-10' : 'col-span-7',
+          )}
+        >
           {selected.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {selected.map((concept) => (
@@ -147,6 +184,7 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
                   label={concept.label}
                   key={concept.iri}
                   remove={() => handleRemove(concept.iri)}
+                  ontologyLabel={concept.ontologyLabel}
                 />
               ))}
             </div>
@@ -170,7 +208,12 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
               </GovFormInput>
 
               {showDropdown && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                <div
+                  className={clsx(
+                    'z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto',
+                    nonFloatingDropDown ? 'relative' : 'absolute',
+                  )}
+                >
                   {isFetching && allResults.length === 0 ? (
                     <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
                       <GovIcon
@@ -191,12 +234,13 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
                         <button
                           key={item.slug}
                           type="button"
-                          onClick={() =>
+                          onClick={() => {
                             handleSelect({
                               iri: item.iri || '',
                               label: item.label || '',
-                            })
-                          }
+                              id: item.id,
+                            });
+                          }}
                           className="border-b border-border-subtlest text-blue-primary hover:bg-primary-subtlest text-left w-full gap-1.5 flex flex-col font-bold p-2"
                         >
                           <span className="flex gap-1.5">
@@ -252,13 +296,16 @@ export const ConceptInput = ({ label, placeholder, name, single }: Props) => {
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setShowInput(true)}
-              className="self-start text-sm text-blue-primary hover:underline cursor-pointer font-medium flex items-center gap-1"
-            >
-              {t('AddConcept')}
-            </button>
+            selected.length > 0 &&
+            !single && (
+              <button
+                type="button"
+                onClick={() => setShowInput(true)}
+                className="self-start text-sm text-blue-primary hover:underline cursor-pointer font-medium flex items-center gap-1"
+              >
+                {t('AddConcept')}
+              </button>
+            )
           )}
         </div>
       </div>
