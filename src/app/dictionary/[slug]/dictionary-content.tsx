@@ -83,7 +83,6 @@ export const DictionaryContent = ({ slug }: Props) => {
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}
-        isPublished={ontologyMetadata.isPublished || false}
         name={ontologyDetail.název?.cs || ''}
         user={ontologyMetadata.user}
         commentsCount={ontologyMetadata.comments?.length}

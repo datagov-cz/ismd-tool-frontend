@@ -344,6 +344,26 @@
       "GraphName": "Název slovníku",
       "ViewOntology": "Zobrazit slovník",
       "CloseDialog": "Zavřít"
+    },
+    "Decision": {
+      "Title": "Vyberte způsob zpracování pojmů",
+      "Description": "Některé pojmy nemají přiřazený slovník (skos:inScheme). Vyberte, jak s nimi naložit.",
+      "Mode": {
+        "NORMALIZE_ALL": {
+          "Label": "Normalizovat všechny pojmy",
+          "Hint": "Všem chybějícím pojmům bude přiřazen navrhovaný slovník."
+        },
+        "EXCLUDE_ALL": {
+          "Label": "Vyloučit všechny pojmy",
+          "Hint": "Pojmy bez přiřazeného slovníku budou z importu vynechány."
+        },
+        "PER_CONCEPT": {
+          "Label": "Rozhodnout u každého pojmu",
+          "Hint": "Zaškrtnuté pojmy budou normalizovány, ostatní vyloučeny."
+        }
+      },
+      "Cancel": "Zrušit",
+      "Confirm": "Pokračovat"
     }
   },
   "Errors": {

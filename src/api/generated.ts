@@ -78,6 +78,7 @@ export interface ApiResponseDtoValidationReport {
   data?: ValidationReport;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ValidationReport {
@@ -114,6 +115,7 @@ export interface ApiResponseDtoOntologyMetadataModel {
   data?: OntologyMetadataModel;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type DescriptionModelDescription = { [key: string]: string };
@@ -142,6 +144,7 @@ export interface ApiResponseDtoResolveConceptsResponse {
   data?: ResolveConceptsResponse;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type ResolveConceptsResponseResolved = {
@@ -278,6 +281,7 @@ export interface ApiResponseDtoConceptMetadataModel {
   data?: ConceptMetadataModel;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface CommentCreateModel {
@@ -290,6 +294,7 @@ export interface ApiResponseDtoCommentModel {
   data?: CommentModel;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface OntologyEditModel {
@@ -381,6 +386,7 @@ export interface ApiResponseDtoUserInfoDto {
   data?: UserInfoDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface UserInfoDto {
@@ -394,6 +400,7 @@ export interface ApiResponseDtoSearchResponseDto {
   data?: SearchResponseDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type SearchResponseDtoSourceStatuses = {
@@ -497,6 +504,7 @@ export interface ApiResponseDtoListRppSearchResultDto {
   data?: RppSearchResultDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface RppSearchResultDto {
@@ -509,6 +517,7 @@ export interface ApiResponseDtoGetOntologyDto {
   data?: GetOntologyDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type ConceptDetailModelNázev = { [key: string]: string };
@@ -797,12 +806,14 @@ export interface ApiResponseDtoListOntologyMetadataModel {
   data?: OntologyMetadataModel[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ApiResponseDtoListMinimalConceptDto {
   data?: MinimalConceptDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type MinimalConceptDtoName = { [key: string]: string };
@@ -817,6 +828,7 @@ export interface ApiResponseDtoGetNkdOntologyListDto {
   data?: GetNkdOntologyListDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetNkdOntologyListDto {
@@ -843,6 +855,7 @@ export interface ApiResponseDtoGetNkdOntologyDto {
   data?: GetNkdOntologyDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetNkdOntologyDto {
@@ -853,6 +866,7 @@ export interface ApiResponseDtoGetNkdConceptDto {
   data?: GetNkdConceptDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetNkdConceptDto {
@@ -864,12 +878,14 @@ export interface ApiResponseDtoResolvedLegalSourceDto {
   data?: ResolvedLegalSourceDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ApiResponseDtoListLawVersionDto {
   data?: LawVersionDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface LawVersionDto {
@@ -885,6 +901,7 @@ export interface ApiResponseDtoListLawDto {
   data?: LawDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface LawDto {
@@ -902,6 +919,7 @@ export interface ApiResponseDtoListFragmentDto {
   data?: FragmentDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface FragmentDto {
@@ -916,6 +934,7 @@ export interface ApiResponseDtoGetConceptDto {
   data?: GetConceptDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetConceptDto {
@@ -928,12 +947,14 @@ export interface ApiResponseDtoListConceptMetadataModel {
   data?: ConceptMetadataModel[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ApiResponseDtoListDataTypeDto {
   data?: DataTypeDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type ApiResponseDtoVoidData = { [key: string]: unknown };
@@ -942,11 +963,23 @@ export interface ApiResponseDtoVoid {
   data?: ApiResponseDtoVoidData;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type UploadFromFileParams = {
-  providedName?: string;
+  normalizeMode?: UploadFromFileNormalizeMode;
+  conceptsToNormalize?: string[];
 };
+
+export type UploadFromFileNormalizeMode =
+  (typeof UploadFromFileNormalizeMode)[keyof typeof UploadFromFileNormalizeMode];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const UploadFromFileNormalizeMode = {
+  NORMALIZE_ALL: 'NORMALIZE_ALL',
+  EXCLUDE_ALL: 'EXCLUDE_ALL',
+  PER_CONCEPT: 'PER_CONCEPT',
+} as const;
 
 export type UploadFromFileBody = {
   file?: Blob;
