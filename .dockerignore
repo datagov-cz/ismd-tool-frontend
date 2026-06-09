@@ -1,0 +1,45 @@
+# Dependencies — reinstalled inside the image via npm ci
+node_modules
+**/node_modules
+
+# Next.js build output — must be generated fresh inside the image.
+# Copying a host-built (e.g. Windows) .next corrupts the in-image build and
+# causes incremental-build chunk errors (e.g. the bogus "<Html> should not be
+# imported outside of pages/_document" prerender crash).
+.next
+out
+
+# Build/test/coverage artifacts
+coverage
+.nyc_output
+
+# Local env files (secrets stay out of the image)
+.env
+.env.*
+!.env.example
+
+# Git & CI
+.git
+.gitignore
+.github
+
+# Editor / OS cruft
+.vscode
+.idea
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker / compose
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Misc local-only
+README.md
+*.local
