@@ -5,7 +5,10 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 type SourceItem = {
   name: string;
@@ -186,6 +189,8 @@ export const NonLegislativeSourceInput = ({
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({ control, name });
 
+  const isActive = useActiveAnchor(name);
+
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [savedIndices, setSavedIndices] = useState<Set<number>>(new Set());
 
@@ -231,7 +236,13 @@ export const NonLegislativeSourceInput = ({
   };
 
   return (
-    <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2" id={name}>
+    <div
+      className={clsx(
+        'w-full grid grid-cols-7 gap-y-4 gap-x-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={name}
+    >
       <GovFormLabel className="w-fit! pt-2.5">
         <span className="font-bold">{label}</span>
       </GovFormLabel>

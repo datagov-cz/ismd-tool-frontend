@@ -6,6 +6,7 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import {
   ArrayPath,
   FieldArray,
@@ -19,6 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shared/Popover';
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 type Language = 'cs' | 'sk' | 'en';
 
@@ -52,6 +54,8 @@ export const LanguageInput = <T extends FieldValues>({
     formState: { errors },
   } = useFormContext<T>();
 
+  const isActive = useActiveAnchor(anchor);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: name as ArrayPath<T>,
@@ -66,7 +70,13 @@ export const LanguageInput = <T extends FieldValues>({
   );
 
   return (
-    <div className="w-full space-y-2" id={anchor}>
+    <div
+      className={clsx(
+        'w-full space-y-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={anchor}
+    >
       {fields.map((field, index) => {
         const lang = (field as unknown as LanguageEntry).languageTag;
         const fieldPath = `${name}.${index}.name` as Parameters<
@@ -82,7 +92,7 @@ export const LanguageInput = <T extends FieldValues>({
         return (
           <div
             key={field.id}
-            className="w-full grid grid-cols-7 gap-y-4 gap-x-2"
+            className={clsx('w-full grid grid-cols-7 gap-y-4 gap-x-2')}
           >
             <GovFormLabel className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>

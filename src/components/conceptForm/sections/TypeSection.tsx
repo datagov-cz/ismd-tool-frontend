@@ -3,13 +3,13 @@ import { useFormContext } from 'react-hook-form';
 
 import { ConceptEditModelConceptTypeEnum } from '@/api/generated';
 import { ConceptInput } from '@/components/shared/ConceptInput';
-import { Input } from '@/components/shared/Input';
+import { DataTypeInput } from '@/components/shared/DataTypeInput';
 import { Select } from '@/components/shared/Select';
 import { FormSection } from '../components/FormSection';
 import { type ConceptForm } from '../schema/conceptFormSchema';
 
-export const TypesSection = () => {
-  const { watch, register } = useFormContext<ConceptForm>();
+export const TypesSection = ({ editing }: { editing?: boolean }) => {
+  const { watch } = useFormContext<ConceptForm>();
   const type = watch('conceptType');
   const t = useTranslations('CreateConcept');
 
@@ -41,17 +41,14 @@ export const TypesSection = () => {
   ];
 
   return (
-    <FormSection
-      icon="diagram-3"
-      label={t('ClassCreateFields.Label')}
-      anchor="types"
-    >
+    <FormSection icon="diagram-3" label={t('ClassCreateFields.Label')}>
       <Select
         name="conceptTypeEnum"
         anchor="conceptTypeEnum"
         label={t('ClassCreateFields.Labels.ConceptType')}
         options={CONCEPT_TYPE_OPTIONS}
         changeMultiple="conceptType"
+        disabled={editing}
       />
       {type === 'TRIDA' && (
         <Select
@@ -72,11 +69,9 @@ export const TypesSection = () => {
             searchType="CONCEPT"
             single
           />
-          <Input<ConceptForm>
-            placeholder={t('TypesSection.PropertyDataTypePlaceholder')}
+          <DataTypeInput
             name="dataType"
             anchor="dataType"
-            register={register}
             label={t('TypesSection.PropertyDataTypeLabel')}
           />
         </>

@@ -11,7 +11,7 @@ export const ConceptMeaningSection = () => {
   const t = useTranslations('CreateConcept.ConceptMeaningSection');
 
   return (
-    <FormSection icon="journal-text" label={t('Label')} anchor="meaning">
+    <FormSection icon="journal-text" label={t('Label')}>
       <LanguageInput<ConceptForm>
         name="definitionModel.definition"
         label={t('DefinitionLabel')}
@@ -42,7 +42,6 @@ export const ConceptMeaningSection = () => {
           placeholder={t('SearchPlaceholder')}
           searchType="RELATIONSHIP"
           searchSource="ALL"
-          single
         />
       )}
       {form.watch('conceptType') === 'VLASTNOST' && (

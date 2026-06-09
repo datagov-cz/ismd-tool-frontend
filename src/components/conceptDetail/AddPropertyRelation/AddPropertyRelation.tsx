@@ -1,8 +1,12 @@
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
-import { ConceptPropertiesModel } from '@/api/generated';
+import {
+  ConceptDetailModelReferencovanéPojmyResolved,
+  ConceptPropertiesModel,
+} from '@/api/generated';
 import { Section } from '../Section';
-import { RelatedTerm } from '../Term/RelatedTerm';
+import { IriRelatedTerm } from '../Term/IriRelatedTerm';
 
 type Props = {
   title: string;
@@ -10,6 +14,7 @@ type Props = {
   type: 'property' | 'relation';
   isOwnerLoggedIn?: boolean;
   openModal: () => void;
+  resolvedRelations?: ConceptDetailModelReferencovanéPojmyResolved;
 };
 
 export const AddPropertyRelation = ({
@@ -18,17 +23,23 @@ export const AddPropertyRelation = ({
   type,
   isOwnerLoggedIn,
   openModal,
+  resolvedRelations,
 }: Props) => {
+  const t = useTranslations('ConceptDetail.Main');
   return (
     <Section title={title}>
       <div className="space-y-2 w-full">
-        {concepts?.map((item) => (
-          <RelatedTerm
-            key={item.name}
-            label={item.name || ''}
-            href={item.ref || ''}
-          />
-        ))}
+        {concepts?.map(
+          (item) =>
+            item.iri && (
+              <IriRelatedTerm
+                key={item.iri}
+                iri={item.iri}
+                resolved={resolvedRelations}
+              />
+            ),
+        )}
+
         {isOwnerLoggedIn && (
           <GovButton
             className="block! py-2"
@@ -45,7 +56,9 @@ export const AddPropertyRelation = ({
               name="plus"
             />
             <span className="text-sm font-bold">
-              Pridat {type === 'property' ? 'vlastnost' : 'vztah'}
+              {type === 'property'
+                ? t('AddPropertyButton')
+                : t('AddRelationButton')}
             </span>
           </GovButton>
         )}

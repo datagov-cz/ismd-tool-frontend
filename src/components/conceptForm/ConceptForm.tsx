@@ -4,7 +4,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
-import { useScrollToAnchor } from '@/hooks/useScrollToAnchor';
 
 import { FormToolbar } from './components/FormToolbar';
 import {
@@ -69,6 +68,7 @@ interface ConceptFormProps {
   onSubmit: (_data: ConceptFormValues) => void;
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
+  editing?: boolean;
 }
 
 export const ConceptForm = ({
@@ -76,6 +76,7 @@ export const ConceptForm = ({
   onSubmit,
   isPending,
   defaultValues: externalDefaults,
+  editing,
 }: ConceptFormProps) => {
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
@@ -89,7 +90,6 @@ export const ConceptForm = ({
 
   const { errors } = form.formState;
 
-  useScrollToAnchor(!!externalDefaults);
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
@@ -116,7 +116,7 @@ export const ConceptForm = ({
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">
         <NamingSection />
-        <TypesSection />
+        <TypesSection editing={editing} />
         <ConceptMeaningSection />
         <SourcesSection />
         <RightsAndObligationsSection />

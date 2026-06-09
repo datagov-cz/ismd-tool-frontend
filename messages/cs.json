@@ -189,7 +189,14 @@
       "OpenInESbirka": "Otevřít v e-sbírce",
       "Loading": "Načítání...",
       "NoResults": "Pro tohle nemáme žádné výsledky",
-      "AddConcept": "+ Přidat další pojem"
+      "AddConcept": "+ Přidat další pojem",
+      "AddRelation": "Přidat vztah k pojmu",
+      "AddProperty": "Přidat vlastnost k pojmu ",
+      "AddRelationButton": "Vytvořit vztah",
+      "AddPropertyButton": "Přidat vlastnost",
+      "OtherConcept": "jiný pojem",
+      "SourceConcept": "Zdrojový pojem (jiný pojem)",
+      "DestinationConcept": "Cílový pojem (jiný pojem)"
     }
   },
   "Term": {

@@ -10,7 +10,7 @@ export const OntologySection = () => {
   const t = useTranslations('CreateConcept.OntologySection');
 
   return (
-    <FormSection icon="database-gear" label={t('Label')} anchor="ontology">
+    <FormSection icon="database-gear" label={t('Label')}>
       <Input<ConceptCreateModel>
         register={form.register}
         label={t('OntologyLabel')}

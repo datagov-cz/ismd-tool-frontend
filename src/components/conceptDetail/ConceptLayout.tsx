@@ -56,6 +56,7 @@ export const ConceptLayout = ({
             conceptName={conceptDetail['název']?.cs}
             slug={slug}
             isOwnerLoggedIn={isOwnerLoggedIn}
+            resolvedRelations={resolvedRelations}
           />
         )}
 

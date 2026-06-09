@@ -151,6 +151,7 @@ export function mapDetailToFormValues(
           ? toMultiLang(detail['popis'])
           : [{ languageTag: 'cs', name: '' }],
     },
+    dataType: detail['obor-hodnot-resolved'],
     definingLegalSource:
       detail['definující-ustanovení-právního-předpisu'] ?? [],
     relatedLegalSource:
@@ -271,6 +272,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           onSubmit={handleSubmit}
           isPending={isPending}
           defaultValues={defaultValues}
+          editing={true}
         />
       )}
     </div>

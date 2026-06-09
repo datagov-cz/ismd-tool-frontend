@@ -81,7 +81,12 @@ const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
 // Property concept (VLASTNOST)
 const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
   conceptTypeEnum: z.literal('VLASTNOST'),
-  dataType: z.string().optional(),
+  dataType: z
+    .object({
+      code: z.string().optional(),
+      label: z.string().optional(),
+    })
+    .optional(),
   domain: ConceptRef.optional(),
   superProperty: z.array(ConceptRef).optional(),
   isInPPDF: z.boolean().optional(),
@@ -127,7 +132,12 @@ const ConceptFormSchema = z.object({
   type: z.string().optional(),
   broaderConcept: z.array(ConceptRef).optional(),
   // VLASTNOST
-  dataType: z.string().optional(),
+  dataType: z
+    .object({
+      code: z.string().optional(),
+      label: z.string().optional(),
+    })
+    .optional(),
   superProperty: z.array(ConceptRef).optional(),
   // VZTAH
   range: ConceptRef.optional(),

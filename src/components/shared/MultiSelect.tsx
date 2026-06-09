@@ -1,5 +1,8 @@
 import { GovFormLabel, GovFormMultiSelect } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { Controller, useFormContext } from 'react-hook-form';
+
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 interface Props {
   label: string;
@@ -10,8 +13,15 @@ interface Props {
 
 export const MultiSelect = ({ label, name, options, anchor }: Props) => {
   const form = useFormContext();
+  const isActive = useActiveAnchor(anchor);
   return (
-    <div id={anchor}>
+    <div
+      id={anchor}
+      className={clsx(
+        'w-full space-y-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+    >
       <Controller
         control={form.control}
         name={name}

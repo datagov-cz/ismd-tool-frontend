@@ -58,8 +58,16 @@ export const FIELD_GROUPS: FieldGroup[] = [
         labelKey: 'Sections.AlternativeName',
         anchor: '#altName',
       },
-      { key: 'definice', labelKey: 'Sections.Definition', anchor: '#meaning' },
-      { key: 'popis', labelKey: 'Sections.Description', anchor: '#meaning' },
+      {
+        key: 'definice',
+        labelKey: 'Sections.Definition',
+        anchor: '#definition',
+      },
+      {
+        key: 'popis',
+        labelKey: 'Sections.Description',
+        anchor: '#description',
+      },
     ],
   },
   {
@@ -68,7 +76,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'ekvivalentní-pojem',
         labelKey: 'Sections.EquivalentConcept',
-        anchor: '#meaning',
+        anchor: '#exactMatch',
       },
     ],
   },

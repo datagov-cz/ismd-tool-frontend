@@ -14,6 +14,7 @@ import {
   SearchType,
   useSearch,
 } from '@/api/generated';
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 import { RelatedTerm } from '../conceptDetail/Term/RelatedTerm';
 
 const LIMIT = 20;
@@ -53,6 +54,8 @@ export const ConceptInput = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('ConceptDetail.Main');
+
+  const isActive = useActiveAnchor(anchor);
 
   const { setValue } = useFormContext();
 
@@ -154,7 +157,13 @@ export const ConceptInput = ({
     (isFetching || allResults.length > 0 || search !== undefined);
 
   return (
-    <div className="w-full space-y-2" id={anchor}>
+    <div
+      className={clsx(
+        'w-full space-y-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={anchor}
+    >
       <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
         {label && (
           <GovFormLabel className="w-fit! pt-2.5">

@@ -56,11 +56,7 @@ export const ProclamationSection = () => {
   ];
 
   return (
-    <FormSection
-      icon="grid"
-      label={t('ProclamationSection.Label')}
-      anchor="proclamation"
-    >
+    <FormSection icon="grid" label={t('ProclamationSection.Label')}>
       <Select
         name="contentType"
         anchor="contentType"

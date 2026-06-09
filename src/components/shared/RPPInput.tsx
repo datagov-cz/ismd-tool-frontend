@@ -4,6 +4,7 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { useFormContext, useWatch } from 'react-hook-form'; // 👈 add useWatch
 
 import {
@@ -11,6 +12,7 @@ import {
   useSearchAgendas,
   useSearchIsvs,
 } from '@/api/generated';
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 import { RelatedTerm } from '../conceptDetail/Term/RelatedTerm';
 
 interface Props {
@@ -26,6 +28,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   const { setValue } = useFormContext();
 
   const selected: RppSearchResultDto | undefined = useWatch({ name });
+  const isActive = useActiveAnchor(name);
 
   const enabled = query.length > 1;
 
@@ -55,7 +58,13 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
   };
 
   return (
-    <div className="w-full space-y-2" id={name}>
+    <div
+      className={clsx(
+        'w-full space-y-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={name}
+    >
       <div className="w-full grid grid-cols-7 gap-x-2 gap-y-4">
         <GovFormLabel className="w-fit! pt-2.5">
           <span className="font-bold">{label}</span>

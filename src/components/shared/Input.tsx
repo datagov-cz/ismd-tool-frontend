@@ -13,6 +13,8 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
+
 interface Props<T extends FieldValues> {
   label: string;
   placeholder: string;
@@ -40,40 +42,45 @@ export const Input = <T extends FieldValues>({
   } = useFormContext<T>();
 
   const error = get(errors, name);
+  const isActive = useActiveAnchor(anchor);
 
   return (
-    <div id={anchor}>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
-            <GovFormLabel className="w-fit! pt-2.5">
-              <span className="font-bold">
-                {label}
-                {required && <span className="text-status-error-700"> *</span>}
-              </span>
-            </GovFormLabel>
-            <div className="col-span-6 relative ml-10">
-              <GovFormInput
-                {...register(name)}
-                id={field.name}
-                placeholder={placeholder}
-                className={clsx('border-0!')}
-                invalid={!!error?.message}
-                multiline={multiline}
-                rows={4}
-                disabled={disabled}
-              />
-              {error?.message && (
-                <GovFormMessage color="error" slot="bottom">
-                  {String(error.message)}
-                </GovFormMessage>
-              )}
-            </div>
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <div
+          className={clsx(
+            'w-full grid grid-cols-7 gap-y-4 gap-x-2 p-2.5 rounded-lg',
+            isActive && 'bg-blue-subtle',
+          )}
+          id={anchor}
+        >
+          <GovFormLabel className="w-fit! pt-2.5">
+            <span className="font-bold">
+              {label}
+              {required && <span className="text-status-error-700"> *</span>}
+            </span>
+          </GovFormLabel>
+          <div className="col-span-6 relative ml-10">
+            <GovFormInput
+              {...register(name)}
+              id={field.name}
+              placeholder={placeholder}
+              className={clsx('border-0!')}
+              invalid={!!error?.message}
+              multiline={multiline}
+              rows={4}
+              disabled={disabled}
+            />
+            {error?.message && (
+              <GovFormMessage color="error" slot="bottom">
+                {String(error.message)}
+              </GovFormMessage>
+            )}
           </div>
-        )}
-      />
-    </div>
+        </div>
+      )}
+    />
   );
 };

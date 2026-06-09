@@ -6,7 +6,7 @@ import { FormSection } from '../components/FormSection';
 export const SourcesSection = () => {
   const t = useTranslations('ConceptDetail.Sections');
   return (
-    <FormSection label={t('ConceptSource')} icon="book" anchor="sources">
+    <FormSection label={t('ConceptSource')} icon="book">
       <NonLegislativeSourceInput
         label={t('DefiningNonLegislative')}
         name="definingNonLegalSource"
