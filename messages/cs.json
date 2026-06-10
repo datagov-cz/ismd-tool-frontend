@@ -115,7 +115,9 @@
     "EditConcept": "Upravit pojem:",
     "Loading": "Načítání pojmu…",
     "ToastSuccess": "Koncept byl úspěšně upraven.",
-    "ToastError": "Při ukládání konceptu došlo k chybě."
+    "ToastError": "Při ukládání konceptu došlo k chybě.",
+    "HintHeader": "Nápověda k formuláři",
+    "Suggestion": "Doporučení"
   },
   "ConceptDetail": {
     "Sections": {
