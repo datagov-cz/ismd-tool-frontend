@@ -11,7 +11,13 @@ const PROTECTED_PATTERNS = [
   /^\/dictionary\/[^/]+\/edit$/,
 ];
 
+const EXCLUDED_PATTERNS = [
+  /^\/concept\/nkd(\/edit)?$/,
+  /^\/dictionary\/nkd(\/edit)?$/,
+];
+
 const isProtected = (pathname: string) =>
+  !EXCLUDED_PATTERNS.some((re) => re.test(pathname)) &&
   PROTECTED_PATTERNS.some((re) => re.test(pathname));
 
 export const SessionGuard = ({ children }: { children: ReactNode }) => {
