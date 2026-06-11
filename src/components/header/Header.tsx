@@ -19,6 +19,7 @@ import { ThemeSwitch } from '../shared/ThemeSwitch';
 import { HintSidebox } from './hintSidebox/HintSidebox';
 import { LoginButton } from './LoginButton';
 import { NavItems } from './NavItems';
+import { OnlineIndicator } from './OnlineIndicator';
 
 interface Props {
   session: Session | null;
@@ -82,6 +83,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 <span className="hidden desktop:inline-block text-xl">
                   ISMD
                 </span>
+                <OnlineIndicator />
                 <span className="inline-block desktop:hidden">
                   {t('LogoTitleMobile')}
                 </span>
