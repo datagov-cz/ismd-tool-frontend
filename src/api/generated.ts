@@ -81,8 +81,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -104,9 +104,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -174,6 +174,8 @@ export interface ResolvedConceptDto {
   ontologyIri?: string;
   ontologyName?: ResolvedConceptDtoOntologyName;
   source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
 }
 
 export type AltNameModelAltName = { [key: string]: string };

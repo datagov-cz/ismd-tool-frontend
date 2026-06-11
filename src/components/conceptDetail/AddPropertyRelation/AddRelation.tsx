@@ -6,7 +6,7 @@ import {
   ConceptPropertiesModel,
 } from '@/api/generated';
 import { Section } from '../Section';
-import { IriRelatedTerm } from '../Term/IriRelatedTerm';
+import { ClassRelationTerm } from '../Term/ClassRelationTerm';
 
 type Props = {
   title: string;
@@ -17,7 +17,7 @@ type Props = {
   resolvedRelations?: ConceptDetailModelReferencovanéPojmyResolved;
 };
 
-export const AddPropertyRelation = ({
+export const AddRelation = ({
   title,
   concepts,
   type,
@@ -32,11 +32,10 @@ export const AddPropertyRelation = ({
         {concepts?.map(
           (item) =>
             item.iri && (
-              <IriRelatedTerm
+              <ClassRelationTerm
                 key={item.iri}
                 iri={item.iri}
                 resolved={resolvedRelations}
-                type={type === 'property' ? 'VLASTNOST' : 'VZTAH'}
               />
             ),
         )}

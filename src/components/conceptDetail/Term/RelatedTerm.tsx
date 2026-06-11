@@ -2,18 +2,22 @@ import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 
+import { ConceptMetadataModelConceptType } from '@/api/generated';
+
 export const RelatedTerm = ({
   label,
   href,
   noIcon,
   remove,
   ontologyLabel,
+  type,
 }: {
   label: string;
   href?: string;
   noIcon?: boolean;
   remove?: () => void;
   ontologyLabel?: string;
+  type?: ConceptMetadataModelConceptType;
 }) => {
   const className = clsx(
     'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active',
@@ -27,11 +31,20 @@ export const RelatedTerm = ({
         {!noIcon && (
           <GovIcon
             slot="icon-start"
-            name="card-heading"
+            name={
+              type === 'VLASTNOST'
+                ? 'tag'
+                : type === 'VZTAH'
+                  ? 'bezier2'
+                  : 'card-heading'
+            }
             type="components"
             size="l"
             color="primary"
-            className="mt-0.5! shrink-0"
+            className={clsx(
+              'shrink-0',
+              type === 'VLASTNOST' || type === 'VZTAH' ? 'mt-1!' : 'mt-0.5!',
+            )}
           />
         )}
         {label}

@@ -1,4 +1,7 @@
-import { ConceptDetailModelReferencovanéPojmyResolved } from '@/api/generated';
+import {
+  ConceptDetailModelReferencovanéPojmyResolved,
+  ConceptMetadataModelConceptType,
+} from '@/api/generated';
 import { iriToLabel } from '@/lib/concept-utils';
 
 import { RelatedTerm } from './RelatedTerm';
@@ -6,9 +9,10 @@ import { RelatedTerm } from './RelatedTerm';
 type Props = {
   iri: string;
   resolved?: ConceptDetailModelReferencovanéPojmyResolved;
+  type?: ConceptMetadataModelConceptType;
 };
 
-export const IriRelatedTerm = ({ iri, resolved }: Props) => {
+export const IriRelatedTerm = ({ iri, resolved, type }: Props) => {
   const resolvedConcept = resolved && resolved[iri];
 
   const label = resolvedConcept
@@ -26,6 +30,7 @@ export const IriRelatedTerm = ({ iri, resolved }: Props) => {
       label={label}
       href={href}
       ontologyLabel={resolvedConcept?.ontologyName?.cs}
+      type={type}
     />
   );
 };

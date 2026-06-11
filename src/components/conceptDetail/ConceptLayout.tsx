@@ -92,6 +92,7 @@ export const ConceptLayout = ({
                 <SuperClassList
                   items={conceptDetail['nadřazená-vlastnost']}
                   resolved={resolvedRelations}
+                  type="VLASTNOST"
                 />
               </Section>
             </div>
@@ -103,6 +104,7 @@ export const ConceptLayout = ({
               <SuperClassList
                 items={conceptDetail['nadřazený-vztah']}
                 resolved={resolvedRelations}
+                type="VZTAH"
               />
             </Section>
           </div>

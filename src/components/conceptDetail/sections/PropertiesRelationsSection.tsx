@@ -7,6 +7,7 @@ import {
 } from '@/api/generated';
 import { AddPropertyModal } from '../AddPropertyRelation/AddPropertyModal';
 import { AddPropertyRelation } from '../AddPropertyRelation/AddPropertyRelation';
+import { AddRelation } from '../AddPropertyRelation/AddRelation';
 import { AddRelationModal } from '../AddPropertyRelation/AddRelationModal';
 
 interface Props {
@@ -51,7 +52,7 @@ export const PropertiesRelationsSection = ({
           openModal={() => setPropertyOpen(true)}
           resolvedRelations={resolvedRelations}
         />
-        <AddPropertyRelation
+        <AddRelation
           title={t('Sections.Relations')}
           concepts={relationships}
           type="relation"
