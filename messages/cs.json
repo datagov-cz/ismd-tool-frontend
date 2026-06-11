@@ -18,8 +18,8 @@
     },
     "NavLogged": {
       "OnlineIndicator": {
-        "Online": "Připojeno",
-        "Offline": "Odpojeno"
+        "Online": "Online",
+        "Offline": "Offline"
       },
       "Link1": "Nápověda",
       "Dropdown": {
