@@ -135,6 +135,7 @@ export const ConceptHeader = ({
             source={source}
             owner={owner}
             slug={slug}
+            iri={conceptDetail.iri}
           />
         </div>
       </div>
