@@ -196,7 +196,9 @@
       "AddPropertyButton": "Přidat vlastnost",
       "OtherConcept": "jiný pojem",
       "SourceConcept": "Zdrojový pojem (jiný pojem)",
-      "DestinationConcept": "Cílový pojem (jiný pojem)"
+      "DestinationConcept": "Cílový pojem (jiný pojem)",
+      "Warning": "Nelze najít pojem v NKD/ISMD",
+      "WarningTooltip": "ISMD nebyl schopný nalézt zobrazený pojem, pojem z OFN je ve slovníku vyplněn, ale na základě daného vyplněného IRI nelze najít pojem v NKD/ISMD."
     }
   },
   "Term": {
