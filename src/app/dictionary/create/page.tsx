@@ -42,7 +42,9 @@ const CreateDictionary = () => {
         <h2 className="text-dark-primary font-medium text-center">
           {t('Form.Or')}
         </h2>
-        <UploadFlow />
+        <div className="relative w-full lg:max-w-160 xl:max-w-200">
+          <UploadFlow />
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -6,8 +6,13 @@ import { toast } from 'react-toastify';
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
 
 import { FormToolbar } from './components/FormToolbar';
-import { resolveHintKey } from './components/hint/conceptFormHints';
+import {
+  conceptFormHints,
+  defaultHint,
+  defaultHintEdit,
+} from './components/hint/conceptFormHints';
 import { HintSidebar } from './components/hint/HintSidebar';
+import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
   ConceptFormSchema,
@@ -92,22 +97,10 @@ export const ConceptForm = ({
 
   const { errors } = form.formState;
 
-  const [activeHint, setActiveHint] = useState<string | null>(null);
-  const [hintOpen, setHintOpen] = useState(true);
-
-  const handleFocus = (e: React.FocusEvent<HTMLFormElement>) => {
-    let el: HTMLElement | null = e.target as HTMLElement;
-    while (el && el !== e.currentTarget) {
-      const id = el.getAttribute('id');
-      const name = el.getAttribute('name');
-      const key = (id && resolveHintKey(id)) || (name && resolveHintKey(name));
-      if (key) {
-        setActiveHint(key);
-        return;
-      }
-      el = el.parentElement;
-    }
-  };
+  const { hint, open, setOpen, handleFocus } = useFormHints(
+    conceptFormHints,
+    editing ? defaultHintEdit : defaultHint,
+  );
 
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
@@ -150,11 +143,10 @@ export const ConceptForm = ({
         </form>
 
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
-          {hintOpen && (
+          {open && (
             <HintSidebar
-              editing={editing}
-              activeKey={activeHint}
-              onClose={() => setHintOpen(false)}
+              hint={hint}
+              onClose={() => setOpen(false)}
               className="sticky top-22 w-full max-w-80"
             />
           )}

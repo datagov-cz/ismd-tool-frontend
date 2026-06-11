@@ -2,29 +2,16 @@ import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import {
-  conceptFormHints,
-  defaultHint,
-  defaultHintEdit,
-} from './conceptFormHints';
+import { Hint } from './conceptFormHints';
 
 interface HintSidebarProps {
-  activeKey: string | null;
+  hint: Hint;
   onClose: () => void;
   className?: string;
-  editing?: boolean;
 }
 
-export const HintSidebar = ({
-  activeKey,
-  onClose,
-  className,
-  editing,
-}: HintSidebarProps) => {
+export const HintSidebar = ({ hint, onClose, className }: HintSidebarProps) => {
   const t = useTranslations('ConceptEditWrapper');
-  const hint =
-    (activeKey && conceptFormHints[activeKey]) ||
-    (editing ? defaultHintEdit : defaultHint);
 
   return (
     <aside

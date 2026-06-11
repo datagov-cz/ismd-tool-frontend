@@ -147,11 +147,49 @@ export const conceptFormHints: Record<string, Hint> = {
   },
 };
 
-export function resolveHintKey(name: string): string | null {
+export const dictionaryDefaultHint: Hint = {
+  title: 'Vytváříte nový slovník.',
+  body: 'Klikněte do libovolného pole ve formuláři a zde se zobrazí konkrétní nápověda k jeho vyplnění.',
+  recommendation:
+    'Začněte názvem a popisem. Tato pole určují, jak bude slovník identifikován a srozumitelný.',
+};
+
+export const dictionaryDefaultHintEdit: Hint = {
+  title: 'Upravujete slovník.',
+  body: 'Klikněte do libovolného pole ve formuláři a zde se zobrazí konkrétní nápověda k jeho vyplnění.',
+  recommendation: 'Upravte název nebo popis slovníku podle potřeby.',
+};
+
+export const dictionaryFormHints: Record<string, Hint> = {
+  namespace: {
+    title: 'Jmenný prostor',
+    body: 'Základní URI (jmenný prostor) slovníku. Tvoří kořen identifikátorů všech pojmů, které do slovníku patří.',
+  },
+  nameModel: {
+    title: 'Název slovníku',
+    body: 'Hlavní název slovníku v daném jazyce (CS povinně, SK a EN volitelně).',
+    recommendation: 'Volte výstižný a jednoznačný název.',
+  },
+  descriptionModel: {
+    title: 'Popis slovníku',
+    body: 'Stručný popis obsahu a účelu slovníku – čeho se pojmy ve slovníku týkají.',
+  },
+};
+
+export function resolveHintKey(
+  name: string,
+  hints: Record<string, Hint>,
+): string | null {
   const parts = name.split('.').filter((p) => !/^\d+$/.test(p));
   for (let i = parts.length; i > 0; i--) {
     const key = parts.slice(0, i).join('.');
-    if (key in conceptFormHints) return key;
+    if (key in hints) return key;
   }
   return null;
 }
+
+export const resolveHintKeyConcept = (name: string): string | null =>
+  resolveHintKey(name, conceptFormHints);
+
+export const resolveHintKeyOntology = (name: string): string | null =>
+  resolveHintKey(name, dictionaryFormHints);

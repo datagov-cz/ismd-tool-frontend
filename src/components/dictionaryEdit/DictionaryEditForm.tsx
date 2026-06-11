@@ -16,6 +16,12 @@ import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { FormSection } from '../conceptForm/components/FormSection';
 import { FormToolbar } from '../conceptForm/components/FormToolbar';
+import {
+  dictionaryDefaultHintEdit,
+  dictionaryFormHints,
+} from '../conceptForm/components/hint/conceptFormHints';
+import { HintSidebar } from '../conceptForm/components/hint/HintSidebar';
+import { useFormHints } from '../conceptForm/components/hint/useFormHints';
 import { LanguageInput } from '../shared/LanguageInput';
 
 export type DictionaryEditProps = {
@@ -79,6 +85,11 @@ export const DictionaryEditForm = ({
 
   const { handleSubmit } = form;
 
+  const { hint, open, setOpen, handleFocus } = useFormHints(
+    dictionaryFormHints,
+    dictionaryDefaultHintEdit,
+  );
+
   const { mutate: editOntology, isPending } = useEditOntology({
     mutation: {
       onSuccess: async () => {
@@ -110,7 +121,7 @@ export const DictionaryEditForm = ({
   return (
     <div className="w-full h-full flex-1 bg-primary-subtlest px-5">
       <div className="w-full relative max-w-250 mx-auto py-5">
-        <div className="w-full space-y-6 relative">
+        <div className="w-full space-y-6 relative lg:max-w-160 xl:max-w-200">
           <div className="space-y-3 relative">
             <div className="relative">
               <button
@@ -142,7 +153,11 @@ export const DictionaryEditForm = ({
               </GovTag>
             </div>
             <FormProvider {...form}>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-2.5"
+                onFocus={handleFocus}
+              >
                 <FormSection label="Základní parametry" icon="tag">
                   <LanguageInput<OntologyEditModel>
                     name="nameModel"
@@ -159,6 +174,15 @@ export const DictionaryEditForm = ({
                 <FormToolbar<OntologyEditModel> isPending={isPending} />
               </form>
             </FormProvider>
+          </div>
+          <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
+            {open && (
+              <HintSidebar
+                hint={hint}
+                onClose={() => setOpen(false)}
+                className="sticky top-22 w-full max-w-80"
+              />
+            )}
           </div>
         </div>
       </div>
