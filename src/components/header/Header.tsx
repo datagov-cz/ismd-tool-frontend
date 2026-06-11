@@ -175,9 +175,10 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-3000 transform transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } desktop:hidden`}
+        className={clsx(
+          'fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-3000 transform transition-all duration-300 ease-in-out desktop:hidden',
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full',
+        )}
       >
         <nav>
           <ul className="flex flex-col p-4 gap-3">
