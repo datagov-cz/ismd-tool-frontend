@@ -2,10 +2,7 @@ import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import {
-  ConceptDetailModelReferencovanéPojmyResolved,
-  ResolvedConceptDto,
-} from '@/api/generated';
+import { ResolvedConceptDto } from '@/api/generated';
 
 const conceptHref = (item: {
   source?: string;
@@ -17,13 +14,10 @@ const conceptHref = (item: {
     : `/concept/nkd?iri=${item.iri}`;
 
 export const ClassRelationTerm = ({
-  iri,
-  resolved,
+  relation,
 }: {
-  iri: string;
-  resolved?: ConceptDetailModelReferencovanéPojmyResolved;
+  relation: ResolvedConceptDto;
 }) => {
-  const relation = resolved?.[iri];
   if (!relation) return;
 
   const href = conceptHref(relation);
@@ -85,19 +79,27 @@ export const ClassRelationTerm = ({
   );
 };
 
-export const InnerTerm = ({ term }: { term: ResolvedConceptDto }) => (
-  <Link
-    href={conceptHref(term)}
-    className="inline-flex gap-1 px-1.5 py bg-white rounded-md border border-border-grey hover:underline"
-  >
-    <GovIcon
-      slot="icon-start"
-      name="card-heading"
-      type="components"
-      size="l"
-      color="primary"
-      className="mt-0.5! shrink-0"
-    />{' '}
-    {term.conceptName?.cs}
-  </Link>
-);
+export const InnerTerm = ({ term }: { term: ResolvedConceptDto }) => {
+  const isRelation = !!term.resolvedDomain && !!term.resolvedRange;
+  const isProperty = !!term.resolvedDomain && !term.resolvedRange;
+
+  return (
+    <Link
+      href={conceptHref(term)}
+      className="inline-flex gap-1 px-1.5 py bg-white rounded-md border border-border-grey hover:underline"
+    >
+      <GovIcon
+        slot="icon-start"
+        name={isProperty ? 'tag' : isRelation ? 'bezier2' : 'card-heading'}
+        type="components"
+        size="l"
+        color="primary"
+        className={clsx(
+          'shrink-0',
+          isProperty || isRelation ? 'mt-1!' : 'mt-0.5!',
+        )}
+      />{' '}
+      {term.conceptName?.cs}
+    </Link>
+  );
+};
