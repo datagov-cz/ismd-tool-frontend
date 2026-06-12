@@ -10,10 +10,7 @@ import { toast } from 'react-toastify';
 import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { FormToolbar } from '@/components/conceptForm/components/FormToolbar';
-import {
-  dictionaryDefaultHint,
-  dictionaryFormHints,
-} from '@/components/conceptForm/components/hint/conceptFormHints';
+import { useDictionaryFormHints } from '@/components/conceptForm/components/hint/conceptFormHints';
 import { HintSidebar } from '@/components/conceptForm/components/hint/HintSidebar';
 import { useFormHints } from '@/components/conceptForm/components/hint/useFormHints';
 import { Input } from '@/components/shared/Input';
@@ -60,10 +57,9 @@ export const CreateForm = () => {
     },
   });
 
-  const { hint, open, setOpen, handleFocus } = useFormHints(
-    dictionaryFormHints,
-    dictionaryDefaultHint,
-  );
+  const { hints, defaultHint } = useDictionaryFormHints();
+
+  const { hint, open, setOpen, handleFocus } = useFormHints(hints, defaultHint);
 
   const { mutate, isPending } = useCreateOntology();
   const { handleSubmit, getValues } = form;

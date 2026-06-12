@@ -6,11 +6,7 @@ import { toast } from 'react-toastify';
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
 
 import { FormToolbar } from './components/FormToolbar';
-import {
-  conceptFormHints,
-  defaultHint,
-  defaultHintEdit,
-} from './components/hint/conceptFormHints';
+import { useConceptFormHints } from './components/hint/conceptFormHints';
 import { HintSidebar } from './components/hint/HintSidebar';
 import { useFormHints } from './components/hint/useFormHints';
 import {
@@ -97,8 +93,10 @@ export const ConceptForm = ({
 
   const { errors } = form.formState;
 
+  const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
+
   const { hint, open, setOpen, handleFocus } = useFormHints(
-    conceptFormHints,
+    hints,
     editing ? defaultHintEdit : defaultHint,
   );
 

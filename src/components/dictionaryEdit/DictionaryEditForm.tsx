@@ -16,10 +16,7 @@ import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { FormSection } from '../conceptForm/components/FormSection';
 import { FormToolbar } from '../conceptForm/components/FormToolbar';
-import {
-  dictionaryDefaultHintEdit,
-  dictionaryFormHints,
-} from '../conceptForm/components/hint/conceptFormHints';
+import { useDictionaryFormHints } from '../conceptForm/components/hint/conceptFormHints';
 import { HintSidebar } from '../conceptForm/components/hint/HintSidebar';
 import { useFormHints } from '../conceptForm/components/hint/useFormHints';
 import { LanguageInput } from '../shared/LanguageInput';
@@ -84,10 +81,11 @@ export const DictionaryEditForm = ({
   });
 
   const { handleSubmit } = form;
+  const { hints, defaultHintEdit } = useDictionaryFormHints();
 
   const { hint, open, setOpen, handleFocus } = useFormHints(
-    dictionaryFormHints,
-    dictionaryDefaultHintEdit,
+    hints,
+    defaultHintEdit,
   );
 
   const { mutate: editOntology, isPending } = useEditOntology({
