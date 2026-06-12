@@ -1,6 +1,11 @@
-import { GovIcon } from '@gov-design-system-ce/react';
+import {
+  GovIcon,
+  GovTooltip,
+  GovTooltipContent,
+} from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 import { ConceptMetadataModelConceptType } from '@/api/generated';
 
@@ -11,6 +16,7 @@ export const RelatedTerm = ({
   remove,
   ontologyLabel,
   type,
+  warning,
 }: {
   label: string;
   href?: string;
@@ -18,12 +24,15 @@ export const RelatedTerm = ({
   remove?: () => void;
   ontologyLabel?: string;
   type?: ConceptMetadataModelConceptType;
+  warning?: boolean;
 }) => {
   const className = clsx(
     'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active',
     noIcon ? 'grayscale' : 'font-bold',
-    !!ontologyLabel ? 'px-2 py-1' : 'p-2',
+    ontologyLabel || warning ? 'px-2 py-1' : 'p-2',
   );
+
+  const t = useTranslations('ConceptDetail.Main');
 
   const content = (
     <>
@@ -72,6 +81,24 @@ export const RelatedTerm = ({
           />
           {ontologyLabel}
         </span>
+      )}
+      {warning && (
+        <GovTooltip position="bottom" className="border-0!">
+          <GovTooltipContent className="z-1000!">
+            {t('WarningTooltip')}
+          </GovTooltipContent>
+          <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
+            <GovIcon
+              slot="icon-start"
+              name="exclamation-triangle"
+              type="components"
+              size="s"
+              color="warning"
+              className="shrink-0 mt-1!"
+            />
+            {t('Warning')}
+          </span>
+        </GovTooltip>
       )}
     </>
   );

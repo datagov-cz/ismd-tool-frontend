@@ -20,8 +20,9 @@ export const IriRelatedTerm = ({ iri, resolved, type }: Props) => {
     ? resolvedConcept.conceptName?.cs
     : iriToLabel(iri);
 
-  const href =
-    resolvedConcept && resolvedConcept.source !== 'NKD'
+  const href = !resolvedConcept
+    ? undefined
+    : resolvedConcept.source !== 'NKD'
       ? `/concept/${resolvedConcept.conceptSlug}`
       : `/concept/nkd?iri=${iri}`;
 
@@ -42,6 +43,7 @@ export const IriRelatedTerm = ({ iri, resolved, type }: Props) => {
             ? 'VLASTNOST'
             : undefined
       }
+      warning={!resolvedConcept}
     />
   );
 };
