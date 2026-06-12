@@ -92,6 +92,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           ontologyDetail['časový-okamžik-poslední-změny'] ||
           ontologyMetadata.updatedAt
         }
+        iri={ontologyDetail.iri}
       />
       {user?.userId && (
         <CommentSidebox
