@@ -66,3 +66,12 @@ gov-tooltip-content,
 .gov-tooltip-content {
   visibility: visible;
 }
+
+/*
+ * The autocomplete results list ships with `overflow-y: auto` but no max-height,
+ * so it grows to full content height and pushes extra results off-screen with no
+ * scroll. Cap it so all returned options are reachable.
+ */
+.gov-form-autocomplete__list {
+  max-height: 16rem;
+}

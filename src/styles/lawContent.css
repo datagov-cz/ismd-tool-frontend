@@ -1,0 +1,12 @@
+/*
+ * Law content (bodyHtml) renders elements tagged with `data-kind`. Make the
+ * paragraph-level ones (`par`) interactive: highlight on hover and show a
+ * pointer so it reads as clickable.
+ */
+.law-content [data-kind='par'] {
+  @apply cursor-pointer transition-colors;
+}
+
+.law-content [data-kind='par']:hover {
+  @apply bg-blue-100;
+}

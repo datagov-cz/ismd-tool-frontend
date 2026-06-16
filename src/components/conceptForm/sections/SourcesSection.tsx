@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 
-import { LegislativeSourceInput } from '@/components/shared/LegislativeSourceInput';
 import { NonLegislativeSourceInput } from '@/components/shared/NonLegislativeSourceInput';
+import { LegislativeSourceInput } from '../../shared/LegislativeSourceInput/LegislativeSourceInput';
 import { FormSection } from '../components/FormSection';
 
 export const SourcesSection = () => {
