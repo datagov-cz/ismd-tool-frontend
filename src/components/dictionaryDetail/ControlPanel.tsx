@@ -14,7 +14,6 @@ import { DeleteDialog } from './DeleteDialog';
 import { DownloadDialog } from './DownloadDialog';
 
 interface Props {
-  isPublished: boolean;
   ontologyID: number;
   name: string;
   user?: UserModel;
@@ -25,7 +24,6 @@ interface Props {
 }
 
 export const ControlPanel = ({
-  isPublished,
   ontologyID,
   name,
   user,
@@ -168,7 +166,7 @@ export const ControlPanel = ({
           </ul>
         </GovDropdown>
 
-        {!isPublished && isOwner && (
+        {isOwner && (
           <ControlPanelButton
             iconName="trash"
             ariaLabel={t('Delete')}
