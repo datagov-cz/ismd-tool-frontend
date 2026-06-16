@@ -1,4 +1,4 @@
-import { ComponentProps, useRef, useState } from 'react';
+import { ComponentProps, useRef } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import { flushSync } from 'react-dom';
 
@@ -21,6 +21,8 @@ type Props = {
   open: ComponentProps<typeof Popover>['open'];
   onOpenChange: ComponentProps<typeof Popover>['onOpenChange'];
   onClear: () => void;
+  selectedIri: string | null;
+  onSelectIri: (_iri: string) => void;
 };
 
 export const LegislativeSourceDetail = ({
@@ -28,23 +30,27 @@ export const LegislativeSourceDetail = ({
   onOpenChange,
   source,
   onClear,
+  selectedIri,
+  onSelectIri,
 }: Props) => {
   const { data, isLoading } = useGetLawContent({
     law: `${source.cislo}/${source.rok}`,
   });
 
-  const [selectedEli, setSelectedEli] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const bodyHtml = data?.data?.bodyHtml;
+  const fragments = data?.data?.fragments as FragmentNode[] | undefined;
 
-  const handleSelect = (eli: string) => {
+  const handleSelect = (iri: string) => {
+    // Flush the selection (and its highlight) to the DOM before scrolling,
+    // otherwise the scroll runs against the pre-update layout.
     flushSync(() => {
-      setSelectedEli(eli);
+      onSelectIri(iri);
     });
 
     contentRef.current
-      ?.querySelector(`[data-eli="${eli}"]`)
+      ?.querySelector(`[data-iri="${iri}"]`)
       ?.scrollIntoView({ block: 'start' });
   };
 
@@ -89,8 +95,8 @@ export const LegislativeSourceDetail = ({
           }
         }}
       >
-        {selectedEli ? (
-          <style>{`.law-content [data-eli="${selectedEli}"]{background-color:var(--law-selected-bg);}`}</style>
+        {selectedIri ? (
+          <style>{`.law-content [data-iri="${selectedIri}"]{background-color:var(--law-selected-bg);}`}</style>
         ) : null}
         {isLoading ? <LegislativeSourceDetailSkeleton /> : null}
         {data?.errorCode ? <p>Error: {data.errorCode}</p> : null}
@@ -98,7 +104,8 @@ export const LegislativeSourceDetail = ({
           <div className="grid grid-cols-3 grid-rows-1 gap-4 flex-1 min-h-0">
             <div className="min-h-0 overflow-y-auto text-sm">
               <LegislativeSourceFragmentNav
-                fragments={data.data.fragments as FragmentNode[] | undefined}
+                fragments={fragments}
+                selectedIri={selectedIri}
                 onSelect={handleSelect}
               />
             </div>

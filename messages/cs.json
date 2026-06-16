@@ -317,6 +317,13 @@
     "Yes": "Ano",
     "No": "Ne"
   },
+  "LegislativeSource": {
+    "SearchPlaceholder": "Vyhledat právní předpis",
+    "Loading": "Načítání…",
+    "NoResults": "Žádné výsledky",
+    "Collapse": "Sbalit",
+    "Expand": "Rozbalit"
+  },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
     "Success": "Úspěšně stažený sobor",

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { FragmentDto } from '@/api/generated';
 
@@ -11,12 +12,14 @@ export type FragmentNode = FragmentDto & {
 
 type Props = {
   fragments: FragmentNode[] | undefined;
-  onSelect: (_eli: string) => void;
+  selectedIri: string | null;
+  onSelect: (_iri: string) => void;
   depth?: number;
 };
 
 export const LegislativeSourceFragmentNav = ({
   fragments,
+  selectedIri,
   onSelect,
   depth = 0,
 }: Props) => (
@@ -27,6 +30,7 @@ export const LegislativeSourceFragmentNav = ({
         <FragmentItem
           key={fragment.iri}
           fragment={fragment}
+          selectedIri={selectedIri}
           onSelect={onSelect}
           depth={depth}
         />
@@ -36,27 +40,37 @@ export const LegislativeSourceFragmentNav = ({
 
 const FragmentItem = ({
   fragment,
+  selectedIri,
   onSelect,
   depth,
 }: {
   fragment: FragmentNode;
-  onSelect: (_eli: string) => void;
+  selectedIri: string | null;
+  onSelect: (_iri: string) => void;
   depth: number;
 }) => {
+  const t = useTranslations('LegislativeSource');
   const [open, setOpen] = useState(false);
   const hasChildren = (fragment.children?.length ?? 0) > 0;
+  const isSelected = fragment.iri === selectedIri;
 
   return (
     <li>
       <div
-        className="flex items-start gap-2 py-1.5 border-b border-(--border-subtle)"
-        style={{ paddingLeft: depth * 12 }}
+        className={`flex items-start gap-2 py-1.5 pr-2 border-b border-(--border-subtle) cursor-pointer hover:bg-blue-100 ${
+          isSelected ? 'bg-blue-200' : ''
+        }`}
+        style={{ paddingLeft: 8 + depth * 12 }}
+        onClick={() => onSelect(fragment.iri ?? '')}
       >
         {hasChildren ? (
           <button
             type="button"
-            onClick={() => setOpen((prev) => !prev)}
-            aria-label={open ? 'Sbalit' : 'Rozbalit'}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen((prev) => !prev);
+            }}
+            aria-label={open ? t('Collapse') : t('Expand')}
             aria-expanded={open}
             className="shrink-0 flex items-center justify-center w-4 h-4 rounded-xs border border-border-primary text-xs"
           >
@@ -72,14 +86,14 @@ const FragmentItem = ({
           <span className="shrink-0 w-4" aria-hidden />
         )}
         <span
-          className="cursor-pointer leading-5 font-semibold not-italic hover:bg-blue-100 [&_var]:not-italic [&_var]:font-semibold"
-          onClick={() => onSelect(fragment.eliPath ?? '')}
+          className="leading-5 font-semibold not-italic [&_var]:not-italic [&_var]:font-semibold"
           dangerouslySetInnerHTML={{ __html: fragment.bodyHtml ?? '' }}
         />
       </div>
       {hasChildren && open ? (
         <LegislativeSourceFragmentNav
           fragments={fragment.children}
+          selectedIri={selectedIri}
           onSelect={onSelect}
           depth={depth + 1}
         />

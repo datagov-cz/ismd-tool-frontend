@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { GovFormLabel } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
-import { FieldValues, Path } from 'react-hook-form';
+import { FieldValues, Path, PathValue, useFormContext } from 'react-hook-form';
 
 import { LegislativeSourceAutocomplete } from '@/components/shared/LegislativeSourceInput/LegislativeSourceAutocomplete';
 import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/types';
@@ -17,17 +17,43 @@ interface Props<T extends FieldValues> {
 
 export const LegislativeSourceInput = <T extends FieldValues>({
   label,
-  // name,
+  name,
   anchor,
 }: Props<T>) => {
-  // const { setValue } = useFormContext<T>();
   const isActive = useActiveAnchor(anchor);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const { setValue, watch } = useFormContext<T>();
+
+  // The RHF value is the selected fragment's IRI — the single source of truth
+  // that survives a form reload (the ELI is only derivable from loaded content,
+  // so it can't be persisted). Without an IRI the input is incomplete, so
+  // `selected` (the chosen law) only drives the detail UI.
+  const selectedIri = (watch(name) as string | undefined) ?? '';
   const [selected, setSelected] = useState<LegislativeSource | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  const setIri = (iri: string) =>
+    setValue(name, iri as PathValue<T, Path<T>>, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
 
   const handleSelectSource = (source: LegislativeSource) => {
     setSelected(source);
+    setIri(''); // a new law invalidates any previously picked fragment
     setIsDetailOpen(true);
+  };
+
+  const handleClear = () => {
+    setSelected(null);
+    setIri('');
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsDetailOpen(open);
+    // Closing without an IRI leaves an invalid input — clear the chosen law.
+    if (!open && !selectedIri) {
+      setSelected(null);
+    }
   };
 
   return (
@@ -46,8 +72,10 @@ export const LegislativeSourceInput = <T extends FieldValues>({
           <LegislativeSourceDetail
             source={selected}
             open={isDetailOpen}
-            onOpenChange={setIsDetailOpen}
-            onClear={() => setSelected(null)}
+            onOpenChange={handleOpenChange}
+            onClear={handleClear}
+            selectedIri={selectedIri || null}
+            onSelectIri={setIri}
           />
         ) : (
           <LegislativeSourceAutocomplete onSourceSelect={handleSelectSource} />
