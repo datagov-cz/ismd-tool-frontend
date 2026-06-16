@@ -18,8 +18,8 @@
     },
     "NavLogged": {
       "OnlineIndicator": {
-        "Online": "Připojeno",
-        "Offline": "Odpojeno"
+        "Online": "Online",
+        "Offline": "Offline"
       },
       "Link1": "Nápověda",
       "Dropdown": {
@@ -189,7 +189,16 @@
       "OpenInESbirka": "Otevřít v e-sbírce",
       "Loading": "Načítání...",
       "NoResults": "Pro tohle nemáme žádné výsledky",
-      "AddConcept": "+ Přidat další pojem"
+      "AddConcept": "+ Přidat další pojem",
+      "AddRelation": "Přidat vztah k pojmu",
+      "AddProperty": "Přidat vlastnost k pojmu ",
+      "AddRelationButton": "Vytvořit vztah",
+      "AddPropertyButton": "Přidat vlastnost",
+      "OtherConcept": "jiný pojem",
+      "SourceConcept": "Zdrojový pojem (jiný pojem)",
+      "DestinationConcept": "Cílový pojem (jiný pojem)",
+      "Warning": "Nelze najít pojem v NKD/ISMD",
+      "WarningTooltip": "ISMD nebyl schopný nalézt zobrazený pojem, pojem z OFN je ve slovníku vyplněn, ale na základě daného vyplněného IRI nelze najít pojem v NKD/ISMD."
     }
   },
   "Term": {
@@ -287,7 +296,9 @@
         "Add": "Přidat",
         "Concepts": "pojmů",
         "Updated": "aktualizováno",
-        "CreateDiagram": "Vytvořit diagram"
+        "CreateDiagram": "Vytvořit diagram",
+        "CopyIRI": "Zkopírovat IRI",
+        "CopyURL": "Zkopírovat URL"
       },
       "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",
@@ -428,6 +439,9 @@
         "IsInPPDF": "Je v PPDF"
       },
       "Options": {
+        "Class": "Třída",
+        "Property": "Vlastnost",
+        "Relation": "Vztah",
         "Yes": "Ano",
         "No": "Ne",
         "ContentType": {

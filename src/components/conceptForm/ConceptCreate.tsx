@@ -31,6 +31,7 @@ export const normalizeFormData = (
     altNameModel: formData.altNameModel?.altName
       ? { altName: toRecord(formData.altNameModel.altName) }
       : undefined,
+    dataType: formData.dataType?.code,
     definitionModel: formData.definitionModel?.definition
       ? { definition: toRecord(formData.definitionModel.definition) }
       : undefined,

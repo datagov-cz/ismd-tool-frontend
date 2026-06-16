@@ -9,10 +9,12 @@ export const AgendaSection = ({
   agenda,
   agendovyInformacniSystem,
   neverejnostUdaje,
+  ppdf,
 }: {
   agenda?: RppAgenda | string;
   agendovyInformacniSystem?: RppIsvs | string;
   neverejnostUdaje?: ResolvedLegalSourceDto[];
+  ppdf?: boolean;
 }) => {
   const t = useTranslations('ConceptDetail');
 
@@ -50,6 +52,9 @@ export const AgendaSection = ({
             })}
           </div>
         </Section>
+      )}
+      {ppdf && (
+        <Section title={t('Sections.IsPpdf')}>{ppdf ? 'Ano' : 'Ne'}</Section>
       )}
     </div>
   );

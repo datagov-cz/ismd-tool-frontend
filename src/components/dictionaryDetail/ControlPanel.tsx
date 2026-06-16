@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -20,6 +20,7 @@ interface Props {
   commentsCount?: number;
   slug: string;
   updatedAt?: string;
+  iri?: string;
 }
 
 export const ControlPanel = ({
@@ -29,6 +30,7 @@ export const ControlPanel = ({
   commentsCount,
   slug,
   updatedAt,
+  iri,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -38,9 +40,9 @@ export const ControlPanel = ({
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
-  const handleCopyLink = async () => {
+  const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(text);
       toast(t('LinkCopied'), { type: 'success' });
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -126,11 +128,44 @@ export const ControlPanel = ({
           ariaLabel={t('Download')}
           onClick={() => setOpenDownload(true)}
         />
-        <ControlPanelButton
-          iconName="link"
-          ariaLabel={t('GetLink')}
-          onClick={() => handleCopyLink()}
-        />
+        <GovDropdown id="copy-link-ismd" position="left">
+          <GovButton
+            color={'primary'}
+            type="base"
+            size="m"
+            className="h-8! [&_button]:h-8!"
+          >
+            <GovIcon
+              name="link"
+              size="m"
+              aria-label={t('GetLink')}
+              className="text-white"
+            />
+          </GovButton>
+          <ul slot="list">
+            {iri && (
+              <GovButton
+                color="primary"
+                type="base"
+                size="s"
+                onGovClick={() => copyToClipboard(iri)}
+                className="w-full! [&_button]:w-full! max-w-none!"
+              >
+                {t('CopyIRI')}
+              </GovButton>
+            )}
+            <GovButton
+              color="primary"
+              type="base"
+              size="s"
+              onGovClick={() => copyToClipboard(window.location.href)}
+              className="w-full! [&_button]:w-full! max-w-none!"
+            >
+              {t('CopyURL')}
+            </GovButton>
+          </ul>
+        </GovDropdown>
+
         {isOwner && (
           <ControlPanelButton
             iconName="trash"
