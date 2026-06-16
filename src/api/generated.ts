@@ -82,8 +82,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -105,9 +105,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -177,6 +177,8 @@ export interface ResolvedConceptDto {
   ontologyIri?: string;
   ontologyName?: ResolvedConceptDtoOntologyName;
   source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
 }
 
 export type AltNameModelAltName = { [key: string]: string };
@@ -928,6 +930,25 @@ export interface FragmentDto {
   kind?: string;
   citation?: string;
   order?: string;
+  bodyHtml?: string;
+}
+
+export interface ApiResponseDtoLawContentDto {
+  data?: LawContentDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface LawContentDto {
+  lawIri?: string;
+  citace?: string;
+  versionIri?: string;
+  versionEliPath?: string;
+  versionDate?: string;
+  versions?: LawVersionDto[];
+  fragments?: FragmentDto[];
+  bodyHtml?: string;
 }
 
 export interface ApiResponseDtoGetConceptDto {
@@ -1172,6 +1193,10 @@ export type SearchLawsParams = {
 
 export type GetFragmentsParams = {
   versionIri: string;
+};
+
+export type GetLawContentParams = {
+  law: string;
 };
 
 export type GetConceptListParams = {
@@ -4557,6 +4582,149 @@ export function useGetFragments<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetFragmentsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997"), vyhledá daný právní akt přesnou shodou, vybere jeho poslední znění a vrátí celé jeho znění: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
+ * @summary Celé znění právního aktu podle reference číslo/rok
+ */
+export const getLawContent = (
+  params: GetLawContentParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoLawContentDto>(
+    { url: `/api/eli/law/content`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetLawContentQueryKey = (params?: GetLawContentParams) => {
+  return [`/api/eli/law/content`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetLawContentQueryOptions = <
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetLawContentQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getLawContent>>> = ({
+    signal,
+  }) => getLawContent(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getLawContent>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetLawContentQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getLawContent>>
+>;
+export type GetLawContentQueryError = unknown;
+
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getLawContent>>,
+          TError,
+          Awaited<ReturnType<typeof getLawContent>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getLawContent>>,
+          TError,
+          Awaited<ReturnType<typeof getLawContent>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Celé znění právního aktu podle reference číslo/rok
+ */
+
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetLawContentQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
