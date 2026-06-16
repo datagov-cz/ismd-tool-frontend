@@ -1,12 +1,10 @@
 /*
- * Law content (bodyHtml) renders elements tagged with `data-kind`. Make the
- * paragraph-level ones (`par`) interactive: highlight on hover and show a
- * pointer so it reads as clickable.
+ * Law content (bodyHtml) is display-only — navigation happens from the left
+ * table of contents. Selecting an entry there highlights the matching node
+ * here (via a generated `[data-eli="…"]` rule) so it's easy to spot after
+ * scrolling it into view. The colour lives here; the dynamic selector is
+ * injected by the component.
  */
-.law-content [data-kind='par'] {
-  @apply cursor-pointer transition-colors;
-}
-
-.law-content [data-kind='par']:hover {
-  @apply bg-blue-100;
+.law-content {
+  --law-selected-bg: var(--color-blue-200, #bfdbfe);
 }
