@@ -1,16 +1,15 @@
 import { ComponentProps, useRef } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
 import { flushSync } from 'react-dom';
 
 import { useGetLawContent } from '@/api/generated';
-import { ButtonInput } from '@/components/shared/ButtonInput';
 import { LegislativeSourceDetailSkeleton } from '@/components/shared/LegislativeSourceInput/LegislativeSourceDetailSkeleton';
 import {
   FragmentNode,
   LegislativeSourceFragmentNav,
 } from '@/components/shared/LegislativeSourceInput/LegislativeSourceFragmentNav';
+import { LegislativeSourceSelected } from '@/components/shared/LegislativeSourceInput/LegislativeSourceSelected';
+import { LegislativeSourceUnselected } from '@/components/shared/LegislativeSourceInput/LegislativeSourceUnselected';
 import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/types';
-import { useLawByIri } from '@/components/shared/LegislativeSourceInput/useLawByIri';
 import {
   Popover,
   PopoverAnchor,
@@ -40,12 +39,6 @@ export const LegislativeSourceDetail = ({
 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const { data: lawByIri } = useLawByIri(selectedIri);
-
-  const triggerLabel = selectedIri
-    ? (lawByIri?.label ?? source.label)
-    : source.label;
-
   const bodyHtml = data?.data?.bodyHtml;
   const fragments = data?.data?.fragments as FragmentNode[] | undefined;
 
@@ -61,43 +54,20 @@ export const LegislativeSourceDetail = ({
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
-      <div className="flex items-center gap-2">
-        <PopoverAnchor asChild>
-          <ButtonInput
-            className="flex-1 min-w-0"
+      <PopoverAnchor>
+        {selectedIri ? (
+          <LegislativeSourceSelected
+            iri={selectedIri}
             onClick={() => onOpenChange?.(!open)}
-          >
-            <span className="flex flex-col items-start text-left">
-              <span
-                className={selectedIri ? 'text-xs text-(--text-subtle)' : ''}
-              >
-                {triggerLabel}
-              </span>
-              {selectedIri ? (
-                <span className="break-all">{selectedIri}</span>
-              ) : null}
-            </span>
-          </ButtonInput>
-        </PopoverAnchor>
-        <button
-          type="button"
-          data-action="clear"
-          className="shrink-0 cursor-pointer flex items-center"
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            onClear();
-          }}
-        >
-          <GovIcon
-            type="components"
-            name="x"
-            slot="icon-start"
-            size="2xl"
-            color="primary"
+            onClear={onClear}
           />
-        </button>
-      </div>
+        ) : (
+          <LegislativeSourceUnselected
+            label={source.label}
+            onClick={() => onOpenChange?.(!open)}
+          />
+        )}
+      </PopoverAnchor>
       <PopoverContent
         side="bottom"
         avoidCollisions={false}

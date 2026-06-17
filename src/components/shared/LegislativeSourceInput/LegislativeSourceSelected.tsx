@@ -1,30 +1,38 @@
 import { GovIcon } from '@gov-design-system-ce/react';
 
+import { useResolveLegalSource } from '@/api/generated';
 import { ButtonInput } from '@/components/shared/ButtonInput';
-import { useLawByIri } from '@/components/shared/LegislativeSourceInput/useLawByIri';
 
 type Props = {
   iri: string;
   onClear: () => void;
+  onClick?: () => void;
 };
 
-// Renders a selected legislative source from its IRI alone (the persisted source
-// of truth). The label is resolved via a fetch-by-IRI (mocked for now) so this
-// works even after a form reload, when no react state about the chosen law
-// exists anymore.
-export const LegislativeSourceSelected = ({ iri, onClear }: Props) => {
-  const { data } = useLawByIri(iri);
+export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
+  const { data } = useResolveLegalSource(
+    { iri },
+    { query: { enabled: !!iri } },
+  );
 
   return (
     <div className="flex items-center gap-2">
-      <ButtonInput className="flex-1 min-w-0">
+      <ButtonInput className="flex-1 min-w-0" onClick={onClick}>
         <span className="flex flex-col items-start text-left">
-          <span className="text-xs text-(--text-subtle)">{data?.label}</span>
-          <span className="break-all">{iri}</span>
+          <span className="text-xs text-(--text-subtle)">
+            {data?.data?.displayLabel}
+          </span>
+          <span
+            className="break-all"
+            dangerouslySetInnerHTML={{
+              __html: data?.data?.fragmentBodyHtml ?? '',
+            }}
+          />
         </span>
       </ButtonInput>
       <button
         type="button"
+        data-action="clear"
         className="shrink-0 cursor-pointer flex items-center"
         onClick={(e) => {
           e.stopPropagation();
