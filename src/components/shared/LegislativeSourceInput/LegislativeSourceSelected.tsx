@@ -16,8 +16,8 @@ export const LegislativeSourceSelected = ({ iri, onClear }: Props) => {
   const { data } = useLawByIri(iri);
 
   return (
-    <div className="relative">
-      <ButtonInput className="pr-12">
+    <div className="flex items-center gap-2">
+      <ButtonInput className="flex-1 min-w-0">
         <span className="flex flex-col items-start text-left">
           <span className="text-xs text-(--text-subtle)">{data?.label}</span>
           <span className="break-all">{iri}</span>
@@ -25,7 +25,7 @@ export const LegislativeSourceSelected = ({ iri, onClear }: Props) => {
       </ButtonInput>
       <button
         type="button"
-        className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
+        className="shrink-0 cursor-pointer flex items-center"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();

@@ -10,22 +10,24 @@ export const SourcesSection = () => {
 
   return (
     <FormSection label={t('ConceptSource')} icon="book">
-      <LegislativeSourceArrayInput<ConceptForm>
-        label="Definující ustanovení právního předpisu"
-        name="definingLegalSource"
-      />
-      <LegislativeSourceArrayInput<ConceptForm>
-        label="Související ustanovení právního předpisu"
-        name="relatedLegalSource"
-      />
-      <NonLegislativeSourceInput
-        label={t('DefiningNonLegislative')}
-        name="definingNonLegalSource"
-      />
-      <NonLegislativeSourceInput
-        label={t('RelatedNonLeagislative')}
-        name="relatedNonLegalSource"
-      />
+      <div className="flex flex-col gap-4">
+        <LegislativeSourceArrayInput<ConceptForm>
+          label="Definující ustanovení právního předpisu"
+          name="definingLegalSource"
+        />
+        <LegislativeSourceArrayInput<ConceptForm>
+          label="Související ustanovení právního předpisu"
+          name="relatedLegalSource"
+        />
+        <NonLegislativeSourceInput
+          label={t('DefiningNonLegislative')}
+          name="definingNonLegalSource"
+        />
+        <NonLegislativeSourceInput
+          label={t('RelatedNonLeagislative')}
+          name="relatedNonLegalSource"
+        />
+      </div>
     </FormSection>
   );
 };

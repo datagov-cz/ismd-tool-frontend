@@ -59,7 +59,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
   };
 
   return (
-    <div ref={containerRef} id={anchor} className="w-full flex flex-col gap-2">
+    <div ref={containerRef} id={anchor} className="w-full flex flex-col">
       {fields.map((field, index) => (
         <LegislativeSourceInput<T>
           key={field.id}
@@ -70,7 +70,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
       ))}
 
       {!lastRowEmpty && (
-        <div className="w-full grid grid-cols-7 gap-x-2 p-2.5 items-center">
+        <div className="w-full grid grid-cols-7 gap-x-2 px-2.5 py-1 items-center">
           {fields.length === 0 ? (
             <GovFormLabel className="w-fit!">
               <span className="font-bold">{label}</span>

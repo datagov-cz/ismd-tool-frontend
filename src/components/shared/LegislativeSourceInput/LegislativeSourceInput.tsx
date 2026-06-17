@@ -67,7 +67,7 @@ export const LegislativeSourceInput = <T extends FieldValues>({
   return (
     <div
       className={clsx(
-        'w-full grid grid-cols-7 gap-y-4 gap-x-2 p-2.5 items-center',
+        'w-full grid grid-cols-7 gap-y-4 gap-x-2 px-2.5 py-1 items-center',
         isActive && 'bg-blue-subtle',
       )}
       id={anchor}

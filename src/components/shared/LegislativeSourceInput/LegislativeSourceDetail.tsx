@@ -61,9 +61,12 @@ export const LegislativeSourceDetail = ({
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverAnchor asChild>
-        <div className="relative">
-          <ButtonInput className="pr-12" onClick={() => onOpenChange?.(!open)}>
+      <div className="flex items-center gap-2">
+        <PopoverAnchor asChild>
+          <ButtonInput
+            className="flex-1 min-w-0"
+            onClick={() => onOpenChange?.(!open)}
+          >
             <span className="flex flex-col items-start text-left">
               <span
                 className={selectedIri ? 'text-xs text-(--text-subtle)' : ''}
@@ -75,26 +78,26 @@ export const LegislativeSourceDetail = ({
               ) : null}
             </span>
           </ButtonInput>
-          <button
-            type="button"
-            data-action="clear"
-            className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              onClear();
-            }}
-          >
-            <GovIcon
-              type="components"
-              name="x"
-              slot="icon-start"
-              size="2xl"
-              color="primary"
-            />
-          </button>
-        </div>
-      </PopoverAnchor>
+        </PopoverAnchor>
+        <button
+          type="button"
+          data-action="clear"
+          className="shrink-0 cursor-pointer flex items-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onClear();
+          }}
+        >
+          <GovIcon
+            type="components"
+            name="x"
+            slot="icon-start"
+            size="2xl"
+            color="primary"
+          />
+        </button>
+      </div>
       <PopoverContent
         side="bottom"
         avoidCollisions={false}
