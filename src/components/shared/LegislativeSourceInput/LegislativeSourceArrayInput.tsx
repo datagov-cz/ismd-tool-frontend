@@ -70,7 +70,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
       ))}
 
       {!lastRowEmpty && (
-        <div className="w-full grid grid-cols-7 gap-x-2 px-2.5 items-center">
+        <div className="w-full grid grid-cols-7 gap-x-2 p-2.5 items-center">
           {fields.length === 0 ? (
             <GovFormLabel className="w-fit!">
               <span className="font-bold">{label}</span>
@@ -78,7 +78,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
           ) : (
             <span aria-hidden />
           )}
-          <div className="col-span-6 ml-10">
+          <div className="col-span-6 ml-10 self-start">
             <ButtonInput onClick={handleAdd}>
               {fields.length === 0 ? (
                 <>
