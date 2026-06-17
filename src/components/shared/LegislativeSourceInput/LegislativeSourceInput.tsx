@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GovFormLabel } from '@gov-design-system-ce/react';
+import { GovFormLabel, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { FieldValues, Path, PathValue, useFormContext } from 'react-hook-form';
 
@@ -14,12 +14,15 @@ interface Props<T extends FieldValues> {
   label: string;
   name: Path<T>;
   anchor?: string;
+  /** Array mode: clearing removes the whole row instead of resetting the value. */
+  onRemove?: () => void;
 }
 
 export const LegislativeSourceInput = <T extends FieldValues>({
   label,
   name,
   anchor,
+  onRemove,
 }: Props<T>) => {
   const isActive = useActiveAnchor(anchor);
   const { setValue, watch } = useFormContext<T>();
@@ -45,6 +48,10 @@ export const LegislativeSourceInput = <T extends FieldValues>({
   };
 
   const handleClear = () => {
+    if (onRemove) {
+      onRemove(); // array mode: drop the row entirely
+      return;
+    }
     setSelected(null);
     setIri('');
   };
@@ -83,7 +90,28 @@ export const LegislativeSourceInput = <T extends FieldValues>({
           // resolve the display from the IRI itself.
           <LegislativeSourceSelected iri={selectedIri} onClear={handleClear} />
         ) : (
-          <LegislativeSourceAutocomplete onSourceSelect={handleSelectSource} />
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <LegislativeSourceAutocomplete
+                onSourceSelect={handleSelectSource}
+              />
+            </div>
+            {onRemove ? (
+              <button
+                type="button"
+                className="shrink-0 cursor-pointer flex items-center"
+                onClick={onRemove}
+              >
+                <GovIcon
+                  type="components"
+                  name="x"
+                  slot="icon-start"
+                  size="2xl"
+                  color="primary"
+                />
+              </button>
+            ) : null}
+          </div>
         )}
       </div>
     </div>

@@ -1,21 +1,22 @@
 import { useTranslations } from 'next-intl';
 
 import { NonLegislativeSourceInput } from '@/components/shared/NonLegislativeSourceInput';
-import { LegislativeSourceInput } from '../../shared/LegislativeSourceInput/LegislativeSourceInput';
+import { LegislativeSourceArrayInput } from '../../shared/LegislativeSourceInput/LegislativeSourceArrayInput';
 import { FormSection } from '../components/FormSection';
+import { type ConceptForm } from '../schema/conceptFormSchema';
 
 export const SourcesSection = () => {
   const t = useTranslations('ConceptDetail.Sections');
 
   return (
     <FormSection label={t('ConceptSource')} icon="book">
-      <LegislativeSourceInput
+      <LegislativeSourceArrayInput<ConceptForm>
         label="Definující ustanovení právního předpisu"
-        name="a"
+        name="definingLegalSource"
       />
-      <LegislativeSourceInput
+      <LegislativeSourceArrayInput<ConceptForm>
         label="Související ustanovení právního předpisu"
-        name="b"
+        name="relatedLegalSource"
       />
       <NonLegislativeSourceInput
         label={t('DefiningNonLegislative')}

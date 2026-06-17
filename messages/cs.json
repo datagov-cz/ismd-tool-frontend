@@ -322,7 +322,9 @@
     "Loading": "Načítání…",
     "NoResults": "Žádné výsledky",
     "Collapse": "Sbalit",
-    "Expand": "Rozbalit"
+    "Expand": "Rozbalit",
+    "AddSource": "Zadejte právní předpis",
+    "AddAnother": "Přidat další právní předpis"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
