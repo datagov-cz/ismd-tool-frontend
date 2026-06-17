@@ -30,8 +30,8 @@ export const Autocomplete = <T,>({
   renderItem,
   onSelect,
   placeholder,
-  loadingMessage = 'Načítání…',
-  emptyMessage = 'Žádné výsledky',
+  loadingMessage,
+  emptyMessage,
 }: Props<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 

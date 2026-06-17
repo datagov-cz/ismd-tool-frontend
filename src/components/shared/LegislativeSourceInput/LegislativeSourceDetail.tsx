@@ -10,6 +10,7 @@ import {
   LegislativeSourceFragmentNav,
 } from '@/components/shared/LegislativeSourceInput/LegislativeSourceFragmentNav';
 import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/types';
+import { useLawByIri } from '@/components/shared/LegislativeSourceInput/useLawByIri';
 import {
   Popover,
   PopoverAnchor,
@@ -39,12 +40,16 @@ export const LegislativeSourceDetail = ({
 
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const { data: lawByIri } = useLawByIri(selectedIri);
+
+  const triggerLabel = selectedIri
+    ? (lawByIri?.label ?? source.label)
+    : source.label;
+
   const bodyHtml = data?.data?.bodyHtml;
   const fragments = data?.data?.fragments as FragmentNode[] | undefined;
 
   const handleSelect = (iri: string) => {
-    // Flush the selection (and its highlight) to the DOM before scrolling,
-    // otherwise the scroll runs against the pre-update layout.
     flushSync(() => {
       onSelectIri(iri);
     });
@@ -59,7 +64,16 @@ export const LegislativeSourceDetail = ({
       <PopoverAnchor asChild>
         <div className="relative">
           <ButtonInput className="pr-12" onClick={() => onOpenChange?.(!open)}>
-            {source.label}
+            <span className="flex flex-col items-start text-left">
+              <span
+                className={selectedIri ? 'text-xs text-(--text-subtle)' : ''}
+              >
+                {triggerLabel}
+              </span>
+              {selectedIri ? (
+                <span className="break-all">{selectedIri}</span>
+              ) : null}
+            </span>
           </ButtonInput>
           <button
             type="button"

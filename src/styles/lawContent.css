@@ -8,3 +8,16 @@
 .law-content {
   --law-selected-bg: var(--color-blue-200, #bfdbfe);
 }
+
+/* `<var>` holds the structural label of a fragment (§ 1, HLAVA I, ČÁST PRVNÍ).
+ * Center only the headings of cast / dil / hlava / par sections. */
+.law-content [data-kind='cast'] > var,
+.law-content [data-kind='dil'] > var,
+.law-content [data-kind='hlava'] > var,
+.law-content [data-kind='par'] > var {
+  @apply block text-center;
+}
+
+.law-content [data-kind='hlava'] > var {
+  @apply font-semibold;
+}

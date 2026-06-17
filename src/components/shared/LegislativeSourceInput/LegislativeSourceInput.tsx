@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { FieldValues, Path, PathValue, useFormContext } from 'react-hook-form';
 
 import { LegislativeSourceAutocomplete } from '@/components/shared/LegislativeSourceInput/LegislativeSourceAutocomplete';
+import { LegislativeSourceSelected } from '@/components/shared/LegislativeSourceInput/LegislativeSourceSelected';
 import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/types';
 import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
@@ -77,6 +78,10 @@ export const LegislativeSourceInput = <T extends FieldValues>({
             selectedIri={selectedIri || null}
             onSelectIri={setIri}
           />
+        ) : selectedIri ? (
+          // No in-memory law (e.g. after a form reload) but a persisted IRI —
+          // resolve the display from the IRI itself.
+          <LegislativeSourceSelected iri={selectedIri} onClear={handleClear} />
         ) : (
           <LegislativeSourceAutocomplete onSourceSelect={handleSelectSource} />
         )}
