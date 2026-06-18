@@ -107,10 +107,11 @@ export const ControlPanel = ({
         {isOwner && (
           <GovButton
             nativeType="button"
-            color="primary"
+            color="neutral"
             type="outlined"
             size="s"
-            disabled
+            className="w-full! max-w-none!"
+            href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/diagram`}
           >
             <GovIcon
               name="diagram-3"

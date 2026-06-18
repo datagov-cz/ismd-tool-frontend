@@ -31,7 +31,11 @@ export default function Providers({
   const nextAuthBasePath = `${normalizedBasePath}/api/auth`;
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      return;
+    }
+
+    if (process.env.NODE_ENV === 'production') {
       // Service worker lives in /public, which Next serves under basePath.
       // Registering '/sw.js' at root 404s when basePath is set.
       navigator.serviceWorker
@@ -39,6 +43,20 @@ export default function Providers({
           scope: `${normalizedBasePath}/`,
         })
         .then(() => {})
+        .catch(() => {});
+    } else {
+      // In dev, tear down any SW + caches left by a prior prod-like run:
+      // its cache-first /_next/static/ handler serves stale chunks and forces
+      // a hard refresh to see code changes.
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) =>
+          registrations.forEach((registration) => registration.unregister()),
+        )
+        .catch(() => {});
+      caches
+        .keys()
+        .then((keys) => keys.forEach((key) => caches.delete(key)))
         .catch(() => {});
     }
   }, [normalizedBasePath]);
