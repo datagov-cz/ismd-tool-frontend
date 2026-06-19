@@ -2,13 +2,13 @@ import { ComponentProps, useRef } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useGetLawContent } from '@/api/generated';
+import { ButtonInput } from '@/components/shared/ButtonInput';
 import { LegislativeSourceDetailSkeleton } from '@/components/shared/LegislativeSourceInput/LegislativeSourceDetailSkeleton';
 import {
   FragmentNode,
   LegislativeSourceFragmentNav,
 } from '@/components/shared/LegislativeSourceInput/LegislativeSourceFragmentNav';
 import { LegislativeSourceSelected } from '@/components/shared/LegislativeSourceInput/LegislativeSourceSelected';
-import { LegislativeSourceUnselected } from '@/components/shared/LegislativeSourceInput/LegislativeSourceUnselected';
 import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/types';
 import {
   Popover,
@@ -62,10 +62,9 @@ export const LegislativeSourceDetail = ({
             onClear={onClear}
           />
         ) : (
-          <LegislativeSourceUnselected
-            label={source.label}
-            onClick={() => onOpenChange?.(!open)}
-          />
+          <ButtonInput onClick={() => onOpenChange?.(!open)}>
+            {source.label}
+          </ButtonInput>
         )}
       </PopoverAnchor>
       <PopoverContent

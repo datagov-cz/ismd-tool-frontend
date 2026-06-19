@@ -1,16 +1,7 @@
-/*
- * Law content (bodyHtml) is display-only — navigation happens from the left
- * table of contents. Selecting an entry there highlights the matching node
- * here (via a generated `[data-eli="…"]` rule) so it's easy to spot after
- * scrolling it into view. The colour lives here; the dynamic selector is
- * injected by the component.
- */
 .law-content {
   --law-selected-bg: var(--color-blue-200, #bfdbfe);
 }
 
-/* `<var>` holds the structural label of a fragment (§ 1, HLAVA I, ČÁST PRVNÍ).
- * Center only the headings of cast / dil / hlava / par sections. */
 .law-content [data-kind='cast'] > var,
 .law-content [data-kind='dil'] > var,
 .law-content [data-kind='hlava'] > var,

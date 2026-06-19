@@ -14,8 +14,8 @@ interface Props<T extends FieldValues> {
   label: string;
   name: Path<T>;
   anchor?: string;
-  /** Array mode: clearing removes the whole row instead of resetting the value. */
   onRemove?: () => void;
+  autoFocus?: boolean;
 }
 
 export const LegislativeSourceInput = <T extends FieldValues>({
@@ -23,14 +23,11 @@ export const LegislativeSourceInput = <T extends FieldValues>({
   name,
   anchor,
   onRemove,
+  autoFocus,
 }: Props<T>) => {
   const isActive = useActiveAnchor(anchor);
   const { setValue, watch } = useFormContext<T>();
 
-  // The RHF value is the selected fragment's IRI — the single source of truth
-  // that survives a form reload (the ELI is only derivable from loaded content,
-  // so it can't be persisted). Without an IRI the input is incomplete, so
-  // `selected` (the chosen law) only drives the detail UI.
   const selectedIri = (watch(name) as string | undefined) ?? '';
   const [selected, setSelected] = useState<LegislativeSource | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -43,13 +40,13 @@ export const LegislativeSourceInput = <T extends FieldValues>({
 
   const handleSelectSource = (source: LegislativeSource) => {
     setSelected(source);
-    setIri(''); // a new law invalidates any previously picked fragment
+    setIri('');
     setIsDetailOpen(true);
   };
 
   const handleClear = () => {
     if (onRemove) {
-      onRemove(); // array mode: drop the row entirely
+      onRemove();
       return;
     }
     setSelected(null);
@@ -58,7 +55,6 @@ export const LegislativeSourceInput = <T extends FieldValues>({
 
   const handleOpenChange = (open: boolean) => {
     setIsDetailOpen(open);
-    // Closing without an IRI leaves an invalid input — clear the chosen law.
     if (!open && !selectedIri) {
       setSelected(null);
     }
@@ -86,14 +82,13 @@ export const LegislativeSourceInput = <T extends FieldValues>({
             onSelectIri={setIri}
           />
         ) : selectedIri ? (
-          // No in-memory law (e.g. after a form reload) but a persisted IRI —
-          // resolve the display from the IRI itself.
           <LegislativeSourceSelected iri={selectedIri} onClear={handleClear} />
         ) : (
           <div className="flex items-center gap-2">
             <div className="flex-1 min-w-0">
               <LegislativeSourceAutocomplete
                 onSourceSelect={handleSelectSource}
+                autoFocus={autoFocus}
               />
             </div>
             {onRemove ? (

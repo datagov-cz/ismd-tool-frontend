@@ -2,7 +2,6 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { GovFormInput, GovIcon } from '@gov-design-system-ce/react';
 
 type Props<T> = {
-  /** Current search query (controlled by the parent, which runs the search). */
   query: string;
   onQueryChange: (_query: string) => void;
   results: T[];
@@ -13,14 +12,9 @@ type Props<T> = {
   placeholder?: string;
   loadingMessage?: string;
   emptyMessage?: string;
+  autoFocus?: boolean;
 };
 
-// Generic, controlled autocomplete: a plain GovFormInput + a custom dropdown.
-// The parent owns the query and feeds back `results`/`isFetching` (typically
-// from a react-query hook), so this component stays presentational and reusable.
-// NB: we deliberately do NOT use the gov `GovFormAutocomplete` web component —
-// it corrupts its own Stencil vdom on multi-item lists (only the first result
-// survives).
 export const Autocomplete = <T,>({
   query,
   onQueryChange,
@@ -32,10 +26,21 @@ export const Autocomplete = <T,>({
   placeholder,
   loadingMessage,
   emptyMessage,
+  autoFocus,
 }: Props<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLGovFormInputElement>(null);
 
   const showDropdown = query.length > 0;
+
+  useEffect(() => {
+    if (!autoFocus) return;
+    // Focus this input's own inner <input> on the next frame (once rendered).
+    const frame = requestAnimationFrame(() => {
+      inputRef.current?.querySelector('input')?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [autoFocus]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -58,6 +63,7 @@ export const Autocomplete = <T,>({
   return (
     <div className="relative" ref={containerRef}>
       <GovFormInput
+        ref={inputRef}
         placeholder={placeholder}
         value={query}
         onGovInput={(e) => onQueryChange(e.detail.value)}

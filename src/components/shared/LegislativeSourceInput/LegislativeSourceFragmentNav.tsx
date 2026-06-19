@@ -4,8 +4,6 @@ import { useTranslations } from 'next-intl';
 
 import { FragmentDto } from '@/api/generated';
 
-// The API returns fragments as a recursive tree, but the generated FragmentDto
-// type omits the `children` field — re-add it here.
 export type FragmentNode = FragmentDto & {
   children?: FragmentNode[];
 };

@@ -8,11 +8,15 @@ import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/ty
 
 type Props = {
   onSourceSelect: (_selectedSource: LegislativeSource) => void;
+  autoFocus?: boolean;
 };
 
 const DEBOUNCE_MS = 300;
 
-export const LegislativeSourceAutocomplete = ({ onSourceSelect }: Props) => {
+export const LegislativeSourceAutocomplete = ({
+  onSourceSelect,
+  autoFocus,
+}: Props) => {
   const t = useTranslations('LegislativeSource');
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounceValue(query, DEBOUNCE_MS);
@@ -37,6 +41,7 @@ export const LegislativeSourceAutocomplete = ({ onSourceSelect }: Props) => {
       onQueryChange={setQuery}
       results={data?.data ?? []}
       isFetching={isFetching}
+      autoFocus={autoFocus}
       placeholder={t('SearchPlaceholder')}
       loadingMessage={t('Loading')}
       emptyMessage={t('NoResults')}

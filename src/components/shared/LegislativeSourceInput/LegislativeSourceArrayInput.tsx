@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { GovFormLabel, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import {
@@ -14,15 +14,10 @@ import { LegislativeSourceInput } from '@/components/shared/LegislativeSourceInp
 
 interface Props<T extends FieldValues> {
   label: string;
-  // `Path<T>` (not `ArrayPath<T>`): RHF's `ArrayPath` excludes primitive-array
-  // fields like `string[]`, which is exactly what we store (an array of IRIs).
   name: Path<T>;
   anchor?: string;
 }
 
-// Drives the single-value `LegislativeSourceInput` as an RHF array: each row is a
-// fragment IRI stored at `${name}.${index}`. The wrapper owns add/remove; each row
-// owns its own search/pick/display lifecycle.
 export const LegislativeSourceArrayInput = <T extends FieldValues>({
   label,
   name,
@@ -35,37 +30,24 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
     name: name as unknown as ArrayPath<T>,
   });
 
-  // Hide "add another" while the last row is still an empty (unfilled) search —
-  // there's no point offering a new row until the current one has a value.
   const values = (watch(name) as string[] | undefined) ?? [];
   const lastRowEmpty = fields.length > 0 && !values[fields.length - 1];
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const focusLastOnAdd = useRef(false);
-
-  // After appending a row, focus its (freshly mounted) search input.
-  useEffect(() => {
-    if (!focusLastOnAdd.current) return;
-    focusLastOnAdd.current = false;
-    requestAnimationFrame(() => {
-      const inputs = containerRef.current?.querySelectorAll('input');
-      inputs?.[inputs.length - 1]?.focus();
-    });
-  }, [fields.length]);
+  const [autoFocusIndex, setAutoFocusIndex] = useState<number | null>(null);
 
   const handleAdd = () => {
-    focusLastOnAdd.current = true;
+    setAutoFocusIndex(fields.length);
     append('' as never);
   };
 
   return (
-    <div ref={containerRef} id={anchor} className="w-full flex flex-col">
+    <div id={anchor} className="w-full flex flex-col">
       {fields.map((field, index) => (
         <LegislativeSourceInput<T>
           key={field.id}
           label={index === 0 ? label : ''}
           name={`${name}.${index}` as Path<T>}
           onRemove={() => remove(index)}
+          autoFocus={index === autoFocusIndex}
         />
       ))}
 
