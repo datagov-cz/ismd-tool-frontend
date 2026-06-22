@@ -1,4 +1,4 @@
-import { ConceptDetailModel } from '@/api/generated';
+import { ConceptDetailModel, ConceptMetadataModel } from '@/api/generated';
 
 /**
  * Domain alias: the generated model plus fields it doesn't expose natively.
@@ -11,8 +11,8 @@ export type Concept = ConceptDetailModel & {
   iri?: string;
   slug?: string;
   'definiční-obor'?: string;
+  metadata?: ConceptMetadataModel;
 };
-
 export type ConceptKind = 'trida' | 'vlastnost' | 'vztah';
 
 export const getConceptKind = (concept: Concept): ConceptKind => {
@@ -56,3 +56,7 @@ export const getDefinicniObor = (concept: Concept): string | undefined =>
 /** Slug for /concept routes. Attached at the API boundary (see Concept). */
 export const getConceptSlug = (concept: Concept): string | undefined =>
   concept.slug;
+
+export const getConceptMetadata = (
+  concept: Concept,
+): ConceptMetadataModel | undefined => concept.metadata;

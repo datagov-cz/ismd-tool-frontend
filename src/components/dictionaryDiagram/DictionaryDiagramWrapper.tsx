@@ -12,7 +12,7 @@ import { CircularLoader } from '../shared/CircularLoader';
 import { DiagramBuilder } from './components/DiagramBuilder';
 import { DiagramConceptPicker } from './components/DiagramConceptPicker';
 import { withHistory } from './hooks/withHistory';
-import { getConceptId } from './model/concept';
+import { Concept, getConceptId } from './model/concept';
 import { diagramReducer, initialDiagramState } from './model/diagram';
 
 export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
@@ -31,14 +31,16 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
     const pojmy = ontologyDetail?.pojmy;
     if (!pojmy) return undefined;
 
-    const slugByIri = new Map(
-      (metadataConcepts ?? []).map((c) => [c.conceptIri, c.slug]),
+    const metaByIri = new Map(
+      (metadataConcepts ?? []).map((c) => [c.conceptIri, c]),
     );
 
     return pojmy.map((concept) => {
       const iri = (concept as { iri?: string }).iri;
-      const slug = iri ? slugByIri.get(iri) : undefined;
-      return slug ? { ...concept, slug } : concept;
+      const metadata = iri ? metaByIri.get(iri) : undefined;
+      return metadata
+        ? ({ ...concept, slug: metadata.slug, metadata } as Concept)
+        : concept;
     });
   }, [ontologyDetail, metadataConcepts]);
 
