@@ -6,6 +6,9 @@ import { toast } from 'react-toastify';
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
 
 import { FormToolbar } from './components/FormToolbar';
+import { useConceptFormHints } from './components/hint/conceptFormHints';
+import { HintSidebar } from './components/hint/HintSidebar';
+import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
   ConceptFormSchema,
@@ -90,6 +93,13 @@ export const ConceptForm = ({
 
   const { errors } = form.formState;
 
+  const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
+
+  const { hint, open, setOpen, handleFocus } = useFormHints(
+    hints,
+    editing ? defaultHintEdit : defaultHint,
+  );
+
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
@@ -114,16 +124,32 @@ export const ConceptForm = ({
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">
-        <NamingSection />
-        <TypesSection editing={editing} />
-        <ConceptMeaningSection />
-        <SourcesSection />
-        <RightsAndObligationsSection />
-        <ProclamationSection />
-        <OntologySection />
-        <FormToolbar<ConceptFormType> isPending={isPending} />
-      </form>
+      <div className="relative w-full lg:max-w-160 xl:max-w-200">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          onFocus={handleFocus}
+          className="w-full space-y-2.5"
+        >
+          <NamingSection />
+          <TypesSection editing={editing} />
+          <ConceptMeaningSection />
+          <SourcesSection />
+          <RightsAndObligationsSection />
+          <ProclamationSection />
+          <OntologySection />
+          <FormToolbar<ConceptFormType> isPending={isPending} />
+        </form>
+
+        <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
+          {open && (
+            <HintSidebar
+              hint={hint}
+              onClose={() => setOpen(false)}
+              className="sticky top-22 w-full max-w-80"
+            />
+          )}
+        </div>
+      </div>
     </FormProvider>
   );
 };
