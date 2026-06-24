@@ -57,7 +57,7 @@ export const LegalSourceAutofillSection = () => {
       return;
     }
 
-    const definition = htmlToText(resolved.displayLabel);
+    const definition = htmlToText(resolved.fragmentBodyHtml);
 
     // Definice
     setValue('definitionModel.definition.0.name', definition, {
