@@ -13,6 +13,7 @@ export const SourcesSection = () => {
       <LegislativeSourceArrayInput<ConceptForm>
         label="Definující ustanovení právního předpisu"
         name="definingLegalSource"
+        anchor="definingLegalSource"
       />
       <LegislativeSourceArrayInput<ConceptForm>
         label="Související ustanovení právního předpisu"
