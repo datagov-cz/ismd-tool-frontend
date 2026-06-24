@@ -48,9 +48,15 @@ export const LegislativeSourceDetail = ({
   const handleSelect = (iri: string) => {
     setDraftIri(iri);
 
-    contentRef.current
-      ?.querySelector(`[data-iri="${iri}"]`)
-      ?.scrollIntoView({ block: 'start' });
+    const scrollToFragment = () =>
+      contentRef.current
+        ?.querySelector(`[data-iri="${iri}"]`)
+        ?.scrollIntoView({ block: 'start' });
+
+    scrollToFragment();
+    // Re-assert once Roboto has swapped in: the font change shifts line heights,
+    // which otherwise drifts the target down proportionally to its depth.
+    void document.fonts.ready.then(scrollToFragment);
   };
 
   const handleOpenChange = (next: boolean) => {
