@@ -1,5 +1,4 @@
-import { ComponentProps, useRef } from 'react';
-import { flushSync } from 'react-dom';
+import { ComponentProps, useRef, useState } from 'react';
 
 import { useGetLawContent } from '@/api/generated';
 import { ButtonInput } from '@/components/shared/ButtonInput';
@@ -38,31 +37,44 @@ export const LegislativeSourceDetail = ({
   });
 
   const contentRef = useRef<HTMLDivElement>(null);
+  // Pending selection while the popover is open. We commit it to the form only
+  // on close, so browsing fragments doesn't repeatedly fire onChange (and the
+  // anchor resize / refetch / popover reposition churn that came with it).
+  const [draftIri, setDraftIri] = useState<string | null>(selectedIri);
 
   const bodyHtml = data?.data?.bodyHtml;
   const fragments = data?.data?.fragments as FragmentNode[] | undefined;
 
   const handleSelect = (iri: string) => {
-    flushSync(() => {
-      onSelectIri(iri);
-    });
+    setDraftIri(iri);
 
     contentRef.current
       ?.querySelector(`[data-iri="${iri}"]`)
       ?.scrollIntoView({ block: 'start' });
   };
 
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      // Start each browse session from the currently committed value.
+      setDraftIri(selectedIri);
+    } else if (draftIri && draftIri !== selectedIri) {
+      // Commit the browsed selection once, on close.
+      onSelectIri(draftIri);
+    }
+    onOpenChange?.(next);
+  };
+
   return (
-    <Popover open={open} onOpenChange={onOpenChange}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverAnchor>
         {selectedIri ? (
           <LegislativeSourceSelected
             iri={selectedIri}
-            onClick={() => onOpenChange?.(!open)}
+            onClick={() => handleOpenChange(!open)}
             onClear={onClear}
           />
         ) : (
-          <ButtonInput onClick={() => onOpenChange?.(!open)}>
+          <ButtonInput onClick={() => handleOpenChange(!open)}>
             {source.label}
           </ButtonInput>
         )}
@@ -81,8 +93,8 @@ export const LegislativeSourceDetail = ({
           }
         }}
       >
-        {selectedIri ? (
-          <style>{`.law-content [data-iri="${selectedIri}"]{background-color:var(--law-selected-bg);}`}</style>
+        {draftIri ? (
+          <style>{`.law-content [data-iri="${draftIri}"]{background-color:var(--law-selected-bg);}`}</style>
         ) : null}
         {isLoading ? <LegislativeSourceDetailSkeleton /> : null}
         {data?.errorCode ? <p>Error: {data.errorCode}</p> : null}
@@ -91,7 +103,7 @@ export const LegislativeSourceDetail = ({
             <div className="min-h-0 overflow-y-auto text-sm">
               <LegislativeSourceFragmentNav
                 fragments={fragments}
-                selectedIri={selectedIri}
+                selectedIri={draftIri}
                 onSelect={handleSelect}
               />
             </div>
