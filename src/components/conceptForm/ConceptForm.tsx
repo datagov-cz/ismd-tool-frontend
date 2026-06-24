@@ -28,7 +28,7 @@ function getDomain(url: string): string | null {
   }
 }
 
-const BASE_DEFAULTS: Omit<
+export const BASE_DEFAULTS: Omit<
   ConceptFormValues,
   'ontologyGraphName' | 'namespace'
 > = {

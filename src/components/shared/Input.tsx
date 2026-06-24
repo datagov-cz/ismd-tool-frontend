@@ -24,6 +24,7 @@ interface Props<T extends FieldValues> {
   disabled?: boolean;
   required?: boolean;
   anchor?: string;
+  layout?: 'grid' | 'flex';
 }
 
 export const Input = <T extends FieldValues>({
@@ -35,6 +36,7 @@ export const Input = <T extends FieldValues>({
   disabled,
   anchor,
   required,
+  layout = 'grid',
 }: Props<T>) => {
   const {
     control,
@@ -51,8 +53,11 @@ export const Input = <T extends FieldValues>({
       render={({ field }) => (
         <div
           className={clsx(
-            'w-full grid grid-cols-7 gap-y-4 gap-x-2 p-2.5 rounded-lg',
+            'w-full p-2.5 rounded-lg',
             isActive && 'bg-blue-subtle',
+            layout === 'grid'
+              ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+              : 'flex flex-col',
           )}
           id={anchor}
         >
@@ -62,7 +67,12 @@ export const Input = <T extends FieldValues>({
               {required && <span className="text-status-error-700"> *</span>}
             </span>
           </GovFormLabel>
-          <div className="col-span-6 relative ml-10">
+          <div
+            className={clsx(
+              'col-span-6 relative',
+              layout === 'grid' ? 'ml-10' : 'ml-0',
+            )}
+          >
             <GovFormInput
               {...register(name)}
               id={field.name}

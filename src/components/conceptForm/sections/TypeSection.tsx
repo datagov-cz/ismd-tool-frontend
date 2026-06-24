@@ -65,8 +65,8 @@ export const TypesSection = ({ editing }: { editing?: boolean }) => {
             anchor="domain"
             label={t('TypesSection.PropertyDomainLabel')}
             placeholder={t('TypesSection.PropertyDomainPlaceholder')}
-            searchSource="ALL"
-            searchType="CONCEPT"
+            searchSource="ISMD"
+            searchType="CLASS"
             single
           />
           <DataTypeInput
@@ -83,8 +83,8 @@ export const TypesSection = ({ editing }: { editing?: boolean }) => {
             anchor="domain"
             label={t('TypesSection.RelationDomainLabel')}
             placeholder={t('TypesSection.RelationDomainPlaceholder')}
-            searchType="CONCEPT"
-            searchSource="ALL"
+            searchType="CLASS"
+            searchSource="ISMD"
             single
           />
           <ConceptInput
@@ -92,8 +92,8 @@ export const TypesSection = ({ editing }: { editing?: boolean }) => {
             anchor="range"
             label={t('TypesSection.RelationRangeLabel')}
             placeholder={t('TypesSection.RelationRangePlaceholder')}
-            searchType="CONCEPT"
-            searchSource="ALL"
+            searchType="CLASS"
+            searchSource="ISMD"
             single
           />
         </>

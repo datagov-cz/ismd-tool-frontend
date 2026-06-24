@@ -11,9 +11,15 @@ interface Props {
   label: string;
   name: string;
   anchor?: string;
+  layout?: 'grid' | 'flex';
 }
 
-export const DataTypeInput = ({ label, name, anchor }: Props) => {
+export const DataTypeInput = ({
+  label,
+  name,
+  anchor,
+  layout = 'grid',
+}: Props) => {
   const form = useFormContext();
   const isActive = useActiveAnchor(anchor);
   const { data, isLoading } = usePropertyDatatypes();
@@ -26,11 +32,23 @@ export const DataTypeInput = ({ label, name, anchor }: Props) => {
         control={form.control}
         name={name}
         render={({ field }) => (
-          <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+          <div
+            className={clsx(
+              'w-full',
+              layout === 'grid'
+                ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+                : 'flex flex-col',
+            )}
+          >
             <GovFormLabel className="w-fit! pt-2.5">
               <span className="font-bold">{label}</span>
             </GovFormLabel>
-            <div className="col-span-6 relative ml-10">
+            <div
+              className={clsx(
+                'col-span-6 relative',
+                layout === 'grid' ? 'ml-10' : 'ml-0',
+              )}
+            >
               <GovFormSelect
                 value={field.value?.code ?? ''}
                 onGovChange={(e) => {

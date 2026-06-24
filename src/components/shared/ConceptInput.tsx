@@ -35,6 +35,7 @@ interface Props {
   searchType: SearchType;
   searchSource: SearchSource;
   anchor?: string;
+  layout?: 'grid' | 'flex';
 }
 
 export const ConceptInput = ({
@@ -46,6 +47,7 @@ export const ConceptInput = ({
   searchType,
   searchSource,
   anchor,
+  layout = 'grid',
 }: Props) => {
   const [query, setQuery] = useState('');
   const [showInput, setShowInput] = useState(true);
@@ -143,7 +145,7 @@ export const ConceptInput = ({
 
   const handleRemove = (iri: string) => {
     if (single) {
-      setValue(name, undefined, { shouldDirty: true });
+      setValue(name, null, { shouldDirty: true });
       setShowInput(true);
     } else {
       const next = selected.filter((s) => s.iri !== iri);
@@ -164,7 +166,14 @@ export const ConceptInput = ({
       )}
       id={anchor}
     >
-      <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+      <div
+        className={clsx(
+          'w-full',
+          layout === 'grid'
+            ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+            : 'flex flex-col',
+        )}
+      >
         {label && (
           <GovFormLabel className="w-fit! pt-2.5">
             <span className="font-bold">{label}</span>
@@ -174,7 +183,8 @@ export const ConceptInput = ({
         <div
           className={clsx(
             'flex flex-col gap-2',
-            label ? 'col-span-6 ml-10' : 'col-span-7',
+            label ? 'col-span-6' : 'col-span-7',
+            layout === 'grid' && 'ml-10',
           )}
         >
           {selected.length > 0 && (
@@ -246,7 +256,13 @@ export const ConceptInput = ({
                           <span className="flex gap-1.5">
                             <GovIcon
                               slot="icon-start"
-                              name="card-heading"
+                              name={
+                                item.conceptType === 'VLASTNOST'
+                                  ? 'tag'
+                                  : item.conceptType === 'VZTAH'
+                                    ? 'bezier2'
+                                    : 'card-heading'
+                              }
                               type="components"
                               size="l"
                               color="primary"
