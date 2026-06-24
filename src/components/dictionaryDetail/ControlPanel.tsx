@@ -182,6 +182,7 @@ export const ControlPanel = ({
         onClose={() => setOpenDelete(false)}
         name={name}
         type="ONTOLOGY"
+        slug={slug}
       />
       <DownloadDialog
         ontologyID={ontologyID}
