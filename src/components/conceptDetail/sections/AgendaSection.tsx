@@ -40,7 +40,7 @@ export const AgendaSection = ({
           {renderAgenda(agendovyInformacniSystem)}
         </Section>
       )}
-      {neverejnostUdaje && (
+      {neverejnostUdaje && neverejnostUdaje?.length > 0 && (
         <Section title={t('Sections.ProvingNonPublicData')}>
           <div className="space-y-2">
             {neverejnostUdaje.map((item) => {
