@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { useDeleteConcept, useDeleteOntology } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 interface DeleteDialogProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface DeleteDialogProps {
   id: number;
   name: string;
   type: 'ONTOLOGY' | 'CONCEPT';
+  slug: string;
 }
 
 export const DeleteDialog = ({
@@ -19,13 +21,18 @@ export const DeleteDialog = ({
   id,
   name,
   type,
+  slug,
 }: DeleteDialogProps) => {
   const t = useTranslations('DeleteDialog');
   const router = useRouter();
+  const queryInvalidate = useQueryInvalidator();
+
   const ontologyMutation = useDeleteOntology({
     mutation: {
       onSuccess: (data) => {
         toast(data.message, { type: 'success' });
+        queryInvalidate.invalidateOntology(slug);
+        queryInvalidate.invalidateOntologyList();
         onClose();
         router.push('/');
       },

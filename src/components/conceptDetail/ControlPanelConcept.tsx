@@ -141,6 +141,7 @@ export const ControlPanelConcept = ({
         onClose={() => setOpenDelete(false)}
         name={name}
         type="CONCEPT"
+        slug={slug}
       />
     </div>
   );
