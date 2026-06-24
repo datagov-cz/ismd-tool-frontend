@@ -18,12 +18,12 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
   return (
     <div className="flex items-center gap-2">
       <ButtonInput className="flex-1 min-w-0" onClick={onClick}>
-        <span className="flex flex-col items-start text-left">
-          <span className="text-xs text-(--text-subtle)">
+        <span className="flex w-full min-w-0 flex-col items-start text-left">
+          <span className="block h-4 w-full truncate text-xs leading-4 text-(--text-subtle)">
             {data?.data?.displayLabel}
           </span>
           <span
-            className="break-all"
+            className="block h-5 w-full truncate leading-5"
             dangerouslySetInnerHTML={{
               __html: data?.data?.fragmentBodyHtml ?? '',
             }}
