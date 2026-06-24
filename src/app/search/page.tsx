@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { GovButton } from '@gov-design-system-ce/react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import {
+  search,
   SearchResultDto,
   SearchSource,
   SearchType as ApiSearchType,
 } from '@/api/generated';
-import { useSearch } from '@/api/generated';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
@@ -39,42 +40,51 @@ const Search = () => {
   const activeSource = isSearchSource(rawSource) ? rawSource : undefined;
 
   const { user } = useCurrentUser();
-
-  const [offset, setOffset] = useState(0);
-  const [results, setResults] = useState<SearchResultDto[]>([]);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setOffset(0);
-    setResults([]);
-  }, [q, activeType, activeSource]);
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['search', q, activeType, activeSource],
+      queryFn: ({ pageParam }) =>
+        search({
+          q,
+          type: activeType,
+          source: activeSource,
+          offset: pageParam,
+          limit: LIMIT,
+        }),
+      initialPageParam: 0,
+      enabled: q.trim().length > 1,
+      getNextPageParam: (lastPage, allPages) => {
+        const lastCount = lastPage.data?.results?.length ?? 0;
 
-  const { data, isFetching } = useSearch(
-    { q, type: activeType, source: activeSource, offset, limit: LIMIT },
-    { query: { enabled: q.trim().length > 1 } },
+        if (lastCount < LIMIT) return undefined;
+
+        const loaded = allPages.reduce(
+          (sum, page) => sum + (page.data?.results?.length ?? 0),
+          0,
+        );
+        return loaded;
+      },
+    });
+
+  const results = useMemo<SearchResultDto[]>(
+    () =>
+      data?.pages.flatMap((page) =>
+        page.success ? (page.data?.results ?? []) : [],
+      ) ?? [],
+    [data],
   );
 
-  useEffect(() => {
-    if (data?.success && data.data?.results && !isFetching) {
-      setResults((prev) =>
-        offset === 0
-          ? (data.data?.results ?? [])
-          : [...prev, ...(data.data?.results ?? [])],
-      );
-    }
-  }, [isFetching, data, offset]);
-
-  const totalCount =
-    (data?.data?.totalOntologies ?? 0) + (data?.data?.totalConcepts ?? 0);
-  const hasMore = totalCount > results.length;
+  const firstPage = data?.pages[0]?.data;
 
   useEffect(() => {
     if (!sentinelRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !isFetching && hasMore) {
-          setOffset((prev) => prev + LIMIT);
+        if (entries[0].isIntersecting && !isFetchingNextPage && hasNextPage) {
+          fetchNextPage();
         }
       },
       { threshold: 0.1 },
@@ -82,7 +92,7 @@ const Search = () => {
 
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [isFetching, hasMore]);
+  }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const toggleType = (type: ApiSearchType) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -124,7 +134,7 @@ const Search = () => {
             >
               {tTypes('Types.Slovník')}{' '}
               {activeType !== 'CONCEPT' &&
-                `[${data?.data?.totalOntologies ?? 0}]`}
+                `[${firstPage?.totalOntologies ?? 0}]`}
             </GovButton>
             <GovButton
               type={activeType === ApiSearchType.CONCEPT ? 'solid' : 'outlined'}
@@ -134,7 +144,7 @@ const Search = () => {
             >
               {tTypes('Types.Pojem')}{' '}
               {activeType !== 'ONTOLOGY' &&
-                `[${data?.data?.totalConcepts ?? 0}]`}
+                `[${firstPage?.totalConcepts ?? 0}]`}
             </GovButton>
             {user?.userId && (
               <GovButton
@@ -153,7 +163,7 @@ const Search = () => {
           </div>
         </div>
 
-        {isFetching && results.length === 0 && (
+        {isLoading && (
           <div className="h-full flex-1 flex items-center justify-center">
             <CircularLoader />
           </div>
@@ -208,8 +218,8 @@ const Search = () => {
           ref={sentinelRef}
           className="py-4 flex justify-center text-sm text-muted-foreground"
         >
-          {isFetching && results.length > 0 && <CircularLoader />}
-          {!isFetching && !hasMore && results.length > 0 && (
+          {isFetchingNextPage && <CircularLoader />}
+          {!isFetchingNextPage && !hasNextPage && results.length > 0 && (
             <span>{t('NoMoreResults')}</span>
           )}
         </div>
