@@ -10,6 +10,7 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { ConceptForm } from './ConceptForm';
 import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
@@ -55,6 +56,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
+  const queryInvalidate = useQueryInvalidator();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
 
@@ -63,6 +65,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
       { slug: ontology, data: normalizeFormData(formData) },
       {
         onSuccess: (response) => {
+          queryInvalidate.invalidateOntology(ontology);
           toast.success(t('ToastSuccess'), { position: 'bottom-right' });
           router.push(`/concept/${response.data?.slug}`);
         },

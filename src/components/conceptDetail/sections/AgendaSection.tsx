@@ -18,10 +18,6 @@ export const AgendaSection = ({
 }) => {
   const t = useTranslations('ConceptDetail');
 
-  if (!agenda && !agendovyInformacniSystem && !neverejnostUdaje) {
-    return null;
-  }
-
   const renderAgenda = (item: RppAgenda | string) => {
     if (typeof item === 'string') {
       const code = item.split('/').pop();
@@ -53,9 +49,7 @@ export const AgendaSection = ({
           </div>
         </Section>
       )}
-      {ppdf && (
-        <Section title={t('Sections.IsPpdf')}>{ppdf ? 'Ano' : 'Ne'}</Section>
-      )}
+      <Section title={t('Sections.IsPpdf')}>{ppdf ? 'Ano' : 'Ne'}</Section>
     </div>
   );
 };

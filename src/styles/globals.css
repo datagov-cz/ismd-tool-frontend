@@ -4,6 +4,8 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@import './lawContent.css';
+
 @custom-variant dark (&:where(.dark, .dark *, [data-theme='dark'], [data-theme='dark'] *));
 
 @theme {

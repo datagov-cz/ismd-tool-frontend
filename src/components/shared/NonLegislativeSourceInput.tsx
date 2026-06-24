@@ -8,6 +8,7 @@ import {
 import clsx from 'clsx';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
+import { ButtonInput } from '@/components/shared/ButtonInput';
 import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 type SourceItem = {
@@ -278,22 +279,14 @@ export const NonLegislativeSourceInput = ({
 
         {editingIndex === null &&
           (fields.length === 0 ? (
-            <button
-              type="button"
-              className="w-full border rounded-lg border-gray-border flex justify-between items-center py-2 px-4 text-card-description"
-              onClick={handleAddNew}
-            >
+            <ButtonInput onClick={handleAddNew}>
               Zadejte zdroj
               <GovIcon type="components" name="plus" size="s" color="primary" />
-            </button>
+            </ButtonInput>
           ) : (
-            <button
-              type="button"
-              onClick={handleAddNew}
-              className="self-start text-sm text-blue-primary hover:underline cursor-pointer mt-2 font-medium flex items-center gap-1"
-            >
+            <ButtonInput onClick={handleAddNew}>
               + Přidat další zdroj
-            </button>
+            </ButtonInput>
           ))}
       </div>
     </div>

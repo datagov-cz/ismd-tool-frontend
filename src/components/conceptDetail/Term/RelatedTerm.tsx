@@ -7,12 +7,15 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
+import { ConceptMetadataModelConceptType } from '@/api/generated';
+
 export const RelatedTerm = ({
   label,
   href,
   noIcon,
   remove,
   ontologyLabel,
+  type,
   warning,
 }: {
   label: string;
@@ -20,6 +23,7 @@ export const RelatedTerm = ({
   noIcon?: boolean;
   remove?: () => void;
   ontologyLabel?: string;
+  type?: ConceptMetadataModelConceptType;
   warning?: boolean;
 }) => {
   const className = clsx(
@@ -36,11 +40,20 @@ export const RelatedTerm = ({
         {!noIcon && (
           <GovIcon
             slot="icon-start"
-            name="card-heading"
+            name={
+              type === 'VLASTNOST'
+                ? 'tag'
+                : type === 'VZTAH'
+                  ? 'bezier2'
+                  : 'card-heading'
+            }
             type="components"
             size="l"
             color="primary"
-            className="mt-0.5! shrink-0"
+            className={clsx(
+              'shrink-0',
+              type === 'VLASTNOST' || type === 'VZTAH' ? 'mt-1!' : 'mt-0.5!',
+            )}
           />
         )}
         {label}
