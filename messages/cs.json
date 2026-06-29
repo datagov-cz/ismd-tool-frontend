@@ -424,6 +424,7 @@
     "Save": "Uložit",
     "Success": "Úspěšně uložený pojem",
     "Error": "Pojem se nepodařilo uložit",
+    "ValidationError": "Prosím opravte chyby ve formuláři.",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
