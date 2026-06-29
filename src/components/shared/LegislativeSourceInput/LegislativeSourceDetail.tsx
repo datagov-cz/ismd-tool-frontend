@@ -37,9 +37,6 @@ export const LegislativeSourceDetail = ({
   });
 
   const contentRef = useRef<HTMLDivElement>(null);
-  // Pending selection while the popover is open. We commit it to the form only
-  // on close, so browsing fragments doesn't repeatedly fire onChange (and the
-  // anchor resize / refetch / popover reposition churn that came with it).
   const [draftIri, setDraftIri] = useState<string | null>(selectedIri);
 
   const bodyHtml = data?.data?.bodyHtml;
@@ -54,17 +51,13 @@ export const LegislativeSourceDetail = ({
         ?.scrollIntoView({ block: 'start' });
 
     scrollToFragment();
-    // Re-assert once Roboto has swapped in: the font change shifts line heights,
-    // which otherwise drifts the target down proportionally to its depth.
     void document.fonts.ready.then(scrollToFragment);
   };
 
   const handleOpenChange = (next: boolean) => {
     if (next) {
-      // Start each browse session from the currently committed value.
       setDraftIri(selectedIri);
     } else if (draftIri && draftIri !== selectedIri) {
-      // Commit the browsed selection once, on close.
       onSelectIri(draftIri);
     }
     onOpenChange?.(next);
