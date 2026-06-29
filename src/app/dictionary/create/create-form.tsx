@@ -16,6 +16,7 @@ import { useFormHints } from '@/components/conceptForm/components/hint/useFormHi
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { useIsOnline } from '@/hooks/useIsOnline';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { NAMESPACE } from '@/lib/constants';
 import { db, type OntologyDraft } from '@/lib/db';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
@@ -45,6 +46,7 @@ export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
   const isOnline = useIsOnline();
   const router = useRouter();
+  const invalidator = useQueryInvalidator();
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
@@ -137,6 +139,7 @@ export const CreateForm = () => {
         onSuccess: (response) => {
           localStorage.removeItem(STORAGE_KEY);
           toast(t('Form.CreateNewDictSuccess'));
+          invalidator.invalidateOntologyList();
           if (response.data?.slug) {
             router.push(`/dictionary/${response.data?.slug}`);
           }

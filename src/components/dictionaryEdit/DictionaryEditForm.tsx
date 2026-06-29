@@ -1,5 +1,6 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -90,9 +91,10 @@ export const DictionaryEditForm = ({
 
   const { mutate: editOntology, isPending } = useEditOntology({
     mutation: {
-      onSuccess: async () => {
-        await invalidator.invalidateOntology(metadata.slug || '');
+      onSuccess: async (res) => {
+        await invalidator.invalidateOntology(res.data?.slug || '');
         toast.success(t('SuccessMessage'), { position: 'bottom-right' });
+        router.push(`/dictionary/${res.data?.slug}`);
       },
       onError: () => {
         toast.error(t('ErrorMessage'), { position: 'bottom-right' });
@@ -134,21 +136,26 @@ export const DictionaryEditForm = ({
                 {t('EditedOntology')}:{' '}
               </span>
 
-              <GovTag
-                color="success"
-                type="subtle"
-                size="xs"
-                className="w-fit border bg-white!"
+              <Link
+                href={`/dictionary/${metadata.slug}`}
+                className="cursor-pointer"
               >
-                <GovIcon
-                  name="journal-text"
-                  slot="icon-start"
-                  type="components"
-                />
-                <span className="font-bold text-blue-primary">
-                  {detail?.['název']?.cs}
-                </span>
-              </GovTag>
+                <GovTag
+                  color="success"
+                  type="subtle"
+                  size="xs"
+                  className="w-fit border bg-white! cursor-pointer!"
+                >
+                  <GovIcon
+                    name="journal-text"
+                    slot="icon-start"
+                    type="components"
+                  />
+                  <span className="font-bold text-blue-primary">
+                    {detail?.['název']?.cs}
+                  </span>
+                </GovTag>
+              </Link>
             </div>
             <FormProvider {...form}>
               <form
