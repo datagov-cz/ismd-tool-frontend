@@ -9,13 +9,6 @@ import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { type ConceptForm } from '@/components/conceptForm/schema/conceptFormSchema';
 import { LegislativeSourcePicker } from '@/components/shared/LegislativeSourceInput/LegislativeSourcePicker';
 
-function htmlToText(html?: string): string {
-  if (!html) return '';
-  const el = document.createElement('div');
-  el.innerHTML = html;
-  return el.textContent?.trim() ?? '';
-}
-
 function scrollToAnchor(anchor: string) {
   document
     .getElementById(anchor)
@@ -23,7 +16,7 @@ function scrollToAnchor(anchor: string) {
 }
 
 type Prefilled = {
-  definition: string;
+  definition?: string;
   legalSourceLabel?: string;
   legalSourceBodyHtml?: string;
 };
@@ -57,19 +50,15 @@ export const LegalSourceAutofillSection = () => {
       return;
     }
 
-    const definition = htmlToText(resolved.fragmentBodyHtml);
-
-    // Definice
-    setValue('definitionModel.definition.0.name', definition, {
+    setValue('definitionModel.definition.0.name', resolved.fragmentBody, {
       shouldDirty: true,
       shouldValidate: true,
     });
 
-    // Definující ustanovení právního předpisu
     setValue('definingLegalSource', [value], { shouldDirty: true });
 
     setPrefilled({
-      definition,
+      definition: resolved.fragmentBody,
       legalSourceLabel: resolved.displayLabel,
       legalSourceBodyHtml: resolved.fragmentBodyHtml,
     });

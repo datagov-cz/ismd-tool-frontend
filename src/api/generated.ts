@@ -46,6 +46,7 @@ export interface ConceptMetadataModel {
   conceptType?: ConceptMetadataModelConceptType;
   conceptIri?: string;
   graphName?: string;
+  ontologySlug?: string;
   conceptName?: string;
   user?: UserModel;
   isPublished?: boolean;
@@ -82,8 +83,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -105,9 +106,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -137,6 +138,7 @@ export interface OntologyCreateModel {
 }
 
 export interface ResolveConceptsRequest {
+  /** @minItems 1 */
   iris: string[];
 }
 
@@ -214,7 +216,9 @@ export const ConceptCreateModelConceptTypeEnum = {
 } as const;
 
 export interface ConceptCreateModel {
+  /** @minLength 1 */
   ontologyGraphName: string;
+  /** @minLength 1 */
   conceptType: string;
   namespace?: string;
   nameModel: NameModel;
@@ -299,6 +303,63 @@ export interface ApiResponseDtoCommentModel {
   errorCode?: string;
 }
 
+export interface ApiResponseDtoReconciliationReportDto {
+  data?: ReconciliationReportDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type MismatchCategory =
+  (typeof MismatchCategory)[keyof typeof MismatchCategory];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MismatchCategory = {
+  RDF_ORPHAN: 'RDF_ORPHAN',
+  PG_MISSING_RDF: 'PG_MISSING_RDF',
+  IRI_GRAPH_MISMATCH: 'IRI_GRAPH_MISMATCH',
+  GRAPH_ORPHAN: 'GRAPH_ORPHAN',
+  SUSPECTED_RENAME: 'SUSPECTED_RENAME',
+  EXCLUDED_NO_INSCHEME: 'EXCLUDED_NO_INSCHEME',
+  RDF_NOT_OWNED_RESOLVABLE: 'RDF_NOT_OWNED_RESOLVABLE',
+} as const;
+
+export interface Mismatch {
+  category?: MismatchCategory;
+  graphName?: string;
+  conceptIri?: string;
+  relatedIri?: string;
+  detail?: string;
+}
+
+export type ReconciliationReportDtoCountsByCategory = { [key: string]: number };
+
+export interface ReconciliationReportDto {
+  startedAt?: string;
+  finishedAt?: string;
+  triggeredBy?: string;
+  graphsScanned?: number;
+  ownedRdfConceptsScanned?: number;
+  pgConceptsScanned?: number;
+  totalMismatches?: number;
+  countsByCategory?: ReconciliationReportDtoCountsByCategory;
+  mismatches?: Mismatch[];
+}
+
+export interface ApiResponseDtoVoid {
+  data?: unknown;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface ApiResponseDtoInteger {
+  data?: number;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
 export interface OntologyEditModel {
   nameModel?: NameModel;
   descriptionModel?: DescriptionModel;
@@ -332,6 +393,7 @@ export const ConceptEditModelConceptTypeEnum = {
 } as const;
 
 export interface ConceptEditModel {
+  /** @minLength 1 */
   conceptType: string;
   namespace?: string;
   nameModel?: NameModel;
@@ -524,9 +586,7 @@ export interface ApiResponseDtoGetOntologyDto {
 
 export type ConceptDetailModelNázev = { [key: string]: string };
 
-export type ConceptDetailModelAlternativníNázev = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelAlternativníNázev = { [key: string]: unknown };
 
 export type ConceptDetailModelDefinice = { [key: string]: string };
 
@@ -654,11 +714,11 @@ export interface PropertyDeviationListString {
 }
 
 export type PropertyDeviationMapStringObjectLocalValue = {
-  [key: string]: { [key: string]: unknown };
+  [key: string]: unknown;
 };
 
 export type PropertyDeviationMapStringObjectPublishedValue = {
-  [key: string]: { [key: string]: unknown };
+  [key: string]: unknown;
 };
 
 export interface PropertyDeviationMapStringObject {
@@ -786,6 +846,7 @@ export interface ResolvedLegalSourceDto {
   displayLabel?: string;
   fragmentCitation?: string;
   fragmentBodyHtml?: string;
+  fragmentBody?: string;
   versionValidUntil?: string;
   isLatestVersion?: boolean;
   enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
@@ -931,6 +992,7 @@ export interface FragmentDto {
   citation?: string;
   order?: string;
   bodyHtml?: string;
+  children?: FragmentDto[];
 }
 
 export interface ApiResponseDtoLawContentDto {
@@ -978,13 +1040,38 @@ export interface ApiResponseDtoListDataTypeDto {
   errorCode?: string;
 }
 
-export type ApiResponseDtoVoidData = { [key: string]: unknown };
-
-export interface ApiResponseDtoVoid {
-  data?: ApiResponseDtoVoidData;
+export interface ApiResponseDtoOutboxStatusDto {
+  data?: OutboxStatusDto;
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface OutboxStatusDto {
+  pending?: number;
+  failed?: number;
+  done?: number;
+  oldestPendingCreatedAt?: string;
+}
+
+export interface ApiResponseDtoListOutboxEntryDto {
+  data?: OutboxEntryDto[];
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface OutboxEntryDto {
+  id?: number;
+  operation?: string;
+  aggregateIri?: string;
+  graphName?: string;
+  status?: string;
+  attempts?: number;
+  lastError?: string;
+  createdAt?: string;
+  claimedAt?: string;
+  seq?: number;
 }
 
 export type UploadFromFileParams = {
@@ -1754,6 +1841,247 @@ export const usePostComment = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getPostCommentMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary Run a PG↔TDB2 consistency scan on demand (detection-only; no repair).
+ */
+export const run = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoReconciliationReportDto>(
+    { url: `/api/admin/reconciler/run`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getRunMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof run>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof run>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['run'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof run>>,
+    void
+  > = () => {
+    return run(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RunMutationResult = NonNullable<Awaited<ReturnType<typeof run>>>;
+
+export type RunMutationError = unknown;
+
+/**
+ * @summary Run a PG↔TDB2 consistency scan on demand (detection-only; no repair).
+ */
+export const useRun = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof run>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof run>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getRunMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary Retry a FAILED outbox row (reset to PENDING). Only FAILED rows are retryable.
+ */
+export const retry = (
+  id: number,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoVoid>(
+    { url: `/api/admin/outbox/retry/${id}`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getRetryMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof retry>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof retry>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ['retry'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof retry>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return retry(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RetryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof retry>>
+>;
+
+export type RetryMutationError = unknown;
+
+/**
+ * @summary Retry a FAILED outbox row (reset to PENDING). Only FAILED rows are retryable.
+ */
+export const useRetry = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof retry>>,
+      TError,
+      { id: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof retry>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationOptions = getRetryMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary Force an outbox drain pass on demand.
+ */
+export const drain = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoInteger>(
+    { url: `/api/admin/outbox/drain`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getDrainMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof drain>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof drain>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['drain'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof drain>>,
+    void
+  > = () => {
+    return drain(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DrainMutationResult = NonNullable<
+  Awaited<ReturnType<typeof drain>>
+>;
+
+export type DrainMutationError = unknown;
+
+/**
+ * @summary Force an outbox drain pass on demand.
+ */
+export const useDrain = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof drain>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof drain>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getDrainMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -5191,6 +5519,404 @@ export function usePropertyDatatypes<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getPropertyDatatypesQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get the most recent PG↔TDB2 reconciliation report.
+ */
+export const lastReport = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoReconciliationReportDto>(
+    { url: `/api/admin/reconciler/report`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getLastReportQueryKey = () => {
+  return [`/api/admin/reconciler/report`] as const;
+};
+
+export const getLastReportQueryOptions = <
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getLastReportQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof lastReport>>> = ({
+    signal,
+  }) => lastReport(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof lastReport>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type LastReportQueryResult = NonNullable<
+  Awaited<ReturnType<typeof lastReport>>
+>;
+export type LastReportQueryError = unknown;
+
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof lastReport>>,
+          TError,
+          Awaited<ReturnType<typeof lastReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof lastReport>>,
+          TError,
+          Awaited<ReturnType<typeof lastReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get the most recent PG↔TDB2 reconciliation report.
+ */
+
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getLastReportQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Outbox queue health: counts by status + oldest pending row age.
+ */
+export const status = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoOutboxStatusDto>(
+    { url: `/api/admin/outbox/status`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getStatusQueryKey = () => {
+  return [`/api/admin/outbox/status`] as const;
+};
+
+export const getStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getStatusQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof status>>> = ({
+    signal,
+  }) => status(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof status>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type StatusQueryResult = NonNullable<Awaited<ReturnType<typeof status>>>;
+export type StatusQueryError = unknown;
+
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof status>>,
+          TError,
+          Awaited<ReturnType<typeof status>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof status>>,
+          TError,
+          Awaited<ReturnType<typeof status>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Outbox queue health: counts by status + oldest pending row age.
+ */
+
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getStatusQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary List FAILED outbox rows (metadata + error; no triple payloads).
+ */
+export const failed = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListOutboxEntryDto>(
+    { url: `/api/admin/outbox/failed`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getFailedQueryKey = () => {
+  return [`/api/admin/outbox/failed`] as const;
+};
+
+export const getFailedQueryOptions = <
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getFailedQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof failed>>> = ({
+    signal,
+  }) => failed(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof failed>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type FailedQueryResult = NonNullable<Awaited<ReturnType<typeof failed>>>;
+export type FailedQueryError = unknown;
+
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof failed>>,
+          TError,
+          Awaited<ReturnType<typeof failed>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof failed>>,
+          TError,
+          Awaited<ReturnType<typeof failed>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List FAILED outbox rows (metadata + error; no triple payloads).
+ */
+
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getFailedQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
