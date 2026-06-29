@@ -112,7 +112,7 @@ export const ConceptForm = ({
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
-      toast.error('Prosím opravte chyby ve formuláři.');
+      toast.error(tConcept('ValidationError'));
     }
   }, [errors]);
 
