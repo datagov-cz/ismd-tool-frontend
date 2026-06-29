@@ -194,6 +194,19 @@ export const OntologyLayout = ({
               </GovFormGroup>
             </div>
             <div className="col-span-4 space-y-2">
+              {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
+                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
+                  <span className="text-xl font-bold text-status-error-600 pb-2">
+                    {t('Main.NoResults.Title')}
+                  </span>
+                  <span>
+                    {t.rich('Main.NoResults.Description', {
+                      query: filterQuery,
+                      strong: (chunks) => <strong>{chunks}</strong>,
+                    })}
+                  </span>
+                </div>
+              )}
               {filteredParentTerms.map(({ concept, subterms }, index) => (
                 <Term
                   data={concept}

@@ -305,7 +305,11 @@
       "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",
       "SearchConcepts": "Hledat výraz",
-      "Ontology": "Slovníky"
+      "Ontology": "Slovníky",
+      "NoResults": {
+        "Title": "Žádné výsledky",
+        "Description": "Hledaný výraz <strong>\"{query}\"</strong> neobsahuje žádný název pojmu"
+      }
     }
   },
   "OntologyList": {
