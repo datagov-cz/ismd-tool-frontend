@@ -538,7 +538,7 @@
     "ConceptDataLabel": "Údaje pojmu",
     "LegalSourceAutofill": {
       "SectionLabel": "Doplnění údajů z e-Sbírky",
-      "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu. Po výběru zdroje můžete pokračovat ručně nebo využít AI návrhy.",
+      "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu.",
       "Optional": "volitelné",
       "PrefilledSummary": "Ze zdroje byly předvyplněny základní údaje:",
       "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
