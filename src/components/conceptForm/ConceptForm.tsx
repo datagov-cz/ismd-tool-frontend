@@ -4,6 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
+import { useFormDraft } from '@/hooks/useFormDraft';
 
 import { FormToolbar } from './components/FormToolbar';
 import { useConceptFormHints } from './components/hint/conceptFormHints';
@@ -72,6 +73,7 @@ interface ConceptFormProps {
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
   editing?: boolean;
+  storageKey?: string;
 }
 
 export const ConceptForm = ({
@@ -80,6 +82,7 @@ export const ConceptForm = ({
   isPending,
   defaultValues: externalDefaults,
   editing,
+  storageKey,
 }: ConceptFormProps) => {
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
@@ -90,6 +93,8 @@ export const ConceptForm = ({
       ...externalDefaults,
     },
   });
+
+  useFormDraft(form, storageKey);
 
   const { errors } = form.formState;
 

@@ -13,6 +13,7 @@ import {
   OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
+import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { FormSection } from '../conceptForm/components/FormSection';
@@ -63,6 +64,7 @@ export const DictionaryEditForm = ({
   const t = useTranslations('DictionaryDetail.EditOntology');
   const invalidator = useQueryInvalidator();
   const router = useRouter();
+  const storageKey = `dictionary-draft:edit:${metadata.slug}`;
 
   const buildValues = () => ({
     nameModel: buildLanguageEntries(detail.název?.cs, {
@@ -81,6 +83,8 @@ export const DictionaryEditForm = ({
     values: buildValues(),
   });
 
+  useFormDraft(form, storageKey);
+
   const { handleSubmit } = form;
   const { hints, defaultHintEdit } = useDictionaryFormHints();
 
@@ -92,6 +96,7 @@ export const DictionaryEditForm = ({
   const { mutate: editOntology, isPending } = useEditOntology({
     mutation: {
       onSuccess: async (res) => {
+        clearFormDraft(storageKey);
         await invalidator.invalidateOntology(res.data?.slug || '');
         toast.success(t('SuccessMessage'), { position: 'bottom-right' });
         router.push(`/dictionary/${res.data?.slug}`);
