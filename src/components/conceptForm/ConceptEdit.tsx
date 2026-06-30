@@ -11,6 +11,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { clearFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { normalizeFormData } from './ConceptCreate';
@@ -227,6 +228,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
   const graphName = conceptMetadata?.graphName ?? '';
+  const storageKey = `concept-draft:edit:${slug}`;
 
   const defaultValues =
     conceptDetail && graphName
@@ -250,6 +252,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       },
       {
         onSuccess: (response) => {
+          clearFormDraft(storageKey);
           (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
             queryInvalidate.invalidateOntology(
               data?.data?.conceptMetadata?.ontologySlug ?? '',
@@ -299,6 +302,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           isPending={isPending}
           defaultValues={defaultValues}
           editing={true}
+          storageKey={storageKey}
         />
       )}
     </div>
