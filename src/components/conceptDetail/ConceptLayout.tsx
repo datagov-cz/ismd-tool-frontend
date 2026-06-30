@@ -22,6 +22,8 @@ interface Props {
   source: 'NKD' | 'ISMD';
   slug: string;
   isOwnerLoggedIn?: boolean;
+  ontologyIri?: string;
+  ontologySlug?: string;
 }
 
 export const ConceptLayout = ({
@@ -31,6 +33,8 @@ export const ConceptLayout = ({
   source,
   slug,
   isOwnerLoggedIn,
+  ontologyIri,
+  ontologySlug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const { user } = useCurrentUser();
@@ -52,11 +56,13 @@ export const ConceptLayout = ({
           <PropertiesRelationsSection
             properties={conceptDetail.conceptProperties}
             relationships={conceptDetail.conceptRelationships}
-            iri={conceptDetail.iri || ''}
+            classIri={conceptDetail.iri || ''}
             conceptName={conceptDetail['název']?.cs}
-            slug={slug}
+            classSlug={slug}
             isOwnerLoggedIn={isOwnerLoggedIn}
             resolvedRelations={resolvedRelations}
+            ontologyIri={ontologyIri}
+            ontologySlug={ontologySlug}
           />
         )}
 

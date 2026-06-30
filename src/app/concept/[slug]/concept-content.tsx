@@ -76,6 +76,8 @@ export const ConceptContent = ({ slug }: Props) => {
         source="ISMD"
         slug={slug}
         isOwnerLoggedIn={conceptMetadata.user?.userId === user?.userId}
+        ontologyIri={conceptMetadata.graphName || ''}
+        ontologySlug={conceptMetadata.ontologySlug || ''}
       >
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}

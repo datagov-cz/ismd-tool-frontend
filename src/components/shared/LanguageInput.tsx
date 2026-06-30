@@ -39,6 +39,7 @@ interface Props<T extends FieldValues> {
   name: LanguageArrayPath<T>;
   multiline?: boolean;
   anchor?: string;
+  layout?: 'grid' | 'flex';
 }
 
 export const LanguageInput = <T extends FieldValues>({
@@ -47,6 +48,7 @@ export const LanguageInput = <T extends FieldValues>({
   name,
   multiline,
   anchor,
+  layout = 'grid',
 }: Props<T>) => {
   const {
     control,
@@ -92,7 +94,12 @@ export const LanguageInput = <T extends FieldValues>({
         return (
           <div
             key={field.id}
-            className={clsx('w-full grid grid-cols-7 gap-y-4 gap-x-2')}
+            className={clsx(
+              'w-full',
+              layout === 'grid'
+                ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+                : 'flex flex-col',
+            )}
           >
             <GovFormLabel className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>

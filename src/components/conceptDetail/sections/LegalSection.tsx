@@ -24,18 +24,19 @@ export const LegalSection = ({
 }) => {
   const t = useTranslations('ConceptDetail');
 
-  if (
-    !definujiciUstanoveni &&
-    !souvisejiciUstanoveni &&
-    !definujícíZdroj &&
-    !souvisejícíZdroj
-  ) {
+  const hasContent =
+    (definujiciUstanoveni?.length ?? 0) > 0 ||
+    (souvisejiciUstanoveni?.length ?? 0) > 0 ||
+    (definujícíZdroj?.length ?? 0) > 0 ||
+    (souvisejícíZdroj?.length ?? 0) > 0;
+
+  if (!hasContent) {
     return null;
   }
 
   return (
     <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
-      {definujiciUstanoveni && (
+      {definujiciUstanoveni && definujiciUstanoveni.length > 0 && (
         <Section title={t('Sections.Resource')}>
           <div className="space-y-2">
             {definujiciUstanoveni.map((item) => {
@@ -45,7 +46,7 @@ export const LegalSection = ({
         </Section>
       )}
 
-      {souvisejiciUstanoveni && (
+      {souvisejiciUstanoveni && souvisejiciUstanoveni.length > 0 && (
         <Section title={t('Sections.RelatedResources')}>
           <div className="space-y-2">
             {souvisejiciUstanoveni.map((item) => {
@@ -55,7 +56,7 @@ export const LegalSection = ({
         </Section>
       )}
 
-      {definujícíZdroj && (
+      {definujícíZdroj && definujícíZdroj.length > 0 && (
         <Section title={t('Sections.NonLegalResources')}>
           {definujícíZdroj.map((item) => {
             return (
@@ -70,7 +71,7 @@ export const LegalSection = ({
         </Section>
       )}
 
-      {souvisejícíZdroj && (
+      {souvisejícíZdroj && souvisejícíZdroj.length > 0 && (
         <Section title={t('Sections.RelatedNonLegalResources')}>
           {souvisejícíZdroj.map((item) => {
             return (

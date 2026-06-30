@@ -228,6 +228,9 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       {
         onSuccess: (response) => {
           (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
+            queryInvalidate.invalidateOntology(
+              data?.data?.conceptMetadata?.ontologySlug ?? '',
+            ),
             toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
           router.push(`/concept/${response.data?.slug}`);
         },

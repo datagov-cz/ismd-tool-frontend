@@ -66,6 +66,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateOntology(ontology);
+          queryInvalidate.invalidateConcept(response.data?.slug || '');
           toast.success(t('ToastSuccess'), { position: 'bottom-right' });
           router.push(`/concept/${response.data?.slug}`);
         },
