@@ -10,6 +10,7 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { clearFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { ConceptForm } from './ConceptForm';
@@ -59,12 +60,14 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const queryInvalidate = useQueryInvalidator();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
+  const storageKey = `concept-draft:create:${ontology}`;
 
   const handleSubmit = (formData: ConceptFormValues) => {
     createConcept(
       { slug: ontology, data: normalizeFormData(formData) },
       {
         onSuccess: (response) => {
+          clearFormDraft(storageKey);
           queryInvalidate.invalidateOntology(ontology);
           queryInvalidate.invalidateConcept(response.data?.slug || '');
           toast.success(t('ToastSuccess'), { position: 'bottom-right' });
@@ -108,6 +111,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
           isPending={isPending}
+          storageKey={storageKey}
         />
       )}
     </div>
