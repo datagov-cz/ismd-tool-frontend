@@ -1,5 +1,7 @@
 'use client';
 
+import { GovButton } from '@gov-design-system-ce/react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
@@ -21,7 +23,7 @@ export const DictionaryContent = ({ slug }: Props) => {
   const { user } = useCurrentUser();
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
-
+  const router = useRouter();
   useVisitedOntology(
     {
       slug,
@@ -36,7 +38,20 @@ export const DictionaryContent = ({ slug }: Props) => {
         <CircularLoader />
       </div>
     );
-  if (!ontologyDetail || !ontologyMetadata) return null;
+
+  if (!ontologyDetail || !ontologyMetadata)
+    return (
+      <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
+        <h1 className="text-2xl">{t('NotFound')}</h1>
+        <GovButton
+          type="solid"
+          color="primary"
+          onGovClick={() => router.back()}
+        >
+          {t('Back')}
+        </GovButton>
+      </div>
+    );
 
   const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
     const parentLocalName = parentTerm.iri?.split('/').pop();
