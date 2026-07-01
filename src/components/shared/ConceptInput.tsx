@@ -262,7 +262,7 @@ export const ConceptInput = ({
                             handleSelect({
                               iri: item.iri || '',
                               label: item.label || '',
-                              id: item.id,
+                              id: item.id ?? undefined,
                             });
                           }}
                           className="border-b border-border-subtlest text-blue-primary hover:bg-primary-subtlest text-left w-full gap-1.5 flex flex-col font-bold p-2"
