@@ -221,6 +221,8 @@
       "Title": "Nový pojem",
       "Save": "Uložit"
     },
+    "NotFound": "Slovník nenalezen",
+    "Back": "Zpět",
     "EditOntology": {
       "Title": "Upravit slovník",
       "EditedOntology": "Upravovaný slovník",
