@@ -74,9 +74,7 @@ export const normalizeFormData = (
     range: formData.range?.iri,
     agendaCode: formData.agendaCode?.iri,
     agendaSystemCode: formData.agendaSystemCode?.iri,
-    privacyProvisions: formData.isPublic
-      ? undefined
-      : formData.privacyProvisions,
+    privacyProvisions: formData.isPublic ? [] : formData.privacyProvisions,
   };
 };
 
