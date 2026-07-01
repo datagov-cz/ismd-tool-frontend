@@ -1,4 +1,5 @@
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
+import { GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { useDebounceValue } from 'usehooks-ts';
 
@@ -9,7 +10,7 @@ import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/ty
 type Props = {
   onSourceSelect: (_selectedSource: LegislativeSource) => void;
   autoFocus?: boolean;
-  startAdornment?: ReactNode;
+  placeholder?: string;
 };
 
 const DEBOUNCE_MS = 300;
@@ -17,7 +18,7 @@ const DEBOUNCE_MS = 300;
 export const LegislativeSourceAutocomplete = ({
   onSourceSelect,
   autoFocus,
-  startAdornment,
+  placeholder,
 }: Props) => {
   const t = useTranslations('LegislativeSource');
   const [query, setQuery] = useState('');
@@ -44,13 +45,15 @@ export const LegislativeSourceAutocomplete = ({
       results={data?.data ?? []}
       isFetching={isFetching}
       autoFocus={autoFocus}
-      placeholder={t('SearchPlaceholder')}
+      placeholder={placeholder ?? t('SearchPlaceholder')}
       loadingMessage={t('Loading')}
       emptyMessage={t('NoResults')}
       getItemKey={(law) => law.iri ?? ''}
       onSelect={handleSelect}
       renderItem={(law) => <>{law.displayName}</>}
-      startAdornment={startAdornment}
+      startAdornment={
+        <GovIcon type="components" name="book" size="m" color="primary" />
+      }
     />
   );
 };
