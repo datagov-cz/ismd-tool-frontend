@@ -66,7 +66,7 @@ export const DictionaryContent = ({ slug }: Props) => {
   return (
     <OntologyLayout
       source="ISMD"
-      title={ontologyDetail.název?.cs || ontologyMetadata.name || ''}
+      title={ontologyDetail.název}
       popis={ontologyDetail.popis}
       fallbackPopis={ontologyMetadata.popis}
       statusLabel={

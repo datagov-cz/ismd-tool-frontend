@@ -120,7 +120,7 @@ export const ConceptHeader = ({
                 (Object.keys(conceptDetail['název']).includes('en') ||
                   Object.keys(conceptDetail['název']).includes('sk')) && (
                   <Section title={t('Main.Name')}>
-                    <LanguageSwitcher item={conceptDetail['název']!} />
+                    <LanguageSwitcher item={conceptDetail['název']!} hideCs />
                   </Section>
                 )}
             </div>

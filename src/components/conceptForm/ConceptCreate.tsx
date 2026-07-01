@@ -17,28 +17,55 @@ import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchem
 
 export const normalizeFormData = (
   formData: ConceptFormValues,
+  originalLanguageTags?: {
+    name?: string[];
+    altName?: string[];
+    definition?: string[];
+    description?: string[];
+  },
 ): CreateConceptBody => {
-  const toRecord = (arr?: { languageTag: string; name: string }[]) =>
-    arr?.reduce<Record<string, string>>((acc, { languageTag, name }) => {
-      acc[languageTag] = name;
-      return acc;
-    }, {});
+  const toRecord = (
+    arr?: { languageTag: string; name: string }[],
+    originalTags?: string[],
+  ) => {
+    const record: Record<string, string> = {};
+    arr?.forEach(({ languageTag, name }) => {
+      record[languageTag] = name;
+    });
+    originalTags?.forEach((tag) => {
+      if (!(tag in record)) {
+        record[tag] = '';
+      }
+    });
+    return record;
+  };
 
   const toIri = (refs?: { iri: string; label: string }[]) =>
     refs?.map((r) => r.iri);
-
   return {
     ...formData,
-    altNameModel: formData.altNameModel?.altName
-      ? { altName: toRecord(formData.altNameModel.altName) }
-      : undefined,
+    nameModel: formData.nameModel?.name
+      ? { name: toRecord(formData.nameModel.name, originalLanguageTags?.name) }
+      : { name: {} },
+    altNameModel: {
+      altName: toRecord(
+        formData.altNameModel?.altName,
+        originalLanguageTags?.altName,
+      ),
+    },
     dataType: formData.dataType?.code,
-    definitionModel: formData.definitionModel?.definition
-      ? { definition: toRecord(formData.definitionModel.definition) }
-      : undefined,
-    descriptionModel: formData.descriptionModel?.description
-      ? { description: toRecord(formData.descriptionModel.description) }
-      : undefined,
+    definitionModel: {
+      definition: toRecord(
+        formData.definitionModel?.definition,
+        originalLanguageTags?.definition,
+      ),
+    },
+    descriptionModel: {
+      description: toRecord(
+        formData.descriptionModel?.description,
+        originalLanguageTags?.description,
+      ),
+    },
     broaderConcept: toIri(formData.broaderConcept),
     superProperty: toIri(formData.superProperty),
     superRelation: toIri(formData.superRelation),
@@ -47,6 +74,9 @@ export const normalizeFormData = (
     range: formData.range?.iri,
     agendaCode: formData.agendaCode?.iri,
     agendaSystemCode: formData.agendaSystemCode?.iri,
+    privacyProvisions: formData.isPublic
+      ? undefined
+      : formData.privacyProvisions,
   };
 };
 

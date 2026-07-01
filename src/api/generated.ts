@@ -56,6 +56,16 @@ export interface ConceptMetadataModel {
   updatedAt?: string;
 }
 
+export type OntologyMetadataModelLastValidationStatus =
+  (typeof OntologyMetadataModelLastValidationStatus)[keyof typeof OntologyMetadataModelLastValidationStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OntologyMetadataModelLastValidationStatus = {
+  VALIDATED: 'VALIDATED',
+  SKIPPED_UNAVAILABLE: 'SKIPPED_UNAVAILABLE',
+  FAILED: 'FAILED',
+} as const;
+
 export interface OntologyMetadataModel {
   id?: number;
   slug?: string;
@@ -69,6 +79,8 @@ export interface OntologyMetadataModel {
   createdAt?: string;
   updatedAt?: string;
   conceptCount?: number;
+  lastValidationStatus?: OntologyMetadataModelLastValidationStatus;
+  lastValidationAt?: string;
 }
 
 export interface UserModel {
@@ -83,8 +95,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -106,9 +118,9 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -846,6 +858,7 @@ export interface ResolvedLegalSourceDto {
   displayLabel?: string;
   fragmentCitation?: string;
   fragmentBodyHtml?: string;
+  fragmentBody?: string;
   versionValidUntil?: string;
   isLatestVersion?: boolean;
   enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
