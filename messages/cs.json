@@ -437,6 +437,7 @@
     "Save": "Uložit",
     "Success": "Úspěšně uložený pojem",
     "Error": "Pojem se nepodařilo uložit",
+    "ValidationError": "Prosím opravte chyby ve formuláři.",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
@@ -547,6 +548,16 @@
       "RelationDomainPlaceholder": "Vyhledejte pojem",
       "RelationRangeLabel": "Cílový pojem",
       "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptDataLabel": "Údaje pojmu",
+    "LegalSourceAutofill": {
+      "SectionLabel": "Doplnění údajů z e-Sbírky",
+      "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu.",
+      "Optional": "volitelné",
+      "PrefilledSummary": "Ze zdroje byly předvyplněny základní údaje:",
+      "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
+      "NotFound": "Pro vybrané ustanovení nebyly nalezeny žádné údaje.",
+      "Success": "Údaje z e-Sbírky byly předvyplněny."
     },
     "ConceptMeaningSection": {
       "Label": "Význam pojmu",
