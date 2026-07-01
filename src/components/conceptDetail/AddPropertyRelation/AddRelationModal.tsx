@@ -15,7 +15,6 @@ import {
   ConceptFormSchema,
 } from '@/components/conceptForm/schema/conceptFormSchema';
 import { ConceptInput } from '@/components/shared/ConceptInput';
-import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
@@ -151,12 +150,10 @@ export const AddRelationModal = ({
               </GovButton>
             </div>
 
-            <Input
-              register={formCreate.register}
-              name="nameModel.name.cs"
+            <LanguageInput<ConceptForm>
+              name="nameModel.name"
               label={tLabels('NamingSection.NameLabel')}
               placeholder={tLabels('NamingSection.NamePlaceholder')}
-              required
               layout="flex"
               anchor="name"
             />

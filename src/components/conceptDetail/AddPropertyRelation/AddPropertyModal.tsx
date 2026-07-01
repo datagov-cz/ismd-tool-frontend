@@ -16,7 +16,6 @@ import {
 } from '@/components/conceptForm/schema/conceptFormSchema';
 import { ConceptInput } from '@/components/shared/ConceptInput';
 import { DataTypeInput } from '@/components/shared/DataTypeInput';
-import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
@@ -123,12 +122,10 @@ export const AddPropertyModal = ({
             {t('AddProperty')} <strong>{conceptClassName}</strong>
           </h3>
           <form onSubmit={formCreate.handleSubmit(onSubmitCreate)}>
-            <Input
-              register={formCreate.register}
-              name="nameModel.name.cs"
+            <LanguageInput<ConceptForm>
+              name="nameModel.name"
               label={tLabels('NamingSection.NameLabel')}
               placeholder={tLabels('NamingSection.NamePlaceholder')}
-              required
               layout="flex"
               anchor="name"
             />
