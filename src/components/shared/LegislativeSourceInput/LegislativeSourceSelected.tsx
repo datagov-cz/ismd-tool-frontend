@@ -17,9 +17,16 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
   );
 
   return (
-    <div className="flex items-center gap-2">
-      <ButtonInput className="flex-1 min-w-0" onClick={onClick}>
-        <span className="flex w-full min-w-0 flex-col items-start text-left">
+    <div className="relative">
+      <ButtonInput className="w-full gap-2" onClick={onClick}>
+        <GovIcon
+          type="components"
+          name="book"
+          size="m"
+          color="primary"
+          className="shrink-0"
+        />
+        <span className="flex w-full min-w-0 flex-col items-start text-left pr-8">
           {isLoading ? (
             <LegislativeSourceSelectedSkeleton />
           ) : (
@@ -28,9 +35,9 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
                 {data?.data?.displayLabel}
               </span>
               <span
-                className="block h-5 w-full truncate leading-5"
+                className="block h-5 w-full text-xs font-semibold truncate leading-5"
                 dangerouslySetInnerHTML={{
-                  __html: data?.data?.fragmentBodyHtml ?? '',
+                  __html: data?.data?.fragmentBody ?? '',
                 }}
               />
             </>
@@ -40,20 +47,14 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
       <button
         type="button"
         data-action="clear"
-        className="shrink-0 cursor-pointer flex items-center"
+        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
           onClear();
         }}
       >
-        <GovIcon
-          type="components"
-          name="x"
-          slot="icon-start"
-          size="2xl"
-          color="primary"
-        />
+        <GovIcon type="components" name="x" size="2xl" color="primary" />
       </button>
     </div>
   );

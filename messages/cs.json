@@ -320,13 +320,13 @@
     "No": "Ne"
   },
   "LegislativeSource": {
-    "SearchPlaceholder": "Vyhledat právní předpis",
+    "SearchPlaceholder": "Vyberte právní předpis a ustanovení",
     "Loading": "Načítání…",
     "NoResults": "Žádné výsledky",
     "Collapse": "Sbalit",
     "Expand": "Rozbalit",
-    "AddSource": "Zadejte právní předpis",
-    "AddAnother": "Přidat další právní předpis"
+    "SelectFragment": "Vybrat ustanovení",
+    "AddAnother": "Přidat další ustanovení"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",

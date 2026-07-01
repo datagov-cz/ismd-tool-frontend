@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GovFormLabel, GovIcon } from '@gov-design-system-ce/react';
+import { GovFormLabel } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import {
   ArrayPath,
@@ -9,8 +9,8 @@ import {
   useFormContext,
 } from 'react-hook-form';
 
-import { ButtonInput } from '@/components/shared/ButtonInput';
 import { LegislativeSourceInput } from '@/components/shared/LegislativeSourceInput/LegislativeSourceInput';
+import { LegislativeSourcePicker } from '@/components/shared/LegislativeSourceInput/LegislativeSourcePicker';
 
 interface Props<T extends FieldValues> {
   label: string;
@@ -40,45 +40,43 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
   };
 
   return (
-    <div id={anchor} className="w-full flex flex-col">
-      {fields.map((field, index) => (
-        <LegislativeSourceInput<T>
-          key={field.id}
-          label={index === 0 ? label : ''}
-          name={`${name}.${index}` as Path<T>}
-          onRemove={() => remove(index)}
-          autoFocus={index === autoFocusIndex}
-        />
-      ))}
+    <div
+      id={anchor}
+      className="w-full grid grid-cols-7 gap-x-2 px-2.5 items-start"
+    >
+      <GovFormLabel className="w-fit! min-h-15 items-center">
+        <span className="font-bold">{label}</span>
+      </GovFormLabel>
 
-      {!lastRowEmpty && (
-        <div className="w-full grid grid-cols-7 gap-x-2 px-2.5 py-1 items-center">
-          {fields.length === 0 ? (
-            <GovFormLabel className="w-fit!">
-              <span className="font-bold">{label}</span>
-            </GovFormLabel>
-          ) : (
-            <span aria-hidden />
-          )}
-          <div className="col-span-6 ml-10 self-start">
-            <ButtonInput onClick={handleAdd}>
-              {fields.length === 0 ? (
-                <>
-                  {t('AddSource')}
-                  <GovIcon
-                    type="components"
-                    name="plus"
-                    size="s"
-                    color="primary"
-                  />
-                </>
-              ) : (
-                `+ ${t('AddAnother')}`
-              )}
-            </ButtonInput>
-          </div>
-        </div>
-      )}
+      <div className="col-span-6 ml-10 flex flex-col">
+        {fields.map((field, index) => (
+          <LegislativeSourceInput<T>
+            key={field.id}
+            name={`${name}.${index}` as Path<T>}
+            onRemove={() => remove(index)}
+            autoFocus={index === autoFocusIndex}
+          />
+        ))}
+
+        {fields.length === 0 ? (
+          <LegislativeSourcePicker
+            value=""
+            onChange={(iri) => {
+              if (iri) {
+                append(iri as never);
+              }
+            }}
+          />
+        ) : !lastRowEmpty ? (
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="self-start text-sm py-1 font-bold text-blue-primary cursor-pointer"
+          >
+            {`+ ${t('AddAnother')}`}
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 };
