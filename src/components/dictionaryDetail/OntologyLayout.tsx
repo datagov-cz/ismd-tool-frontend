@@ -10,9 +10,14 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel, OntologyMetadataModel } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  OntologyDetailModelNázev,
+  OntologyMetadataModel,
+} from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
 import { LanguageSwitcher } from '../conceptDetail/LanguageSwitcher';
+import { Section } from '../conceptDetail/Section';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ValidationSummary } from './validation/ValidationSummary';
@@ -23,7 +28,7 @@ export interface TermWithSlug {
 }
 
 interface Props {
-  title: string;
+  title?: OntologyDetailModelNázev;
   popis?: Record<string, string> | null;
   source: 'NKD' | 'ISMD';
   fallbackPopis?: string;
@@ -136,9 +141,23 @@ export const OntologyLayout = ({
                   {statusLabel && <span> / {statusLabel}</span>}
                 </GovTag>
               </div>
-              <h1 className="text-[32px] font-medium">{title}</h1>
+              <h1 className="text-[32px] font-medium">
+                {title?.cs || title?.en || title?.sk}
+              </h1>
+              {title && (
+                <div className="flex gap-2 items-center">
+                  {(Object.keys(title).includes('en') ||
+                    Object.keys(title).includes('sk')) && (
+                    <Section title={t('Main.Name')}>
+                      <LanguageSwitcher item={title!} hideCs />
+                    </Section>
+                  )}
+                </div>
+              )}
               {popis ? (
-                <LanguageSwitcher item={popis} />
+                <Section title={t('Main.Description')}>
+                  <LanguageSwitcher item={popis} />
+                </Section>
               ) : (
                 <p className="text-md">{fallbackPopis}</p>
               )}

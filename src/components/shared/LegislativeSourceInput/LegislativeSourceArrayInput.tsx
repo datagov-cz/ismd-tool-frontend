@@ -61,7 +61,10 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
             <span aria-hidden />
           )}
           <div className="col-span-6 ml-10 self-start">
-            <ButtonInput onClick={handleAdd}>
+            <ButtonInput
+              onClick={handleAdd}
+              name={`${name}.${fields.length}` as Path<T>}
+            >
               {fields.length === 0 ? (
                 <>
                   {t('AddSource')}

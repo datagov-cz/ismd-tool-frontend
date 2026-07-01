@@ -283,6 +283,8 @@
       "Send": "Odeslat"
     },
     "Main": {
+      "Name": "Název",
+      "Description": "Popis",
       "DictionaryStatus": {
         "Draft": "Rozpracovaný slovník",
         "Published": "Publikovaný slovník"

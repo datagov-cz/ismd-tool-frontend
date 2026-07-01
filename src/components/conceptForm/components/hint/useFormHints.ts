@@ -14,6 +14,7 @@ export function useFormHints(hints: Record<string, Hint>, defaultHint: Hint) {
       const key =
         (id && resolveHintKey(id, hints)) ||
         (name && resolveHintKey(name, hints));
+
       if (key) {
         setActiveKey(key);
         return;

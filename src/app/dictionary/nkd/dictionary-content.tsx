@@ -34,7 +34,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
   return (
     <OntologyLayout
       source="NKD"
-      title={ontologyDetail.název?.cs ?? ''}
+      title={ontologyDetail.název}
       popis={ontologyDetail.popis}
       concepts={ontologyDetail.pojmy}
       conceptCount={ontologyDetail.pojmy?.length}

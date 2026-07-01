@@ -38,7 +38,7 @@ export const BASE_DEFAULTS: Omit<
   conceptType: 'TRIDA',
   conceptTypeEnum: 'TRIDA',
   identifier: undefined,
-  nameModel: { name: { cs: '' } },
+  nameModel: { name: [{ languageTag: 'cs', name: '' }] },
   altNameModel: { altName: [{ languageTag: 'cs', name: '' }] },
   definitionModel: { definition: [{ languageTag: 'cs', name: '' }] },
   descriptionModel: { description: [{ languageTag: 'cs', name: '' }] },
