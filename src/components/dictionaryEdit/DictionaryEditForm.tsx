@@ -91,9 +91,9 @@ export const DictionaryEditForm = ({
 
   const { mutate: editOntology, isPending } = useEditOntology({
     mutation: {
-      onSuccess: async (res) => {
-        await invalidator.invalidateOntology(res.data?.slug || '');
-        toast.success(t('SuccessMessage'), { position: 'bottom-right' });
+      onSuccess: (res) => {
+        (invalidator.invalidateOntology(res.data?.slug || ''),
+          toast.success(t('SuccessMessage'), { position: 'bottom-right' }));
         router.push(`/dictionary/${res.data?.slug}`);
       },
       onError: () => {
