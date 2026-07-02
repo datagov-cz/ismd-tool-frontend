@@ -48,6 +48,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
           name={`${name}.${index}` as Path<T>}
           onRemove={() => remove(index)}
           autoFocus={index === autoFocusIndex}
+          id={`${name}.${index}` as Path<T>}
         />
       ))}
 

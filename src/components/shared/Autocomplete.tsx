@@ -13,6 +13,7 @@ type Props<T> = {
   loadingMessage?: string;
   emptyMessage?: string;
   autoFocus?: boolean;
+  id: string;
 };
 
 export const Autocomplete = <T,>({
@@ -27,6 +28,7 @@ export const Autocomplete = <T,>({
   loadingMessage,
   emptyMessage,
   autoFocus,
+  id,
 }: Props<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLGovFormInputElement>(null);
@@ -69,6 +71,7 @@ export const Autocomplete = <T,>({
         onGovInput={(e) => onQueryChange(e.detail.value)}
         className="border-0! flex-1"
         inputType="text"
+        id={id}
       >
         <GovIcon name="search" slot="icon-end" type="components" size="s" />
       </GovFormInput>
