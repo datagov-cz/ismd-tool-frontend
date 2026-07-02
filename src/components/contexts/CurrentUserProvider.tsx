@@ -9,6 +9,7 @@ type CurrentUserContextValue = {
   user: UserInfoDto | undefined;
   isLoggedIn: boolean;
   isLoading: boolean;
+  isAdmin: boolean;
 };
 
 const CurrentUserContext = createContext<CurrentUserContextValue | undefined>(
@@ -32,6 +33,7 @@ export const CurrentUserProvider = ({
       value={{
         user: data?.data,
         isLoggedIn: sessionExists && !!data?.data?.userId,
+        isAdmin: data?.data?.roles?.includes('ROLE_ADMIN') ?? false,
         isLoading: status === 'loading' || isLoading,
       }}
     >

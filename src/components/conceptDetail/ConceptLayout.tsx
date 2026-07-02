@@ -2,7 +2,6 @@ import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
-import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ConceptRelation } from './ConceptRelation';
 import { MissingConceptFields } from './MissingConceptFields';
@@ -37,7 +36,6 @@ export const ConceptLayout = ({
   ontologySlug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
-  const { user } = useCurrentUser();
   const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start px-5">
@@ -144,7 +142,7 @@ export const ConceptLayout = ({
           zpusobZiskaniUdaje={conceptDetail['způsob-získání-údaje']}
         />
 
-        {source === 'ISMD' && user?.userId && (
+        {source === 'ISMD' && isOwnerLoggedIn && (
           <MissingConceptFields
             slug={slug}
             conceptDetail={conceptDetail}

@@ -19,7 +19,7 @@ interface Props {
 
 export const ConceptContent = ({ slug }: Props) => {
   const concept = useGetConceptDetail(slug);
-  const { user } = useCurrentUser();
+  const { user, isAdmin } = useCurrentUser();
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
   const router = useRouter();
@@ -65,7 +65,7 @@ export const ConceptContent = ({ slug }: Props) => {
         isPublished={conceptMetadata.isPublished}
         commentsCount={conceptMetadata.comments?.length ?? 0}
         loggedIn={!!user?.userId}
-        owner={conceptMetadata.user?.userId === user?.userId}
+        editAllowed={conceptMetadata.user?.userId === user?.userId || isAdmin}
         source={'ISMD'}
         slug={slug}
       />
@@ -75,7 +75,9 @@ export const ConceptContent = ({ slug }: Props) => {
         conceptType={conceptType}
         source="ISMD"
         slug={slug}
-        isOwnerLoggedIn={conceptMetadata.user?.userId === user?.userId}
+        isOwnerLoggedIn={
+          conceptMetadata.user?.userId === user?.userId || isAdmin
+        }
         ontologyIri={conceptMetadata.graphName || ''}
         ontologySlug={conceptMetadata.ontologySlug || ''}
       >

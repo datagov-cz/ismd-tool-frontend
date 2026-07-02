@@ -58,7 +58,7 @@ export const OntologyLayout = ({
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
-  const { user } = useCurrentUser();
+  const { user, isAdmin } = useCurrentUser();
 
   const [filterQuery, setFilterQuery] = useState('');
 
@@ -105,7 +105,9 @@ export const OntologyLayout = ({
       );
   }, [concepts, filterQuery, getRelatedTerms]);
 
-  const isLoggedOutOrNKD = !user?.userId || source === 'NKD';
+  const isLoggedOutOrNKD =
+    (user?.userId !== metaData?.user?.userId || source === 'NKD') &&
+    (!isAdmin || source === 'NKD');
 
   return (
     <div className="w-full h-full flex-1">
