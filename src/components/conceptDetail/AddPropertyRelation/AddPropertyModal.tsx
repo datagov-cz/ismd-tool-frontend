@@ -41,8 +41,12 @@ export const AddPropertyModal = ({
   classSlug,
 }: Props) => {
   const queryInvalidate = useQueryInvalidator();
-  const { mutate: editConcept } = useEditConcept();
-  const { mutate: createConcept } = useCreateConcept();
+  const { mutate: editConcept } = useEditConcept({
+    mutation: { mutationKey: ['editConceptModal'] },
+  });
+  const { mutate: createConcept } = useCreateConcept({
+    mutation: { mutationKey: ['createConceptModal'] },
+  });
   const [createView, setCreateView] = useState(false);
 
   const t = useTranslations('ConceptDetail.Main');

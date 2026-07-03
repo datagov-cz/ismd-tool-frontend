@@ -1,6 +1,7 @@
 'use client';
 
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
+import { onlineManager } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
@@ -12,7 +13,7 @@ import {
   useGetConceptDetail,
 } from '@/api/generated';
 import { clearFormDraft } from '@/hooks/useFormDraft';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { draftKeys } from '@/lib/draftKeys';
 
 import { normalizeFormData } from './ConceptCreate';
 import { ConceptForm } from './ConceptForm';
@@ -224,16 +225,16 @@ export function mapDetailToFormValues(
 
 export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const { data, isLoading } = useGetConceptDetail(slug);
-  const { mutate: editConcept, isPending } = useEditConcept();
+  const { mutate: editConcept, isPending, isPaused } = useEditConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptEditWrapper');
+  const tOffline = useTranslations('Offline');
   const router = useRouter();
-  const queryInvalidate = useQueryInvalidator();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
   const graphName = conceptMetadata?.graphName ?? '';
-  const storageKey = `concept-draft:edit:${slug}`;
+  const storageKey = draftKeys.conceptEdit(slug);
 
   const defaultValues =
     conceptDetail && graphName
@@ -256,20 +257,18 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         data: normalizeFormData(formData, originalLanguageTags),
       },
       {
+        // Toast/invalidation/draft-clear live in mutation defaults.
         onSuccess: (response) => {
-          clearFormDraft(storageKey);
-          (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
-            queryInvalidate.invalidateOntology(
-              data?.data?.conceptMetadata?.ontologySlug ?? '',
-            ),
-            toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
           router.push(`/concept/${response.data?.slug}`);
-        },
-        onError: () => {
-          toast.error(t('ToastError'), { position: 'bottom-right' });
         },
       },
     );
+
+    if (!onlineManager.isOnline()) {
+      clearFormDraft(storageKey);
+      toast(tOffline('SavedOffline'), { position: 'bottom-right' });
+      router.push(`/concept/${slug}`);
+    }
   };
 
   return (
@@ -304,7 +303,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         <ConceptForm
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
-          isPending={isPending}
+          isPending={isPending && !isPaused}
           defaultValues={defaultValues}
           editing={true}
           storageKey={storageKey}

@@ -47,8 +47,12 @@ export const AddRelationModal = ({
   const tLabels = useTranslations('CreateConcept');
 
   const queryInvalidate = useQueryInvalidator();
-  const { mutate: editConcept } = useEditConcept();
-  const { mutate: createConcept } = useCreateConcept();
+  const { mutate: editConcept } = useEditConcept({
+    mutation: { mutationKey: ['editConceptModal'] },
+  });
+  const { mutate: createConcept } = useCreateConcept({
+    mutation: { mutationKey: ['createConceptModal'] },
+  });
 
   const [createView, setCreateView] = useState(false);
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { onlineManager } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -16,13 +16,9 @@ import { useFormHints } from '@/components/conceptForm/components/hint/useFormHi
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
-import { useIsOnline } from '@/hooks/useIsOnline';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { NAMESPACE } from '@/lib/constants';
-import { db, type OntologyDraft } from '@/lib/db';
+import { draftKeys } from '@/lib/draftKeys';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
-
-const STORAGE_KEY = 'ontology-create-form';
 
 type LanguageEntry = { name?: string; languageTag?: string };
 
@@ -39,9 +35,7 @@ const toLanguageMap = (
 
 export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
-  const isOnline = useIsOnline();
   const router = useRouter();
-  const invalidator = useQueryInvalidator();
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
@@ -53,13 +47,13 @@ export const CreateForm = () => {
     },
   });
 
-  useFormDraft(form, STORAGE_KEY);
+  useFormDraft(form, draftKeys.ontologyCreate);
 
   const { hints, defaultHint } = useDictionaryFormHints();
 
   const { hint, open, setOpen, handleFocus } = useFormHints(hints, defaultHint);
 
-  const { mutate, isPending } = useCreateOntology();
+  const { mutate, isPending, isPaused } = useCreateOntology();
   const { handleSubmit } = form;
 
   const buildPayload = (data: OntologySchemaType): OntologyCreateModel => {
@@ -72,74 +66,35 @@ export const CreateForm = () => {
     };
   };
 
-  const syncOfflineData = async () => {
-    try {
-      const drafts = await db.ontologyDrafts.toArray();
-      for (const draft of drafts) {
-        mutate(
-          { data: draft.payload },
-          {
-            onSuccess: async () => {
-              await db.ontologyDrafts.delete(draft.id!);
-              toast(t('Form.CreateNewDictSuccess'));
-            },
-            onError: () => toast(t('Form.CreateNewDictSyncError')),
-          },
-        );
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Sync failed:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (isOnline) syncOfflineData();
-  }, [isOnline]);
-
-  const onSubmit = async (data: OntologySchemaType) => {
-    const payload = buildPayload(data);
-
-    if (!isOnline) {
-      try {
-        const draft: OntologyDraft = {
-          namespace: data.namespace,
-          payload,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        await db.ontologyDrafts.add(draft);
-        form.reset();
-        clearFormDraft(STORAGE_KEY);
-        toast(
-          t('Form.SavedOffline') || 'Saved offline. Will sync when online.',
-        );
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to save offline:', error);
-        toast(t('Form.CreateNewDictError'));
-      }
-      return;
-    }
+  const onSubmit = (data: OntologySchemaType) => {
+    const wasOffline = !onlineManager.isOnline();
 
     mutate(
-      { data: payload },
+      { data: buildPayload(data) },
       {
-        onSuccess: (response) => {
-          clearFormDraft(STORAGE_KEY);
-          toast(t('Form.CreateNewDictSuccess'));
-          invalidator.invalidateOntologyList();
-          if (response.data?.slug) {
-            router.push(`/dictionary/${response.data?.slug}`);
-          }
-        },
-        onError: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Failed to create ontology:', error);
-          toast(t('Form.CreateNewDictError'));
-        },
+        // Toast + invalidation + draft-clear live in mutation defaults
+        // (offlineMutationDefaults.ts) so they also run on offline resume.
+        // Offline submits skip navigation: the mutation resumes later,
+        // possibly while the user is drafting something new on this page.
+        onSuccess: wasOffline
+          ? undefined
+          : (response) => {
+              if (response.data?.slug) {
+                router.push(`/dictionary/${response.data.slug}`);
+              }
+            },
       },
     );
+
+    if (wasOffline) {
+      // Mutation is paused and persisted; the localStorage draft would only
+      // resurrect a duplicate on reload, so clear it now (matches old flow).
+      // reset() first: it re-triggers the autosave watcher (useFormDraft),
+      // which would rewrite the draft if clearFormDraft ran first.
+      form.reset();
+      clearFormDraft(draftKeys.ontologyCreate);
+      toast(t('Form.SavedOffline'));
+    }
   };
 
   return (
@@ -168,7 +123,7 @@ export const CreateForm = () => {
               placeholder={t('Form.DescriptionPlaceholder')}
             />
           </FormSection>
-          <FormToolbar<OntologySchemaType> isPending={isPending} />
+          <FormToolbar<OntologySchemaType> isPending={isPending && !isPaused} />
         </form>
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
           {open && (
