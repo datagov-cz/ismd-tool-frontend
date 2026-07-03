@@ -16,6 +16,7 @@ interface Props<T extends FieldValues> {
   anchor?: string;
   onRemove?: () => void;
   autoFocus?: boolean;
+  id: string;
 }
 
 export const LegislativeSourceInput = <T extends FieldValues>({
@@ -24,6 +25,7 @@ export const LegislativeSourceInput = <T extends FieldValues>({
   anchor,
   onRemove,
   autoFocus,
+  id,
 }: Props<T>) => {
   const isActive = useActiveAnchor(anchor);
   const { setValue, watch } = useFormContext<T>();
@@ -89,6 +91,7 @@ export const LegislativeSourceInput = <T extends FieldValues>({
               <LegislativeSourceAutocomplete
                 onSourceSelect={handleSelectSource}
                 autoFocus={autoFocus}
+                id={id}
               />
             </div>
             {onRemove ? (

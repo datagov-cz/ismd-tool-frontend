@@ -9,6 +9,7 @@ import { LegislativeSource } from '@/components/shared/LegislativeSourceInput/ty
 type Props = {
   onSourceSelect: (_selectedSource: LegislativeSource) => void;
   autoFocus?: boolean;
+  id: string;
 };
 
 const DEBOUNCE_MS = 300;
@@ -16,6 +17,7 @@ const DEBOUNCE_MS = 300;
 export const LegislativeSourceAutocomplete = ({
   onSourceSelect,
   autoFocus,
+  id,
 }: Props) => {
   const t = useTranslations('LegislativeSource');
   const [query, setQuery] = useState('');
@@ -48,6 +50,7 @@ export const LegislativeSourceAutocomplete = ({
       getItemKey={(law) => law.iri ?? ''}
       onSelect={handleSelect}
       renderItem={(law) => <>{law.displayName}</>}
+      id={id}
     />
   );
 };

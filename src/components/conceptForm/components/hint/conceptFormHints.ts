@@ -16,6 +16,7 @@ export const conceptHintKeys = [
   'relatedLegalSource',
   'definingNonLegalSource',
   'relatedNonLegalSource',
+  'conceptTypeEnum',
   'agendaCode',
   'agendaSystemCode',
   'isPublic',

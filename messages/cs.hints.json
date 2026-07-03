@@ -24,7 +24,7 @@
           "body": "Synonyma, zkratky nebo jiné názvy, pod kterými je pojem také znám. Můžete přidat varianty ve více jazycích."
         }
       },
-      "conceptType": {
+      "conceptTypeEnum": {
         "title": "Typ pojmu",
         "body": "Určuje povahu pojmu: Třída, Vlastnost, Vztah nebo Datový typ. Volba ovlivní, která další pole se ve formuláři zobrazí.",
         "recommendation": "Třída popisuje skupinu objektů, vlastnost jejich charakteristiku, vztah propojení mezi nimi."
