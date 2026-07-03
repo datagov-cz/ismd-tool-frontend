@@ -36,7 +36,7 @@ export const ControlPanel = ({
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   const tEdit = useTranslations('DictionaryDetail.EditOntology');
-  const { user: currentUser } = useCurrentUser();
+  const { user: currentUser, isAdmin } = useCurrentUser();
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
@@ -52,7 +52,7 @@ export const ControlPanel = ({
   };
 
   const isOwner = user?.userId === currentUser?.userId;
-
+  const isEditAllowed = isOwner || isAdmin;
   const isLoggedOut = !currentUser?.userId;
 
   return (
@@ -64,7 +64,7 @@ export const ControlPanel = ({
       )}
       <div className="flex gap-2 flex-col items-end">
         <div className="flex gap-8">
-          {isOwner && (
+          {isEditAllowed && (
             <GovButton
               nativeType="button"
               color="primary"
@@ -104,7 +104,7 @@ export const ControlPanel = ({
           )}
         </div>
 
-        {isOwner && (
+        {isEditAllowed && (
           <GovButton
             nativeType="button"
             color="primary"
@@ -166,7 +166,7 @@ export const ControlPanel = ({
           </ul>
         </GovDropdown>
 
-        {isOwner && (
+        {isEditAllowed && (
           <ControlPanelButton
             iconName="trash"
             ariaLabel={t('Delete')}
@@ -189,6 +189,7 @@ export const ControlPanel = ({
         open={openDownload}
         type="ISMD"
         onClose={() => setOpenDownload(false)}
+        ontologyName={name.replace(/\s+/g, '_').toLowerCase()}
       />
     </div>
   );

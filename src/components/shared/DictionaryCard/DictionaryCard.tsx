@@ -124,6 +124,7 @@ export const DictionaryCard = ({
           : { type, ontologyIRI })}
         open={openDownload}
         onClose={() => setOpenDownload(false)}
+        ontologyName={title.replace(/[ ]/g, '-').toLowerCase()}
       />
     </div>
   );

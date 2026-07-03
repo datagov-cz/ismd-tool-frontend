@@ -127,7 +127,7 @@ export const AddRelationModal = ({
             setCreateView(false);
           }}
           open={open}
-          className="fixed z-100 [&_dialog]:max-w-150!"
+          className="fixed z-100"
         >
           <h3 slot="title" className="font-normal!">
             {t('AddRelation')} <strong>{conceptClassName}</strong>
@@ -214,7 +214,7 @@ export const AddRelationModal = ({
           setCreateView(false);
         }}
         open={open}
-        className="fixed z-100 [&_dialog]:max-w-150!"
+        className="fixed z-100"
       >
         <h3 slot="title" className="font-normal!">
           {t('AddRelation')} <strong>{conceptClassName}</strong>

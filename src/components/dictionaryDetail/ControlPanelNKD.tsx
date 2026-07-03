@@ -91,6 +91,7 @@ export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
         open={openDownload}
         onClose={() => setOpenDownload(false)}
         type="NKD"
+        ontologyName={ontologyIRI.split('/').pop() || 'ontology'}
       />
     </div>
   );

@@ -78,35 +78,29 @@ export const ConceptInput = ({
     }
   }, [selected.length, single]);
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['concept-input-search', query, searchType, searchSource],
-    queryFn: ({ pageParam }) =>
-      searchRequest({
-        q: query,
-        type: searchType,
-        source: searchSource,
-        offset: pageParam,
-        limit: LIMIT,
-      }),
-    initialPageParam: 0,
-    enabled: query.length > 3,
-    getNextPageParam: (lastPage, allPages) => {
-      const lastCount = lastPage.data?.results?.length ?? 0;
-      if (lastCount < LIMIT) return undefined;
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['concept-input-search', query, searchType, searchSource],
+      queryFn: ({ pageParam }) =>
+        searchRequest({
+          q: query,
+          type: searchType,
+          source: searchSource,
+          offset: pageParam,
+          limit: LIMIT,
+        }),
+      initialPageParam: 0,
+      enabled: query.length > 3,
+      getNextPageParam: (lastPage, allPages) => {
+        const lastCount = lastPage.data?.results?.length ?? 0;
+        if (lastCount < LIMIT) return undefined;
 
-      return allPages.reduce(
-        (sum, page) => sum + (page.data?.results?.length ?? 0),
-        0,
-      );
-    },
-  });
+        return allPages.reduce(
+          (sum, page) => sum + (page.data?.results?.length ?? 0),
+          0,
+        );
+      },
+    });
 
   const allResults = useMemo<SearchResultDto[]>(
     () => data?.pages.flatMap((page) => page.data?.results ?? []) ?? [],
@@ -167,9 +161,7 @@ export const ConceptInput = ({
       if (next.length === 0) setShowInput(true);
     }
   };
-
-  const showDropdown =
-    query.length > 3 && (isFetching || allResults.length > 0);
+  const showDropdown = query.length > 0;
 
   return (
     <div
@@ -238,7 +230,11 @@ export const ConceptInput = ({
                     nonFloatingDropDown ? 'relative' : 'absolute',
                   )}
                 >
-                  {isLoading ? (
+                  {query.length < 4 ? (
+                    <div className="p-4 text-status-error-600 text-sm text-center">
+                      {t('ShortQuery')}
+                    </div>
+                  ) : isLoading ? (
                     <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
                       <GovIcon
                         name="loader"

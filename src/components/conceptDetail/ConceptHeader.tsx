@@ -17,7 +17,7 @@ type Props = {
   isPublished?: boolean;
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
-  owner: boolean;
+  editAllowed: boolean;
   slug: string;
 };
 
@@ -29,7 +29,7 @@ export const ConceptHeader = ({
   commentsCount,
   loggedIn,
   source,
-  owner,
+  editAllowed,
   slug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
@@ -133,7 +133,7 @@ export const ConceptHeader = ({
             name={conceptDetail.název?.cs || ''}
             loggedIn={loggedIn}
             source={source}
-            owner={owner}
+            editAllowed={editAllowed}
             slug={slug}
             iri={conceptDetail.iri}
           />
