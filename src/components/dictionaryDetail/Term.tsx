@@ -3,7 +3,10 @@ import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  GetOntologyDtoPublishedConceptDeviations,
+} from '@/api/generated';
 
 export type TermProps = {
   data: ConceptDetailModel;
@@ -11,6 +14,104 @@ export type TermProps = {
   tree?: boolean;
   slug?: string;
   filterQuery?: string;
+  deviations?: GetOntologyDtoPublishedConceptDeviations;
+};
+
+const fieldLabel = (key: string) =>
+  key.charAt(0).toUpperCase() + key.slice(1).replace(/-/g, ' ');
+
+const getDeviation = (
+  deviations: GetOntologyDtoPublishedConceptDeviations | undefined,
+  iri?: string,
+) => {
+  if (!deviations || !iri) return null;
+  const entry = deviations[iri];
+  if (!entry || entry.status === 'NO_DEVIATION') return null;
+  return entry;
+};
+
+type DeviationEntry = NonNullable<ReturnType<typeof getDeviation>>;
+
+type DeviatedItem = {
+  data: ConceptDetailModel;
+  slug: string;
+  deviation: DeviationEntry;
+};
+
+const changedFields = (deviation: DeviationEntry) =>
+  Object.keys(deviation).filter(
+    (key) => key !== 'status' && key !== 'errorMessage',
+  );
+
+const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
+  const t = useTranslations('DictionaryDetail.Deviations');
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="-mx-3 -mb-2 mt-3 bg-[#FDF6D9] px-3 py-3">
+      <p className="flex items-center gap-1.5 font-medium text-sm text-dark-secondary pl-1">
+        <GovIcon
+          name="info-circle"
+          size="s"
+          className="text-status-warning-600"
+        />
+        {t('FooterTitle')}
+      </p>
+
+      <div className="flex flex-col">
+        {items.map((item, index) => {
+          const fields = changedFields(item.deviation);
+          const hasError = item.deviation.status !== 'HAS_DEVIATIONS';
+          const href = `${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${item.slug}`;
+
+          return (
+            <div
+              key={item.data.iri || index}
+              className={clsx(
+                'flex gap-2 ml-8 py-2',
+                index !== items.length - 1 && 'border-b border-black/10',
+              )}
+            >
+              <div className="min-w-0">
+                {items.length > 1 && (
+                  <div className="flex gap-1">
+                    <span className="text-sm text-black">{t('LocatedIn')}</span>
+                    <a
+                      href={href}
+                      className="text-card-description font-bold text-sm hover:underline block truncate"
+                    >
+                      {item.data.název?.cs}
+                    </a>
+                  </div>
+                )}
+                {hasError ? (
+                  <p className="text-sm text-black">
+                    {item.deviation.errorMessage || t('VerifyError')}
+                  </p>
+                ) : (
+                  <p className="text-sm text-black">
+                    {t('CheckChanges')}
+                    {fields.map((field, i) => (
+                      <span key={field}>
+                        <a
+                          href={href}
+                          className="font-medium text-sm underline hover:no-underline"
+                        >
+                          {fieldLabel(field)}
+                        </a>
+                        {i !== fields.length - 1 && ', '}
+                      </span>
+                    ))}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 const Highlight = ({ text, query }: { text: string; query: string }) => {
@@ -77,7 +178,10 @@ const SubtermRow = ({ item, isLast, filterQuery }: SubtermRowProps) => {
   const name = item.data.název?.cs ?? '';
 
   return (
-    <div className="relative flex items-start pl-4">
+    <div
+      className="relative flex items-start pl-4 scroll-mt-24"
+      id={item.data.iri}
+    >
       <span
         className={`absolute left-0 top-0 w-px bg-blue-primary/30 ${isLast ? 'h-3.5' : 'h-full'}`}
       />
@@ -143,7 +247,13 @@ const SubtermGroup = ({
   );
 };
 
-export const Term = ({ data, subterms, slug, filterQuery }: TermProps) => {
+export const Term = ({
+  data,
+  subterms,
+  slug,
+  filterQuery,
+  deviations,
+}: TermProps) => {
   const t = useTranslations('Term');
 
   const name = data.název?.cs;
@@ -161,8 +271,19 @@ export const Term = ({ data, subterms, slug, filterQuery }: TermProps) => {
 
   const hasSubterms = visibleGroups.length > 0;
 
+  const deviatedItems: DeviatedItem[] = [
+    { data, slug: slug ?? '' },
+    ...(subterms ?? []),
+  ].flatMap((item) => {
+    const deviation = getDeviation(deviations, item.data.iri);
+    return deviation ? [{ ...item, deviation }] : [];
+  });
+
   return (
-    <div className="bg-white rounded-xl px-3 py-2 border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
+    <div
+      className="bg-white rounded-xl px-3 py-2 border border-border-grey overflow-hidden shadow-subtle flex flex-col scroll-m-24"
+      id={data.iri}
+    >
       <span className={clsx('relative flex gap-2', hasSubterms && 'pb-3')}>
         <GovIcon
           slot="icon-start"
@@ -204,6 +325,8 @@ export const Term = ({ data, subterms, slug, filterQuery }: TermProps) => {
           ))}
         </div>
       )}
+
+      <DeviationFooter items={deviatedItems} />
     </div>
   );
 };

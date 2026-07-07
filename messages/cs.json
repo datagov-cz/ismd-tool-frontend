@@ -286,6 +286,16 @@
       "OwnComment": "Vlastní komentář",
       "Send": "Odeslat"
     },
+    "Deviations": {
+      "ToggleLabel": "Se změnou návazností",
+      "FooterTitle": "Změny v navázaných pojmech",
+      "LocatedIn": "Nachází se v: ",
+      "VerifyError": "Pojem nebylo možné ověřit v NKD",
+      "CheckChanges": "Zkontrolovat změny: ",
+      "SidebarTitle": "Pojmy se změněnou návazností",
+      "SidebarDescription": "Tyto pojmy jsou navázané na publikované pojmy, které byly mezitím změněny.",
+      "Differences": "Rozdíly"
+    },
     "Main": {
       "Name": "Název",
       "Description": "Popis",

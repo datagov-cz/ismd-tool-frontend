@@ -85,7 +85,7 @@ export const VisitedOntologies = () => {
             modified: item.updatedAt ? new Date(item.updatedAt) : undefined,
             concepts: item.conceptCount || 0,
             link: getOntologyHref({ slug: item.slug || '', source: 'ISMD' }),
-            isPublished: item.isPublished,
+            isPublished: false,
           },
         ]
       : [],

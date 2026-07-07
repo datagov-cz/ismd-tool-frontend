@@ -16,7 +16,7 @@ export const FormSection = ({
   return (
     <div
       className={clsx(
-        'py-5 px-3 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] transition-colors duration-300 ease-in bg-white',
+        'py-5 px-3 rounded-lg shadow-subtle transition-colors duration-300 ease-in bg-white',
       )}
     >
       <div className="flex gap-2 items-center pb-2 pl-2.5">

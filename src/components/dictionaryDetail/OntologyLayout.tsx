@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 
 import {
   ConceptDetailModel,
+  GetOntologyDtoPublishedConceptDeviations,
   OntologyDetailModelNázev,
   OntologyMetadataModel,
 } from '@/api/generated';
@@ -20,6 +21,7 @@ import { LanguageSwitcher } from '../conceptDetail/LanguageSwitcher';
 import { Section } from '../conceptDetail/Section';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
+import { DeviationSidebarCard } from './DeviationSidebarCard';
 import { ValidationSummary } from './validation/ValidationSummary';
 
 export interface TermWithSlug {
@@ -40,6 +42,7 @@ interface Props {
   conceptCount?: number;
   metaData?: OntologyMetadataModel;
   slug?: string;
+  deviations?: GetOntologyDtoPublishedConceptDeviations;
 }
 
 export const OntologyLayout = ({
@@ -55,14 +58,24 @@ export const OntologyLayout = ({
   conceptCount,
   slug,
   metaData,
+  deviations,
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
   const { user, isAdmin } = useCurrentUser();
 
   const [filterQuery, setFilterQuery] = useState('');
+  const [showDeviations, setShowDeviations] = useState(true);
 
   const router = useRouter();
+
+  const hasDeviations =
+    source === 'ISMD' &&
+    !!deviations &&
+    Object.values(deviations).some((entry) => entry.status !== 'NO_DEVIATION');
+
+  const visibleDeviations =
+    hasDeviations && showDeviations ? deviations : undefined;
 
   const filteredParentTerms = useMemo(() => {
     const conceptIris = new Set(concepts?.map((c) => c.iri).filter(Boolean));
@@ -177,7 +190,7 @@ export const OntologyLayout = ({
               {t('Main.Sections.Terms')}{' '}
               <span className="opacity-60">[{conceptCount}]</span>
             </p>
-            <div className="flex justify-between pb-2 items-end">
+            <div className="flex justify-between pb-2 items-end gap-4">
               {!isLoggedOutOrNKD && (
                 <GovButton
                   type="solid"
@@ -195,28 +208,57 @@ export const OntologyLayout = ({
                 </GovButton>
               )}
 
-              <GovFormGroup className="relative w-full max-w-60">
-                <GovFormInput
-                  className="max-w-60 w-full border-0!"
-                  size="s"
-                  placeholder={t('Main.SearchConcepts')}
-                  value={filterQuery}
-                  onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
-                >
-                  <GovIcon
-                    type="components"
-                    color="neutral"
-                    name="funnel"
-                    slot="icon-start"
+              <div className="flex items-center gap-4 ml-auto">
+                {hasDeviations && (
+                  <label className="flex items-center gap-2 cursor-pointer select-none whitespace-nowrap">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={showDeviations}
+                      onClick={() => setShowDeviations((v) => !v)}
+                      className={clsx(
+                        'relative h-5 w-9 rounded-full transition-colors duration-200 shrink-0 cursor-pointer',
+                        showDeviations
+                          ? 'bg-status-warning-600'
+                          : 'bg-black/25',
+                      )}
+                    >
+                      <span
+                        className={clsx(
+                          'absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200',
+                          showDeviations && 'translate-x-4',
+                        )}
+                      />
+                    </button>
+                    <span className="text-sm">
+                      {t('Deviations.ToggleLabel')}
+                    </span>
+                  </label>
+                )}
+
+                <GovFormGroup className="relative w-full max-w-60">
+                  <GovFormInput
+                    className="max-w-60 w-full border-0!"
                     size="s"
-                    className="transition-transform duration-200"
-                  />
-                </GovFormInput>
-              </GovFormGroup>
+                    placeholder={t('Main.SearchConcepts')}
+                    value={filterQuery}
+                    onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
+                  >
+                    <GovIcon
+                      type="components"
+                      color="neutral"
+                      name="funnel"
+                      slot="icon-start"
+                      size="s"
+                      className="transition-transform duration-200"
+                    />
+                  </GovFormInput>
+                </GovFormGroup>
+              </div>
             </div>
             <div className="col-span-4 space-y-2">
               {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
-                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
+                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-subtle flex flex-col">
                   <span className="text-xl font-bold text-status-error-600 pb-2">
                     {t('Main.NoResults.Title')}
                   </span>
@@ -235,13 +277,22 @@ export const OntologyLayout = ({
                   key={concept.iri || index}
                   slug={getConceptSlug(concept)}
                   filterQuery={filterQuery}
+                  deviations={visibleDeviations}
                 />
               ))}
             </div>
           </div>
-          {!isLoggedOutOrNKD && slug && metaData && (
-            <ValidationSummary slug={slug} metaData={metaData} />
-          )}
+          <div className="col-span-4 flex flex-col items-center pl-10 gap-10 sticky top-24 self-start">
+            {visibleDeviations && (
+              <DeviationSidebarCard
+                deviations={visibleDeviations}
+                concepts={concepts}
+              />
+            )}
+            {!isLoggedOutOrNKD && slug && metaData && (
+              <ValidationSummary slug={slug} metaData={metaData} />
+            )}
+          </div>
         </div>
       </div>
     </div>
