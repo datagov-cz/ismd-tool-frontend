@@ -141,6 +141,11 @@ export function mapDetailToFormValues(
     conceptType: conceptTypeEnum,
     conceptTypeEnum,
     identifier: detail['identifikátor'],
+    type: detail.typ?.includes('Typ subjektu práva')
+      ? 'Subjekt'
+      : detail.typ?.includes('Typ objektu práva')
+        ? 'Objekt'
+        : undefined,
     nameModel: {
       name:
         toMultiLang(nameRecord).length > 0
