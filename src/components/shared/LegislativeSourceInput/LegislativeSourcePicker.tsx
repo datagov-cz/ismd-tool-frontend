@@ -14,6 +14,7 @@ interface Props {
   anchor?: string;
   onRemove?: () => void;
   autoFocus?: boolean;
+  id: string;
 }
 
 export const LegislativeSourcePicker = ({
@@ -22,6 +23,7 @@ export const LegislativeSourcePicker = ({
   anchor,
   onRemove,
   autoFocus,
+  id,
 }: Props) => {
   const isActive = useActiveAnchor(anchor);
 
@@ -69,6 +71,7 @@ export const LegislativeSourcePicker = ({
           onClear={handleClear}
           selectedIri={selectedIri || null}
           onSelectIri={setIri}
+          id={id}
         />
       ) : selectedIri ? (
         <LegislativeSourceSelected iri={selectedIri} onClear={handleClear} />
@@ -76,6 +79,7 @@ export const LegislativeSourcePicker = ({
         <LegislativeSourceAutocomplete
           onSourceSelect={handleSelectSource}
           autoFocus={autoFocus}
+          id={id}
         />
       )}
     </div>

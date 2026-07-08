@@ -18,6 +18,7 @@ import {
 } from '@/components/shared/Popover';
 
 type Props = {
+  id: string;
   source: LegislativeSource;
   open: ComponentProps<typeof Popover>['open'];
   onOpenChange: ComponentProps<typeof Popover>['onOpenChange'];
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export const LegislativeSourceDetail = ({
+  id,
   open,
   onOpenChange,
   source,
@@ -79,6 +81,7 @@ export const LegislativeSourceDetail = ({
               <LegislativeSourceAutocomplete
                 placeholder={source.label}
                 onSourceSelect={() => {}}
+                id={id}
               />
             </div>
           </div>

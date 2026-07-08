@@ -34,6 +34,7 @@ export const LegislativeSourceInput = <T extends FieldValues>({
       anchor={anchor}
       onRemove={onRemove}
       autoFocus={autoFocus}
-    id={id}/>
+      id={id}
+    />
   );
 };
