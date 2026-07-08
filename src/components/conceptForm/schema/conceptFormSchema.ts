@@ -1,10 +1,5 @@
 import { z } from 'zod';
 
-// Reusable base schemas
-const NameModelSchema = z.object({
-  name: z.record(z.string(), z.string().min(1, 'Název je povinný')),
-});
-
 const ConceptRef = z.object({
   iri: z.string(),
   label: z.string(),
@@ -37,7 +32,9 @@ const ConceptCreateModelSchema = z.object({
   ontologyGraphName: z.string().min(1),
   conceptType: z.string().min(1),
   namespace: z.string().optional(),
-  nameModel: NameModelSchema,
+  nameModel: z.object({
+    name: MultiLangueModelSchema,
+  }),
   identifier: z.string().optional(),
   altNameModel: z
     .object({
@@ -156,7 +153,6 @@ const ConceptFormSchema = z.object({
 });
 
 // Inferred types
-export type NameModel = z.infer<typeof NameModelSchema>;
 export type ConceptCreateModel = z.infer<typeof ConceptCreateModelSchema>;
 export type ClassConceptModel = z.infer<typeof ClassConceptModelSchema>;
 export type PropertyConceptModel = z.infer<typeof PropertyConceptModelSchema>;
@@ -167,7 +163,6 @@ export type CreateConceptBody = z.infer<typeof CreateConceptBodySchema>;
 export type ConceptForm = z.infer<typeof ConceptFormSchema>;
 
 export {
-  NameModelSchema,
   ConceptCreateModelSchema,
   ClassConceptModelSchema,
   PropertyConceptModelSchema,

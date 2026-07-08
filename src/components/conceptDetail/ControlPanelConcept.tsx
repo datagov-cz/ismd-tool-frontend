@@ -16,7 +16,7 @@ interface Props {
   commentsCount: number;
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
-  owner: boolean;
+  editAllowed: boolean;
   slug: string;
   iri?: string;
 }
@@ -27,7 +27,7 @@ export const ControlPanelConcept = ({
   name,
   commentsCount,
   loggedIn,
-  owner,
+  editAllowed,
   source,
   slug,
   iri,
@@ -51,9 +51,9 @@ export const ControlPanelConcept = ({
 
   return (
     <div className="flex flex-col gap-2 justify-between h-full">
-      {((loggedIn && source === 'ISMD') || owner) && (
+      {((loggedIn && source === 'ISMD') || editAllowed) && (
         <div className="flex gap-8">
-          {owner && (
+          {editAllowed && (
             <GovButton
               type="solid"
               color="primary"
@@ -126,7 +126,7 @@ export const ControlPanelConcept = ({
             </GovButton>
           </ul>
         </GovDropdown>
-        {!isPublished && owner && (
+        {!isPublished && editAllowed && (
           <ControlPanelButton
             iconName="trash"
             danger
@@ -141,6 +141,7 @@ export const ControlPanelConcept = ({
         onClose={() => setOpenDelete(false)}
         name={name}
         type="CONCEPT"
+        slug={slug}
       />
     </div>
   );

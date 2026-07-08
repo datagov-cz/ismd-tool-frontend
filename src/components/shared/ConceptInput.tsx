@@ -1,18 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   GovFormInput,
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
+  search as searchRequest,
   SearchResultDto,
   SearchSource,
   SearchType,
-  useSearch,
 } from '@/api/generated';
 import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 import { RelatedTerm } from '../conceptDetail/Term/RelatedTerm';
@@ -35,6 +36,7 @@ interface Props {
   searchType: SearchType;
   searchSource: SearchSource;
   anchor?: string;
+  layout?: 'grid' | 'flex';
 }
 
 export const ConceptInput = ({
@@ -46,13 +48,13 @@ export const ConceptInput = ({
   searchType,
   searchSource,
   anchor,
+  layout = 'grid',
 }: Props) => {
   const [query, setQuery] = useState('');
   const [showInput, setShowInput] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const [allResults, setAllResults] = useState<SearchResultDto[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const t = useTranslations('ConceptDetail.Main');
 
   const isActive = useActiveAnchor(anchor);
@@ -76,44 +78,52 @@ export const ConceptInput = ({
     }
   }, [selected.length, single]);
 
-  useEffect(() => {
-    setOffset(0);
-    setAllResults([]);
-  }, [query]);
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['concept-input-search', query, searchType, searchSource],
+      queryFn: ({ pageParam }) =>
+        searchRequest({
+          q: query,
+          type: searchType,
+          source: searchSource,
+          offset: pageParam,
+          limit: LIMIT,
+        }),
+      initialPageParam: 0,
+      enabled: query.length > 3,
+      getNextPageParam: (lastPage, allPages) => {
+        const lastCount = lastPage.data?.results?.length ?? 0;
+        if (lastCount < LIMIT) return undefined;
 
-  const { data: search, isFetching } = useSearch(
-    { q: query, type: searchType, source: searchSource, offset, limit: LIMIT },
-    { query: { enabled: query.length > 3 } },
+        return allPages.reduce(
+          (sum, page) => sum + (page.data?.results?.length ?? 0),
+          0,
+        );
+      },
+    });
+
+  const allResults = useMemo<SearchResultDto[]>(
+    () => data?.pages.flatMap((page) => page.data?.results ?? []) ?? [],
+    [data],
   );
 
-  useEffect(() => {
-    if (search?.data?.results && !isFetching) {
-      setAllResults((prev) =>
-        offset === 0
-          ? (search.data?.results ?? [])
-          : [...prev, ...(search.data?.results ?? [])],
+  const sentinelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      observerRef.current?.disconnect();
+      if (!node) return;
+
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !isFetchingNextPage && hasNextPage) {
+            fetchNextPage();
+          }
+        },
+        { root: scrollContainerRef.current, threshold: 0.1 },
       );
-    }
-  }, [isFetching, search, offset]);
-
-  const totalCount = search?.data?.totalConcepts ?? 0;
-  const hasMore = totalCount > allResults.length;
-
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isFetching && hasMore) {
-          setOffset((prev) => prev + LIMIT);
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [isFetching, hasMore]);
+      observerRef.current.observe(node);
+    },
+    [isFetchingNextPage, hasNextPage, fetchNextPage],
+  );
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -143,7 +153,7 @@ export const ConceptInput = ({
 
   const handleRemove = (iri: string) => {
     if (single) {
-      setValue(name, undefined, { shouldDirty: true });
+      setValue(name, null, { shouldDirty: true });
       setShowInput(true);
     } else {
       const next = selected.filter((s) => s.iri !== iri);
@@ -151,10 +161,7 @@ export const ConceptInput = ({
       if (next.length === 0) setShowInput(true);
     }
   };
-
-  const showDropdown =
-    query.length > 3 &&
-    (isFetching || allResults.length > 0 || search !== undefined);
+  const showDropdown = query.length > 0;
 
   return (
     <div
@@ -164,7 +171,14 @@ export const ConceptInput = ({
       )}
       id={anchor}
     >
-      <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+      <div
+        className={clsx(
+          'w-full',
+          layout === 'grid'
+            ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+            : 'flex flex-col',
+        )}
+      >
         {label && (
           <GovFormLabel className="w-fit! pt-2.5">
             <span className="font-bold">{label}</span>
@@ -174,7 +188,8 @@ export const ConceptInput = ({
         <div
           className={clsx(
             'flex flex-col gap-2',
-            label ? 'col-span-6 ml-10' : 'col-span-7',
+            label ? 'col-span-6' : 'col-span-7',
+            layout === 'grid' && 'ml-10',
           )}
         >
           {selected.length > 0 && (
@@ -209,12 +224,17 @@ export const ConceptInput = ({
 
               {showDropdown && (
                 <div
+                  ref={scrollContainerRef}
                   className={clsx(
                     'z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto',
                     nonFloatingDropDown ? 'relative' : 'absolute',
                   )}
                 >
-                  {isFetching && allResults.length === 0 ? (
+                  {query.length < 4 ? (
+                    <div className="p-4 text-status-error-600 text-sm text-center">
+                      {t('ShortQuery')}
+                    </div>
+                  ) : isLoading ? (
                     <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
                       <GovIcon
                         name="loader"
@@ -232,13 +252,13 @@ export const ConceptInput = ({
                     <>
                       {allResults.map((item) => (
                         <button
-                          key={item.slug}
+                          key={item.iri}
                           type="button"
                           onClick={() => {
                             handleSelect({
                               iri: item.iri || '',
                               label: item.label || '',
-                              id: item.id,
+                              id: item.id ?? undefined,
                             });
                           }}
                           className="border-b border-border-subtlest text-blue-primary hover:bg-primary-subtlest text-left w-full gap-1.5 flex flex-col font-bold p-2"
@@ -246,7 +266,13 @@ export const ConceptInput = ({
                           <span className="flex gap-1.5">
                             <GovIcon
                               slot="icon-start"
-                              name="card-heading"
+                              name={
+                                item.conceptType === 'VLASTNOST'
+                                  ? 'tag'
+                                  : item.conceptType === 'VZTAH'
+                                    ? 'bezier2'
+                                    : 'card-heading'
+                              }
                               type="components"
                               size="l"
                               color="primary"
@@ -281,7 +307,7 @@ export const ConceptInput = ({
                         ref={sentinelRef}
                         className="py-2 flex justify-center"
                       >
-                        {isFetching && (
+                        {isFetchingNextPage && (
                           <GovIcon
                             name="loader"
                             type="components"

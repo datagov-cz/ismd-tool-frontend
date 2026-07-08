@@ -37,15 +37,19 @@ export const VisitedOntologies = () => {
     if (stored) {
       const parsed: (string | VisitedEntry)[] = JSON.parse(stored);
 
+      const safeDecode = (value: string) => {
+        try {
+          return decodeURIComponent(value);
+        } catch {
+          return value;
+        }
+      };
+
       const entries: VisitedEntry[] = parsed.map((item) => {
         if (typeof item === 'string') {
-          try {
-            return { slug: decodeURIComponent(item), source: 'ISMD' as const };
-          } catch {
-            return { slug: item, source: 'ISMD' as const };
-          }
+          return { slug: safeDecode(item), source: 'ISMD' as const };
         }
-        return item;
+        return { ...item, slug: safeDecode(item.slug) };
       });
 
       setVisitedEntries(entries);

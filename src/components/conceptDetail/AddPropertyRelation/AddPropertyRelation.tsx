@@ -36,6 +36,7 @@ export const AddPropertyRelation = ({
                 key={item.iri}
                 iri={item.iri}
                 resolved={resolvedRelations}
+                type={type === 'property' ? 'VLASTNOST' : 'VZTAH'}
               />
             ),
         )}

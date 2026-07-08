@@ -141,7 +141,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
       {
         key: 'ustanovení-dokládající-neveřejnost-údaje',
         labelKey: 'Sections.ProvingNonPublicData',
-        anchor: '#isPublic',
+        anchor: '#privacyProvisions',
       },
       { key: 'je-ppdf', labelKey: 'Sections.IsPpdf', anchor: '#isInPPDF' },
     ],

@@ -11,6 +11,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { clearFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { normalizeFormData } from './ConceptCreate';
@@ -21,13 +22,17 @@ function toMultiLang(
   record?: Record<string, string>,
 ): { languageTag: string; name: string }[] {
   if (!record) return [];
-  return Object.entries(record).map(([languageTag, name]) => ({
-    languageTag,
-    name,
-  }));
+  return Object.entries(record)
+    .map(([languageTag, name]) => ({
+      languageTag,
+      name,
+    }))
+    .sort((a, b) => {
+      if (a.languageTag === 'cs') return -1;
+      if (b.languageTag === 'cs') return 1;
+      return 0;
+    });
 }
-
-// Add these helpers near the top of ConceptEditWrapper.tsx
 
 const SHARING_METHOD_IRI_MAP: Record<string, string> = {
   'veřejně-přístupné': 'veřejně přístupné',
@@ -123,15 +128,29 @@ export function mapDetailToFormValues(
     }),
   );
 
+  const nameRecord = Object.fromEntries(
+    Object.entries(detail['název'] ?? {}).map(([lang, val]) => {
+      if (typeof val === 'string') return [lang, val];
+      const first = Object.values(val as Record<string, unknown>)[0];
+      return [lang, first != null ? String(first) : ''];
+    }),
+  );
+
   return {
     ontologyGraphName: graphName,
     conceptType: conceptTypeEnum,
     conceptTypeEnum,
     identifier: detail['identifikátor'],
+    type: detail.typ?.includes('Typ subjektu práva')
+      ? 'Subjekt'
+      : detail.typ?.includes('Typ objektu práva')
+        ? 'Objekt'
+        : undefined,
     nameModel: {
-      name: (detail['název'] as Record<string, string> | undefined) ?? {
-        cs: '',
-      },
+      name:
+        toMultiLang(nameRecord).length > 0
+          ? toMultiLang(nameRecord)
+          : [{ languageTag: 'cs', name: '' }],
     },
     altNameModel: {
       altName:
@@ -214,6 +233,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
   const graphName = conceptMetadata?.graphName ?? '';
+  const storageKey = `concept-draft:edit:${slug}`;
 
   const defaultValues =
     conceptDetail && graphName
@@ -223,11 +243,25 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
 
+    const originalLanguageTags = {
+      name: Object.keys(conceptDetail?.['název'] ?? {}),
+      altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),
+      definition: Object.keys(conceptDetail?.['definice'] ?? {}),
+      description: Object.keys(conceptDetail?.['popis'] ?? {}),
+    };
+
     editConcept(
-      { conceptId: conceptMetadata.id, data: normalizeFormData(formData) },
+      {
+        conceptId: conceptMetadata.id,
+        data: normalizeFormData(formData, originalLanguageTags),
+      },
       {
         onSuccess: (response) => {
+          clearFormDraft(storageKey);
           (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
+            queryInvalidate.invalidateOntology(
+              data?.data?.conceptMetadata?.ontologySlug ?? '',
+            ),
             toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
           router.push(`/concept/${response.data?.slug}`);
         },
@@ -273,6 +307,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           isPending={isPending}
           defaultValues={defaultValues}
           editing={true}
+          storageKey={storageKey}
         />
       )}
     </div>

@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import {
-  NkdOntologyListItemDto,
-  useListAllNkdOntologies,
-} from '@/api/generated';
+import { listAllNkdOntologies, NkdOntologyListItemDto } from '@/api/generated';
 import { DictionaryCardProps } from '../shared/DictionaryCard/DictionaryCard';
 
 import { OntologyList } from './OntologyList';
@@ -33,41 +31,49 @@ const toCardItem = (
 };
 
 export const NKDListWrapper = () => {
-  const [offset, setOffset] = useState(0);
-  const [ontologies, setOntologies] = useState<NkdOntologyListItemDto[]>([]);
   const [filterQuery, setFilterQuery] = useState('');
 
-  const { data, isFetching } = useListAllNkdOntologies({
-    offset,
-    limit: LIMIT,
-  });
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['nkd-ontologies', 'infinite'],
+      queryFn: ({ pageParam }) =>
+        listAllNkdOntologies({ offset: pageParam, limit: LIMIT }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        const lastCount = lastPage.data?.ontologies?.length ?? 0;
 
-  useEffect(() => {
-    if (data?.data?.ontologies && !isFetching) {
-      setOntologies((prev) => [...prev, ...(data.data?.ontologies ?? [])]);
-    }
-  }, [isFetching, data]);
+        if (lastCount < LIMIT) return undefined;
 
-  const totalCount = data?.data?.['celkový-počet'] ?? 0;
-  const hasMore = totalCount > ontologies.length;
+        const loaded = allPages.reduce(
+          (sum, page) => sum + (page.data?.ontologies?.length ?? 0),
+          0,
+        );
+        return loaded;
+      },
+    });
 
-  const items = ontologies
-    .map(toCardItem)
-    .filter((item): item is DictionaryCardProps => item !== null)
-    .filter(
-      (item) =>
-        !filterQuery ||
-        item.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
-        item.text?.toLowerCase().includes(filterQuery.toLowerCase()),
-    );
+  const items = useMemo(() => {
+    const ontologies =
+      data?.pages.flatMap((page) => page.data?.ontologies ?? []) ?? [];
+
+    return ontologies
+      .map(toCardItem)
+      .filter((item): item is DictionaryCardProps => item !== null)
+      .filter(
+        (item) =>
+          !filterQuery ||
+          item.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
+          item.text?.toLowerCase().includes(filterQuery.toLowerCase()),
+      );
+  }, [data, filterQuery]);
 
   return (
     <OntologyList
       type="NKD"
       items={items}
-      isFetching={isFetching}
-      hasMore={hasMore}
-      onLoadMore={() => setOffset((prev) => prev + LIMIT)}
+      isFetching={isLoading || isFetchingNextPage}
+      hasMore={hasNextPage}
+      onLoadMore={() => fetchNextPage()}
       filterQuery={filterQuery}
       onFilterChange={setFilterQuery}
     />

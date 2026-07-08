@@ -46,7 +46,11 @@ export const DefiningSection = ({
       )}
       {hasNadrazenaTrida && (
         <Section title={t('Sections.SupersededClass')}>
-          <IriRelatedTermList iris={nadrazenaTrida} resolved={resolved} />
+          <IriRelatedTermList
+            iris={nadrazenaTrida}
+            resolved={resolved}
+            type="TRIDA"
+          />
         </Section>
       )}
       {ekvivalentniPojem && (

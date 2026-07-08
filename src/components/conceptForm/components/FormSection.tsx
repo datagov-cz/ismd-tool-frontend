@@ -30,7 +30,7 @@ export const FormSection = ({
           {label}
         </span>
       </div>
-      <div>{children}</div>
+      <div className="space-y-2">{children}</div>
     </div>
   );
 };

@@ -12,20 +12,24 @@ import { AddRelationModal } from '../AddPropertyRelation/AddRelationModal';
 interface Props {
   properties?: ConceptDetailModel['conceptProperties'];
   relationships?: ConceptDetailModel['conceptRelationships'];
-  iri: string;
+  classIri: string;
   conceptName?: string;
-  slug: string;
+  classSlug: string;
   isOwnerLoggedIn?: boolean;
   resolvedRelations?: ConceptDetailModelReferencovanéPojmyResolved;
+  ontologyIri?: string;
+  ontologySlug?: string;
 }
 
 export const PropertiesRelationsSection = ({
   properties = [],
   relationships = [],
-  iri,
+  classIri,
   conceptName,
-  slug,
+  classSlug,
   isOwnerLoggedIn,
+  ontologyIri,
+  ontologySlug,
   resolvedRelations,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
@@ -63,18 +67,22 @@ export const PropertiesRelationsSection = ({
       {conceptName && isOwnerLoggedIn && (
         <>
           <AddPropertyModal
-            iri={iri}
-            conceptName={conceptName}
+            classIri={classIri}
+            conceptClassName={conceptName}
             open={propertyOpen}
             setOpen={setPropertyOpen}
-            slug={slug}
+            classSlug={classSlug}
+            ontologyGraphName={ontologyIri}
+            ontologySlug={ontologySlug}
           />
           <AddRelationModal
-            iri={iri}
-            conceptName={conceptName}
+            classIri={classIri}
+            conceptClassName={conceptName}
             open={relationOpen}
             setOpen={setRelationOpen}
-            slug={slug}
+            classSlug={classSlug}
+            ontologyGraphName={ontologyIri}
+            ontologySlug={ontologySlug}
           />
         </>
       )}

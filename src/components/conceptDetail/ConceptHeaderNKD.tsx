@@ -121,7 +121,7 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
             isPublished={true}
             name={conceptDetail.název?.cs || ''}
             source={'NKD'}
-            owner={false}
+            editAllowed={false}
             commentsCount={0}
             slug=""
             iri={conceptDetail.iri}

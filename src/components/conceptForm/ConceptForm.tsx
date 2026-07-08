@@ -4,8 +4,12 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
+import { useFormDraft } from '@/hooks/useFormDraft';
 
 import { FormToolbar } from './components/FormToolbar';
+import { useConceptFormHints } from './components/hint/conceptFormHints';
+import { HintSidebar } from './components/hint/HintSidebar';
+import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
   ConceptFormSchema,
@@ -28,14 +32,14 @@ function getDomain(url: string): string | null {
   }
 }
 
-const BASE_DEFAULTS: Omit<
+export const BASE_DEFAULTS: Omit<
   ConceptFormValues,
   'ontologyGraphName' | 'namespace'
 > = {
   conceptType: 'TRIDA',
   conceptTypeEnum: 'TRIDA',
   identifier: undefined,
-  nameModel: { name: { cs: '' } },
+  nameModel: { name: [{ languageTag: 'cs', name: '' }] },
   altNameModel: { altName: [{ languageTag: 'cs', name: '' }] },
   definitionModel: { definition: [{ languageTag: 'cs', name: '' }] },
   descriptionModel: { description: [{ languageTag: 'cs', name: '' }] },
@@ -69,6 +73,7 @@ interface ConceptFormProps {
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
   editing?: boolean;
+  storageKey?: string;
 }
 
 export const ConceptForm = ({
@@ -77,6 +82,7 @@ export const ConceptForm = ({
   isPending,
   defaultValues: externalDefaults,
   editing,
+  storageKey,
 }: ConceptFormProps) => {
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
@@ -88,7 +94,16 @@ export const ConceptForm = ({
     },
   });
 
+  useFormDraft(form, storageKey);
+
   const { errors } = form.formState;
+
+  const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
+
+  const { hint, open, setOpen, handleFocus } = useFormHints(
+    hints,
+    editing ? defaultHintEdit : defaultHint,
+  );
 
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
@@ -114,16 +129,32 @@ export const ConceptForm = ({
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">
-        <NamingSection />
-        <TypesSection editing={editing} />
-        <ConceptMeaningSection />
-        <SourcesSection />
-        <RightsAndObligationsSection />
-        <ProclamationSection />
-        <OntologySection />
-        <FormToolbar<ConceptFormType> isPending={isPending} />
-      </form>
+      <div className="relative w-full lg:max-w-160 xl:max-w-200">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          onFocus={handleFocus}
+          className="w-full space-y-2.5"
+        >
+          <NamingSection />
+          <TypesSection editing={editing} />
+          <ConceptMeaningSection />
+          <SourcesSection />
+          <RightsAndObligationsSection />
+          <ProclamationSection />
+          <OntologySection />
+          <FormToolbar<ConceptFormType> isPending={isPending} />
+        </form>
+
+        <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
+          {open && (
+            <HintSidebar
+              hint={hint}
+              onClose={() => setOpen(false)}
+              className="sticky top-22 w-full max-w-80"
+            />
+          )}
+        </div>
+      </div>
     </FormProvider>
   );
 };
