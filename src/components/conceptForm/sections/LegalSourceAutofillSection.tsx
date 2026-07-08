@@ -112,14 +112,12 @@ export const LegalSourceAutofillSection = () => {
       {!prefilled ? (
         <div className="px-2.5">{t('SectionDescription')}</div>
       ) : null}
-      <LegislativeSourcePicker
-        label={null}
-        startAdornment={
-          <GovIcon type="components" name="book" size="m" color="primary" />
-        }
-        onChange={handleChange}
-        value={autofillValue}
-      />
+      <div className="px-2.5">
+        <LegislativeSourcePicker
+          onChange={handleChange}
+          value={autofillValue}
+        />
+      </div>
       {prefilled ? (
         <div className="px-2.5 space-y-2">
           <div className="text-sm font-semibold">{t('PrefilledSummary')}</div>

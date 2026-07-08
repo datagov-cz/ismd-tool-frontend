@@ -3,7 +3,6 @@ import { FieldValues, Path, PathValue, useFormContext } from 'react-hook-form';
 import { LegislativeSourcePicker } from '@/components/shared/LegislativeSourceInput/LegislativeSourcePicker';
 
 interface Props<T extends FieldValues> {
-  label: string | null;
   name: Path<T>;
   anchor?: string;
   onRemove?: () => void;
@@ -12,7 +11,6 @@ interface Props<T extends FieldValues> {
 }
 
 export const LegislativeSourceInput = <T extends FieldValues>({
-  label,
   name,
   anchor,
   onRemove,
@@ -31,7 +29,6 @@ export const LegislativeSourceInput = <T extends FieldValues>({
 
   return (
     <LegislativeSourcePicker
-      label={label}
       value={value}
       onChange={handleChange}
       anchor={anchor}

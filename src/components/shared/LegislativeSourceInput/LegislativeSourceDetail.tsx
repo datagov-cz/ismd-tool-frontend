@@ -1,7 +1,9 @@
 import { ComponentProps, useRef, useState } from 'react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { useGetLawContent } from '@/api/generated';
-import { ButtonInput } from '@/components/shared/ButtonInput';
+import { LegislativeSourceAutocomplete } from '@/components/shared/LegislativeSourceInput/LegislativeSourceAutocomplete';
 import { LegislativeSourceDetailSkeleton } from '@/components/shared/LegislativeSourceInput/LegislativeSourceDetailSkeleton';
 import {
   FragmentNode,
@@ -32,6 +34,7 @@ export const LegislativeSourceDetail = ({
   selectedIri,
   onSelectIri,
 }: Props) => {
+  const t = useTranslations('LegislativeSource');
   const { data, isLoading } = useGetLawContent({
     law: `${source.cislo}/${source.rok}`,
   });
@@ -54,28 +57,31 @@ export const LegislativeSourceDetail = ({
     void document.fonts.ready.then(scrollToFragment);
   };
 
-  const handleOpenChange = (next: boolean) => {
-    if (next) {
-      setDraftIri(selectedIri);
-    } else if (draftIri && draftIri !== selectedIri) {
+  const handleConfirmSelection = () => {
+    if (draftIri) {
       onSelectIri(draftIri);
+      onOpenChange?.(false);
     }
-    onOpenChange?.(next);
   };
 
   return (
-    <Popover open={open} onOpenChange={handleOpenChange}>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverAnchor>
         {selectedIri ? (
           <LegislativeSourceSelected
             iri={selectedIri}
-            onClick={() => handleOpenChange(!open)}
+            onClick={() => onOpenChange?.(!open)}
             onClear={onClear}
           />
         ) : (
-          <ButtonInput onClick={() => handleOpenChange(!open)}>
-            {source.label}
-          </ButtonInput>
+          <div className="cursor-pointer" onClick={() => onOpenChange?.(!open)}>
+            <div className="pointer-events-none">
+              <LegislativeSourceAutocomplete
+                placeholder={source.label}
+                onSourceSelect={() => {}}
+              />
+            </div>
+          </div>
         )}
       </PopoverAnchor>
       <PopoverContent
@@ -84,7 +90,7 @@ export const LegislativeSourceDetail = ({
         align="start"
         sideOffset={0}
         style={{ width: 'var(--radix-popover-trigger-width)' }}
-        className="bg-white p-4 border border-(--border-subtle) max-h-(--radix-popover-content-available-height) overflow-hidden flex flex-col"
+        className="bg-white p-4 border border-(--border-subtle) max-h-96 overflow-hidden flex flex-col"
         onInteractOutside={(e) => {
           const target = e.detail.originalEvent.target as HTMLElement | null;
           if (target?.closest('[data-action="clear"]')) {
@@ -106,11 +112,29 @@ export const LegislativeSourceDetail = ({
                 onSelect={handleSelect}
               />
             </div>
-            <div
-              ref={contentRef}
-              className="law-content min-h-0 overflow-y-auto col-span-2"
-              dangerouslySetInnerHTML={{ __html: bodyHtml ?? '' }}
-            />
+            <div className="law-content min-h-0 overflow-y-auto col-span-2">
+              <div
+                ref={contentRef}
+                dangerouslySetInnerHTML={{ __html: bodyHtml ?? '' }}
+              />
+              {draftIri && (
+                <div className="sticky text-center bottom-0 bg-white pt-2 border-t border-primary-subtlest">
+                  <GovButton
+                    type="solid"
+                    color="primary"
+                    size="s"
+                    onGovClick={handleConfirmSelection}
+                  >
+                    <GovIcon
+                      name="check-square"
+                      type="components"
+                      slot="icon-start"
+                    />
+                    {t('SelectFragment')}
+                  </GovButton>
+                </div>
+              )}
+            </div>
           </div>
         ) : null}
       </PopoverContent>
