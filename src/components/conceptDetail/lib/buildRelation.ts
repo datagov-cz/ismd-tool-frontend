@@ -25,8 +25,8 @@ export const buildRelation = (
       : undefined;
   };
 
-  const start = toRelationItem(conceptDetail['obor-hodnot']);
-  const end = toRelationItem(conceptDetail['definiční-obor']);
+  const end = toRelationItem(conceptDetail['obor-hodnot']);
+  const start = toRelationItem(conceptDetail['definiční-obor']);
 
   const middle: RelationItem | undefined = conceptDetail['název']?.cs
     ? { name: conceptDetail['název'].cs, slug }
