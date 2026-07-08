@@ -66,11 +66,17 @@ export const AddRelationModal = ({
       ontologyGraphName: ontologyGraphName,
       conceptType: 'VZTAH',
       conceptTypeEnum: 'VZTAH',
-      ...(direction === 'currentToOther'
-        ? { domain: { label: conceptClassName, iri: classIri } }
-        : { range: { label: conceptClassName, iri: classIri } }),
+      domain: { label: conceptClassName, iri: classIri },
     },
   });
+
+  const changeDirection = (dir: 'currentToOther' | 'otherToCurrent') => {
+    if (dir === direction) return;
+    const { domain, range } = formCreate.getValues();
+    formCreate.setValue('domain', range ?? undefined, { shouldValidate: true });
+    formCreate.setValue('range', domain ?? undefined, { shouldValidate: true });
+    setDirection(dir);
+  };
 
   const onSubmit = (data: z.infer<typeof AddRelationModelSchema>) => {
     if (!data.relation?.id || !data.otherConcept?.iri) return;
@@ -137,14 +143,14 @@ export const AddRelationModal = ({
               <GovButton
                 color="primary"
                 type={direction === 'currentToOther' ? 'solid' : 'outlined'}
-                onGovClick={() => setDirection('currentToOther')}
+                onGovClick={() => changeDirection('currentToOther')}
               >
                 {conceptClassName} → {t('OtherConcept')}
               </GovButton>
               <GovButton
                 color="primary"
                 type={direction === 'otherToCurrent' ? 'solid' : 'outlined'}
-                onGovClick={() => setDirection('otherToCurrent')}
+                onGovClick={() => changeDirection('otherToCurrent')}
               >
                 {t('OtherConcept')} → {conceptClassName}
               </GovButton>
@@ -224,14 +230,14 @@ export const AddRelationModal = ({
             <GovButton
               color="primary"
               type={direction === 'currentToOther' ? 'solid' : 'outlined'}
-              onGovClick={() => setDirection('currentToOther')}
+              onGovClick={() => changeDirection('currentToOther')}
             >
               {conceptClassName} → {t('OtherConcept')}
             </GovButton>
             <GovButton
               color="primary"
               type={direction === 'otherToCurrent' ? 'solid' : 'outlined'}
-              onGovClick={() => setDirection('otherToCurrent')}
+              onGovClick={() => changeDirection('otherToCurrent')}
             >
               {t('OtherConcept')} → {conceptClassName}
             </GovButton>

@@ -118,7 +118,6 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
 
           <ControlPanelConcept
             conceptID={0}
-            isPublished={true}
             name={conceptDetail.název?.cs || ''}
             source={'NKD'}
             editAllowed={false}
