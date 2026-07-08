@@ -13,6 +13,7 @@ type Props<T> = {
   loadingMessage?: string;
   emptyMessage?: string;
   autoFocus?: boolean;
+  startAdornment?: ReactNode;
   id: string;
 };
 
@@ -28,6 +29,7 @@ export const Autocomplete = <T,>({
   loadingMessage,
   emptyMessage,
   autoFocus,
+  startAdornment,
   id,
 }: Props<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -73,6 +75,11 @@ export const Autocomplete = <T,>({
         inputType="text"
         id={id}
       >
+        {startAdornment ? (
+          <span slot="icon-start" className="flex items-center">
+            {startAdornment}
+          </span>
+        ) : null}
         <GovIcon name="search" slot="icon-end" type="components" size="s" />
       </GovFormInput>
 

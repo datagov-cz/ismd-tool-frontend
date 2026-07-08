@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -15,6 +16,7 @@ import {
   ConceptFormSchema,
 } from './schema/conceptFormSchema';
 import { ConceptMeaningSection } from './sections/ConceptMeaningSection';
+import { LegalSourceAutofillSection } from './sections/LegalSourceAutofillSection';
 import { NamingSection } from './sections/NamingSection';
 import { OntologySection } from './sections/OntologySection';
 import { ProclamationSection } from './sections/ProclamationSection';
@@ -84,6 +86,8 @@ export const ConceptForm = ({
   editing,
   storageKey,
 }: ConceptFormProps) => {
+  const tConcept = useTranslations('CreateConcept');
+
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
     defaultValues: {
@@ -108,9 +112,7 @@ export const ConceptForm = ({
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
-      toast.error('Prosím opravte chyby ve formuláři.', {
-        position: 'bottom-right',
-      });
+      toast.error(tConcept('ValidationError'));
     }
   }, [errors]);
 
@@ -130,6 +132,11 @@ export const ConceptForm = ({
   return (
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
+        <LegalSourceAutofillSection />
+        <div className="my-4 flex items-center gap-2 text-sm">
+          <span className="font-semibold">{tConcept('ConceptDataLabel')}</span>
+          <span className="flex-1 h-px bg-(--button-outlined-primary-hover)" />
+        </div>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           onFocus={handleFocus}
