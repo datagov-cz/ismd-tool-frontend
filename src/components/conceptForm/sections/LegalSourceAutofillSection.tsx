@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { GovChip, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
@@ -22,6 +22,7 @@ type Prefilled = {
 };
 
 export const LegalSourceAutofillSection = () => {
+  const id = useId();
   const t = useTranslations('CreateConcept.LegalSourceAutofill');
   const tLabels = useTranslations('CreateConcept.CommonConceptFields.Labels');
   const { setValue } = useFormContext<ConceptForm>();
@@ -114,6 +115,7 @@ export const LegalSourceAutofillSection = () => {
       ) : null}
       <div className="px-2.5">
         <LegislativeSourcePicker
+          id={id}
           onChange={handleChange}
           value={autofillValue}
         />
