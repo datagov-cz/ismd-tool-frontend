@@ -10,7 +10,6 @@ import { ControlPanelButton } from '../dictionaryDetail/ControlPanelButton';
 import { DeleteDialog } from '../dictionaryDetail/DeleteDialog';
 
 interface Props {
-  isPublished: boolean;
   conceptID: number;
   name: string;
   commentsCount: number;
@@ -22,7 +21,6 @@ interface Props {
 }
 
 export const ControlPanelConcept = ({
-  isPublished,
   conceptID,
   name,
   commentsCount,
@@ -126,7 +124,7 @@ export const ControlPanelConcept = ({
             </GovButton>
           </ul>
         </GovDropdown>
-        {!isPublished && editAllowed && (
+        {editAllowed && (
           <ControlPanelButton
             iconName="trash"
             danger

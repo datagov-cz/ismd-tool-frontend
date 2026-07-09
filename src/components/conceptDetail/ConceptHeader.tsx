@@ -1,4 +1,5 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -9,28 +10,33 @@ import { ControlPanelConcept } from './ControlPanelConcept';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Section } from './Section';
 
+type RelationItem = {
+  name: string;
+  slug: string;
+};
+
 type Props = {
   ontology: string;
   conceptDetail: ConceptDetailModel;
   conceptId?: number;
   commentsCount: number;
-  isPublished?: boolean;
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
   editAllowed: boolean;
   slug: string;
+  relation?: { start: RelationItem; middle: RelationItem; end: RelationItem };
 };
 
 export const ConceptHeader = ({
   ontology,
   conceptDetail,
   conceptId,
-  isPublished,
   commentsCount,
   loggedIn,
   source,
   editAllowed,
   slug,
+  relation,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
@@ -123,13 +129,33 @@ export const ConceptHeader = ({
                     <LanguageSwitcher item={conceptDetail['název']!} hideCs />
                   </Section>
                 )}
+              {relation && (
+                <div className="flex gap-2 items-center pt-2">
+                  <InnerTerm term={relation.start} />
+                  <GovIcon
+                    name="arrow-right"
+                    slot="icon-start"
+                    type="components"
+                    size="s"
+                    color="primary"
+                  />
+                  <InnerTerm term={relation.middle} isRelation={true} />
+                  <GovIcon
+                    name="arrow-right"
+                    slot="icon-start"
+                    type="components"
+                    size="s"
+                    color="primary"
+                  />
+                  <InnerTerm term={relation.end} />
+                </div>
+              )}
             </div>
           </div>
 
           <ControlPanelConcept
             commentsCount={commentsCount}
             conceptID={conceptId || 0}
-            isPublished={isPublished || false}
             name={conceptDetail.název?.cs || ''}
             loggedIn={loggedIn}
             source={source}
@@ -140,5 +166,37 @@ export const ConceptHeader = ({
         </div>
       </div>
     </div>
+  );
+};
+
+export const InnerTerm = ({
+  term,
+  isRelation,
+}: {
+  term: RelationItem;
+  isRelation?: boolean;
+}) => {
+  return (
+    <Link
+      href={`/concept/${term.slug}`}
+      className={clsx(
+        'inline-flex gap-1 px-1.5 py  rounded-md border hover:underline',
+        isRelation
+          ? 'border-blue-primary bg-blue-subtle font-bold text-blue-hover'
+          : 'border-border-grey bg-white',
+      )}
+    >
+      {!isRelation && (
+        <GovIcon
+          slot="icon-start"
+          name={'card-heading'}
+          type="components"
+          size="l"
+          color="primary"
+          className={clsx('shrink-0', 'mt-0.5!')}
+        />
+      )}
+      {term.name}
+    </Link>
   );
 };
