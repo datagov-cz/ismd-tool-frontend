@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   BaseEdge,
   type Edge,
@@ -15,7 +15,7 @@ import { getConceptFromDragEvent } from '../model/conceptDrag';
 import type { ConceptEdgeData } from '../model/diagram';
 import { buildBentPath } from '../model/edgePath';
 
-const MAX_LABEL_LENGTH = 15;
+import { useShowFullLabels } from './labelDisplayContext';
 
 export type LabeledEdgeData = ConceptEdgeData & {
   onDropVztah?: (_vztah: Concept) => void;
@@ -35,8 +35,15 @@ export const LabeledEdge = ({
   markerEnd,
   data,
 }: EdgeProps<Edge<LabeledEdgeData>>) => {
-  const [expanded, setExpanded] = useState(false);
+  const showFullLabels = useShowFullLabels();
   const [dragOver, setDragOver] = useState(false);
+
+  const [labelOverride, setLabelOverride] = useState(false);
+  useEffect(() => setLabelOverride(false), [showFullLabels]);
+  const showFull = labelOverride ? !showFullLabels : showFullLabels;
+
+  const labelRef = useRef<HTMLDivElement>(null);
+  const [isTruncatable, setIsTruncatable] = useState(false);
 
   const [draftBends, setDraftBends] = useState<XYPosition[] | null>(null);
   const dragIndex = useRef<number | null>(null);
@@ -141,9 +148,17 @@ export const LabeledEdge = ({
     : {};
 
   const label = data?.label;
-  const isTruncatable = !!label && label.length > MAX_LABEL_LENGTH;
-  const displayLabel =
-    isTruncatable && !expanded ? `${label.slice(0, MAX_LABEL_LENGTH)}…` : label;
+
+  useLayoutEffect(() => {
+    const el = labelRef.current;
+    if (!el || !label) return;
+    if (showFull) {
+      const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 16;
+      setIsTruncatable(el.clientHeight > lineHeight * 1.5);
+    } else {
+      setIsTruncatable(el.scrollWidth > el.clientWidth);
+    }
+  }, [label, showFull]);
 
   return (
     <>
@@ -208,8 +223,12 @@ export const LabeledEdge = ({
 
         {(label || incomplete) && (
           <div
+            ref={labelRef}
             className={clsx(
-              'nodrag nopan absolute rounded px-1.5 py-0.5 text-xs font-medium max-w-55 border',
+              'nodrag nopan absolute rounded px-1.5 py-0.5 text-xs font-medium max-w-37.5 border',
+              showFull
+                ? 'whitespace-normal wrap-break-word'
+                : 'overflow-hidden text-ellipsis whitespace-nowrap',
               incomplete
                 ? 'border-dashed text-card-description bg-white'
                 : 'border-border-grey text-dark-blue-subtle bg-white',
@@ -219,20 +238,19 @@ export const LabeledEdge = ({
               transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY + 16}px)`,
               pointerEvents: 'all',
               cursor: isTruncatable ? 'pointer' : 'default',
-              whiteSpace: expanded ? 'normal' : 'nowrap',
             }}
             onClick={
               isTruncatable
                 ? (e) => {
                     e.stopPropagation();
-                    setExpanded((v) => !v);
+                    setLabelOverride((v) => !v);
                   }
                 : undefined
             }
-            title={isTruncatable && !expanded ? label : undefined}
+            title={isTruncatable && !showFull && label ? label : undefined}
             {...dropHandlers}
           >
-            {incomplete ? 'Přidat vztah' : displayLabel}
+            {incomplete ? 'Přidat vztah' : label}
           </div>
         )}
       </EdgeLabelRenderer>

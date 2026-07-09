@@ -1,9 +1,11 @@
 import '@xyflow/react/dist/style.css';
 
 import { useCallback, useRef, useState } from 'react';
+import { GovIcon } from '@gov-design-system-ce/react';
 import {
   Background,
   BackgroundVariant,
+  ControlButton,
   Controls,
   type EdgeChange,
   MiniMap,
@@ -13,6 +15,7 @@ import {
 
 import { AddNewConceptDialog } from '@/components/dictionaryDiagram/components/AddNewConceptDialog';
 import { ConceptNode } from '@/components/dictionaryDiagram/components/ConceptNode';
+import { LabelDisplayContext } from '@/components/dictionaryDiagram/components/labelDisplayContext';
 import { LabeledEdge } from '@/components/dictionaryDiagram/components/LabeledEdge';
 import { useConceptDrop } from '@/components/dictionaryDiagram/hooks/useConceptDrop';
 import {
@@ -43,6 +46,7 @@ export const DiagramCanvas = ({
 }: DiagramBuilderProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [showFullLabels, setShowFullLabels] = useState(false);
 
   const { onDrop, onDragOver } = useConceptDrop(dispatch, concepts);
 
@@ -78,39 +82,62 @@ export const DiagramCanvas = ({
       className="flex-1084 bg-white shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] rounded-md relative"
       ref={wrapperRef}
     >
-      <ReactFlow<ConceptFlowNode, ConceptFlowEdge>
-        nodes={nodes}
-        edges={displayEdges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onEdgeClick={onEdgeClick}
-        onConnect={onConnect}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        fitView
-        colorMode="system"
-      >
-        <DiagramToolbar
-          canUndo={canUndo}
-          canRedo={canRedo}
-          onUndo={() => dispatch({ type: 'undo' })}
-          onRedo={() => dispatch({ type: 'redo' })}
-          onLayout={runLayout}
-          onAddConcept={() => setOpenAddDialog(true)}
-        />
+      <LabelDisplayContext.Provider value={showFullLabels}>
+        <ReactFlow<ConceptFlowNode, ConceptFlowEdge>
+          nodes={nodes}
+          edges={displayEdges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onEdgeClick={onEdgeClick}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          fitView
+          colorMode="system"
+        >
+          <DiagramToolbar
+            canUndo={canUndo}
+            canRedo={canRedo}
+            onUndo={() => dispatch({ type: 'undo' })}
+            onRedo={() => dispatch({ type: 'redo' })}
+            onLayout={runLayout}
+            onAddConcept={() => setOpenAddDialog(true)}
+          />
 
-        <DiagramTopBar
-          onExport={() => {}}
-          onRename={() => {}}
-          onHelp={() => {}}
-        />
+          <DiagramTopBar
+            onExport={() => {}}
+            onRename={() => {}}
+            onHelp={() => {}}
+          />
 
-        <Controls className="text-blue-hover" showInteractive={true} />
-        <MiniMap />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-      </ReactFlow>
+          <Controls className="text-blue-hover" showInteractive={true}>
+            <ControlButton
+              onClick={() => setShowFullLabels((v) => !v)}
+              title={
+                showFullLabels
+                  ? 'Zkrátit popisky vztahů'
+                  : 'Zobrazit celé popisky vztahů'
+              }
+              aria-pressed={showFullLabels}
+            >
+              <GovIcon
+                type="components"
+                name={
+                  showFullLabels
+                    ? 'arrows-collapse-vertical'
+                    : 'arrows-expand-vertical'
+                }
+                color="primary"
+                size="xs"
+              />
+            </ControlButton>
+          </Controls>
+          <MiniMap />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        </ReactFlow>
+      </LabelDisplayContext.Provider>
 
       <RelationshipChooserOverlay
         chooser={chooser}
