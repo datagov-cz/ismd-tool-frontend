@@ -18,24 +18,18 @@ import {
   getDefinicniObor,
 } from './concept';
 
-// --- node / edge typing ----------------------------------------------------
-
 export type ConceptNodeData = {
-  concept: Concept; // always a Třída
+  concept: Concept;
   vlastnosti: Concept[];
 };
 
-/**
- * Relationship kinds from the design (A–B / A>B / B>A / A=B).
- * Edges don't carry this yet — `connect` creates a plain edge. When the
- * "Vyberte typ vazby" chooser lands, it will set `data.kind` (+ direction)
- * and that's the only place that needs to change.
- */
 export type RelationshipKind = 'obecny' | 'hierarchie' | 'ekvivalence';
 
 export type ConceptEdgeData = {
   kind?: RelationshipKind;
   label?: string;
+  vztahIri?: string;
+  bends?: XYPosition[];
 };
 
 export type ConceptFlowNode = Node<ConceptNodeData, 'concept'>;
@@ -43,8 +37,6 @@ export type ConceptFlowEdge = Edge<ConceptEdgeData>;
 
 export const isConceptNode = (node: Node): node is ConceptFlowNode =>
   node.type === 'concept';
-
-// --- state + actions -------------------------------------------------------
 
 export type DiagramState = {
   nodes: ConceptFlowNode[];
@@ -56,8 +48,22 @@ export const initialDiagramState: DiagramState = { nodes: [], edges: [] };
 export type DiagramAction =
   | { type: 'nodesChange'; changes: NodeChange<ConceptFlowNode>[] }
   | { type: 'edgesChange'; changes: EdgeChange<ConceptFlowEdge>[] }
-  | { type: 'connect'; connection: Connection }
-  | { type: 'init'; concepts: Concept[] } // <-- new
+  | {
+      type: 'connect';
+      connection: Connection;
+      id?: string;
+      kind?: RelationshipKind;
+      swap?: boolean;
+    }
+  | {
+      type: 'setEdgeKind';
+      edgeId: string;
+      kind: RelationshipKind;
+      swap?: boolean;
+    }
+  | { type: 'setEdgeVztah'; edgeId: string; vztah: Concept }
+  | { type: 'setEdgeBends'; edgeId: string; bends?: XYPosition[] }
+  | { type: 'init'; concepts: Concept[] }
   | { type: 'applyLayout'; positions: Record<string, XYPosition> }
   | {
       type: 'placeTrida';
@@ -67,11 +73,6 @@ export type DiagramAction =
     }
   | { type: 'assignVlastnost'; targetNodeId: string; vlastnost: Concept };
 
-// --- default layout --------------------------------------------------------
-
-// const COL_GAP = 10;
-// const ROW_GAP = 10;
-
 export const getNadrazenaTrida = (c: Concept): string[] => {
   const v = c['nadřazená-třída'];
   return Array.isArray(v) ? v : v ? [v] : [];
@@ -80,11 +81,6 @@ export const getNadrazenaTrida = (c: Concept): string[] => {
 export const getOborHodnot = (c: Concept): string | undefined =>
   c['obor-hodnot'] ?? undefined;
 
-/**
- * Starting diagram derived from the ontology's concepts: one node per Třída,
- * each with its Vlastnosti attached (same rule as `placeTrida`), in a grid.
- * A Vlastnost attaches to the first Třída that claims it.
- */
 export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
   const assigned = new Set<string>();
   const tridy = concepts.filter((c) => getConceptKind(c) === 'trida');
@@ -101,16 +97,11 @@ export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
     return {
       id: crypto.randomUUID(),
       type: 'concept' as const,
-      position: {
-        x: i,
-        y: i,
-      },
+      position: { x: i, y: i },
       data: { concept, vlastnosti },
     };
   });
 
-  // IRI -> React Flow node id. Only Třídy are nodes, so anything not in here
-  // (Vlastnost, Literal, missing IRI) simply produces no edge.
   const nodeIdByIri = new Map(
     nodes.map((n) => [getConceptIri(n.data.concept), n.id]),
   );
@@ -125,7 +116,7 @@ export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
   ) => {
     const source = nodeIdByIri.get(sourceIri);
     const target = nodeIdByIri.get(targetIri);
-    if (!source || !target) return; // an endpoint isn't a Třída on the canvas
+    if (!source || !target) return;
     const key = `${source}->${target}:${data.kind}`;
     if (seen.has(key)) return;
     seen.add(key);
@@ -133,34 +124,31 @@ export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
       id: crypto.randomUUID(),
       source,
       target,
-      sourceHandle: sourceIri, // handles are id'd by concept IRI
+      sourceHandle: sourceIri,
       targetHandle: targetIri,
       data,
     });
   };
 
-  // Hierarchy: nadřazená třída (super) -> the Třída that declares it (sub).
   for (const trida of tridy) {
     for (const superIri of getNadrazenaTrida(trida)) {
       pushEdge(superIri, getConceptIri(trida) ?? '', { kind: 'hierarchie' });
     }
   }
 
-  // Vztah: domain (definiční-obor) -> range (obor-hodnot).
   for (const vztah of concepts.filter((c) => getConceptKind(c) === 'vztah')) {
     const domain = getDefinicniObor(vztah);
     const range = getOborHodnot(vztah);
     if (!domain || !range) continue;
-    pushEdge(domain, range, { kind: 'obecny', label: vztah.název?.cs });
+    pushEdge(domain, range, {
+      kind: 'obecny',
+      label: vztah.název?.cs,
+      vztahIri: getConceptIri(vztah),
+    });
   }
 
   return { nodes, edges };
 };
-
-// --- reducer ---------------------------------------------------------------
-//
-// All diagram rules live here. UI components dispatch intent; this decides
-// what the diagram becomes. Relationship rules will be added to `connect`.
 
 export const diagramReducer = (
   state: DiagramState,
@@ -173,32 +161,113 @@ export const diagramReducer = (
     case 'edgesChange':
       return { ...state, edges: applyEdgeChanges(action.changes, state.edges) };
 
-    case 'connect':
-      // For now: a plain edge. Later: open the relationship chooser, then set
-      // edge `data.kind` and direction based on the chosen vazba.
-      return { ...state, edges: addEdge(action.connection, state.edges) };
+    case 'connect': {
+      const edgeId = action.id ?? crypto.randomUUID();
+      const c = action.connection;
+      const conn = action.swap
+        ? {
+            source: c.target,
+            target: c.source,
+            sourceHandle: c.targetHandle,
+            targetHandle: c.sourceHandle,
+          }
+        : c;
+      return {
+        ...state,
+        edges: addEdge(
+          {
+            ...conn,
+            id: edgeId,
+            ...(action.kind ? { data: { kind: action.kind } } : {}),
+          },
+          state.edges,
+        ),
+      };
+    }
+
+    case 'setEdgeKind':
+      return {
+        ...state,
+        edges: state.edges.map((edge) => {
+          if (edge.id !== action.edgeId) return edge;
+          const base = action.swap
+            ? {
+                ...edge,
+                source: edge.target,
+                target: edge.source,
+                sourceHandle: edge.targetHandle,
+                targetHandle: edge.sourceHandle,
+              }
+            : edge;
+          return {
+            ...base,
+            data:
+              action.kind === 'obecny'
+                ? { ...base.data, kind: action.kind }
+                : {
+                    ...base.data,
+                    kind: action.kind,
+                    label: undefined,
+                    vztahIri: undefined,
+                  },
+          };
+        }),
+      };
+
+    case 'setEdgeVztah':
+      return {
+        ...state,
+        edges: state.edges.map((e) =>
+          e.id === action.edgeId && e.data?.kind === 'obecny'
+            ? {
+                ...e,
+                data: {
+                  ...e.data,
+                  label: action.vztah.název?.cs,
+                  vztahIri: getConceptIri(action.vztah),
+                },
+              }
+            : e,
+        ),
+      };
+
+    case 'setEdgeBends':
+      return {
+        ...state,
+        edges: state.edges.map((e) =>
+          e.id === action.edgeId
+            ? {
+                ...e,
+                data: {
+                  ...e.data,
+                  bends: action.bends?.length ? action.bends : undefined,
+                },
+              }
+            : e,
+        ),
+      };
+
     case 'init':
       return buildDefaultDiagram(action.concepts);
 
     case 'applyLayout':
       return {
-        ...state,
         nodes: state.nodes.map((n) =>
           action.positions[n.id]
             ? { ...n, position: action.positions[n.id] }
             : n,
         ),
+        edges: state.edges.map((e) =>
+          e.data?.bends ? { ...e, data: { ...e.data, bends: undefined } } : e,
+        ),
       };
 
     case 'placeTrida': {
-      // Only one node per Třída.
       const tridaId = getConceptId(action.concept);
       if (state.nodes.some((n) => getConceptId(n.data.concept) === tridaId)) {
         return state;
       }
 
-      // A Vlastnost can sit on only one Třída at a time — don't auto-steal
-      // ones already assigned elsewhere.
       const assigned = new Set(
         state.nodes.flatMap((n) => n.data.vlastnosti.map(getConceptId)),
       );
@@ -225,7 +294,6 @@ export const diagramReducer = (
       if (!state.nodes.some((n) => n.id === action.targetNodeId)) return state;
 
       const nodes = state.nodes.map((node) => {
-        // attach to the target (no-op if already there)
         if (node.id === action.targetNodeId) {
           if (node.data.vlastnosti.some((v) => getConceptId(v) === vlId)) {
             return node;
@@ -239,7 +307,6 @@ export const diagramReducer = (
           };
         }
 
-        // remove from any other Třída (one Třída at a time)
         if (node.data.vlastnosti.some((v) => getConceptId(v) === vlId)) {
           return {
             ...node,

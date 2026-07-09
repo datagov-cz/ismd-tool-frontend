@@ -1,4 +1,3 @@
-// hooks/withHistory.ts
 import type { Reducer } from 'react';
 
 import type { DiagramAction } from '../model/diagram';
@@ -9,7 +8,6 @@ export type HistoryState<S> = {
   past: S[];
   present: S;
   future: S[];
-  /** true while a pointer drag is in flight, so we snapshot only once per drag */
   inDrag: boolean;
 };
 
@@ -26,17 +24,16 @@ function decide(action: HistoryAction, inDrag: boolean): Decision {
         const moving = changes.some(
           (c) => c.type === 'position' && c.dragging === true,
         );
-        // first move of a drag → snapshot; later moves → skip; release → skip
         if (moving) return { commit: !inDrag, inDrag: true };
         return inDrag
-          ? { commit: false, inDrag: false } // drag released
-          : { commit: true, inDrag: false }; // discrete (keyboard) move
+          ? { commit: false, inDrag: false }
+          : { commit: true, inDrag: false };
       }
 
       const structural = changes.some(
         (c) => c.type === 'remove' || c.type === 'add' || c.type === 'replace',
       );
-      return { commit: structural, inDrag }; // ignore pure select / dimensions
+      return { commit: structural, inDrag };
     }
 
     case 'edgesChange':
@@ -45,7 +42,6 @@ function decide(action: HistoryAction, inDrag: boolean): Decision {
         inDrag,
       };
 
-    // connect, drop, add-concept, … — every other mutation is one undo step
     default:
       return { commit: true, inDrag };
   }
@@ -56,7 +52,6 @@ export function withHistory<S>(
 ): Reducer<HistoryState<S>, HistoryAction> {
   return (state, action) => {
     const { past, present, future, inDrag } = state;
-    console.log(state, 'test');
     if (action.type === 'undo') {
       if (past.length === 0) return state;
       return {

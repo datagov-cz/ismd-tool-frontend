@@ -24,3 +24,13 @@ export const parseConceptDrag = (
     return null;
   }
 };
+
+export const getConceptFromDragEvent = (e: React.DragEvent): Concept | null => {
+  const raw = e.dataTransfer.getData('application/x-concept');
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as Concept;
+  } catch {
+    return null;
+  }
+};

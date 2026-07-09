@@ -12,7 +12,7 @@ const AgendaRef = z.object({
   code: z.string().optional(),
 });
 
-const MultiLangueModelSchema = z
+export const MultiLangueModelSchema = z
   .array(
     z.object({
       languageTag: z.string(),

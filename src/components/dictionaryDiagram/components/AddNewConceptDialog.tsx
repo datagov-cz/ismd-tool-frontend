@@ -11,9 +11,12 @@ import {
   useGetOntologyDetail,
 } from '@/api/generated';
 import { normalizeFormData } from '@/components/conceptForm/ConceptCreate';
-import { NameModelSchema } from '@/components/conceptForm/schema/conceptFormSchema';
+import {
+  ConceptForm,
+  MultiLangueModelSchema,
+} from '@/components/conceptForm/schema/conceptFormSchema';
 import { type ConceptForm as ConceptFormValues } from '@/components/conceptForm/schema/conceptFormSchema';
-import { Input } from '@/components/shared/Input';
+import { LanguageInput } from '@/components/shared/LanguageInput';
 import { Select } from '@/components/shared/Select';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
@@ -28,7 +31,9 @@ function getDomain(url: string): string | null {
 }
 
 const AddNewConceptSchema = z.object({
-  nameModel: NameModelSchema,
+  nameModel: z.object({
+    name: MultiLangueModelSchema,
+  }),
   conceptTypeEnum: z.enum(['TRIDA', 'VLASTNOST', 'VZTAH']),
   type: z.string(),
 });
@@ -56,7 +61,7 @@ export const AddNewConceptDialog = ({
   const form = useForm<AddNewConceptValues>({
     resolver: zodResolver(AddNewConceptSchema),
     defaultValues: {
-      nameModel: { name: { cs: '' } },
+      nameModel: { name: [{ languageTag: 'cs', name: '' }] },
       conceptTypeEnum: 'TRIDA',
       type: '',
     },
@@ -123,12 +128,10 @@ export const AddNewConceptDialog = ({
           </span>
 
           <div className="space-y-2.5">
-            <Input
-              register={form.register}
-              name="nameModel.name.cs"
+            <LanguageInput<ConceptForm>
+              name="nameModel.name"
               label={t('NamingSection.NameLabel')}
               placeholder={t('NamingSection.NamePlaceholder')}
-              required
               anchor="name"
             />
             <Select

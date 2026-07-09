@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
-  // GovFormCheckbox,
   GovFormGroup,
   GovFormInput,
-  // GovFormLabel,
   GovIcon,
   GovTabs,
   GovTabsItem,
@@ -12,13 +10,15 @@ import clsx from 'clsx';
 
 import {
   type Concept,
-  // type ConceptKind,
+  type ConceptKind,
   getConceptId,
   getConceptKind,
   KIND_ICON,
   KIND_LABEL,
-} from '../model/concept';
-import { onConceptDragStart } from '../model/conceptDrag';
+} from '../../model/concept';
+import { onConceptDragStart } from '../../model/conceptDrag';
+
+import { FilterCheckbox } from './FilterCheckbox';
 
 export const DiagramConceptPicker = ({
   concepts,
@@ -28,27 +28,26 @@ export const DiagramConceptPicker = ({
   activeConceptIds: Set<string>;
 }) => {
   const [search, setSearch] = useState('');
-  // const [kinds, setKinds] = useState<Record<ConceptKind, boolean>>({
-  //   trida: false,
-  //   vlastnost: false,
-  //   vztah: false,
-  // });
+  const [kinds, setKinds] = useState<Record<ConceptKind, boolean>>({
+    trida: false,
+    vlastnost: false,
+    vztah: false,
+  });
 
-  // const toggleKind = (kind: ConceptKind) =>
-  //   setKinds((prev) => ({ ...prev, [kind]: !prev[kind] }));
+  const toggleKind = (kind: ConceptKind) =>
+    setKinds((prev) => ({ ...prev, [kind]: !prev[kind] }));
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    // const noKindFilter = !kinds.trida && !kinds.vlastnost && !kinds.vztah;
+    const noKindFilter = !kinds.trida && !kinds.vlastnost && !kinds.vztah;
 
     return concepts.filter((concept) => {
       const matchesName =
         !query || !!concept.název?.cs?.toLowerCase().includes(query);
-      // const matchesKind = noKindFilter || kinds[getConceptKind(concept)];
-      // return matchesName && matchesKind;
-      return matchesName;
+      const matchesKind = noKindFilter || kinds[getConceptKind(concept)];
+      return matchesName && matchesKind;
     });
-  }, [concepts, search]);
+  }, [concepts, search, kinds]);
 
   return (
     <div className="flex-300 bg-white shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] rounded-md py-2 px-4">
@@ -64,7 +63,7 @@ export const DiagramConceptPicker = ({
               <GovIcon name="search" size="s" slot="icon-start" />
             </GovFormInput>
           </GovFormGroup>
-          {/* 
+
           <div className="flex gap-4 pt-2">
             <FilterCheckbox
               label="Třídy"
@@ -81,7 +80,7 @@ export const DiagramConceptPicker = ({
               checked={kinds.vztah}
               onToggle={() => toggleKind('vztah')}
             />
-          </div> */}
+          </div>
 
           <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1">
             {filtered.map((item, index) => (
@@ -105,37 +104,6 @@ export const DiagramConceptPicker = ({
   );
 };
 
-// const FilterCheckbox = ({
-//   label,
-//   checked,
-//   onToggle,
-// }: {
-//   label: string;
-//   checked: boolean;
-//   onToggle: (_checked: boolean) => void;
-// }) => {
-//   const ref = useRef<any>(null);
-
-//   useEffect(() => {
-//     const el = ref.current;
-//     if (!el) return;
-
-//     const handler = () => onToggle(Boolean(el.checked));
-//     el.addEventListener('gov-change', handler);
-//     el.addEventListener('change', handler);
-//     return () => {
-//       el.removeEventListener('gov-change', handler);
-//       el.removeEventListener('change', handler);
-//     };
-//   }, [onToggle]);
-
-//   return (
-//     <GovFormCheckbox ref={ref} size="s" checked={checked}>
-//       <GovFormLabel slot="label">{label}</GovFormLabel>
-//     </GovFormCheckbox>
-//   );
-// };
-
 export const DiagramPickerConcept = ({
   concept,
   active,
@@ -145,11 +113,7 @@ export const DiagramPickerConcept = ({
 }) => {
   const kind = getConceptKind(concept);
 
-  // Třída places a node (once it's there, can't place again).
-  // Vlastnost can always be (re)assigned to a Třída node.
-  // Vztah has no drop target yet.
-  const draggable =
-    kind === 'vlastnost' ? true : kind === 'trida' ? !active : false;
+  const draggable = !active;
 
   return (
     <div

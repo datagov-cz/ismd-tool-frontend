@@ -9,7 +9,13 @@ export const layoutWithDagre = (
   direction: 'TB' | 'LR' = 'TB',
 ): Record<string, XYPosition> => {
   const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: direction, nodesep: 10, ranksep: 100 });
+
+  const spacing =
+    direction === 'TB'
+      ? { nodesep: 70, ranksep: 130 }
+      : { nodesep: 90, ranksep: 160 };
+
+  g.setGraph({ rankdir: direction, ...spacing, edgesep: 40 });
 
   for (const node of nodes) {
     g.setNode(node.id, {
