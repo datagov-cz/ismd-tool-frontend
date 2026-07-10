@@ -244,6 +244,8 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
 
+    const wasOffline = !onlineManager.isOnline();
+
     const originalLanguageTags = {
       name: Object.keys(conceptDetail?.['název'] ?? {}),
       altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),
@@ -257,17 +259,17 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         data: normalizeFormData(formData, originalLanguageTags),
       },
       {
-        // Toast/invalidation/draft-clear live in mutation defaults.
-        onSuccess: (response) => {
-          router.push(`/concept/${response.data?.slug}`);
-        },
+        onSuccess: wasOffline
+          ? undefined
+          : (response) => {
+              router.push(`/concept/${response.data?.slug}`);
+            },
       },
     );
 
-    if (!onlineManager.isOnline()) {
+    if (wasOffline) {
       clearFormDraft(storageKey);
       toast(tOffline('SavedOffline'), { position: 'bottom-right' });
-      router.push(`/concept/${slug}`);
     }
   };
 

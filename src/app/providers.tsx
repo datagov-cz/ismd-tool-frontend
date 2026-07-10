@@ -49,7 +49,7 @@ export default function Providers({
 
   useEffect(() => {
     if (
-      process.env.NODE_ENV === 'production' &&
+      !process.env.NEXT_PUBLIC_DISABLE_SW &&
       typeof window !== 'undefined' &&
       'serviceWorker' in navigator
     ) {

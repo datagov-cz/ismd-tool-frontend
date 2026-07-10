@@ -4,6 +4,7 @@ import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { onlineManager } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import {
@@ -91,21 +92,27 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const graphName = data?.data?.ontologyMetadata?.graphName;
   const storageKey = draftKeys.conceptCreate(ontology);
 
-  const handleSubmit = (formData: ConceptFormValues) => {
+  const handleSubmit = (
+    formData: ConceptFormValues,
+    form: UseFormReturn<ConceptFormValues>,
+  ) => {
+    const wasOffline = !onlineManager.isOnline();
+
     createConcept(
       { slug: ontology, data: normalizeFormData(formData) },
       {
-        // Toast/invalidation/draft-clear live in mutation defaults.
-        onSuccess: (response) => {
-          router.push(`/concept/${response.data?.slug}`);
-        },
+        onSuccess: wasOffline
+          ? undefined
+          : (response) => {
+              router.push(`/concept/${response.data?.slug}`);
+            },
       },
     );
 
-    if (!onlineManager.isOnline()) {
+    if (wasOffline) {
+      form.reset();
       clearFormDraft(storageKey);
       toast(tOffline('SavedOffline'), { position: 'bottom-right' });
-      router.push(`/dictionary/${ontology}`);
     }
   };
 
