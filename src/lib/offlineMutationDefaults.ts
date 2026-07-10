@@ -15,19 +15,10 @@ import { clearFormDraft } from '@/hooks/useFormDraft';
 import { draftKeys } from '@/lib/draftKeys';
 import messages from '../../messages/cs.json';
 
-// Toasts here fire on mutation resume, possibly after the originating form
-// unmounted or after a page reload — no React context, so no useTranslations.
 const t = createTranslator({ locale: 'cs', messages });
 
 /**
- * Defaults give paused mutations a mutationFn after page reload
- * (functions are not serializable, so resumePausedMutations() relies on
- * these) and centralize success/error side effects so they also run when
- * a mutation resumes outside its originating component.
- *
- * Forms must NOT toast or invalidate in their own callbacks — only
- * navigation belongs at the component level. DictionaryEditForm must not
- * pass hook-level callbacks (they would shallow-override these defaults).
+ * Offline mutation defaults are handlers that trigger when user gets back online
  */
 export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
   queryClient.setMutationDefaults(['createOntology'], {
@@ -47,9 +38,8 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
     onSuccess: (response) => {
       const slug = response.data?.slug ?? '';
       clearFormDraft(draftKeys.ontologyEdit(slug));
-      toast.success(t('DictionaryDetail.EditOntology.SuccessMessage'), {
-        position: 'bottom-right',
-      });
+      toast.success(t('DictionaryDetail.EditOntology.SuccessMessage'));
+
       return Promise.all([
         queryClient.invalidateQueries({
           queryKey: getGetOntologyDetailQueryKey(slug),
@@ -59,19 +49,15 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
         }),
       ]);
     },
-    onError: () =>
-      toast.error(t('DictionaryDetail.EditOntology.ErrorMessage'), {
-        position: 'bottom-right',
-      }),
+    onError: () => toast.error(t('DictionaryDetail.EditOntology.ErrorMessage')),
   });
 
   queryClient.setMutationDefaults(['createConcept'], {
     ...getCreateConceptMutationOptions(),
     onSuccess: (response, variables) => {
       clearFormDraft(draftKeys.conceptCreate(variables.slug));
-      toast.success(t('ConceptCreateWrapper.ToastSuccess'), {
-        position: 'bottom-right',
-      });
+      toast.success(t('ConceptCreateWrapper.ToastSuccess'));
+
       return Promise.all([
         queryClient.invalidateQueries({
           queryKey: getGetOntologyDetailQueryKey(variables.slug),
@@ -83,10 +69,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
         }),
       ]);
     },
-    onError: () =>
-      toast.error(t('ConceptCreateWrapper.ToastError'), {
-        position: 'bottom-right',
-      }),
+    onError: () => toast.error(t('ConceptCreateWrapper.ToastError')),
   });
 
   queryClient.setMutationDefaults(['editConcept'], {
@@ -94,9 +77,8 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
     onSuccess: (response) => {
       const slug = response.data?.slug ?? '';
       clearFormDraft(draftKeys.conceptEdit(slug));
-      toast.success(t('ConceptEditWrapper.ToastSuccess'), {
-        position: 'bottom-right',
-      });
+      toast.success(t('ConceptEditWrapper.ToastSuccess'));
+
       return Promise.all([
         queryClient.invalidateQueries({
           queryKey: getGetConceptDetailQueryKey(encodeURIComponent(slug)),
@@ -108,9 +90,6 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
         }),
       ]);
     },
-    onError: () =>
-      toast.error(t('ConceptEditWrapper.ToastError'), {
-        position: 'bottom-right',
-      }),
+    onError: () => toast.error(t('ConceptEditWrapper.ToastError')),
   });
 };

@@ -1,11 +1,9 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { onlineManager } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import {
   DescriptionModelDescription,
@@ -14,7 +12,8 @@ import {
   OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
-import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
+import { useFormDraft } from '@/hooks/useFormDraft';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { FormSection } from '../conceptForm/components/FormSection';
@@ -63,8 +62,8 @@ export const DictionaryEditForm = ({
   detail,
 }: DictionaryEditProps) => {
   const t = useTranslations('DictionaryDetail.EditOntology');
-  const tOffline = useTranslations('Offline');
   const router = useRouter();
+  const submitForm = useSubmitForm();
   const storageKey = draftKeys.ontologyEdit(metadata.slug ?? '');
 
   const buildValues = () => ({
@@ -103,25 +102,18 @@ export const DictionaryEditForm = ({
       emptyLangs,
     ) as DescriptionModelDescription;
 
-    editOntology(
-      {
+    submitForm({
+      mutate: editOntology,
+      variables: {
         data: {
           nameModel: { name },
           descriptionModel: { description },
         },
         ontologyId: ontologyID,
       },
-      {
-        // Toast/invalidation/draft-clear live in mutation defaults.
-        onSuccess: (res) => router.push(`/dictionary/${res.data?.slug}`),
-      },
-    );
-
-    if (!onlineManager.isOnline()) {
-      clearFormDraft(storageKey);
-      toast(tOffline('SavedOffline'), { position: 'bottom-right' });
-      router.push(`/dictionary/${metadata.slug}`);
-    }
+      onSuccess: (res) => router.push(`/dictionary/${res.data?.slug}`),
+      draftKey: storageKey,
+    });
   };
 
   return (

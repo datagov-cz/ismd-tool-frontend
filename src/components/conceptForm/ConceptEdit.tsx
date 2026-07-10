@@ -1,10 +1,8 @@
 'use client';
 
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
-import { onlineManager } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
 
 import {
   ConceptDetailModel,
@@ -12,7 +10,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
-import { clearFormDraft } from '@/hooks/useFormDraft';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
 import { normalizeFormData } from './ConceptCreate';
@@ -228,8 +226,8 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const { mutate: editConcept, isPending, isPaused } = useEditConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptEditWrapper');
-  const tOffline = useTranslations('Offline');
   const router = useRouter();
+  const submitForm = useSubmitForm();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
@@ -244,8 +242,6 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
 
-    const wasOffline = !onlineManager.isOnline();
-
     const originalLanguageTags = {
       name: Object.keys(conceptDetail?.['název'] ?? {}),
       altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),
@@ -253,24 +249,15 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       description: Object.keys(conceptDetail?.['popis'] ?? {}),
     };
 
-    editConcept(
-      {
+    submitForm({
+      mutate: editConcept,
+      variables: {
         conceptId: conceptMetadata.id,
         data: normalizeFormData(formData, originalLanguageTags),
       },
-      {
-        onSuccess: wasOffline
-          ? undefined
-          : (response) => {
-              router.push(`/concept/${response.data?.slug}`);
-            },
-      },
-    );
-
-    if (wasOffline) {
-      clearFormDraft(storageKey);
-      toast(tOffline('SavedOffline'), { position: 'bottom-right' });
-    }
+      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      draftKey: storageKey,
+    });
   };
 
   return (

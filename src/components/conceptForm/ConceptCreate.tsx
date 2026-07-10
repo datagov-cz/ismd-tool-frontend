@@ -1,18 +1,16 @@
 'use client';
 
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
-import { onlineManager } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { UseFormReturn } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import {
   CreateConceptBody,
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
-import { clearFormDraft } from '@/hooks/useFormDraft';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
 import { ConceptForm } from './ConceptForm';
@@ -86,8 +84,8 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const { mutate: createConcept, isPending, isPaused } = useCreateConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptCreateWrapper');
-  const tOffline = useTranslations('Offline');
   const router = useRouter();
+  const submitForm = useSubmitForm();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
   const storageKey = draftKeys.conceptCreate(ontology);
@@ -96,24 +94,13 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
     formData: ConceptFormValues,
     form: UseFormReturn<ConceptFormValues>,
   ) => {
-    const wasOffline = !onlineManager.isOnline();
-
-    createConcept(
-      { slug: ontology, data: normalizeFormData(formData) },
-      {
-        onSuccess: wasOffline
-          ? undefined
-          : (response) => {
-              router.push(`/concept/${response.data?.slug}`);
-            },
-      },
-    );
-
-    if (wasOffline) {
-      form.reset();
-      clearFormDraft(storageKey);
-      toast(tOffline('SavedOffline'), { position: 'bottom-right' });
-    }
+    submitForm({
+      mutate: createConcept,
+      variables: { slug: ontology, data: normalizeFormData(formData) },
+      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      draftKey: storageKey,
+      reset: () => form.reset(),
+    });
   };
 
   return (

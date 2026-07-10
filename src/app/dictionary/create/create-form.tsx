@@ -1,11 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { onlineManager } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { FormSection } from '@/components/conceptForm/components/FormSection';
@@ -15,7 +13,8 @@ import { HintSidebar } from '@/components/conceptForm/components/hint/HintSideba
 import { useFormHints } from '@/components/conceptForm/components/hint/useFormHints';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
-import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
+import { useFormDraft } from '@/hooks/useFormDraft';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { NAMESPACE } from '@/lib/constants';
 import { draftKeys } from '@/lib/draftKeys';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
@@ -55,6 +54,7 @@ export const CreateForm = () => {
 
   const { mutate, isPending, isPaused } = useCreateOntology();
   const { handleSubmit } = form;
+  const submitForm = useSubmitForm();
 
   const buildPayload = (data: OntologySchemaType): OntologyCreateModel => {
     const name = toLanguageMap(data.nameModel);
@@ -67,26 +67,18 @@ export const CreateForm = () => {
   };
 
   const onSubmit = (data: OntologySchemaType) => {
-    const wasOffline = !onlineManager.isOnline();
-
-    mutate(
-      { data: buildPayload(data) },
-      {
-        onSuccess: wasOffline
-          ? undefined
-          : (response) => {
-              if (response.data?.slug) {
-                router.push(`/dictionary/${response.data.slug}`);
-              }
-            },
+    submitForm({
+      mutate,
+      variables: { data: buildPayload(data) },
+      onSuccess: (response) => {
+        if (response.data?.slug) {
+          router.push(`/dictionary/${response.data.slug}`);
+        }
       },
-    );
-
-    if (wasOffline) {
-      form.reset();
-      clearFormDraft(draftKeys.ontologyCreate);
-      toast(t('Form.SavedOffline'));
-    }
+      draftKey: draftKeys.ontologyCreate,
+      reset: () => form.reset(),
+      offlineMessage: t('Form.SavedOffline'),
+    });
   };
 
   return (
