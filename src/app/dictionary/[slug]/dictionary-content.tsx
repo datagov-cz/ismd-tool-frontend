@@ -116,7 +116,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           userId={user.userId}
         />
       )}
-      <ValidationSidebox />
+      <ValidationSidebox concepts={ontologyMetadata.concepts} />
     </OntologyLayout>
   );
 };

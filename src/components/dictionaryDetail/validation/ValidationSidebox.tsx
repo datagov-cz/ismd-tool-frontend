@@ -10,7 +10,11 @@ import {
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { ValidationResult, ValidationResultSeverity } from '@/api/generated';
+import {
+  ConceptMetadataModel,
+  ValidationResult,
+  ValidationResultSeverity,
+} from '@/api/generated';
 import { Sidebox } from '@/components/shared/Sidebox';
 import { useValidationSideboxStore } from '@/store/validationBoxStore';
 
@@ -56,17 +60,20 @@ const ValidationAccordionSection = ({
   rules,
   severity,
   activeRuleName,
-  slug,
+  concepts,
 }: {
   rules: ValidationRule[];
   severity: ValidationResultSeverity;
   activeRuleName: string | null;
-  slug: string;
+  concepts?: ConceptMetadataModel[];
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
   const config = severityConfig[severity];
 
   if (rules.length === 0) return null;
+
+  const getConceptSlug = (concept: ValidationResult) =>
+    concepts?.find((m) => m.conceptIri === concept.value)?.slug || '';
 
   return (
     <GovAccordion className="space-y-2!">
@@ -116,7 +123,7 @@ const ValidationAccordionSection = ({
                   type="outlined"
                   color="primary"
                   size="xs"
-                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}-${result.focusNodeName}`}
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${getConceptSlug(result)}`}
                 >
                   {t('OpenConcept')}
                   <GovIcon
@@ -137,7 +144,11 @@ const ValidationAccordionSection = ({
 
 type ActiveFilters = Record<ValidationResultSeverity, boolean>;
 
-export const ValidationSidebox = () => {
+export const ValidationSidebox = ({
+  concepts,
+}: {
+  concepts?: ConceptMetadataModel[];
+}) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
 
   const isOpen = useValidationSideboxStore((state) => state.isOpen);
@@ -150,7 +161,6 @@ export const ValidationSidebox = () => {
     (state) => state.setActiveRuleName,
   );
   const timestamp = useValidationSideboxStore((state) => state.timestamp);
-  const slug = useValidationSideboxStore((state) => state.slug);
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     ERROR: true,
@@ -244,7 +254,7 @@ export const ValidationSidebox = () => {
                 rules={grouped.errors}
                 severity="ERROR"
                 activeRuleName={activeRuleName}
-                slug={slug}
+                concepts={concepts}
               />
             )}
             {activeFilters.WARNING && (
@@ -252,7 +262,7 @@ export const ValidationSidebox = () => {
                 rules={grouped.warnings}
                 severity="WARNING"
                 activeRuleName={activeRuleName}
-                slug={slug}
+                concepts={concepts}
               />
             )}
             {activeFilters.INFO && (
@@ -260,7 +270,7 @@ export const ValidationSidebox = () => {
                 rules={grouped.infos}
                 severity="INFO"
                 activeRuleName={activeRuleName}
-                slug={slug}
+                concepts={concepts}
               />
             )}
           </div>
