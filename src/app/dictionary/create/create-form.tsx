@@ -72,10 +72,6 @@ export const CreateForm = () => {
     mutate(
       { data: buildPayload(data) },
       {
-        // Toast + invalidation + draft-clear live in mutation defaults
-        // (offlineMutationDefaults.ts) so they also run on offline resume.
-        // Offline submits skip navigation: the mutation resumes later,
-        // possibly while the user is drafting something new on this page.
         onSuccess: wasOffline
           ? undefined
           : (response) => {
@@ -87,10 +83,6 @@ export const CreateForm = () => {
     );
 
     if (wasOffline) {
-      // Mutation is paused and persisted; the localStorage draft would only
-      // resurrect a duplicate on reload, so clear it now (matches old flow).
-      // reset() first: it re-triggers the autosave watcher (useFormDraft),
-      // which would rewrite the draft if clearFormDraft ran first.
       form.reset();
       clearFormDraft(draftKeys.ontologyCreate);
       toast(t('Form.SavedOffline'));
