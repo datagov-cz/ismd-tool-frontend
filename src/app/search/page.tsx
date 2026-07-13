@@ -204,6 +204,7 @@ const Search = () => {
                 modified={
                   item.lastModified ? new Date(item.lastModified) : undefined
                 }
+                conceptType={item.conceptType}
                 link={
                   item.source === 'ISMD'
                     ? `/concept/${item.slug}`
