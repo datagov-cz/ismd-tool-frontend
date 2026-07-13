@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  ConceptMetadataModelConceptType,
+} from '@/api/generated';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -25,6 +28,7 @@ type Props = {
   editAllowed: boolean;
   slug: string;
   relation?: { start: RelationItem; middle: RelationItem; end: RelationItem };
+  conceptType?: ConceptMetadataModelConceptType;
 };
 
 export const ConceptHeader = ({
@@ -37,6 +41,7 @@ export const ConceptHeader = ({
   editAllowed,
   slug,
   relation,
+  conceptType,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
@@ -162,6 +167,7 @@ export const ConceptHeader = ({
             editAllowed={editAllowed}
             slug={slug}
             iri={conceptDetail.iri}
+            conceptType={conceptType}
           />
         </div>
       </div>

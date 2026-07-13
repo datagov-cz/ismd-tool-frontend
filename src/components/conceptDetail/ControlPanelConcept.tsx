@@ -5,6 +5,7 @@ import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
+import { ConceptMetadataModelConceptType } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 import { ControlPanelButton } from '../dictionaryDetail/ControlPanelButton';
 import { DeleteDialog } from '../dictionaryDetail/DeleteDialog';
@@ -18,6 +19,7 @@ interface Props {
   editAllowed: boolean;
   slug: string;
   iri?: string;
+  conceptType?: ConceptMetadataModelConceptType;
 }
 
 export const ControlPanelConcept = ({
@@ -29,6 +31,7 @@ export const ControlPanelConcept = ({
   source,
   slug,
   iri,
+  conceptType,
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
@@ -140,6 +143,7 @@ export const ControlPanelConcept = ({
         name={name}
         type="CONCEPT"
         slug={slug}
+        conceptType={conceptType}
       />
     </div>
   );
