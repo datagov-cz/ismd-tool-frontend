@@ -1,5 +1,5 @@
 .law-content {
-  --law-selected-bg: var(--color-blue-200, #bfdbfe);
+  --law-selected-bg: var(--color-status-warning-100, #fff9e9);
 }
 
 .law-content [data-kind='cast'] > var,

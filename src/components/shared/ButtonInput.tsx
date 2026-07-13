@@ -9,7 +9,7 @@ export const ButtonInput = forwardRef<HTMLButtonElement, Props>(
       ref={ref}
       type={type}
       className={clsx(
-        'w-full border rounded-lg border-gray-border flex justify-between items-center py-2 px-4 text-card-description',
+        'w-full bg-white border rounded-lg border-gray-border flex justify-between items-center py-2 px-4 text-card-description',
         className,
       )}
       {...props}

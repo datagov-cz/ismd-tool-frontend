@@ -95,8 +95,8 @@ export interface ApiResponseDtoValidationReport {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }

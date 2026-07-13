@@ -347,13 +347,13 @@
     "No": "Ne"
   },
   "LegislativeSource": {
-    "SearchPlaceholder": "Vyhledat právní předpis",
+    "SearchPlaceholder": "Vyberte právní předpis a ustanovení",
     "Loading": "Načítání…",
     "NoResults": "Žádné výsledky",
     "Collapse": "Sbalit",
     "Expand": "Rozbalit",
-    "AddSource": "Zadejte právní předpis",
-    "AddAnother": "Přidat další právní předpis"
+    "SelectFragment": "Vybrat ustanovení",
+    "AddAnother": "Přidat další ustanovení"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
@@ -361,7 +361,13 @@
     "Error": "Soubor se nepodařilo stáhnout"
   },
   "DeleteDialog": {
-    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Title": {
+      "ONTOLOGY": "Jste si jistí, že chcete odstranit slovník?",
+      "CONCEPT": "Jste si jistí, že chcete odstranit pojem?",
+      "TRIDA": "Jste si jistí, že chcete odstranit třídu?",
+      "VLASTNOST": "Jste si jistí, že chcete odstranit vlastnost?",
+      "VZTAH": "Jste si jistí, že chcete odstranit vztah?"
+    },
     "Name": "Název",
     "No": "Ne",
     "Yes": "Ano"
@@ -451,6 +457,7 @@
     "Save": "Uložit",
     "Success": "Úspěšně uložený pojem",
     "Error": "Pojem se nepodařilo uložit",
+    "ValidationError": "Prosím opravte chyby ve formuláři.",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
@@ -561,6 +568,16 @@
       "RelationDomainPlaceholder": "Vyhledejte pojem",
       "RelationRangeLabel": "Cílový pojem",
       "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptDataLabel": "Údaje pojmu",
+    "LegalSourceAutofill": {
+      "SectionLabel": "Doplnění údajů z e-Sbírky",
+      "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu.",
+      "Optional": "volitelné",
+      "PrefilledSummary": "Ze zdroje byly předvyplněny základní údaje:",
+      "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
+      "NotFound": "Pro vybrané ustanovení nebyly nalezeny žádné údaje.",
+      "Success": "Údaje z e-Sbírky byly předvyplněny."
     },
     "ConceptMeaningSection": {
       "Label": "Význam pojmu",

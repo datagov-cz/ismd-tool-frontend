@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useGetConceptDetail } from '@/api/generated';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
+import { buildRelation } from '@/components/conceptDetail/lib/buildRelation';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
@@ -62,12 +63,17 @@ export const ConceptContent = ({ slug }: Props) => {
         ontology={ontology}
         conceptDetail={conceptDetail}
         conceptId={conceptMetadata.id}
-        isPublished={conceptMetadata.isPublished}
         commentsCount={conceptMetadata.comments?.length ?? 0}
         loggedIn={!!user?.userId}
         editAllowed={conceptMetadata.user?.userId === user?.userId || isAdmin}
         source={'ISMD'}
         slug={slug}
+        conceptType={conceptMetadata.conceptType}
+        relation={
+          conceptMetadata.conceptType === 'VZTAH'
+            ? buildRelation(conceptDetail, slug)
+            : undefined
+        }
       />
 
       <ConceptLayout
