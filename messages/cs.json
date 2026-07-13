@@ -351,7 +351,13 @@
     "Error": "Soubor se nepodařilo stáhnout"
   },
   "DeleteDialog": {
-    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Title": {
+      "ONTOLOGY": "Jste si jistí, že chcete odstranit slovník?",
+      "CONCEPT": "Jste si jistí, že chcete odstranit pojem?",
+      "TRIDA": "Jste si jistí, že chcete odstranit třídu?",
+      "VLASTNOST": "Jste si jistí, že chcete odstranit vlastnost?",
+      "VZTAH": "Jste si jistí, že chcete odstranit vztah?"
+    },
     "Name": "Název",
     "No": "Ne",
     "Yes": "Ano"

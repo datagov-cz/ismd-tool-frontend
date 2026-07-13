@@ -68,6 +68,7 @@ export const ConceptContent = ({ slug }: Props) => {
         editAllowed={conceptMetadata.user?.userId === user?.userId || isAdmin}
         source={'ISMD'}
         slug={slug}
+        conceptType={conceptMetadata.conceptType}
         relation={
           conceptMetadata.conceptType === 'VZTAH'
             ? buildRelation(conceptDetail, slug)

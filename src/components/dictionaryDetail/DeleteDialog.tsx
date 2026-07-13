@@ -3,7 +3,11 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { useDeleteConcept, useDeleteOntology } from '@/api/generated';
+import {
+  ConceptMetadataModelConceptType,
+  useDeleteConcept,
+  useDeleteOntology,
+} from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 interface DeleteDialogProps {
@@ -12,6 +16,7 @@ interface DeleteDialogProps {
   id: number;
   name: string;
   type: 'ONTOLOGY' | 'CONCEPT';
+  conceptType?: ConceptMetadataModelConceptType;
   slug: string;
 }
 
@@ -22,10 +27,13 @@ export const DeleteDialog = ({
   name,
   type,
   slug,
+  conceptType,
 }: DeleteDialogProps) => {
   const t = useTranslations('DeleteDialog');
   const router = useRouter();
   const queryInvalidate = useQueryInvalidator();
+  const titleKey =
+    type === 'ONTOLOGY' ? 'ONTOLOGY' : (conceptType ?? 'CONCEPT');
 
   const ontologyMutation = useDeleteOntology({
     mutation: {
@@ -74,7 +82,7 @@ export const DeleteDialog = ({
       open={open}
       className="fixed z-100"
     >
-      <h2 slot="title">{t('Title')}</h2>
+      <h2 slot="title">{t(`Title.${titleKey}`)}</h2>
       <p>
         <span>{t('Name')}:</span> {name}
       </p>
