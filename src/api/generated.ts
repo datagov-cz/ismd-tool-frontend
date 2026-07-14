@@ -38,6 +38,7 @@ export const ConceptMetadataModelConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptMetadataModel {
@@ -124,9 +125,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -185,6 +186,7 @@ export const ConceptCreateModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptCreateModel {
@@ -534,6 +536,7 @@ export const ConceptEditModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptEditModel {
@@ -656,6 +659,7 @@ export const SearchResultDtoConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export type SearchResultDtoMatchedBy =
@@ -959,6 +963,7 @@ export const MinimalConceptDtoConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface MinimalConceptDto {
