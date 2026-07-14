@@ -69,6 +69,7 @@ export const ConceptContent = ({ slug }: Props) => {
         source={'ISMD'}
         slug={slug}
         conceptType={conceptMetadata.conceptType}
+        ontologySlug={conceptMetadata.ontologySlug}
         relation={
           conceptMetadata.conceptType === 'VZTAH'
             ? buildRelation(conceptDetail, slug)

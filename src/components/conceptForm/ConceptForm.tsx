@@ -76,6 +76,7 @@ interface ConceptFormProps {
   defaultValues?: Partial<ConceptFormValues>;
   editing?: boolean;
   storageKey?: string;
+  conceptIri?: string;
 }
 
 export const ConceptForm = ({
@@ -85,6 +86,7 @@ export const ConceptForm = ({
   defaultValues: externalDefaults,
   editing,
   storageKey,
+  conceptIri,
 }: ConceptFormProps) => {
   const tConcept = useTranslations('CreateConcept');
 
@@ -144,7 +146,7 @@ export const ConceptForm = ({
         >
           <NamingSection />
           <TypesSection editing={editing} />
-          <ConceptMeaningSection />
+          <ConceptMeaningSection blockedIri={conceptIri} />
           <SourcesSection />
           <RightsAndObligationsSection />
           <ProclamationSection />

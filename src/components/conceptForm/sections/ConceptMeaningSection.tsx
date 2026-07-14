@@ -6,7 +6,11 @@ import { LanguageInput } from '@/components/shared/LanguageInput';
 import { FormSection } from '../components/FormSection';
 import { ConceptForm } from '../schema/conceptFormSchema';
 
-export const ConceptMeaningSection = () => {
+export const ConceptMeaningSection = ({
+  blockedIri,
+}: {
+  blockedIri?: string;
+}) => {
   const form = useFormContext();
   const t = useTranslations('CreateConcept.ConceptMeaningSection');
 
@@ -32,6 +36,7 @@ export const ConceptMeaningSection = () => {
           placeholder={t('SearchPlaceholder')}
           searchType="CLASS"
           searchSource="ALL"
+          blockedIri={blockedIri}
         />
       )}
       {form.watch('conceptType') === 'VZTAH' && (
@@ -42,6 +47,7 @@ export const ConceptMeaningSection = () => {
           placeholder={t('SearchPlaceholder')}
           searchType="RELATIONSHIP"
           searchSource="ALL"
+          blockedIri={blockedIri}
         />
       )}
       {form.watch('conceptType') === 'VLASTNOST' && (
@@ -52,6 +58,7 @@ export const ConceptMeaningSection = () => {
           placeholder={t('SearchPlaceholder')}
           searchType="PROPERTY"
           searchSource="ALL"
+          blockedIri={blockedIri}
         />
       )}
       <ConceptInput
