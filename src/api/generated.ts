@@ -38,6 +38,7 @@ export const ConceptMetadataModelConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptMetadataModel {
@@ -94,9 +95,14 @@ export interface ApiResponseDtoValidationReport {
   errorCode?: string;
 }
 
+export interface NkdResource {
+  iri?: string;
+  prefLabel?: string;
+}
+
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -118,6 +124,7 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  nkdResource?: NkdResource;
   warning?: boolean;
   info?: boolean;
   focusNodeName?: string;
@@ -147,52 +154,6 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
-}
-
-export interface ResolveConceptsRequest {
-  /** @minItems 1 */
-  iris: string[];
-}
-
-export interface ApiResponseDtoResolveConceptsResponse {
-  data?: ResolveConceptsResponse;
-  message?: string;
-  success?: boolean;
-  errorCode?: string;
-}
-
-export type ResolveConceptsResponseResolved = {
-  [key: string]: ResolvedConceptDto;
-};
-
-export interface ResolveConceptsResponse {
-  resolved?: ResolveConceptsResponseResolved;
-}
-
-export type ResolvedConceptDtoConceptName = { [key: string]: string };
-
-export type ResolvedConceptDtoOntologyName = { [key: string]: string };
-
-export type ResolvedConceptDtoSource =
-  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedConceptDtoSource = {
-  NKD: 'NKD',
-  ISMD: 'ISMD',
-  UNPUBLISHED: 'UNPUBLISHED',
-  ALL: 'ALL',
-} as const;
-
-export interface ResolvedConceptDto {
-  iri?: string;
-  conceptName?: ResolvedConceptDtoConceptName;
-  conceptSlug?: string;
-  ontologyIri?: string;
-  ontologyName?: ResolvedConceptDtoOntologyName;
-  source?: ResolvedConceptDtoSource;
-  resolvedDomain?: ResolvedConceptDto;
-  resolvedRange?: ResolvedConceptDto;
 }
 
 export type AltNameModelAltName = { [key: string]: string };
@@ -225,6 +186,7 @@ export const ConceptCreateModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptCreateModel {
@@ -300,6 +262,178 @@ export interface ApiResponseDtoConceptMetadataModel {
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface ApiResponseDtoLinkSnapshotDto {
+  data?: LinkSnapshotDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type LinkSnapshotDtoLinkPredicate =
+  (typeof LinkSnapshotDtoLinkPredicate)[keyof typeof LinkSnapshotDtoLinkPredicate];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoLinkPredicate = {
+  BROADER_CLASS: 'BROADER_CLASS',
+  SUPER_PROPERTY: 'SUPER_PROPERTY',
+  SUPER_RELATION: 'SUPER_RELATION',
+  EXACT_MATCH: 'EXACT_MATCH',
+} as const;
+
+export type LinkSnapshotDtoOrigin =
+  (typeof LinkSnapshotDtoOrigin)[keyof typeof LinkSnapshotDtoOrigin];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoOrigin = {
+  SELF_PUBLISHED: 'SELF_PUBLISHED',
+  LINK_TARGET: 'LINK_TARGET',
+} as const;
+
+export type LinkSnapshotDtoStatus =
+  (typeof LinkSnapshotDtoStatus)[keyof typeof LinkSnapshotDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoStatus = {
+  NO_DEVIATION: 'NO_DEVIATION',
+  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
+  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
+  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
+  QUERY_ERROR: 'QUERY_ERROR',
+  PENDING: 'PENDING',
+} as const;
+
+export type LinkSnapshotDtoAvailableActionsItem =
+  (typeof LinkSnapshotDtoAvailableActionsItem)[keyof typeof LinkSnapshotDtoAvailableActionsItem];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoAvailableActionsItem = {
+  UPDATE: 'UPDATE',
+  REMOVE: 'REMOVE',
+} as const;
+
+export interface LinkSnapshotDto {
+  snapshotId?: number;
+  owningConceptId?: number;
+  linkPredicate?: LinkSnapshotDtoLinkPredicate;
+  origin?: LinkSnapshotDtoOrigin;
+  nkdConcept?: NkdConceptRefDto;
+  snapshotAt?: string;
+  lastCheckedAt?: string;
+  status?: LinkSnapshotDtoStatus;
+  deviation?: PublishedConceptDeviationModel;
+  availableActions?: LinkSnapshotDtoAvailableActionsItem[];
+}
+
+export interface NkdConceptRefDto {
+  iri?: string;
+  label?: string;
+}
+
+export type NonLegalSourceDtoNázev = { [key: string]: string };
+
+export type NonLegalSourceDtoPopis = { [key: string]: string };
+
+export interface NonLegalSourceDto {
+  iri?: string;
+  url?: string;
+  typ?: string;
+  název?: NonLegalSourceDtoNázev;
+  popis?: NonLegalSourceDtoPopis;
+}
+
+export interface PropertyDeviationBoolean {
+  localValue?: boolean;
+  publishedValue?: boolean;
+  different?: boolean;
+}
+
+export interface PropertyDeviationListNonLegalSourceDto {
+  localValue?: NonLegalSourceDto[];
+  publishedValue?: NonLegalSourceDto[];
+  different?: boolean;
+}
+
+export interface PropertyDeviationListString {
+  localValue?: string[];
+  publishedValue?: string[];
+  different?: boolean;
+}
+
+export type PropertyDeviationMapStringObjectLocalValue = {
+  [key: string]: unknown;
+};
+
+export type PropertyDeviationMapStringObjectPublishedValue = {
+  [key: string]: unknown;
+};
+
+export interface PropertyDeviationMapStringObject {
+  localValue?: PropertyDeviationMapStringObjectLocalValue;
+  publishedValue?: PropertyDeviationMapStringObjectPublishedValue;
+  different?: boolean;
+}
+
+export type PropertyDeviationMapStringStringLocalValue = {
+  [key: string]: string;
+};
+
+export type PropertyDeviationMapStringStringPublishedValue = {
+  [key: string]: string;
+};
+
+export interface PropertyDeviationMapStringString {
+  localValue?: PropertyDeviationMapStringStringLocalValue;
+  publishedValue?: PropertyDeviationMapStringStringPublishedValue;
+  different?: boolean;
+}
+
+export interface PropertyDeviationString {
+  localValue?: string;
+  publishedValue?: string;
+  different?: boolean;
+}
+
+export type PublishedConceptDeviationModelStatus =
+  (typeof PublishedConceptDeviationModelStatus)[keyof typeof PublishedConceptDeviationModelStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PublishedConceptDeviationModelStatus = {
+  NO_DEVIATION: 'NO_DEVIATION',
+  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
+  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
+  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
+  QUERY_ERROR: 'QUERY_ERROR',
+  PENDING: 'PENDING',
+} as const;
+
+export interface PublishedConceptDeviationModel {
+  status?: PublishedConceptDeviationModelStatus;
+  errorMessage?: string;
+  typ?: PropertyDeviationListString;
+  název?: PropertyDeviationMapStringString;
+  'alternativní-název'?: PropertyDeviationMapStringObject;
+  definice?: PropertyDeviationMapStringString;
+  popis?: PropertyDeviationMapStringString;
+  identifikátor?: PropertyDeviationString;
+  'nadřazená-třída'?: PropertyDeviationListString;
+  'nadřazený-vztah'?: PropertyDeviationListString;
+  'nadřazená-vlastnost'?: PropertyDeviationListString;
+  'definiční-obor'?: PropertyDeviationString;
+  'obor-hodnot'?: PropertyDeviationString;
+  'ekvivalentní-pojem'?: PropertyDeviationListString;
+  'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
+  'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
+  'definující-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
+  'související-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
+  'způsob-sdílení-údajů'?: PropertyDeviationListString;
+  'způsob-získání-údajů'?: PropertyDeviationString;
+  'typ-obsahu-údajů'?: PropertyDeviationString;
+  'je-ppdf'?: PropertyDeviationBoolean;
+  ais?: PropertyDeviationString;
+  agenda?: PropertyDeviationString;
+  'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
 }
 
 export interface CommentCreateModel {
@@ -402,6 +536,7 @@ export const ConceptEditModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptEditModel {
@@ -524,6 +659,7 @@ export const SearchResultDtoConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export type SearchResultDtoMatchedBy =
@@ -672,23 +808,14 @@ export type GetOntologyDtoPublishedConceptDeviations = {
   [key: string]: PublishedConceptDeviationModel;
 };
 
+export type GetOntologyDtoLinkSnapshots = { [key: string]: LinkSnapshotDto[] };
+
 export interface GetOntologyDto {
   ontologyMetadata?: OntologyMetadataModel;
   ontologyDetail?: OntologyDetailModel;
   publishedOntologyDeviationModel?: PublishedOntologyDeviationModel;
   publishedConceptDeviations?: GetOntologyDtoPublishedConceptDeviations;
-}
-
-export type NonLegalSourceDtoNázev = { [key: string]: string };
-
-export type NonLegalSourceDtoPopis = { [key: string]: string };
-
-export interface NonLegalSourceDto {
-  iri?: string;
-  url?: string;
-  typ?: string;
-  název?: NonLegalSourceDtoNázev;
-  popis?: NonLegalSourceDtoPopis;
+  linkSnapshots?: GetOntologyDtoLinkSnapshots;
 }
 
 export type OntologyDetailModelNázev = { [key: string]: string };
@@ -707,98 +834,6 @@ export interface OntologyDetailModel {
   'počet-pojmů'?: number;
 }
 
-export interface PropertyDeviationBoolean {
-  localValue?: boolean;
-  publishedValue?: boolean;
-  different?: boolean;
-}
-
-export interface PropertyDeviationListNonLegalSourceDto {
-  localValue?: NonLegalSourceDto[];
-  publishedValue?: NonLegalSourceDto[];
-  different?: boolean;
-}
-
-export interface PropertyDeviationListString {
-  localValue?: string[];
-  publishedValue?: string[];
-  different?: boolean;
-}
-
-export type PropertyDeviationMapStringObjectLocalValue = {
-  [key: string]: unknown;
-};
-
-export type PropertyDeviationMapStringObjectPublishedValue = {
-  [key: string]: unknown;
-};
-
-export interface PropertyDeviationMapStringObject {
-  localValue?: PropertyDeviationMapStringObjectLocalValue;
-  publishedValue?: PropertyDeviationMapStringObjectPublishedValue;
-  different?: boolean;
-}
-
-export type PropertyDeviationMapStringStringLocalValue = {
-  [key: string]: string;
-};
-
-export type PropertyDeviationMapStringStringPublishedValue = {
-  [key: string]: string;
-};
-
-export interface PropertyDeviationMapStringString {
-  localValue?: PropertyDeviationMapStringStringLocalValue;
-  publishedValue?: PropertyDeviationMapStringStringPublishedValue;
-  different?: boolean;
-}
-
-export interface PropertyDeviationString {
-  localValue?: string;
-  publishedValue?: string;
-  different?: boolean;
-}
-
-export type PublishedConceptDeviationModelStatus =
-  (typeof PublishedConceptDeviationModelStatus)[keyof typeof PublishedConceptDeviationModelStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PublishedConceptDeviationModelStatus = {
-  NO_DEVIATION: 'NO_DEVIATION',
-  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
-  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
-  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
-  QUERY_ERROR: 'QUERY_ERROR',
-} as const;
-
-export interface PublishedConceptDeviationModel {
-  status?: PublishedConceptDeviationModelStatus;
-  errorMessage?: string;
-  typ?: PropertyDeviationListString;
-  název?: PropertyDeviationMapStringString;
-  'alternativní-název'?: PropertyDeviationMapStringObject;
-  definice?: PropertyDeviationMapStringString;
-  popis?: PropertyDeviationMapStringString;
-  identifikátor?: PropertyDeviationString;
-  'nadřazená-třída'?: PropertyDeviationListString;
-  'nadřazený-vztah'?: PropertyDeviationListString;
-  'nadřazená-vlastnost'?: PropertyDeviationListString;
-  'definiční-obor'?: PropertyDeviationString;
-  'obor-hodnot'?: PropertyDeviationString;
-  'ekvivalentní-pojem'?: PropertyDeviationListString;
-  'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
-  'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
-  'definující-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
-  'související-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
-  'způsob-sdílení-údajů'?: PropertyDeviationListString;
-  'způsob-získání-údajů'?: PropertyDeviationString;
-  'typ-obsahu-údajů'?: PropertyDeviationString;
-  'je-ppdf'?: PropertyDeviationBoolean;
-  ais?: PropertyDeviationString;
-  agenda?: PropertyDeviationString;
-  'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
-}
-
 export type PublishedOntologyDeviationModelStatus =
   (typeof PublishedOntologyDeviationModelStatus)[keyof typeof PublishedOntologyDeviationModelStatus];
 
@@ -809,6 +844,7 @@ export const PublishedOntologyDeviationModelStatus = {
   ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
   CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
   QUERY_ERROR: 'QUERY_ERROR',
+  PENDING: 'PENDING',
 } as const;
 
 export interface PublishedOntologyDeviationModel {
@@ -817,6 +853,32 @@ export interface PublishedOntologyDeviationModel {
   typ?: PropertyDeviationListString;
   název?: PropertyDeviationMapStringString;
   popis?: PropertyDeviationMapStringString;
+}
+
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
 }
 
 export type ResolvedLegalSourceDtoLevel =
@@ -893,10 +955,22 @@ export interface ApiResponseDtoListMinimalConceptDto {
 
 export type MinimalConceptDtoName = { [key: string]: string };
 
+export type MinimalConceptDtoConceptType =
+  (typeof MinimalConceptDtoConceptType)[keyof typeof MinimalConceptDtoConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MinimalConceptDtoConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
+} as const;
+
 export interface MinimalConceptDto {
   iri?: string;
   slug?: string;
   name?: MinimalConceptDtoName;
+  conceptType?: MinimalConceptDtoConceptType;
 }
 
 export interface ApiResponseDtoGetNkdOntologyListDto {
@@ -1584,99 +1658,6 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
 };
 
 /**
- * Pro pole IRI pojmů vrací mapu IRI → {conceptName, conceptSlug, ontologyIri, ontologyName, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. {@code conceptSlug} je vyplněn pouze pro ISMD pojmy; NKD pojmy se navigují podle IRI. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
- * @summary Získání metadat referencovaných pojmů
- */
-export const resolveConceptReferences = (
-  resolveConceptsRequest: ResolveConceptsRequest,
-  options?: SecondParameter<typeof axiosInstance>,
-  signal?: AbortSignal,
-) => {
-  return axiosInstance<ApiResponseDtoResolveConceptsResponse>(
-    {
-      url: `/api/ontology/concepts/resolve`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: resolveConceptsRequest,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getResolveConceptReferencesMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof resolveConceptReferences>>,
-    TError,
-    { data: ResolveConceptsRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof resolveConceptReferences>>,
-  TError,
-  { data: ResolveConceptsRequest },
-  TContext
-> => {
-  const mutationKey = ['resolveConceptReferences'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof resolveConceptReferences>>,
-    { data: ResolveConceptsRequest }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return resolveConceptReferences(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type ResolveConceptReferencesMutationResult = NonNullable<
-  Awaited<ReturnType<typeof resolveConceptReferences>>
->;
-export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
-export type ResolveConceptReferencesMutationError = unknown;
-
-/**
- * @summary Získání metadat referencovaných pojmů
- */
-export const useResolveConceptReferences = <
-  TError = unknown,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof resolveConceptReferences>>,
-      TError,
-      { data: ResolveConceptsRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof resolveConceptReferences>>,
-  TError,
-  { data: ResolveConceptsRequest },
-  TContext
-> => {
-  const mutationOptions = getResolveConceptReferencesMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
  * Vytvoří nový pojem (třídu, vlastnost nebo vztah) ve slovníku. Podporuje různé typy pojmů podle OFN standardů. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
  * @summary Vytvoření nového pojmu
  */
@@ -1763,6 +1744,95 @@ export const useCreateConcept = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateConceptMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Znovu načte propojený publikovaný pojem z NKD, obnoví lokální kopii a vrátí přepočítanou odchylku. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Aktualizace lokální kopie NKD pojmu
+ */
+export const updateLocalCopy = (
+  conceptId: number,
+  snapshotId: number,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoLinkSnapshotDto>(
+    {
+      url: `/api/concept/${conceptId}/localcopy/${snapshotId}/update`,
+      method: 'POST',
+      signal,
+    },
+    options,
+  );
+};
+
+export const getUpdateLocalCopyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateLocalCopy>>,
+    TError,
+    { conceptId: number; snapshotId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationKey = ['updateLocalCopy'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateLocalCopy>>,
+    { conceptId: number; snapshotId: number }
+  > = (props) => {
+    const { conceptId, snapshotId } = props ?? {};
+
+    return updateLocalCopy(conceptId, snapshotId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateLocalCopyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateLocalCopy>>
+>;
+
+export type UpdateLocalCopyMutationError = unknown;
+
+/**
+ * @summary Aktualizace lokální kopie NKD pojmu
+ */
+export const useUpdateLocalCopy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateLocalCopy>>,
+      TError,
+      { conceptId: number; snapshotId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationOptions = getUpdateLocalCopyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -6019,6 +6089,93 @@ export const useDeleteOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getDeleteOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Zruší propojení na publikovaný pojem v NKD a odstraní jeho lokální kopii. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Odstranění lokální kopie NKD pojmu
+ */
+export const removeLocalCopy = (
+  conceptId: number,
+  snapshotId: number,
+  options?: SecondParameter<typeof axiosInstance>,
+) => {
+  return axiosInstance<ApiResponseDtoVoid>(
+    {
+      url: `/api/concept/${conceptId}/localcopy/${snapshotId}`,
+      method: 'DELETE',
+    },
+    options,
+  );
+};
+
+export const getRemoveLocalCopyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeLocalCopy>>,
+    TError,
+    { conceptId: number; snapshotId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof removeLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationKey = ['removeLocalCopy'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof removeLocalCopy>>,
+    { conceptId: number; snapshotId: number }
+  > = (props) => {
+    const { conceptId, snapshotId } = props ?? {};
+
+    return removeLocalCopy(conceptId, snapshotId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveLocalCopyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof removeLocalCopy>>
+>;
+
+export type RemoveLocalCopyMutationError = unknown;
+
+/**
+ * @summary Odstranění lokální kopie NKD pojmu
+ */
+export const useRemoveLocalCopy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof removeLocalCopy>>,
+      TError,
+      { conceptId: number; snapshotId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof removeLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationOptions = getRemoveLocalCopyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
