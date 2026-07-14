@@ -29,6 +29,7 @@ type Props = {
   slug: string;
   relation?: { start: RelationItem; middle: RelationItem; end: RelationItem };
   conceptType?: ConceptMetadataModelConceptType;
+  ontologySlug?: string;
 };
 
 export const ConceptHeader = ({
@@ -42,6 +43,7 @@ export const ConceptHeader = ({
   slug,
   relation,
   conceptType,
+  ontologySlug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
@@ -67,7 +69,7 @@ export const ConceptHeader = ({
               {t('Main.ControlPanel.InOntology')}:
             </span>
             <Link
-              href={`/dictionary/${ontology.split(' ').join('-')}`}
+              href={`/dictionary/${ontologySlug}`}
               className="cursor-pointer"
             >
               <GovTag
