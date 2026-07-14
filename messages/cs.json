@@ -204,8 +204,8 @@
       "CreateAndAddRelationship": "Vytvořit vztah a vybrat",
       "Cancel": "Zrušit",
       "OtherConcept": "jiný pojem",
-      "SourceConcept": "Zdrojový pojem (jiný pojem)",
-      "DestinationConcept": "Cílový pojem (jiný pojem)",
+      "SourceConcept": "Definiční obor (jiný pojem)",
+      "DestinationConcept": "Obor hodnot (jiný pojem)",
       "Warning": "Nelze najít pojem v NKD/ISMD",
       "ShortQuery": "Hledaný výraz musí mít alspoň 4 znaky",
       "ShortQueryRPP": "Hledaný výraz musí mít alspoň 2 znaky",
@@ -412,7 +412,8 @@
     }
   },
   "Errors": {
-    "UnknownError": "Neznámý error"
+    "UnknownError": "Neznámý error",
+    "NameRequired": "Název je povinný"
   },
   "CreateOntology": {
     "Form": {
@@ -554,9 +555,9 @@
       "PropertyDomainPlaceholder": "Vyhledejte pojem",
       "PropertyDataTypeLabel": "Datový typ hodnoty",
       "PropertyDataTypePlaceholder": "Vyberte typ hodnoty",
-      "RelationDomainLabel": "Výchozí pojem",
+      "RelationDomainLabel": "Definiční obor (Výchozí pojem)",
       "RelationDomainPlaceholder": "Vyhledejte pojem",
-      "RelationRangeLabel": "Cílový pojem",
+      "RelationRangeLabel": "Obor hodnot (Cílový pojem)",
       "RelationRangePlaceholder": "Vyhledejte pojem"
     },
     "ConceptDataLabel": "Údaje pojmu",
