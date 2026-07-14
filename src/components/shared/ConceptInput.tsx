@@ -37,6 +37,7 @@ interface Props {
   searchSource: SearchSource;
   anchor?: string;
   layout?: 'grid' | 'flex';
+  blockedIri?: string;
 }
 
 export const ConceptInput = ({
@@ -49,6 +50,7 @@ export const ConceptInput = ({
   searchSource,
   anchor,
   layout = 'grid',
+  blockedIri,
 }: Props) => {
   const [query, setQuery] = useState('');
   const [showInput, setShowInput] = useState(true);
@@ -103,8 +105,11 @@ export const ConceptInput = ({
     });
 
   const allResults = useMemo<SearchResultDto[]>(
-    () => data?.pages.flatMap((page) => page.data?.results ?? []) ?? [],
-    [data],
+    () =>
+      data?.pages
+        .flatMap((page) => page.data?.results ?? [])
+        .filter((item) => item.iri !== blockedIri) ?? [],
+    [data, blockedIri],
   );
 
   const sentinelRef = useCallback(

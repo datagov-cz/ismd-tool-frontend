@@ -7,6 +7,7 @@ import {
   GovTag,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -43,6 +44,7 @@ interface Props {
   metaData?: OntologyMetadataModel;
   slug?: string;
   deviations?: GetOntologyDtoPublishedConceptDeviations;
+  isPublished?: boolean;
 }
 
 export const OntologyLayout = ({
@@ -59,6 +61,7 @@ export const OntologyLayout = ({
   slug,
   metaData,
   deviations,
+  isPublished,
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
@@ -138,24 +141,51 @@ export const OntologyLayout = ({
                 <GovIcon slot="icon-start" name="chevron-left" size="m" />
                 {t('Main.BackToHome')}
               </GovButton>
-              <div className="flex w-full justify-between">
-                <GovTag
-                  color="success"
-                  size="xs"
-                  type="subtle"
-                  className="w-fit [&_span]:font-bold!"
-                >
-                  <GovIcon
-                    slot="icon-start"
-                    name="journal-text"
-                    size="l"
-                    className="text-white"
-                  />
-                  {t('Main.Ontology')}
-                  <span> / {source}</span>
-                  {statusLabel && <span> / {statusLabel}</span>}
-                </GovTag>
-              </div>
+              <Link
+                href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
+                className="cursor-pointer! hover:underline"
+              >
+                <div className="flex w-full justify-between">
+                  <GovTag
+                    color={isPublished ? 'success' : 'secondary'}
+                    size="xs"
+                    type="subtle"
+                    className={clsx(
+                      'w-fit [&_span]:font-bold! [&_span]:cursor-pointer!',
+                    )}
+                  >
+                    <GovIcon
+                      slot="icon-start"
+                      name="journal-text"
+                      size="l"
+                      className="text-white"
+                    />
+                    <span
+                      className={clsx(
+                        !isPublished && 'text-status-warning-700!',
+                      )}
+                    >
+                      {t('Main.Ontology')}
+                    </span>
+                    <span
+                      className={clsx(
+                        !isPublished && 'text-status-warning-700',
+                      )}
+                    >
+                      {`/ ${source}`}
+                    </span>
+                    {statusLabel && (
+                      <span
+                        className={clsx(
+                          !isPublished && 'text-status-warning-700',
+                        )}
+                      >
+                        {`/ ${statusLabel}`}
+                      </span>
+                    )}
+                  </GovTag>
+                </div>
+              </Link>
               <h1 className="text-[32px] font-medium">
                 {title?.cs || title?.en || title?.sk}
               </h1>

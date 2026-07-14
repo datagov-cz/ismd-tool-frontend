@@ -287,7 +287,13 @@ export const Term = ({
       <span className={clsx('relative flex gap-2', hasSubterms && 'pb-3')}>
         <GovIcon
           slot="icon-start"
-          name="card-heading"
+          name={
+            data.typ?.includes('Vlastnost')
+              ? 'tag'
+              : data.typ?.includes('Vztah')
+                ? 'bezier2'
+                : 'card-heading'
+          }
           type="components"
           size="l"
           color="primary"

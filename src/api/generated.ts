@@ -38,6 +38,7 @@ export const ConceptMetadataModelConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptMetadataModel {
@@ -94,9 +95,14 @@ export interface ApiResponseDtoValidationReport {
   errorCode?: string;
 }
 
+export interface NkdResource {
+  iri?: string;
+  prefLabel?: string;
+}
+
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -118,9 +124,10 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
-  focusNodeName?: string;
+  nkdResource?: NkdResource;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -147,52 +154,6 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
-}
-
-export interface ResolveConceptsRequest {
-  /** @minItems 1 */
-  iris: string[];
-}
-
-export interface ApiResponseDtoResolveConceptsResponse {
-  data?: ResolveConceptsResponse;
-  message?: string;
-  success?: boolean;
-  errorCode?: string;
-}
-
-export type ResolveConceptsResponseResolved = {
-  [key: string]: ResolvedConceptDto;
-};
-
-export interface ResolveConceptsResponse {
-  resolved?: ResolveConceptsResponseResolved;
-}
-
-export type ResolvedConceptDtoConceptName = { [key: string]: string };
-
-export type ResolvedConceptDtoOntologyName = { [key: string]: string };
-
-export type ResolvedConceptDtoSource =
-  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedConceptDtoSource = {
-  NKD: 'NKD',
-  ISMD: 'ISMD',
-  UNPUBLISHED: 'UNPUBLISHED',
-  ALL: 'ALL',
-} as const;
-
-export interface ResolvedConceptDto {
-  iri?: string;
-  conceptName?: ResolvedConceptDtoConceptName;
-  conceptSlug?: string;
-  ontologyIri?: string;
-  ontologyName?: ResolvedConceptDtoOntologyName;
-  source?: ResolvedConceptDtoSource;
-  resolvedDomain?: ResolvedConceptDto;
-  resolvedRange?: ResolvedConceptDto;
 }
 
 export type AltNameModelAltName = { [key: string]: string };
@@ -225,6 +186,7 @@ export const ConceptCreateModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptCreateModel {
@@ -574,6 +536,7 @@ export const ConceptEditModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptEditModel {
@@ -696,6 +659,7 @@ export const SearchResultDtoConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export type SearchResultDtoMatchedBy =
@@ -891,6 +855,32 @@ export interface PublishedOntologyDeviationModel {
   popis?: PropertyDeviationMapStringString;
 }
 
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
+}
+
 export type ResolvedLegalSourceDtoLevel =
   (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
 
@@ -965,10 +955,22 @@ export interface ApiResponseDtoListMinimalConceptDto {
 
 export type MinimalConceptDtoName = { [key: string]: string };
 
+export type MinimalConceptDtoConceptType =
+  (typeof MinimalConceptDtoConceptType)[keyof typeof MinimalConceptDtoConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MinimalConceptDtoConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
+} as const;
+
 export interface MinimalConceptDto {
   iri?: string;
   slug?: string;
   name?: MinimalConceptDtoName;
+  conceptType?: MinimalConceptDtoConceptType;
 }
 
 export interface ApiResponseDtoGetNkdOntologyListDto {
@@ -1651,99 +1653,6 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * Pro pole IRI pojmů vrací mapu IRI → {conceptName, conceptSlug, ontologyIri, ontologyName, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. {@code conceptSlug} je vyplněn pouze pro ISMD pojmy; NKD pojmy se navigují podle IRI. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
- * @summary Získání metadat referencovaných pojmů
- */
-export const resolveConceptReferences = (
-  resolveConceptsRequest: ResolveConceptsRequest,
-  options?: SecondParameter<typeof axiosInstance>,
-  signal?: AbortSignal,
-) => {
-  return axiosInstance<ApiResponseDtoResolveConceptsResponse>(
-    {
-      url: `/api/ontology/concepts/resolve`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: resolveConceptsRequest,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getResolveConceptReferencesMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof resolveConceptReferences>>,
-    TError,
-    { data: ResolveConceptsRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof resolveConceptReferences>>,
-  TError,
-  { data: ResolveConceptsRequest },
-  TContext
-> => {
-  const mutationKey = ['resolveConceptReferences'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof resolveConceptReferences>>,
-    { data: ResolveConceptsRequest }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return resolveConceptReferences(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type ResolveConceptReferencesMutationResult = NonNullable<
-  Awaited<ReturnType<typeof resolveConceptReferences>>
->;
-export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
-export type ResolveConceptReferencesMutationError = unknown;
-
-/**
- * @summary Získání metadat referencovaných pojmů
- */
-export const useResolveConceptReferences = <
-  TError = unknown,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof resolveConceptReferences>>,
-      TError,
-      { data: ResolveConceptsRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof resolveConceptReferences>>,
-  TError,
-  { data: ResolveConceptsRequest },
-  TContext
-> => {
-  const mutationOptions = getResolveConceptReferencesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

@@ -91,6 +91,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           ? t('Main.DictionaryStatus.Published')
           : t('Main.DictionaryStatus.Draft')
       }
+      isPublished={ontologyMetadata.isPublished}
       concepts={ontologyDetail.pojmy}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}

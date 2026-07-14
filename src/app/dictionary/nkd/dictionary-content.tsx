@@ -55,7 +55,9 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
       title={ontologyDetail.název}
       popis={ontologyDetail.popis}
       concepts={ontologyDetail.pojmy}
+      statusLabel={t('Main.DictionaryStatus.Published')}
       conceptCount={ontologyDetail.pojmy?.length}
+      isPublished={true}
       getConceptSlug={nkdSlug}
       getRelatedTerms={(parent) =>
         ontologyDetail.pojmy

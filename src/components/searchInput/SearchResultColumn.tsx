@@ -82,6 +82,7 @@ export const SearchResultColumn = ({
                   query={query}
                   href={getItemHref(item)}
                   onClose={onClose}
+                  conceptType={item.conceptType}
                 />
               </li>
             ))}
