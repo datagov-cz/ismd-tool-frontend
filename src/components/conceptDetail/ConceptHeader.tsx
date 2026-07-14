@@ -92,41 +92,53 @@ export const ConceptHeader = ({
         </div>
         <div className="flex justify-between gap-3 w-full">
           <div>
-            <div className="gap-3 flex pb-2">
+            <div className="flex pb-2 flex-col">
               <h1 className="text-xl lg:text-2xl font-medium">
                 {conceptDetail.název?.cs}
               </h1>
-              <GovTag
-                color="primary"
-                type="subtle"
-                size="xs"
-                className="h-fit whitespace-nowrap my-1!"
-              >
-                <GovIcon
-                  name="card-heading"
-                  slot="icon-start"
-                  type="components"
-                />
-                {conceptDetail.typ
-                  ?.filter((item: string) => item !== 'Koncept')
-                  .map(
-                    (item: string, index, arr) =>
-                      item + ` ${index < arr.length - 1 ? '/ ' : ''}`,
-                  )}
-              </GovTag>
-              <GovTag
-                color={isPublic ? 'success' : 'neutral'}
-                type="subtle"
-                size="xs"
-                className="h-fit whitespace-nowrap my-1!"
-              >
-                <GovIcon
-                  name={isPublic ? 'globe' : 'lock-fill'}
-                  slot="icon-start"
-                  type="components"
-                />
-                {isPublic ? t('Main.Public') : t('Main.NonPublic')}
-              </GovTag>
+              <div className="space-x-1">
+                <GovTag
+                  color="primary"
+                  type="subtle"
+                  size="xs"
+                  className="h-fit whitespace-nowrap my-1!"
+                >
+                  <GovIcon
+                    name={
+                      conceptType === 'VZTAH'
+                        ? 'bezier2'
+                        : conceptType === 'VLASTNOST'
+                          ? 'tag'
+                          : 'card-heading'
+                    }
+                    slot="icon-start"
+                    type="components"
+                  />
+                  <span className="font-bold">
+                    {conceptDetail.typ
+                      ?.filter((item: string) => item !== 'Koncept')
+                      .map(
+                        (item: string, index, arr) =>
+                          item + ` ${index < arr.length - 1 ? '/ ' : ''}`,
+                      )}
+                  </span>
+                </GovTag>
+                <GovTag
+                  color={isPublic ? 'success' : 'neutral'}
+                  type="subtle"
+                  size="xs"
+                  className="h-fit whitespace-nowrap my-1!"
+                >
+                  <GovIcon
+                    name={isPublic ? 'globe' : 'lock-fill'}
+                    slot="icon-start"
+                    type="components"
+                  />
+                  <span className="font-bold">
+                    {isPublic ? t('Main.Public') : t('Main.NonPublic')}
+                  </span>
+                </GovTag>
+              </div>
             </div>
             <div>
               {conceptDetail['název'] &&
