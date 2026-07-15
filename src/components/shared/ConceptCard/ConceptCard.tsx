@@ -3,6 +3,7 @@ import { GovIcon } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
+import { SearchResultDtoConceptType } from '@/api/generated';
 import { CardStat } from '../DictionaryCard/CardStat';
 
 export type DictionaryCardProps = {
@@ -10,6 +11,7 @@ export type DictionaryCardProps = {
   link: string;
   text?: string;
   modified?: Date;
+  conceptType?: SearchResultDtoConceptType;
 };
 
 const TruncatedText = ({ text }: { text: string }) => {
@@ -51,6 +53,7 @@ export const ConceptCard = ({
   link,
   text,
   modified,
+  conceptType,
 }: DictionaryCardProps) => {
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
@@ -62,7 +65,13 @@ export const ConceptCard = ({
       >
         <GovIcon
           slot="icon-start"
-          name="card-heading"
+          name={
+            conceptType === 'VZTAH'
+              ? 'bezier2'
+              : conceptType === 'VLASTNOST'
+                ? 'tag'
+                : 'card-heading'
+          }
           type="components"
           size="m"
           color="primary"

@@ -204,8 +204,8 @@
       "CreateAndAddRelationship": "Vytvořit vztah a vybrat",
       "Cancel": "Zrušit",
       "OtherConcept": "jiný pojem",
-      "SourceConcept": "Zdrojový pojem (jiný pojem)",
-      "DestinationConcept": "Cílový pojem (jiný pojem)",
+      "SourceConcept": "Definiční obor (jiný pojem)",
+      "DestinationConcept": "Obor hodnot (jiný pojem)",
       "Warning": "Nelze najít pojem v NKD/ISMD",
       "ShortQuery": "Hledaný výraz musí mít alspoň 4 znaky",
       "ShortQueryRPP": "Hledaný výraz musí mít alspoň 2 znaky",
@@ -337,13 +337,13 @@
     "No": "Ne"
   },
   "LegislativeSource": {
-    "SearchPlaceholder": "Vyhledat právní předpis",
+    "SearchPlaceholder": "Vyberte právní předpis a ustanovení",
     "Loading": "Načítání…",
     "NoResults": "Žádné výsledky",
     "Collapse": "Sbalit",
     "Expand": "Rozbalit",
-    "AddSource": "Zadejte právní předpis",
-    "AddAnother": "Přidat další právní předpis"
+    "SelectFragment": "Vybrat ustanovení",
+    "AddAnother": "Přidat další ustanovení"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
@@ -351,7 +351,13 @@
     "Error": "Soubor se nepodařilo stáhnout"
   },
   "DeleteDialog": {
-    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Title": {
+      "ONTOLOGY": "Jste si jistí, že chcete odstranit slovník?",
+      "CONCEPT": "Jste si jistí, že chcete odstranit pojem?",
+      "TRIDA": "Jste si jistí, že chcete odstranit třídu?",
+      "VLASTNOST": "Jste si jistí, že chcete odstranit vlastnost?",
+      "VZTAH": "Jste si jistí, že chcete odstranit vztah?"
+    },
     "Name": "Název",
     "No": "Ne",
     "Yes": "Ano"
@@ -406,7 +412,8 @@
     }
   },
   "Errors": {
-    "UnknownError": "Neznámý error"
+    "UnknownError": "Neznámý error",
+    "NameRequired": "Název je povinný"
   },
   "CreateOntology": {
     "Form": {
@@ -441,6 +448,7 @@
     "Save": "Uložit",
     "Success": "Úspěšně uložený pojem",
     "Error": "Pojem se nepodařilo uložit",
+    "ValidationError": "Prosím opravte chyby ve formuláři.",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
@@ -547,10 +555,20 @@
       "PropertyDomainPlaceholder": "Vyhledejte pojem",
       "PropertyDataTypeLabel": "Datový typ hodnoty",
       "PropertyDataTypePlaceholder": "Vyberte typ hodnoty",
-      "RelationDomainLabel": "Výchozí pojem",
+      "RelationDomainLabel": "Definiční obor (Výchozí pojem)",
       "RelationDomainPlaceholder": "Vyhledejte pojem",
-      "RelationRangeLabel": "Cílový pojem",
+      "RelationRangeLabel": "Obor hodnot (Cílový pojem)",
       "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptDataLabel": "Údaje pojmu",
+    "LegalSourceAutofill": {
+      "SectionLabel": "Doplnění údajů z e-Sbírky",
+      "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu.",
+      "Optional": "volitelné",
+      "PrefilledSummary": "Ze zdroje byly předvyplněny základní údaje:",
+      "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
+      "NotFound": "Pro vybrané ustanovení nebyly nalezeny žádné údaje.",
+      "Success": "Údaje z e-Sbírky byly předvyplněny."
     },
     "ConceptMeaningSection": {
       "Label": "Význam pojmu",

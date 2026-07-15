@@ -27,13 +27,32 @@ const DigitalObject = z.object({
   url: z.url().optional(),
 });
 
+const RequiredNameModelSchema = z
+  .array(
+    z.object({
+      languageTag: z.string(),
+      name: z.string(),
+    }),
+  )
+  .min(1, 'NameRequired')
+  .superRefine((entries, ctx) => {
+    const hasValue = entries.some((e) => e.name.trim() !== '');
+    if (!hasValue) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'NameRequired',
+        path: [0, 'name'],
+      });
+    }
+  });
+
 // Shared base fields
 const ConceptCreateModelSchema = z.object({
   ontologyGraphName: z.string().min(1),
   conceptType: z.string().min(1),
   namespace: z.string().optional(),
   nameModel: z.object({
-    name: MultiLangueModelSchema,
+    name: RequiredNameModelSchema,
   }),
   identifier: z.string().optional(),
   altNameModel: z

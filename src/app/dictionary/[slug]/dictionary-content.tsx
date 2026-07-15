@@ -89,6 +89,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           ? t('Main.DictionaryStatus.Published')
           : t('Main.DictionaryStatus.Draft')
       }
+      isPublished={ontologyMetadata.isPublished}
       concepts={ontologyDetail.pojmy}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}
@@ -116,7 +117,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           userId={user.userId}
         />
       )}
-      <ValidationSidebox />
+      <ValidationSidebox concepts={ontologyMetadata.concepts} />
     </OntologyLayout>
   );
 };
