@@ -1,8 +1,12 @@
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  PublishedConceptDeviationModel,
+} from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
 
+import { ConceptDeviationSection } from './ConceptDeviatonsSection/ConceptDeviationSection';
 import { ConceptRelation } from './ConceptRelation';
 import { MissingConceptFields } from './MissingConceptFields';
 import { RangeItem } from './RangeItem';
@@ -23,6 +27,8 @@ interface Props {
   isOwnerLoggedIn?: boolean;
   ontologyIri?: string;
   ontologySlug?: string;
+  deviations?: PublishedConceptDeviationModel;
+  conceptId?: number;
 }
 
 export const ConceptLayout = ({
@@ -34,11 +40,23 @@ export const ConceptLayout = ({
   isOwnerLoggedIn,
   ontologyIri,
   ontologySlug,
+  deviations,
+  conceptId,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start px-5">
+      {deviations && conceptId && (
+        <div className="col-span-10">
+          <ConceptDeviationSection
+            deviations={deviations}
+            resolved={resolvedRelations}
+            snapshotId={0}
+            conceptId={conceptId}
+          />
+        </div>
+      )}
       <div className="w-full py-6 col-span-6 flex flex-col gap-2">
         <AltNameSection altName={conceptDetail['alternativní-název']} />
         <DefiningSection

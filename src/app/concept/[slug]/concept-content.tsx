@@ -87,6 +87,8 @@ export const ConceptContent = ({ slug }: Props) => {
         }
         ontologyIri={conceptMetadata.graphName || ''}
         ontologySlug={conceptMetadata.ontologySlug || ''}
+        deviations={concept.data.data?.publishedConceptDeviationModel}
+        conceptId={conceptMetadata.id}
       >
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}

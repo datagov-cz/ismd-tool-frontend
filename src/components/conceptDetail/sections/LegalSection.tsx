@@ -111,19 +111,25 @@ export const NonLegislativeSource = ({
 
 interface LegislativeSourceProps {
   item: ResolvedLegalSourceDto;
+  bg?: 'white' | 'blue';
 }
 
-export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
+export const LegislativeSource = ({
+  item,
+  bg = 'blue',
+}: LegislativeSourceProps) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations('ConceptDetail');
 
-  const { data } = useResolveLegalSource(
-    { iri: item.fragmentIri ?? '' },
-    { query: { enabled: !!item.fragmentIri && open } },
-  );
+  const { data } = useResolveLegalSource({ iri: item.fragmentIri ?? '' });
 
   return (
-    <div className="border border-gray-border rounded-lg bg-status-warning-100 px-2 py-1">
+    <div
+      className={clsx(
+        'border rounded-lg border-border-primary px-2 py-1',
+        bg === 'white' ? 'bg-white ' : 'bg-primary-subtlest',
+      )}
+    >
       <button
         type="button"
         className="w-full flex justify-between items-center gap-2"
@@ -132,7 +138,9 @@ export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
       >
         <div className="flex items-center gap-2">
           <GovIcon type="components" name="book" color="neutral" />
-          <span className="font-medium text-start">{item.displayLabel}</span>
+          <span className="font-medium text-start">
+            {data?.data?.displayLabel}
+          </span>
         </div>
         <GovIcon
           type="components"

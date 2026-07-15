@@ -119,6 +119,25 @@
     "HintHeader": "Nápověda k formuláři",
     "Suggestion": "Doporučení"
   },
+  "ConceptDeviations": {
+    "Title": "Změny proti publikovanému zdroji [{count}]",
+    "Description": "V publikované verzi došlo ke změnám. Vyberte změny které chcete převzít do tohoto pojmu.",
+    "DifferencesLabel": "Rozdíly charakteristik oproti publikované verzi:",
+    "ExpandAria": "Zobrazit změny",
+    "CollapseAria": "Sbalit změny",
+    "SelectAll": "Vybrat vše",
+    "DeselectAll": "Zrušit výběr",
+    "SelectedCount": "Vybráno: {selected} ze {total} změn",
+    "ShowDifferences": "Zobrazit rozdíly",
+    "HideDifferences": "Sbalit rozdíly",
+    "AcceptSelected": "Převzít vybrané změny",
+    "UpdateAndKeepLink": "Zachovat propojení a aktualizovat",
+    "Updating": "Aktualizuji…",
+    "LocalVersion": "Lokální verze",
+    "PublishedVersion": "Publikovaná verze",
+    "Yes": "ANO",
+    "No": "NE"
+  },
   "ConceptDetail": {
     "Sections": {
       "AlternativeName": "Alternativní název",
