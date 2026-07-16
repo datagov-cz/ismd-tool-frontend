@@ -37,7 +37,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
     normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH) || '/';
 
   const isHomepage = pathname === '/';
-  const showFullHeader = !isHomepage || !!session;
+  const isAuthenticated = !!session;
   const isGated = isGatedProp ?? isGatedPath(pathname);
 
   const handleLogin = () => signIn('keycloak', { callbackUrl }, { prompt: 'login' });
@@ -67,7 +67,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
     <>
       <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-200 transition-colors duration-300">
         <section className="mx-auto max-w-full-hd px-5 flex justify-between items-center gap-x-4">
-          {showFullHeader && (
+          {isAuthenticated && (
             <div className="flex items-center gap-4 flex-1">
               <Link
                 href="/"
@@ -79,18 +79,16 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                   height={48}
                   alt="lion"
                 />
-                <span className="hidden desktop:inline-block text-xl">
-                  ISMD
-                </span>
+                <span className="text-xl">ISMD</span>
                 <OnlineIndicator />
-                <span className="inline-block desktop:hidden">
+                <span className="inline-block tablet:hidden">
                   {t('LogoTitleMobile')}
                 </span>
               </Link>
             </div>
           )}
 
-          {showFullHeader && (
+          {isAuthenticated && (
             <div className="flex-auto 2xl:flex-2 flex justify-center items-center gap-4">
               {!isHomepage && (
                 <GovButton
@@ -103,30 +101,21 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 </GovButton>
               )}
               <SearchInput />
-              {session && (
-                <GovButton
-                  size="m"
-                  type="solid"
-                  color="primary"
-                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
-                >
-                  <GovIcon slot="icon-start" name="plus" />
-                  {t('Ontology')}
-                </GovButton>
-              )}
+              <GovButton
+                size="m"
+                type="solid"
+                color="primary"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
+              >
+                <GovIcon slot="icon-start" name="plus" />
+                {t('Ontology')}
+              </GovButton>
             </div>
           )}
-
           <div className="flex flex-1 justify-end">
             <nav>
               <ul className="hidden gap-x-3 px-3 w-full flex-col desktop:flex-row flex-nowrap items-center justify-end desktop:flex">
-                {!isHomepage && !session && (
-                  <LoginButton
-                    size="s"
-                    className="mx-2"
-                    onLogin={handleLogin}
-                  />
-                )}
+                <LoginButton size="s" className="mx-2" onLogin={handleLogin} />
                 <NavItems session={session} handleLogin={handleLogin} />
               </ul>
             </nav>
