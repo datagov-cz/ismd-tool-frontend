@@ -2,10 +2,10 @@
 
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { Session } from 'next-auth';
-import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
+import { federatedSignOut } from '@/utils/federatedSignOut';
 import { ConditionalTooltip } from '../shared/ConditionalTooltip';
 
 import { LoginButton } from './LoginButton';
@@ -69,8 +69,7 @@ export const NavItems = ({ session, handleLogin }: Props) => {
               {
                 icon: 'upload',
                 label: t('NavLogged.Logout'),
-                onClick: () =>
-                  signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_PATH }),
+                onClick: () => void federatedSignOut(),
               },
             ]}
           />
