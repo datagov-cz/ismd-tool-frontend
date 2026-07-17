@@ -21,6 +21,12 @@ import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 
 type LanguageEntry = { name?: string; languageTag?: string };
 
+const DEFAULT_VALUES = {
+  namespace: NAMESPACE,
+  nameModel: [{ name: '', languageTag: 'cs' }],
+  descriptionModel: [{ name: '', languageTag: 'cs' }],
+};
+
 const toLanguageMap = (
   entries: LanguageEntry[] | undefined,
 ): Record<string, string> =>
@@ -39,11 +45,7 @@ export const CreateForm = () => {
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
     resolver: zodResolver(createOntologySchema(t)),
-    defaultValues: {
-      namespace: NAMESPACE,
-      nameModel: [{ name: '', languageTag: 'cs' }],
-      descriptionModel: [{ name: '', languageTag: 'cs' }],
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
   useFormDraft(form, draftKeys.ontologyCreate);
@@ -76,7 +78,7 @@ export const CreateForm = () => {
         }
       },
       draftKey: draftKeys.ontologyCreate,
-      reset: () => form.reset(),
+      reset: () => form.reset(DEFAULT_VALUES),
       offlineMessage: t('Form.SavedOffline'),
     });
   };

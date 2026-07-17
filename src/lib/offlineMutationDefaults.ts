@@ -113,6 +113,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
     queryClient.setMutationDefaults(options.mutationKey ?? [key], {
       ...options,
       ...effects,
+      networkMode: 'online',
     });
   });
 };
