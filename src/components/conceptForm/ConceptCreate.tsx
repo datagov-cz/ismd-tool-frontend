@@ -100,6 +100,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
       onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
       draftKey: storageKey,
       reset: () => form.reset(),
+      offlineMessage: t('SavedOffline'),
     });
   };
 

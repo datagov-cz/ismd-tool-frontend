@@ -53,7 +53,7 @@ export const useSubmitForm = () => {
     if (wasOffline) {
       reset?.();
       clearFormDraft(draftKey);
-      toast(offlineMessage ?? t('SavedOffline'));
+      toast.info(offlineMessage ?? t('SavedOffline'), { autoClose: 10000 });
     }
   };
 };

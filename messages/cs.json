@@ -109,7 +109,8 @@
   "ConceptCreateWrapper": {
     "NewConceptFor": "Nový pojem k:",
     "ToastSuccess": "Koncept byl úspěšně vytvořen.",
-    "ToastError": "Při ukládání konceptu došlo k chybě."
+    "ToastError": "Při ukládání konceptu došlo k chybě.",
+    "SavedOffline": "Pojem byl uložen offline a bude odeslán po obnovení připojení. Můžete rovnou vytvářet další pojmy."
   },
   "ConceptEditWrapper": {
     "EditConcept": "Upravit pojem:",
@@ -427,7 +428,7 @@
       "CreateNewDict": "Vytvořit nový slovník...",
       "CreateNewDictError": "Chyba při vytváření nového slovníku",
       "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
-      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení.",
+      "SavedOffline": "Slovník byl uložen offline a bude odeslán po obnovení připojení. Můžete rovnou vytvářet další slovníky.",
       "Or": "nebo",
       "Back": "Zpět"
     },
