@@ -10,33 +10,63 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { clearFormDraft } from '@/hooks/useFormDraft';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { ConceptForm } from './ConceptForm';
 import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
 
 export const normalizeFormData = (
   formData: ConceptFormValues,
+  originalLanguageTags?: {
+    name?: string[];
+    altName?: string[];
+    definition?: string[];
+    description?: string[];
+  },
 ): CreateConceptBody => {
-  const toRecord = (arr?: { languageTag: string; name: string }[]) =>
-    arr?.reduce<Record<string, string>>((acc, { languageTag, name }) => {
-      acc[languageTag] = name;
-      return acc;
-    }, {});
+  const toRecord = (
+    arr?: { languageTag: string; name: string }[],
+    originalTags?: string[],
+  ) => {
+    const record: Record<string, string> = {};
+    arr?.forEach(({ languageTag, name }) => {
+      record[languageTag] = name;
+    });
+    originalTags?.forEach((tag) => {
+      if (!(tag in record)) {
+        record[tag] = '';
+      }
+    });
+    return record;
+  };
 
   const toIri = (refs?: { iri: string; label: string }[]) =>
     refs?.map((r) => r.iri);
-
   return {
     ...formData,
-    altNameModel: formData.altNameModel?.altName
-      ? { altName: toRecord(formData.altNameModel.altName) }
-      : undefined,
-    definitionModel: formData.definitionModel?.definition
-      ? { definition: toRecord(formData.definitionModel.definition) }
-      : undefined,
-    descriptionModel: formData.descriptionModel?.description
-      ? { description: toRecord(formData.descriptionModel.description) }
-      : undefined,
+    nameModel: formData.nameModel?.name
+      ? { name: toRecord(formData.nameModel.name, originalLanguageTags?.name) }
+      : { name: {} },
+    altNameModel: {
+      altName: toRecord(
+        formData.altNameModel?.altName,
+        originalLanguageTags?.altName,
+      ),
+    },
+    dataType: formData.dataType?.code,
+    definitionModel: {
+      definition: toRecord(
+        formData.definitionModel?.definition,
+        originalLanguageTags?.definition,
+      ),
+    },
+    descriptionModel: {
+      description: toRecord(
+        formData.descriptionModel?.description,
+        originalLanguageTags?.description,
+      ),
+    },
     broaderConcept: toIri(formData.broaderConcept),
     superProperty: toIri(formData.superProperty),
     superRelation: toIri(formData.superRelation),
@@ -45,6 +75,7 @@ export const normalizeFormData = (
     range: formData.range?.iri,
     agendaCode: formData.agendaCode?.iri,
     agendaSystemCode: formData.agendaSystemCode?.iri,
+    privacyProvisions: formData.isPublic ? [] : formData.privacyProvisions,
   };
 };
 
@@ -54,14 +85,19 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
+  const queryInvalidate = useQueryInvalidator();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
+  const storageKey = `concept-draft:create:${ontology}`;
 
   const handleSubmit = (formData: ConceptFormValues) => {
     createConcept(
       { slug: ontology, data: normalizeFormData(formData) },
       {
         onSuccess: (response) => {
+          clearFormDraft(storageKey);
+          queryInvalidate.invalidateOntology(ontology);
+          queryInvalidate.invalidateConcept(response.data?.slug || '');
           toast.success(t('ToastSuccess'), { position: 'bottom-right' });
           router.push(`/concept/${response.data?.slug}`);
         },
@@ -103,6 +139,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
           isPending={isPending}
+          storageKey={storageKey}
         />
       )}
     </div>

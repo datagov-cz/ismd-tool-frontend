@@ -6,10 +6,13 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import {
   ArrayPath,
   FieldArray,
   FieldValues,
+  get,
   useFieldArray,
   useFormContext,
 } from 'react-hook-form';
@@ -19,6 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shared/Popover';
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 type Language = 'cs' | 'sk' | 'en';
 
@@ -36,6 +40,8 @@ interface Props<T extends FieldValues> {
   placeholder: string;
   name: LanguageArrayPath<T>;
   multiline?: boolean;
+  anchor?: string;
+  layout?: 'grid' | 'flex';
 }
 
 export const LanguageInput = <T extends FieldValues>({
@@ -43,12 +49,18 @@ export const LanguageInput = <T extends FieldValues>({
   placeholder,
   name,
   multiline,
+  anchor,
+  layout = 'grid',
 }: Props<T>) => {
   const {
     control,
     register,
     formState: { errors },
   } = useFormContext<T>();
+
+  const t = useTranslations('Errors');
+
+  const isActive = useActiveAnchor(anchor);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -64,23 +76,29 @@ export const LanguageInput = <T extends FieldValues>({
   );
 
   return (
-    <div className="w-full space-y-2">
+    <div
+      className={clsx(
+        'w-full space-y-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={anchor}
+    >
       {fields.map((field, index) => {
         const lang = (field as unknown as LanguageEntry).languageTag;
         const fieldPath = `${name}.${index}.name` as Parameters<
           typeof register
         >[0];
-        const fieldError = (
-          errors as Record<
-            string,
-            { [i: number]: { name?: { message?: string } } }
-          >
-        )?.[name as string]?.[index]?.name?.message;
+        const fieldError = get(errors, `${name}.${index}.name`);
 
         return (
           <div
             key={field.id}
-            className="w-full grid grid-cols-7 gap-y-4 gap-x-2"
+            className={clsx(
+              'w-full',
+              layout === 'grid'
+                ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+                : 'flex flex-col',
+            )}
           >
             <GovFormLabel className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>
@@ -94,18 +112,23 @@ export const LanguageInput = <T extends FieldValues>({
               >
                 {lang}
               </GovChip>
-              <GovFormInput
-                {...register(fieldPath)}
-                placeholder={placeholder}
-                className="[&input]:border-0! flex-1 [&_span]:pr-14!"
-                multiline={multiline}
-                rows={multiline ? 4 : undefined}
-              />
-              {fieldError && (
-                <span className="text-red-600 text-sm absolute bottom-0 left-10 translate-y-full">
-                  {fieldError}
-                </span>
-              )}
+              <div className="w-full">
+                <GovFormInput
+                  {...register(fieldPath)}
+                  placeholder={placeholder}
+                  className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                  multiline={multiline}
+                  rows={multiline ? 4 : undefined}
+                />
+                {fieldError?.message && (
+                  <span
+                    className="text-red-600 text-sm absolute bottom-0 left-0 translate-y-full"
+                    role="alert"
+                  >
+                    {t(String(fieldError.message))}
+                  </span>
+                )}
+              </div>
 
               {index === 0 && (
                 <div className="absolute right-1 top-1/2 -translate-y-1/2">

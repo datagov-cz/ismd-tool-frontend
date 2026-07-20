@@ -59,6 +59,8 @@ export const ConceptContentNKD = ({ slug }: Props) => {
         source="NKD"
         conceptDetail={conceptDetail}
         conceptType={getType()}
+        slug={slug}
+        isOwnerLoggedIn={false}
       >
         <OtherOntologyConcepts
           ontology={concept.data.data?.ontologyIri || ''}

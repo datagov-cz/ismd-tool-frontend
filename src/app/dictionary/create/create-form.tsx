@@ -10,9 +10,14 @@ import { toast } from 'react-toastify';
 import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { FormToolbar } from '@/components/conceptForm/components/FormToolbar';
+import { useDictionaryFormHints } from '@/components/conceptForm/components/hint/conceptFormHints';
+import { HintSidebar } from '@/components/conceptForm/components/hint/HintSidebar';
+import { useFormHints } from '@/components/conceptForm/components/hint/useFormHints';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
+import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
 import { useIsOnline } from '@/hooks/useIsOnline';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { NAMESPACE } from '@/lib/constants';
 import { db, type OntologyDraft } from '@/lib/db';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
@@ -32,16 +37,11 @@ const toLanguageMap = (
     {} as Record<string, string>,
   ) ?? {};
 
-const buildDefaultValues = (): Partial<OntologySchemaType> => {
-  if (typeof window === 'undefined') return {};
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : {};
-};
-
 export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
   const isOnline = useIsOnline();
   const router = useRouter();
+  const invalidator = useQueryInvalidator();
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
@@ -50,23 +50,17 @@ export const CreateForm = () => {
       namespace: NAMESPACE,
       nameModel: [{ name: '', languageTag: 'cs' }],
       descriptionModel: [{ name: '', languageTag: 'cs' }],
-      ...buildDefaultValues(),
     },
   });
 
+  useFormDraft(form, STORAGE_KEY);
+
+  const { hints, defaultHint } = useDictionaryFormHints();
+
+  const { hint, open, setOpen, handleFocus } = useFormHints(hints, defaultHint);
+
   const { mutate, isPending } = useCreateOntology();
-  const { handleSubmit, getValues } = form;
-
-  useEffect(() => {
-    const subscription = form.watch(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(getValues()));
-    });
-    return () => subscription.unsubscribe();
-  }, [form, getValues]);
-
-  useEffect(() => {
-    if (isOnline) syncOfflineData();
-  }, [isOnline]);
+  const { handleSubmit } = form;
 
   const buildPayload = (data: OntologySchemaType): OntologyCreateModel => {
     const name = toLanguageMap(data.nameModel);
@@ -99,6 +93,10 @@ export const CreateForm = () => {
     }
   };
 
+  useEffect(() => {
+    if (isOnline) syncOfflineData();
+  }, [isOnline]);
+
   const onSubmit = async (data: OntologySchemaType) => {
     const payload = buildPayload(data);
 
@@ -112,7 +110,7 @@ export const CreateForm = () => {
         };
         await db.ontologyDrafts.add(draft);
         form.reset();
-        localStorage.removeItem(STORAGE_KEY);
+        clearFormDraft(STORAGE_KEY);
         toast(
           t('Form.SavedOffline') || 'Saved offline. Will sync when online.',
         );
@@ -128,8 +126,9 @@ export const CreateForm = () => {
       { data: payload },
       {
         onSuccess: (response) => {
-          localStorage.removeItem(STORAGE_KEY);
+          clearFormDraft(STORAGE_KEY);
           toast(t('Form.CreateNewDictSuccess'));
+          invalidator.invalidateOntologyList();
           if (response.data?.slug) {
             router.push(`/dictionary/${response.data?.slug}`);
           }
@@ -145,27 +144,42 @@ export const CreateForm = () => {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
-        <FormSection label="Základní parametry" icon="tag">
-          <Input
-            register={form.register}
-            name="namespace"
-            label={t('Form.NamespaceLabel')}
-            placeholder={t('Form.NamespacePlaceholder')}
-          />
-          <LanguageInput<OntologySchemaType>
-            name="nameModel"
-            label={t('Form.NameLabel')}
-            placeholder={t('Form.NamePlaceholder')}
-          />
-          <LanguageInput<OntologySchemaType>
-            name="descriptionModel"
-            label={t('Form.DescriptionLabel')}
-            placeholder={t('Form.DescriptionPlaceholder')}
-          />
-        </FormSection>
-        <FormToolbar<OntologySchemaType> isPending={isPending} />
-      </form>
+      <div className="relative w-full lg:max-w-160 xl:max-w-200">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-2.5"
+          onFocus={handleFocus}
+        >
+          <FormSection label="Základní parametry" icon="tag">
+            <Input
+              register={form.register}
+              name="namespace"
+              label={t('Form.NamespaceLabel')}
+              placeholder={t('Form.NamespacePlaceholder')}
+            />
+            <LanguageInput<OntologySchemaType>
+              name="nameModel"
+              label={t('Form.NameLabel')}
+              placeholder={t('Form.NamePlaceholder')}
+            />
+            <LanguageInput<OntologySchemaType>
+              name="descriptionModel"
+              label={t('Form.DescriptionLabel')}
+              placeholder={t('Form.DescriptionPlaceholder')}
+            />
+          </FormSection>
+          <FormToolbar<OntologySchemaType> isPending={isPending} />
+        </form>
+        <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
+          {open && (
+            <HintSidebar
+              hint={hint}
+              onClose={() => setOpen(false)}
+              className="sticky top-22 w-full max-w-80"
+            />
+          )}
+        </div>
+      </div>
     </FormProvider>
   );
 };

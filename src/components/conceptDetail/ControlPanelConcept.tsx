@@ -1,34 +1,37 @@
 'use client';
 
 import { useState } from 'react';
-import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
+import { ConceptMetadataModelConceptType } from '@/api/generated';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 import { ControlPanelButton } from '../dictionaryDetail/ControlPanelButton';
 import { DeleteDialog } from '../dictionaryDetail/DeleteDialog';
 
 interface Props {
-  isPublished: boolean;
   conceptID: number;
   name: string;
   commentsCount: number;
   loggedIn?: boolean;
   source?: 'NKD' | 'ISMD';
-  owner: boolean;
+  editAllowed: boolean;
   slug: string;
+  iri?: string;
+  conceptType?: ConceptMetadataModelConceptType;
 }
 
 export const ControlPanelConcept = ({
-  isPublished,
   conceptID,
   name,
   commentsCount,
   loggedIn,
-  owner,
+  editAllowed,
   source,
   slug,
+  iri,
+  conceptType,
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
@@ -36,9 +39,9 @@ export const ControlPanelConcept = ({
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
-  const handleCopyLink = async () => {
+  const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(text);
       toast(t('LinkCopied'), { type: 'success' });
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -49,9 +52,9 @@ export const ControlPanelConcept = ({
 
   return (
     <div className="flex flex-col gap-2 justify-between h-full">
-      {((loggedIn && source === 'ISMD') || owner) && (
+      {((loggedIn && source === 'ISMD') || editAllowed) && (
         <div className="flex gap-8">
-          {owner && (
+          {editAllowed && (
             <GovButton
               type="solid"
               color="primary"
@@ -86,13 +89,45 @@ export const ControlPanelConcept = ({
       )}
 
       <div className="self-end">
-        <ControlPanelButton
-          iconName="link"
-          ariaLabel={t('GetLink')}
-          onClick={() => handleCopyLink()}
-          label={source === 'NKD' ? t('CopyLink') : undefined}
-        />
-        {!isPublished && owner && (
+        <GovDropdown id="copy-link-ismd" position="left">
+          <GovButton
+            color={'primary'}
+            type="base"
+            size="m"
+            className="h-8! [&_button]:h-8!"
+          >
+            <GovIcon
+              name="link"
+              size="m"
+              aria-label={t('GetLink')}
+              className="text-white"
+            />
+            {source === 'NKD' ? t('CopyLink') : undefined}
+          </GovButton>
+          <ul slot="list">
+            {iri && (
+              <GovButton
+                color="primary"
+                type="base"
+                size="s"
+                onGovClick={() => copyToClipboard(iri)}
+                className="w-full! [&_button]:w-full! max-w-none!"
+              >
+                {t('CopyIRI')}
+              </GovButton>
+            )}
+            <GovButton
+              color="primary"
+              type="base"
+              size="s"
+              onGovClick={() => copyToClipboard(window.location.href)}
+              className="w-full! [&_button]:w-full! max-w-none!"
+            >
+              {t('CopyURL')}
+            </GovButton>
+          </ul>
+        </GovDropdown>
+        {editAllowed && (
           <ControlPanelButton
             iconName="trash"
             danger
@@ -107,6 +142,8 @@ export const ControlPanelConcept = ({
         onClose={() => setOpenDelete(false)}
         name={name}
         type="CONCEPT"
+        slug={slug}
+        conceptType={conceptType}
       />
     </div>
   );

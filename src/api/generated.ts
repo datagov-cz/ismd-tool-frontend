@@ -38,6 +38,7 @@ export const ConceptMetadataModelConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptMetadataModel {
@@ -46,6 +47,7 @@ export interface ConceptMetadataModel {
   conceptType?: ConceptMetadataModelConceptType;
   conceptIri?: string;
   graphName?: string;
+  ontologySlug?: string;
   conceptName?: string;
   user?: UserModel;
   isPublished?: boolean;
@@ -54,6 +56,16 @@ export interface ConceptMetadataModel {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type OntologyMetadataModelLastValidationStatus =
+  (typeof OntologyMetadataModelLastValidationStatus)[keyof typeof OntologyMetadataModelLastValidationStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OntologyMetadataModelLastValidationStatus = {
+  VALIDATED: 'VALIDATED',
+  SKIPPED_UNAVAILABLE: 'SKIPPED_UNAVAILABLE',
+  FAILED: 'FAILED',
+} as const;
 
 export interface OntologyMetadataModel {
   id?: number;
@@ -68,6 +80,8 @@ export interface OntologyMetadataModel {
   createdAt?: string;
   updatedAt?: string;
   conceptCount?: number;
+  lastValidationStatus?: OntologyMetadataModelLastValidationStatus;
+  lastValidationAt?: string;
 }
 
 export interface UserModel {
@@ -78,11 +92,17 @@ export interface ApiResponseDtoValidationReport {
   data?: ValidationReport;
   message?: string;
   success?: boolean;
+  errorCode?: string;
+}
+
+export interface NkdResource {
+  iri?: string;
+  prefLabel?: string;
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -104,6 +124,7 @@ export interface ValidationResult {
   focusNodeUri?: string;
   resultPathUri?: string;
   value?: string;
+  nkdResource?: NkdResource;
   warning?: boolean;
   info?: boolean;
   focusNodeName?: string;
@@ -114,6 +135,7 @@ export interface ApiResponseDtoOntologyMetadataModel {
   data?: OntologyMetadataModel;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type DescriptionModelDescription = { [key: string]: string };
@@ -132,48 +154,6 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
-}
-
-export interface ResolveConceptsRequest {
-  iris: string[];
-}
-
-export interface ApiResponseDtoResolveConceptsResponse {
-  data?: ResolveConceptsResponse;
-  message?: string;
-  success?: boolean;
-}
-
-export type ResolveConceptsResponseResolved = {
-  [key: string]: ResolvedConceptDto;
-};
-
-export interface ResolveConceptsResponse {
-  resolved?: ResolveConceptsResponseResolved;
-}
-
-export type ResolvedConceptDtoConceptName = { [key: string]: string };
-
-export type ResolvedConceptDtoOntologyName = { [key: string]: string };
-
-export type ResolvedConceptDtoSource =
-  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedConceptDtoSource = {
-  NKD: 'NKD',
-  ISMD: 'ISMD',
-  UNPUBLISHED: 'UNPUBLISHED',
-  ALL: 'ALL',
-} as const;
-
-export interface ResolvedConceptDto {
-  iri?: string;
-  conceptName?: ResolvedConceptDtoConceptName;
-  conceptSlug?: string;
-  ontologyIri?: string;
-  ontologyName?: ResolvedConceptDtoOntologyName;
-  source?: ResolvedConceptDtoSource;
 }
 
 export type AltNameModelAltName = { [key: string]: string };
@@ -206,10 +186,13 @@ export const ConceptCreateModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptCreateModel {
+  /** @minLength 1 */
   ontologyGraphName: string;
+  /** @minLength 1 */
   conceptType: string;
   namespace?: string;
   nameModel: NameModel;
@@ -278,6 +261,179 @@ export interface ApiResponseDtoConceptMetadataModel {
   data?: ConceptMetadataModel;
   message?: string;
   success?: boolean;
+  errorCode?: string;
+}
+
+export interface ApiResponseDtoLinkSnapshotDto {
+  data?: LinkSnapshotDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type LinkSnapshotDtoLinkPredicate =
+  (typeof LinkSnapshotDtoLinkPredicate)[keyof typeof LinkSnapshotDtoLinkPredicate];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoLinkPredicate = {
+  BROADER_CLASS: 'BROADER_CLASS',
+  SUPER_PROPERTY: 'SUPER_PROPERTY',
+  SUPER_RELATION: 'SUPER_RELATION',
+  EXACT_MATCH: 'EXACT_MATCH',
+} as const;
+
+export type LinkSnapshotDtoOrigin =
+  (typeof LinkSnapshotDtoOrigin)[keyof typeof LinkSnapshotDtoOrigin];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoOrigin = {
+  SELF_PUBLISHED: 'SELF_PUBLISHED',
+  LINK_TARGET: 'LINK_TARGET',
+} as const;
+
+export type LinkSnapshotDtoStatus =
+  (typeof LinkSnapshotDtoStatus)[keyof typeof LinkSnapshotDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoStatus = {
+  NO_DEVIATION: 'NO_DEVIATION',
+  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
+  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
+  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
+  QUERY_ERROR: 'QUERY_ERROR',
+  PENDING: 'PENDING',
+} as const;
+
+export type LinkSnapshotDtoAvailableActionsItem =
+  (typeof LinkSnapshotDtoAvailableActionsItem)[keyof typeof LinkSnapshotDtoAvailableActionsItem];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LinkSnapshotDtoAvailableActionsItem = {
+  UPDATE: 'UPDATE',
+  REMOVE: 'REMOVE',
+} as const;
+
+export interface LinkSnapshotDto {
+  snapshotId?: number;
+  owningConceptId?: number;
+  linkPredicate?: LinkSnapshotDtoLinkPredicate;
+  origin?: LinkSnapshotDtoOrigin;
+  nkdConcept?: NkdConceptRefDto;
+  snapshotAt?: string;
+  lastCheckedAt?: string;
+  status?: LinkSnapshotDtoStatus;
+  deviation?: PublishedConceptDeviationModel;
+  availableActions?: LinkSnapshotDtoAvailableActionsItem[];
+}
+
+export interface NkdConceptRefDto {
+  iri?: string;
+  label?: string;
+}
+
+export type NonLegalSourceDtoNázev = { [key: string]: string };
+
+export type NonLegalSourceDtoPopis = { [key: string]: string };
+
+export interface NonLegalSourceDto {
+  iri?: string;
+  url?: string;
+  typ?: string;
+  název?: NonLegalSourceDtoNázev;
+  popis?: NonLegalSourceDtoPopis;
+}
+
+export interface PropertyDeviationBoolean {
+  localValue?: boolean;
+  publishedValue?: boolean;
+  different?: boolean;
+}
+
+export interface PropertyDeviationListNonLegalSourceDto {
+  localValue?: NonLegalSourceDto[];
+  publishedValue?: NonLegalSourceDto[];
+  different?: boolean;
+}
+
+export interface PropertyDeviationListString {
+  localValue?: string[];
+  publishedValue?: string[];
+  different?: boolean;
+}
+
+export type PropertyDeviationMapStringObjectLocalValue = {
+  [key: string]: unknown;
+};
+
+export type PropertyDeviationMapStringObjectPublishedValue = {
+  [key: string]: unknown;
+};
+
+export interface PropertyDeviationMapStringObject {
+  localValue?: PropertyDeviationMapStringObjectLocalValue;
+  publishedValue?: PropertyDeviationMapStringObjectPublishedValue;
+  different?: boolean;
+}
+
+export type PropertyDeviationMapStringStringLocalValue = {
+  [key: string]: string;
+};
+
+export type PropertyDeviationMapStringStringPublishedValue = {
+  [key: string]: string;
+};
+
+export interface PropertyDeviationMapStringString {
+  localValue?: PropertyDeviationMapStringStringLocalValue;
+  publishedValue?: PropertyDeviationMapStringStringPublishedValue;
+  different?: boolean;
+}
+
+export interface PropertyDeviationString {
+  localValue?: string;
+  publishedValue?: string;
+  different?: boolean;
+}
+
+export type PublishedConceptDeviationModelStatus =
+  (typeof PublishedConceptDeviationModelStatus)[keyof typeof PublishedConceptDeviationModelStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PublishedConceptDeviationModelStatus = {
+  NO_DEVIATION: 'NO_DEVIATION',
+  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
+  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
+  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
+  QUERY_ERROR: 'QUERY_ERROR',
+  PENDING: 'PENDING',
+} as const;
+
+export interface PublishedConceptDeviationModel {
+  status?: PublishedConceptDeviationModelStatus;
+  errorMessage?: string;
+  typ?: PropertyDeviationListString;
+  název?: PropertyDeviationMapStringString;
+  'alternativní-název'?: PropertyDeviationMapStringObject;
+  definice?: PropertyDeviationMapStringString;
+  popis?: PropertyDeviationMapStringString;
+  identifikátor?: PropertyDeviationString;
+  'nadřazená-třída'?: PropertyDeviationListString;
+  'nadřazený-vztah'?: PropertyDeviationListString;
+  'nadřazená-vlastnost'?: PropertyDeviationListString;
+  'definiční-obor'?: PropertyDeviationString;
+  'obor-hodnot'?: PropertyDeviationString;
+  'ekvivalentní-pojem'?: PropertyDeviationListString;
+  'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
+  'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
+  'definující-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
+  'související-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
+  'způsob-sdílení-údajů'?: PropertyDeviationListString;
+  'způsob-získání-údajů'?: PropertyDeviationString;
+  'typ-obsahu-údajů'?: PropertyDeviationString;
+  'je-ppdf'?: PropertyDeviationBoolean;
+  ais?: PropertyDeviationString;
+  agenda?: PropertyDeviationString;
+  'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
 }
 
 export interface CommentCreateModel {
@@ -290,6 +446,64 @@ export interface ApiResponseDtoCommentModel {
   data?: CommentModel;
   message?: string;
   success?: boolean;
+  errorCode?: string;
+}
+
+export interface ApiResponseDtoReconciliationReportDto {
+  data?: ReconciliationReportDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type MismatchCategory =
+  (typeof MismatchCategory)[keyof typeof MismatchCategory];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MismatchCategory = {
+  RDF_ORPHAN: 'RDF_ORPHAN',
+  PG_MISSING_RDF: 'PG_MISSING_RDF',
+  IRI_GRAPH_MISMATCH: 'IRI_GRAPH_MISMATCH',
+  GRAPH_ORPHAN: 'GRAPH_ORPHAN',
+  SUSPECTED_RENAME: 'SUSPECTED_RENAME',
+  EXCLUDED_NO_INSCHEME: 'EXCLUDED_NO_INSCHEME',
+  RDF_NOT_OWNED_RESOLVABLE: 'RDF_NOT_OWNED_RESOLVABLE',
+} as const;
+
+export interface Mismatch {
+  category?: MismatchCategory;
+  graphName?: string;
+  conceptIri?: string;
+  relatedIri?: string;
+  detail?: string;
+}
+
+export type ReconciliationReportDtoCountsByCategory = { [key: string]: number };
+
+export interface ReconciliationReportDto {
+  startedAt?: string;
+  finishedAt?: string;
+  triggeredBy?: string;
+  graphsScanned?: number;
+  ownedRdfConceptsScanned?: number;
+  pgConceptsScanned?: number;
+  totalMismatches?: number;
+  countsByCategory?: ReconciliationReportDtoCountsByCategory;
+  mismatches?: Mismatch[];
+}
+
+export interface ApiResponseDtoVoid {
+  data?: unknown;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface ApiResponseDtoInteger {
+  data?: number;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
 }
 
 export interface OntologyEditModel {
@@ -322,9 +536,11 @@ export const ConceptEditModelConceptTypeEnum = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export interface ConceptEditModel {
+  /** @minLength 1 */
   conceptType: string;
   namespace?: string;
   nameModel?: NameModel;
@@ -381,6 +597,7 @@ export interface ApiResponseDtoUserInfoDto {
   data?: UserInfoDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface UserInfoDto {
@@ -394,6 +611,7 @@ export interface ApiResponseDtoSearchResponseDto {
   data?: SearchResponseDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type SearchResponseDtoSourceStatuses = {
@@ -441,6 +659,7 @@ export const SearchResultDtoConceptType = {
   TRIDA: 'TRIDA',
   VLASTNOST: 'VLASTNOST',
   VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
 } as const;
 
 export type SearchResultDtoMatchedBy =
@@ -497,6 +716,7 @@ export interface ApiResponseDtoListRppSearchResultDto {
   data?: RppSearchResultDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface RppSearchResultDto {
@@ -509,13 +729,12 @@ export interface ApiResponseDtoGetOntologyDto {
   data?: GetOntologyDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type ConceptDetailModelNázev = { [key: string]: string };
 
-export type ConceptDetailModelAlternativníNázev = {
-  [key: string]: { [key: string]: unknown };
-};
+export type ConceptDetailModelAlternativníNázev = { [key: string]: unknown };
 
 export type ConceptDetailModelDefinice = { [key: string]: string };
 
@@ -589,23 +808,14 @@ export type GetOntologyDtoPublishedConceptDeviations = {
   [key: string]: PublishedConceptDeviationModel;
 };
 
+export type GetOntologyDtoLinkSnapshots = { [key: string]: LinkSnapshotDto[] };
+
 export interface GetOntologyDto {
   ontologyMetadata?: OntologyMetadataModel;
   ontologyDetail?: OntologyDetailModel;
   publishedOntologyDeviationModel?: PublishedOntologyDeviationModel;
   publishedConceptDeviations?: GetOntologyDtoPublishedConceptDeviations;
-}
-
-export type NonLegalSourceDtoNázev = { [key: string]: string };
-
-export type NonLegalSourceDtoPopis = { [key: string]: string };
-
-export interface NonLegalSourceDto {
-  iri?: string;
-  url?: string;
-  typ?: string;
-  název?: NonLegalSourceDtoNázev;
-  popis?: NonLegalSourceDtoPopis;
+  linkSnapshots?: GetOntologyDtoLinkSnapshots;
 }
 
 export type OntologyDetailModelNázev = { [key: string]: string };
@@ -624,98 +834,6 @@ export interface OntologyDetailModel {
   'počet-pojmů'?: number;
 }
 
-export interface PropertyDeviationBoolean {
-  localValue?: boolean;
-  publishedValue?: boolean;
-  different?: boolean;
-}
-
-export interface PropertyDeviationListNonLegalSourceDto {
-  localValue?: NonLegalSourceDto[];
-  publishedValue?: NonLegalSourceDto[];
-  different?: boolean;
-}
-
-export interface PropertyDeviationListString {
-  localValue?: string[];
-  publishedValue?: string[];
-  different?: boolean;
-}
-
-export type PropertyDeviationMapStringObjectLocalValue = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export type PropertyDeviationMapStringObjectPublishedValue = {
-  [key: string]: { [key: string]: unknown };
-};
-
-export interface PropertyDeviationMapStringObject {
-  localValue?: PropertyDeviationMapStringObjectLocalValue;
-  publishedValue?: PropertyDeviationMapStringObjectPublishedValue;
-  different?: boolean;
-}
-
-export type PropertyDeviationMapStringStringLocalValue = {
-  [key: string]: string;
-};
-
-export type PropertyDeviationMapStringStringPublishedValue = {
-  [key: string]: string;
-};
-
-export interface PropertyDeviationMapStringString {
-  localValue?: PropertyDeviationMapStringStringLocalValue;
-  publishedValue?: PropertyDeviationMapStringStringPublishedValue;
-  different?: boolean;
-}
-
-export interface PropertyDeviationString {
-  localValue?: string;
-  publishedValue?: string;
-  different?: boolean;
-}
-
-export type PublishedConceptDeviationModelStatus =
-  (typeof PublishedConceptDeviationModelStatus)[keyof typeof PublishedConceptDeviationModelStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PublishedConceptDeviationModelStatus = {
-  NO_DEVIATION: 'NO_DEVIATION',
-  HAS_DEVIATIONS: 'HAS_DEVIATIONS',
-  ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
-  CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
-  QUERY_ERROR: 'QUERY_ERROR',
-} as const;
-
-export interface PublishedConceptDeviationModel {
-  status?: PublishedConceptDeviationModelStatus;
-  errorMessage?: string;
-  typ?: PropertyDeviationListString;
-  název?: PropertyDeviationMapStringString;
-  'alternativní-název'?: PropertyDeviationMapStringObject;
-  definice?: PropertyDeviationMapStringString;
-  popis?: PropertyDeviationMapStringString;
-  identifikátor?: PropertyDeviationString;
-  'nadřazená-třída'?: PropertyDeviationListString;
-  'nadřazený-vztah'?: PropertyDeviationListString;
-  'nadřazená-vlastnost'?: PropertyDeviationListString;
-  'definiční-obor'?: PropertyDeviationString;
-  'obor-hodnot'?: PropertyDeviationString;
-  'ekvivalentní-pojem'?: PropertyDeviationListString;
-  'definující-ustanovení-právního-předpisu'?: PropertyDeviationListString;
-  'související-ustanovení-právního-předpisu'?: PropertyDeviationListString;
-  'definující-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
-  'související-nelegislativní-zdroj'?: PropertyDeviationListNonLegalSourceDto;
-  'způsob-sdílení-údajů'?: PropertyDeviationListString;
-  'způsob-získání-údajů'?: PropertyDeviationString;
-  'typ-obsahu-údajů'?: PropertyDeviationString;
-  'je-ppdf'?: PropertyDeviationBoolean;
-  ais?: PropertyDeviationString;
-  agenda?: PropertyDeviationString;
-  'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
-}
-
 export type PublishedOntologyDeviationModelStatus =
   (typeof PublishedOntologyDeviationModelStatus)[keyof typeof PublishedOntologyDeviationModelStatus];
 
@@ -726,6 +844,7 @@ export const PublishedOntologyDeviationModelStatus = {
   ENDPOINT_UNAVAILABLE: 'ENDPOINT_UNAVAILABLE',
   CONCEPT_NOT_FOUND_IN_NKD: 'CONCEPT_NOT_FOUND_IN_NKD',
   QUERY_ERROR: 'QUERY_ERROR',
+  PENDING: 'PENDING',
 } as const;
 
 export interface PublishedOntologyDeviationModel {
@@ -734,6 +853,32 @@ export interface PublishedOntologyDeviationModel {
   typ?: PropertyDeviationListString;
   název?: PropertyDeviationMapStringString;
   popis?: PropertyDeviationMapStringString;
+}
+
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
 }
 
 export type ResolvedLegalSourceDtoLevel =
@@ -775,6 +920,7 @@ export interface ResolvedLegalSourceDto {
   displayLabel?: string;
   fragmentCitation?: string;
   fragmentBodyHtml?: string;
+  fragmentBody?: string;
   versionValidUntil?: string;
   isLatestVersion?: boolean;
   enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
@@ -797,26 +943,41 @@ export interface ApiResponseDtoListOntologyMetadataModel {
   data?: OntologyMetadataModel[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ApiResponseDtoListMinimalConceptDto {
   data?: MinimalConceptDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export type MinimalConceptDtoName = { [key: string]: string };
+
+export type MinimalConceptDtoConceptType =
+  (typeof MinimalConceptDtoConceptType)[keyof typeof MinimalConceptDtoConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MinimalConceptDtoConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
+} as const;
 
 export interface MinimalConceptDto {
   iri?: string;
   slug?: string;
   name?: MinimalConceptDtoName;
+  conceptType?: MinimalConceptDtoConceptType;
 }
 
 export interface ApiResponseDtoGetNkdOntologyListDto {
   data?: GetNkdOntologyListDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetNkdOntologyListDto {
@@ -843,6 +1004,7 @@ export interface ApiResponseDtoGetNkdOntologyDto {
   data?: GetNkdOntologyDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetNkdOntologyDto {
@@ -853,6 +1015,7 @@ export interface ApiResponseDtoGetNkdConceptDto {
   data?: GetNkdConceptDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetNkdConceptDto {
@@ -864,12 +1027,14 @@ export interface ApiResponseDtoResolvedLegalSourceDto {
   data?: ResolvedLegalSourceDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ApiResponseDtoListLawVersionDto {
   data?: LawVersionDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface LawVersionDto {
@@ -885,6 +1050,7 @@ export interface ApiResponseDtoListLawDto {
   data?: LawDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface LawDto {
@@ -902,6 +1068,7 @@ export interface ApiResponseDtoListFragmentDto {
   data?: FragmentDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface FragmentDto {
@@ -910,12 +1077,33 @@ export interface FragmentDto {
   kind?: string;
   citation?: string;
   order?: string;
+  bodyHtml?: string;
+  children?: FragmentDto[];
+}
+
+export interface ApiResponseDtoLawContentDto {
+  data?: LawContentDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface LawContentDto {
+  lawIri?: string;
+  citace?: string;
+  versionIri?: string;
+  versionEliPath?: string;
+  versionDate?: string;
+  versions?: LawVersionDto[];
+  fragments?: FragmentDto[];
+  bodyHtml?: string;
 }
 
 export interface ApiResponseDtoGetConceptDto {
   data?: GetConceptDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface GetConceptDto {
@@ -928,25 +1116,64 @@ export interface ApiResponseDtoListConceptMetadataModel {
   data?: ConceptMetadataModel[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
 export interface ApiResponseDtoListDataTypeDto {
   data?: DataTypeDto[];
   message?: string;
   success?: boolean;
+  errorCode?: string;
 }
 
-export type ApiResponseDtoVoidData = { [key: string]: unknown };
-
-export interface ApiResponseDtoVoid {
-  data?: ApiResponseDtoVoidData;
+export interface ApiResponseDtoOutboxStatusDto {
+  data?: OutboxStatusDto;
   message?: string;
   success?: boolean;
+  errorCode?: string;
+}
+
+export interface OutboxStatusDto {
+  pending?: number;
+  failed?: number;
+  done?: number;
+  oldestPendingCreatedAt?: string;
+}
+
+export interface ApiResponseDtoListOutboxEntryDto {
+  data?: OutboxEntryDto[];
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface OutboxEntryDto {
+  id?: number;
+  operation?: string;
+  aggregateIri?: string;
+  graphName?: string;
+  status?: string;
+  attempts?: number;
+  lastError?: string;
+  createdAt?: string;
+  claimedAt?: string;
+  seq?: number;
 }
 
 export type UploadFromFileParams = {
-  providedName?: string;
+  normalizeMode?: UploadFromFileNormalizeMode;
+  conceptsToNormalize?: string[];
 };
+
+export type UploadFromFileNormalizeMode =
+  (typeof UploadFromFileNormalizeMode)[keyof typeof UploadFromFileNormalizeMode];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const UploadFromFileNormalizeMode = {
+  NORMALIZE_ALL: 'NORMALIZE_ALL',
+  EXCLUDE_ALL: 'EXCLUDE_ALL',
+  PER_CONCEPT: 'PER_CONCEPT',
+} as const;
 
 export type UploadFromFileBody = {
   file?: Blob;
@@ -1139,6 +1366,10 @@ export type SearchLawsParams = {
 
 export type GetFragmentsParams = {
   versionIri: string;
+};
+
+export type GetLawContentParams = {
+  law: string;
 };
 
 export type GetConceptListParams = {
@@ -1427,99 +1658,6 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
 };
 
 /**
- * Pro pole IRI pojmů vrací mapu IRI → {conceptName, conceptSlug, ontologyIri, ontologyName, source}. FE volá tento endpoint po obdržení detailu pojmu/slovníku, aby obohatil prosté IRI (nadřazená třída/vztah/vlastnost, ekvivalentní pojem, vlastnosti, vztahy) o informace potřebné k navigaci napříč zdroji ISMD/NKD. {@code conceptSlug} je vyplněn pouze pro ISMD pojmy; NKD pojmy se navigují podle IRI. Nerozlišené IRI jsou v odpovědi vynechány. Veřejný endpoint.
- * @summary Získání metadat referencovaných pojmů
- */
-export const resolveConceptReferences = (
-  resolveConceptsRequest: ResolveConceptsRequest,
-  options?: SecondParameter<typeof axiosInstance>,
-  signal?: AbortSignal,
-) => {
-  return axiosInstance<ApiResponseDtoResolveConceptsResponse>(
-    {
-      url: `/api/ontology/concepts/resolve`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: resolveConceptsRequest,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getResolveConceptReferencesMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof resolveConceptReferences>>,
-    TError,
-    { data: ResolveConceptsRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof resolveConceptReferences>>,
-  TError,
-  { data: ResolveConceptsRequest },
-  TContext
-> => {
-  const mutationKey = ['resolveConceptReferences'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof resolveConceptReferences>>,
-    { data: ResolveConceptsRequest }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return resolveConceptReferences(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type ResolveConceptReferencesMutationResult = NonNullable<
-  Awaited<ReturnType<typeof resolveConceptReferences>>
->;
-export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
-export type ResolveConceptReferencesMutationError = unknown;
-
-/**
- * @summary Získání metadat referencovaných pojmů
- */
-export const useResolveConceptReferences = <
-  TError = unknown,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof resolveConceptReferences>>,
-      TError,
-      { data: ResolveConceptsRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof resolveConceptReferences>>,
-  TError,
-  { data: ResolveConceptsRequest },
-  TContext
-> => {
-  const mutationOptions = getResolveConceptReferencesMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
  * Vytvoří nový pojem (třídu, vlastnost nebo vztah) ve slovníku. Podporuje různé typy pojmů podle OFN standardů. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
  * @summary Vytvoření nového pojmu
  */
@@ -1611,6 +1749,95 @@ export const useCreateConcept = <TError = unknown, TContext = unknown>(
 };
 
 /**
+ * Znovu načte propojený publikovaný pojem z NKD, obnoví lokální kopii a vrátí přepočítanou odchylku. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Aktualizace lokální kopie NKD pojmu
+ */
+export const updateLocalCopy = (
+  conceptId: number,
+  snapshotId: number,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoLinkSnapshotDto>(
+    {
+      url: `/api/concept/${conceptId}/localcopy/${snapshotId}/update`,
+      method: 'POST',
+      signal,
+    },
+    options,
+  );
+};
+
+export const getUpdateLocalCopyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateLocalCopy>>,
+    TError,
+    { conceptId: number; snapshotId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationKey = ['updateLocalCopy'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateLocalCopy>>,
+    { conceptId: number; snapshotId: number }
+  > = (props) => {
+    const { conceptId, snapshotId } = props ?? {};
+
+    return updateLocalCopy(conceptId, snapshotId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateLocalCopyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateLocalCopy>>
+>;
+
+export type UpdateLocalCopyMutationError = unknown;
+
+/**
+ * @summary Aktualizace lokální kopie NKD pojmu
+ */
+export const useUpdateLocalCopy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateLocalCopy>>,
+      TError,
+      { conceptId: number; snapshotId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationOptions = getUpdateLocalCopyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
  * Umožňuje přidat komentář ke slovníku nebo pojmu. Komentář je identifikován IRI slovníku nebo pojmu. Vyžaduje autentizaci.
  * @summary Přidání komentáře
  */
@@ -1696,6 +1923,247 @@ export const usePostComment = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getPostCommentMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary Run a PG↔TDB2 consistency scan on demand (detection-only; no repair).
+ */
+export const run = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoReconciliationReportDto>(
+    { url: `/api/admin/reconciler/run`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getRunMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof run>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof run>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['run'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof run>>,
+    void
+  > = () => {
+    return run(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RunMutationResult = NonNullable<Awaited<ReturnType<typeof run>>>;
+
+export type RunMutationError = unknown;
+
+/**
+ * @summary Run a PG↔TDB2 consistency scan on demand (detection-only; no repair).
+ */
+export const useRun = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof run>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof run>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getRunMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary Retry a FAILED outbox row (reset to PENDING). Only FAILED rows are retryable.
+ */
+export const retry = (
+  id: number,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoVoid>(
+    { url: `/api/admin/outbox/retry/${id}`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getRetryMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof retry>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof retry>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ['retry'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof retry>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return retry(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RetryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof retry>>
+>;
+
+export type RetryMutationError = unknown;
+
+/**
+ * @summary Retry a FAILED outbox row (reset to PENDING). Only FAILED rows are retryable.
+ */
+export const useRetry = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof retry>>,
+      TError,
+      { id: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof retry>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationOptions = getRetryMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * @summary Force an outbox drain pass on demand.
+ */
+export const drain = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoInteger>(
+    { url: `/api/admin/outbox/drain`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getDrainMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof drain>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof drain>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ['drain'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof drain>>,
+    void
+  > = () => {
+    return drain(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DrainMutationResult = NonNullable<
+  Awaited<ReturnType<typeof drain>>
+>;
+
+export type DrainMutationError = unknown;
+
+/**
+ * @summary Force an outbox drain pass on demand.
+ */
+export const useDrain = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof drain>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof drain>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationOptions = getDrainMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -4536,6 +5004,149 @@ export function useGetFragments<
 }
 
 /**
+ * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997"), vyhledá daný právní akt přesnou shodou, vybere jeho poslední znění a vrátí celé jeho znění: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
+ * @summary Celé znění právního aktu podle reference číslo/rok
+ */
+export const getLawContent = (
+  params: GetLawContentParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoLawContentDto>(
+    { url: `/api/eli/law/content`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetLawContentQueryKey = (params?: GetLawContentParams) => {
+  return [`/api/eli/law/content`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetLawContentQueryOptions = <
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetLawContentQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getLawContent>>> = ({
+    signal,
+  }) => getLawContent(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getLawContent>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetLawContentQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getLawContent>>
+>;
+export type GetLawContentQueryError = unknown;
+
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getLawContent>>,
+          TError,
+          Awaited<ReturnType<typeof getLawContent>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getLawContent>>,
+          TError,
+          Awaited<ReturnType<typeof getLawContent>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Celé znění právního aktu podle reference číslo/rok
+ */
+
+export function useGetLawContent<
+  TData = Awaited<ReturnType<typeof getLawContent>>,
+  TError = unknown,
+>(
+  params: GetLawContentParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getLawContent>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetLawContentQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací kompletní detail pojmu včetně všech vlastností, vztahů, definic a dalších metadat. Obsahuje také informace o odchylkách od publikované verze. Veřejný endpoint.
  * @summary Detail pojmu
  */
@@ -5002,6 +5613,404 @@ export function usePropertyDatatypes<
 }
 
 /**
+ * @summary Get the most recent PG↔TDB2 reconciliation report.
+ */
+export const lastReport = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoReconciliationReportDto>(
+    { url: `/api/admin/reconciler/report`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getLastReportQueryKey = () => {
+  return [`/api/admin/reconciler/report`] as const;
+};
+
+export const getLastReportQueryOptions = <
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getLastReportQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof lastReport>>> = ({
+    signal,
+  }) => lastReport(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof lastReport>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type LastReportQueryResult = NonNullable<
+  Awaited<ReturnType<typeof lastReport>>
+>;
+export type LastReportQueryError = unknown;
+
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof lastReport>>,
+          TError,
+          Awaited<ReturnType<typeof lastReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof lastReport>>,
+          TError,
+          Awaited<ReturnType<typeof lastReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get the most recent PG↔TDB2 reconciliation report.
+ */
+
+export function useLastReport<
+  TData = Awaited<ReturnType<typeof lastReport>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getLastReportQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Outbox queue health: counts by status + oldest pending row age.
+ */
+export const status = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoOutboxStatusDto>(
+    { url: `/api/admin/outbox/status`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getStatusQueryKey = () => {
+  return [`/api/admin/outbox/status`] as const;
+};
+
+export const getStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getStatusQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof status>>> = ({
+    signal,
+  }) => status(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof status>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type StatusQueryResult = NonNullable<Awaited<ReturnType<typeof status>>>;
+export type StatusQueryError = unknown;
+
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof status>>,
+          TError,
+          Awaited<ReturnType<typeof status>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof status>>,
+          TError,
+          Awaited<ReturnType<typeof status>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Outbox queue health: counts by status + oldest pending row age.
+ */
+
+export function useStatus<
+  TData = Awaited<ReturnType<typeof status>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getStatusQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary List FAILED outbox rows (metadata + error; no triple payloads).
+ */
+export const failed = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListOutboxEntryDto>(
+    { url: `/api/admin/outbox/failed`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getFailedQueryKey = () => {
+  return [`/api/admin/outbox/failed`] as const;
+};
+
+export const getFailedQueryOptions = <
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getFailedQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof failed>>> = ({
+    signal,
+  }) => failed(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof failed>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type FailedQueryResult = NonNullable<Awaited<ReturnType<typeof failed>>>;
+export type FailedQueryError = unknown;
+
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof failed>>,
+          TError,
+          Awaited<ReturnType<typeof failed>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof failed>>,
+          TError,
+          Awaited<ReturnType<typeof failed>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List FAILED outbox rows (metadata + error; no triple payloads).
+ */
+
+export function useFailed<
+  TData = Awaited<ReturnType<typeof failed>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getFailedQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Smaže slovník a všechna jeho data z RDF úložiště i databáze. Vyžaduje oprávnění vlastníka nebo administrátora.
  * @summary Smazání slovníku
  */
@@ -5080,6 +6089,93 @@ export const useDeleteOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getDeleteOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Zruší propojení na publikovaný pojem v NKD a odstraní jeho lokální kopii. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Odstranění lokální kopie NKD pojmu
+ */
+export const removeLocalCopy = (
+  conceptId: number,
+  snapshotId: number,
+  options?: SecondParameter<typeof axiosInstance>,
+) => {
+  return axiosInstance<ApiResponseDtoVoid>(
+    {
+      url: `/api/concept/${conceptId}/localcopy/${snapshotId}`,
+      method: 'DELETE',
+    },
+    options,
+  );
+};
+
+export const getRemoveLocalCopyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeLocalCopy>>,
+    TError,
+    { conceptId: number; snapshotId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof removeLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationKey = ['removeLocalCopy'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof removeLocalCopy>>,
+    { conceptId: number; snapshotId: number }
+  > = (props) => {
+    const { conceptId, snapshotId } = props ?? {};
+
+    return removeLocalCopy(conceptId, snapshotId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveLocalCopyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof removeLocalCopy>>
+>;
+
+export type RemoveLocalCopyMutationError = unknown;
+
+/**
+ * @summary Odstranění lokální kopie NKD pojmu
+ */
+export const useRemoveLocalCopy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof removeLocalCopy>>,
+      TError,
+      { conceptId: number; snapshotId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof removeLocalCopy>>,
+  TError,
+  { conceptId: number; snapshotId: number },
+  TContext
+> => {
+  const mutationOptions = getRemoveLocalCopyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

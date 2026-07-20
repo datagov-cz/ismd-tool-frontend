@@ -1,6 +1,13 @@
-import { GovIcon } from '@gov-design-system-ce/react';
+import {
+  GovIcon,
+  GovTooltip,
+  GovTooltipContent,
+} from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+
+import { ConceptMetadataModelConceptType } from '@/api/generated';
 
 export const RelatedTerm = ({
   label,
@@ -8,18 +15,24 @@ export const RelatedTerm = ({
   noIcon,
   remove,
   ontologyLabel,
+  type,
+  warning,
 }: {
   label: string;
   href?: string;
   noIcon?: boolean;
   remove?: () => void;
   ontologyLabel?: string;
+  type?: ConceptMetadataModelConceptType;
+  warning?: boolean;
 }) => {
   const className = clsx(
     'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active',
     noIcon ? 'grayscale' : 'font-bold',
-    !!ontologyLabel ? 'px-2 py-1' : 'p-2',
+    ontologyLabel || warning ? 'px-2 py-1' : 'p-2',
   );
+
+  const t = useTranslations('ConceptDetail.Main');
 
   const content = (
     <>
@@ -27,11 +40,20 @@ export const RelatedTerm = ({
         {!noIcon && (
           <GovIcon
             slot="icon-start"
-            name="card-heading"
+            name={
+              type === 'VLASTNOST'
+                ? 'tag'
+                : type === 'VZTAH'
+                  ? 'bezier2'
+                  : 'card-heading'
+            }
             type="components"
             size="l"
             color="primary"
-            className="mt-0.5! shrink-0"
+            className={clsx(
+              'shrink-0',
+              type === 'VLASTNOST' || type === 'VZTAH' ? 'mt-1!' : 'mt-0.5!',
+            )}
           />
         )}
         {label}
@@ -59,6 +81,24 @@ export const RelatedTerm = ({
           />
           {ontologyLabel}
         </span>
+      )}
+      {warning && (
+        <GovTooltip position="bottom" className="border-0!">
+          <GovTooltipContent className="z-1000!">
+            {t('WarningTooltip')}
+          </GovTooltipContent>
+          <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
+            <GovIcon
+              slot="icon-start"
+              name="exclamation-triangle"
+              type="components"
+              size="s"
+              color="warning"
+              className="shrink-0 mt-1!"
+            />
+            {t('Warning')}
+          </span>
+        </GovTooltip>
       )}
     </>
   );

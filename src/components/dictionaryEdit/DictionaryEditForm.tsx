@@ -1,5 +1,6 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -12,10 +13,14 @@ import {
   OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
+import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { FormSection } from '../conceptForm/components/FormSection';
 import { FormToolbar } from '../conceptForm/components/FormToolbar';
+import { useDictionaryFormHints } from '../conceptForm/components/hint/conceptFormHints';
+import { HintSidebar } from '../conceptForm/components/hint/HintSidebar';
+import { useFormHints } from '../conceptForm/components/hint/useFormHints';
 import { LanguageInput } from '../shared/LanguageInput';
 
 export type DictionaryEditProps = {
@@ -59,6 +64,7 @@ export const DictionaryEditForm = ({
   const t = useTranslations('DictionaryDetail.EditOntology');
   const invalidator = useQueryInvalidator();
   const router = useRouter();
+  const storageKey = `dictionary-draft:edit:${metadata.slug}`;
 
   const buildValues = () => ({
     nameModel: buildLanguageEntries(detail.název?.cs, {
@@ -77,13 +83,23 @@ export const DictionaryEditForm = ({
     values: buildValues(),
   });
 
+  useFormDraft(form, storageKey);
+
   const { handleSubmit } = form;
+  const { hints, defaultHintEdit } = useDictionaryFormHints();
+
+  const { hint, open, setOpen, handleFocus } = useFormHints(
+    hints,
+    defaultHintEdit,
+  );
 
   const { mutate: editOntology, isPending } = useEditOntology({
     mutation: {
-      onSuccess: async () => {
-        await invalidator.invalidateOntology(metadata.slug || '');
+      onSuccess: async (res) => {
+        clearFormDraft(storageKey);
+        await invalidator.invalidateOntology(res.data?.slug || '');
         toast.success(t('SuccessMessage'), { position: 'bottom-right' });
+        router.push(`/dictionary/${res.data?.slug}`);
       },
       onError: () => {
         toast.error(t('ErrorMessage'), { position: 'bottom-right' });
@@ -110,7 +126,7 @@ export const DictionaryEditForm = ({
   return (
     <div className="w-full h-full flex-1 bg-primary-subtlest px-5">
       <div className="w-full relative max-w-250 mx-auto py-5">
-        <div className="w-full space-y-6 relative">
+        <div className="w-full space-y-6 relative lg:max-w-160 xl:max-w-200">
           <div className="space-y-3 relative">
             <div className="relative">
               <button
@@ -125,24 +141,33 @@ export const DictionaryEditForm = ({
                 {t('EditedOntology')}:{' '}
               </span>
 
-              <GovTag
-                color="success"
-                type="subtle"
-                size="xs"
-                className="w-fit border bg-white!"
+              <Link
+                href={`/dictionary/${metadata.slug}`}
+                className="cursor-pointer"
               >
-                <GovIcon
-                  name="journal-text"
-                  slot="icon-start"
-                  type="components"
-                />
-                <span className="font-bold text-blue-primary">
-                  {detail?.['název']?.cs}
-                </span>
-              </GovTag>
+                <GovTag
+                  color="success"
+                  type="subtle"
+                  size="xs"
+                  className="w-fit border bg-white! cursor-pointer!"
+                >
+                  <GovIcon
+                    name="journal-text"
+                    slot="icon-start"
+                    type="components"
+                  />
+                  <span className="font-bold text-blue-primary">
+                    {detail?.['název']?.cs}
+                  </span>
+                </GovTag>
+              </Link>
             </div>
             <FormProvider {...form}>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-2.5"
+                onFocus={handleFocus}
+              >
                 <FormSection label="Základní parametry" icon="tag">
                   <LanguageInput<OntologyEditModel>
                     name="nameModel"
@@ -159,6 +184,15 @@ export const DictionaryEditForm = ({
                 <FormToolbar<OntologyEditModel> isPending={isPending} />
               </form>
             </FormProvider>
+          </div>
+          <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
+            {open && (
+              <HintSidebar
+                hint={hint}
+                onClose={() => setOpen(false)}
+                className="sticky top-22 w-full max-w-80"
+              />
+            )}
           </div>
         </div>
       </div>

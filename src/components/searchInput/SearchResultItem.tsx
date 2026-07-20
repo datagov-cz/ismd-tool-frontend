@@ -1,7 +1,7 @@
 import { GovIcon } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 
-import { SearchType } from '@/api/generated';
+import { SearchResultDtoConceptType, SearchType } from '@/api/generated';
 
 import { SearchHighlightMatch } from './SearchHighlightMatch';
 
@@ -12,6 +12,7 @@ export const SearchResultItem = ({
   query,
   href,
   onClose,
+  conceptType,
 }: {
   type: SearchType;
   isPublished?: boolean;
@@ -19,6 +20,7 @@ export const SearchResultItem = ({
   query: string;
   href: string;
   onClose?: () => void;
+  conceptType?: SearchResultDtoConceptType;
 }) => {
   return (
     <Link
@@ -33,7 +35,11 @@ export const SearchResultItem = ({
             ? isPublished === false
               ? 'journals'
               : 'journal-text'
-            : 'card-heading'
+            : conceptType === 'VZTAH'
+              ? 'bezier2'
+              : conceptType === 'VLASTNOST'
+                ? 'tag'
+                : 'card-heading'
         }
         color={
           type === SearchType.ONTOLOGY

@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { MultiSelect } from '@/components/shared/MultiSelect';
+import { MultiCheckBox } from '@/components/shared/MultiCheckBox';
 import { Select } from '@/components/shared/Select';
 import { FormSection } from '../components/FormSection';
 
@@ -38,7 +38,6 @@ export const ProclamationSection = () => {
   ];
 
   const SHARING_METHOD_OPTIONS = [
-    { value: '', label: '' },
     {
       value: 'veřejně přístupné',
       label: t('CommonConceptFields.Options.SharingMethod.PubliclyAccessible'),
@@ -59,15 +58,17 @@ export const ProclamationSection = () => {
     <FormSection icon="grid" label={t('ProclamationSection.Label')}>
       <Select
         name="contentType"
+        anchor="contentType"
         label={t('ProclamationSection.ContentTypeLabel')}
         options={CONTENT_TYPE_OPTIONS}
       />
       <Select
         name="acquisitionMethod"
+        anchor="acquisitionMethod"
         label={t('ProclamationSection.AcquisitionMethodLabel')}
         options={ACQUISITION_METHOD_OPTIONS}
       />
-      <MultiSelect
+      <MultiCheckBox
         name="sharingMethod"
         label={t('ProclamationSection.SharingMethodLabel')}
         options={SHARING_METHOD_OPTIONS}

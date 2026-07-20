@@ -6,7 +6,11 @@ import { LanguageInput } from '@/components/shared/LanguageInput';
 import { FormSection } from '../components/FormSection';
 import { ConceptForm } from '../schema/conceptFormSchema';
 
-export const ConceptMeaningSection = () => {
+export const ConceptMeaningSection = ({
+  blockedIri,
+}: {
+  blockedIri?: string;
+}) => {
   const form = useFormContext();
   const t = useTranslations('CreateConcept.ConceptMeaningSection');
 
@@ -16,37 +20,54 @@ export const ConceptMeaningSection = () => {
         name="definitionModel.definition"
         label={t('DefinitionLabel')}
         placeholder={t('DefinitionPlaceholder')}
+        anchor="definition"
       />
       <LanguageInput<ConceptForm>
         name="descriptionModel.description"
         label={t('DescriptionLabel')}
+        anchor="description"
         placeholder={t('DescriptionPlaceholder')}
       />
       {form.watch('conceptType') === 'TRIDA' && (
         <ConceptInput
           name="broaderConcept"
+          anchor="broaderConcept"
           label={t('BroaderConceptLabel')}
           placeholder={t('SearchPlaceholder')}
+          searchType="CLASS"
+          searchSource="ALL"
+          blockedIri={blockedIri}
         />
       )}
       {form.watch('conceptType') === 'VZTAH' && (
         <ConceptInput
           name="superRelation"
+          anchor="superRelation"
           label={t('SuperRelationLabel')}
           placeholder={t('SearchPlaceholder')}
+          searchType="RELATIONSHIP"
+          searchSource="ALL"
+          blockedIri={blockedIri}
         />
       )}
       {form.watch('conceptType') === 'VLASTNOST' && (
         <ConceptInput
           name="superProperty"
+          anchor="superProperty"
           label={t('SuperPropertyLabel')}
           placeholder={t('SearchPlaceholder')}
+          searchType="PROPERTY"
+          searchSource="ALL"
+          blockedIri={blockedIri}
         />
       )}
       <ConceptInput
         name="exactMatch"
+        anchor="exactMatch"
         label={t('EquivalentConceptLabel')}
         placeholder={t('SearchPlaceholder')}
+        searchType="CONCEPT"
+        searchSource="ALL"
       />
     </FormSection>
   );

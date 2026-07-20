@@ -9,16 +9,14 @@ export const AgendaSection = ({
   agenda,
   agendovyInformacniSystem,
   neverejnostUdaje,
+  ppdf,
 }: {
   agenda?: RppAgenda | string;
   agendovyInformacniSystem?: RppIsvs | string;
   neverejnostUdaje?: ResolvedLegalSourceDto[];
+  ppdf?: boolean;
 }) => {
   const t = useTranslations('ConceptDetail');
-
-  if (!agenda && !agendovyInformacniSystem && !neverejnostUdaje) {
-    return null;
-  }
 
   const renderAgenda = (item: RppAgenda | string) => {
     if (typeof item === 'string') {
@@ -42,7 +40,7 @@ export const AgendaSection = ({
           {renderAgenda(agendovyInformacniSystem)}
         </Section>
       )}
-      {neverejnostUdaje && (
+      {neverejnostUdaje && neverejnostUdaje?.length > 0 && (
         <Section title={t('Sections.ProvingNonPublicData')}>
           <div className="space-y-2">
             {neverejnostUdaje.map((item) => {
@@ -51,6 +49,7 @@ export const AgendaSection = ({
           </div>
         </Section>
       )}
+      <Section title={t('Sections.IsPpdf')}>{ppdf ? 'Ano' : 'Ne'}</Section>
     </div>
   );
 };

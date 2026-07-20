@@ -18,8 +18,8 @@
     },
     "NavLogged": {
       "OnlineIndicator": {
-        "Online": "Připojeno",
-        "Offline": "Odpojeno"
+        "Online": "Online",
+        "Offline": "Offline"
       },
       "Link1": "Nápověda",
       "Dropdown": {
@@ -115,7 +115,9 @@
     "EditConcept": "Upravit pojem:",
     "Loading": "Načítání pojmu…",
     "ToastSuccess": "Koncept byl úspěšně upraven.",
-    "ToastError": "Při ukládání konceptu došlo k chybě."
+    "ToastError": "Při ukládání konceptu došlo k chybě.",
+    "HintHeader": "Nápověda k formuláři",
+    "Suggestion": "Doporučení"
   },
   "ConceptDetail": {
     "Sections": {
@@ -189,7 +191,25 @@
       "OpenInESbirka": "Otevřít v e-sbírce",
       "Loading": "Načítání...",
       "NoResults": "Pro tohle nemáme žádné výsledky",
-      "AddConcept": "+ Přidat další pojem"
+      "AddConcept": "+ Přidat další pojem",
+      "AddRelation": "Přidat vztah k pojmu",
+      "AddProperty": "Přidat vlastnost k pojmu ",
+      "AddRelationButton": "Vytvořit vztah",
+      "AddPropertyButton": "Přidat vlastnost",
+      "CreateProperty": "+ Vytvořit novou vlastnost",
+      "CreateRelationship": "+ Vytvořit nový vytah",
+      "NoSuitableProperty": "Nenalezli jste vhodnou vlastnost?",
+      "NoSuitableRelationship": "Nenalezli jste vhodný vztah?",
+      "CreateAndAddProperty": "Vytvořit vlastnost a vybrat",
+      "CreateAndAddRelationship": "Vytvořit vztah a vybrat",
+      "Cancel": "Zrušit",
+      "OtherConcept": "jiný pojem",
+      "SourceConcept": "Definiční obor (jiný pojem)",
+      "DestinationConcept": "Obor hodnot (jiný pojem)",
+      "Warning": "Nelze najít pojem v NKD/ISMD",
+      "ShortQuery": "Hledaný výraz musí mít alspoň 4 znaky",
+      "ShortQueryRPP": "Hledaný výraz musí mít alspoň 2 znaky",
+      "WarningTooltip": "ISMD nebyl schopný nalézt zobrazený pojem, pojem z OFN je ve slovníku vyplněn, ale na základě daného vyplněného IRI nelze najít pojem v NKD/ISMD."
     }
   },
   "Term": {
@@ -203,6 +223,8 @@
       "Title": "Nový pojem",
       "Save": "Uložit"
     },
+    "NotFound": "Slovník nenalezen",
+    "Back": "Zpět",
     "EditOntology": {
       "Title": "Upravit slovník",
       "EditedOntology": "Upravovaný slovník",
@@ -265,6 +287,8 @@
       "Send": "Odeslat"
     },
     "Main": {
+      "Name": "Název",
+      "Description": "Popis",
       "DictionaryStatus": {
         "Draft": "Rozpracovaný slovník",
         "Published": "Publikovaný slovník"
@@ -287,12 +311,18 @@
         "Add": "Přidat",
         "Concepts": "pojmů",
         "Updated": "aktualizováno",
-        "CreateDiagram": "Vytvořit diagram"
+        "CreateDiagram": "Vytvořit diagram",
+        "CopyIRI": "Zkopírovat IRI",
+        "CopyURL": "Zkopírovat URL"
       },
       "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",
       "SearchConcepts": "Hledat výraz",
-      "Ontology": "Slovníky"
+      "Ontology": "Slovníky",
+      "NoResults": {
+        "Title": "Žádné výsledky",
+        "Description": "Hledaný výraz <strong>\"{query}\"</strong> neobsahuje žádný název pojmu"
+      }
     }
   },
   "OntologyList": {
@@ -306,13 +336,28 @@
     "Yes": "Ano",
     "No": "Ne"
   },
+  "LegislativeSource": {
+    "SearchPlaceholder": "Vyberte právní předpis a ustanovení",
+    "Loading": "Načítání…",
+    "NoResults": "Žádné výsledky",
+    "Collapse": "Sbalit",
+    "Expand": "Rozbalit",
+    "SelectFragment": "Vybrat ustanovení",
+    "AddAnother": "Přidat další ustanovení"
+  },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
     "Success": "Úspěšně stažený sobor",
     "Error": "Soubor se nepodařilo stáhnout"
   },
   "DeleteDialog": {
-    "Title": "Jste si jistí, že chcete odstranit slovník?",
+    "Title": {
+      "ONTOLOGY": "Jste si jistí, že chcete odstranit slovník?",
+      "CONCEPT": "Jste si jistí, že chcete odstranit pojem?",
+      "TRIDA": "Jste si jistí, že chcete odstranit třídu?",
+      "VLASTNOST": "Jste si jistí, že chcete odstranit vlastnost?",
+      "VZTAH": "Jste si jistí, že chcete odstranit vztah?"
+    },
     "Name": "Název",
     "No": "Ne",
     "Yes": "Ano"
@@ -344,10 +389,31 @@
       "GraphName": "Název slovníku",
       "ViewOntology": "Zobrazit slovník",
       "CloseDialog": "Zavřít"
+    },
+    "Decision": {
+      "Title": "Vyberte způsob zpracování pojmů",
+      "Description": "Některé pojmy nemají přiřazený slovník (skos:inScheme). Vyberte, jak s nimi naložit.",
+      "Mode": {
+        "NORMALIZE_ALL": {
+          "Label": "Normalizovat všechny pojmy",
+          "Hint": "Všem chybějícím pojmům bude přiřazen navrhovaný slovník."
+        },
+        "EXCLUDE_ALL": {
+          "Label": "Vyloučit všechny pojmy",
+          "Hint": "Pojmy bez přiřazeného slovníku budou z importu vynechány."
+        },
+        "PER_CONCEPT": {
+          "Label": "Rozhodnout u každého pojmu",
+          "Hint": "Zaškrtnuté pojmy budou normalizovány, ostatní vyloučeny."
+        }
+      },
+      "Cancel": "Zrušit",
+      "Confirm": "Pokračovat"
     }
   },
   "Errors": {
-    "UnknownError": "Neznámý error"
+    "UnknownError": "Neznámý error",
+    "NameRequired": "Název je povinný"
   },
   "CreateOntology": {
     "Form": {
@@ -382,6 +448,7 @@
     "Save": "Uložit",
     "Success": "Úspěšně uložený pojem",
     "Error": "Pojem se nepodařilo uložit",
+    "ValidationError": "Prosím opravte chyby ve formuláři.",
     "CommonConceptFields": {
       "Labels": {
         "Name": "Název",
@@ -408,6 +475,9 @@
         "IsInPPDF": "Je v PPDF"
       },
       "Options": {
+        "Class": "Třída",
+        "Property": "Vlastnost",
+        "Relation": "Vztah",
         "Yes": "Ano",
         "No": "Ne",
         "ContentType": {
@@ -485,10 +555,20 @@
       "PropertyDomainPlaceholder": "Vyhledejte pojem",
       "PropertyDataTypeLabel": "Datový typ hodnoty",
       "PropertyDataTypePlaceholder": "Vyberte typ hodnoty",
-      "RelationDomainLabel": "Výchozí pojem",
+      "RelationDomainLabel": "Definiční obor (Výchozí pojem)",
       "RelationDomainPlaceholder": "Vyhledejte pojem",
-      "RelationRangeLabel": "Cílový pojem",
+      "RelationRangeLabel": "Obor hodnot (Cílový pojem)",
       "RelationRangePlaceholder": "Vyhledejte pojem"
+    },
+    "ConceptDataLabel": "Údaje pojmu",
+    "LegalSourceAutofill": {
+      "SectionLabel": "Doplnění údajů z e-Sbírky",
+      "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu.",
+      "Optional": "volitelné",
+      "PrefilledSummary": "Ze zdroje byly předvyplněny základní údaje:",
+      "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
+      "NotFound": "Pro vybrané ustanovení nebyly nalezeny žádné údaje.",
+      "Success": "Údaje z e-Sbírky byly předvyplněny."
     },
     "ConceptMeaningSection": {
       "Label": "Význam pojmu",

@@ -12,9 +12,14 @@ import {
 interface Props {
   conceptDetail: ConceptDetailModel;
   conceptType: ConceptType;
+  slug: string;
 }
 
-export const MissingConceptFields = ({ conceptDetail, conceptType }: Props) => {
+export const MissingConceptFields = ({
+  conceptDetail,
+  conceptType,
+  slug,
+}: Props) => {
   const t = useTranslations('ConceptDetail');
   const missingGroups = getMissingConceptFieldGroups(
     conceptDetail,
@@ -44,6 +49,7 @@ export const MissingConceptFields = ({ conceptDetail, conceptType }: Props) => {
                   className="block! py-2"
                   color="primary"
                   type="base"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}/edit${config.anchor}`}
                 >
                   <GovIcon
                     size="xs"

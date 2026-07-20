@@ -7,9 +7,11 @@ import { toast } from 'react-toastify';
 
 import {
   ConceptDetailModel,
+  ConceptDetailModelReferencovanéPojmyResolved,
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { clearFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { normalizeFormData } from './ConceptCreate';
@@ -20,24 +22,86 @@ function toMultiLang(
   record?: Record<string, string>,
 ): { languageTag: string; name: string }[] {
   if (!record) return [];
-  return Object.entries(record).map(([languageTag, name]) => ({
-    languageTag,
-    name,
-  }));
+  return Object.entries(record)
+    .map(([languageTag, name]) => ({
+      languageTag,
+      name,
+    }))
+    .sort((a, b) => {
+      if (a.languageTag === 'cs') return -1;
+      if (b.languageTag === 'cs') return 1;
+      return 0;
+    });
+}
+
+const SHARING_METHOD_IRI_MAP: Record<string, string> = {
+  'veřejně-přístupné': 'veřejně přístupné',
+  'poskytované-na-žádost': 'poskytované na žádost',
+  'zpřístupňované-pro-výkon-agendy': 'zpřístupňované pro výkon agendy',
+};
+
+const ACQUISITION_METHOD_IRI_MAP: Record<string, string> = {
+  'jiných-agend': 'jiných agend',
+  provozní: 'provozní',
+};
+
+const CONTENT_TYPE_IRI_MAP: Record<string, string> = {
+  identifikační: 'identifikační',
+  evidenční: 'evidenční',
+  statistické: 'statistické',
+};
+
+function iriToSlug(iri: string): string {
+  return iri.split('/').pop() ?? '';
+}
+
+function mapSharingMethods(iris?: string[]): string[] {
+  return (iris ?? [])
+    .map((iri) => SHARING_METHOD_IRI_MAP[iriToSlug(iri)] ?? '')
+    .filter(Boolean);
+}
+
+function mapAcquisitionMethod(iri?: string): string {
+  if (!iri) return '';
+  return ACQUISITION_METHOD_IRI_MAP[iriToSlug(iri)] ?? '';
+}
+
+function mapContentType(iri?: string): string {
+  if (!iri) return '';
+  return CONTENT_TYPE_IRI_MAP[iriToSlug(iri)] ?? '';
 }
 
 function toConceptRef(
   iri?: string,
-): { iri: string; label: string } | undefined {
-  return iri ? { iri, label: iri } : undefined;
+  resolved?: ConceptDetailModelReferencovanéPojmyResolved,
+): { iri: string; label: string; ontologyLabel: string } | undefined {
+  if (!iri) return undefined;
+  const resolvedItem = resolved?.[iri];
+  if (resolvedItem) {
+    return {
+      iri: iri,
+      label: resolvedItem.conceptName?.cs ?? '',
+      ontologyLabel: resolvedItem.ontologyName?.cs ?? '',
+    };
+  } else if (iri && iri.includes('pojem/')) {
+    return {
+      iri,
+      label: (iri.split('pojem/')[1] ?? '').replace(/-/g, ' '),
+      ontologyLabel: '',
+    };
+  } else {
+    return undefined;
+  }
 }
 
-function toConceptRefs(iris?: string[]): { iri: string; label: string }[] {
+function toConceptRefs(
+  iris?: string[],
+  resolved?: ConceptDetailModelReferencovanéPojmyResolved,
+): { iri: string; label: string; ontologyLabel: string }[] {
   return (
-    iris?.map((iri) => ({
-      iri,
-      label: iri.split('pojem/')[1].replace(/-/g, ' '),
-    })) ?? []
+    iris
+      ?.map((iri) => toConceptRef(iri, resolved))
+      .filter((ref) => ref !== undefined) ?? []
   );
 }
 
@@ -64,19 +128,49 @@ export function mapDetailToFormValues(
     }),
   );
 
+  const nameRecord = Object.fromEntries(
+    Object.entries(detail['název'] ?? {}).map(([lang, val]) => {
+      if (typeof val === 'string') return [lang, val];
+      const first = Object.values(val as Record<string, unknown>)[0];
+      return [lang, first != null ? String(first) : ''];
+    }),
+  );
+
   return {
     ontologyGraphName: graphName,
     conceptType: conceptTypeEnum,
     conceptTypeEnum,
     identifier: detail['identifikátor'],
+    type: detail.typ?.includes('Typ subjektu práva')
+      ? 'Subjekt'
+      : detail.typ?.includes('Typ objektu práva')
+        ? 'Objekt'
+        : undefined,
     nameModel: {
-      name: (detail['název'] as Record<string, string> | undefined) ?? {
-        cs: '',
-      },
+      name:
+        toMultiLang(nameRecord).length > 0
+          ? toMultiLang(nameRecord)
+          : [{ languageTag: 'cs', name: '' }],
     },
-    altNameModel: { altName: toMultiLang(altNameRecord) },
-    definitionModel: { definition: toMultiLang(detail['definice']) },
-    descriptionModel: { description: toMultiLang(detail['popis']) },
+    altNameModel: {
+      altName:
+        toMultiLang(altNameRecord).length > 0
+          ? toMultiLang(altNameRecord)
+          : [{ languageTag: 'cs', name: '' }],
+    },
+    definitionModel: {
+      definition:
+        toMultiLang(detail['definice']).length > 0
+          ? toMultiLang(detail['definice'])
+          : [{ languageTag: 'cs', name: '' }],
+    },
+    descriptionModel: {
+      description:
+        toMultiLang(detail['popis']).length > 0
+          ? toMultiLang(detail['popis'])
+          : [{ languageTag: 'cs', name: '' }],
+    },
+    dataType: detail['obor-hodnot-resolved'],
     definingLegalSource:
       detail['definující-ustanovení-právního-předpisu'] ?? [],
     relatedLegalSource:
@@ -93,19 +187,37 @@ export function mapDetailToFormValues(
         description: s.popis?.cs,
         url: s.url,
       })) ?? [],
-    exactMatch: toConceptRefs(detail['ekvivalentní-pojem']),
-    broaderConcept: toConceptRefs(detail['nadřazená-třída']),
-    superProperty: toConceptRefs(detail['nadřazená-vlastnost']),
-    superRelation: toConceptRefs(detail['nadřazený-vztah']),
-    domain: toConceptRef(detail['definiční-obor']),
-    range: toConceptRef(detail['obor-hodnot']),
+    exactMatch: toConceptRefs(
+      detail['ekvivalentní-pojem'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    broaderConcept: toConceptRefs(
+      detail['nadřazená-třída'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    superProperty: toConceptRefs(
+      detail['nadřazená-vlastnost'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    superRelation: toConceptRefs(
+      detail['nadřazený-vztah'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    domain: toConceptRef(
+      detail['definiční-obor'],
+      detail['referencované-pojmy-resolved'],
+    ),
+    range: toConceptRef(
+      detail['obor-hodnot'],
+      detail['referencované-pojmy-resolved'],
+    ),
     agendaCode: detail['agenda-resolved'],
     agendaSystemCode: detail['agendový-informační-systém-resolved'],
-    contentType: detail['typ-obsahu-údaje'] ?? '',
-    acquisitionMethod: detail['způsob-získání-údaje'] ?? '',
-    sharingMethod: detail['způsob-sdílení-údaje'] ?? [],
+    contentType: mapContentType(detail['typ-obsahu-údaje']),
+    acquisitionMethod: mapAcquisitionMethod(detail['způsob-získání-údaje']),
+    sharingMethod: mapSharingMethods(detail['způsob-sdílení-údaje']),
     isInPPDF: detail['je-ppdf'] ?? false,
-    isPublic: false,
+    isPublic: detail.typ?.includes('Veřejný údaj'),
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
   };
 }
@@ -121,6 +233,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
   const graphName = conceptMetadata?.graphName ?? '';
+  const storageKey = `concept-draft:edit:${slug}`;
 
   const defaultValues =
     conceptDetail && graphName
@@ -130,11 +243,25 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
 
+    const originalLanguageTags = {
+      name: Object.keys(conceptDetail?.['název'] ?? {}),
+      altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),
+      definition: Object.keys(conceptDetail?.['definice'] ?? {}),
+      description: Object.keys(conceptDetail?.['popis'] ?? {}),
+    };
+
     editConcept(
-      { conceptId: conceptMetadata.id, data: normalizeFormData(formData) },
+      {
+        conceptId: conceptMetadata.id,
+        data: normalizeFormData(formData, originalLanguageTags),
+      },
       {
         onSuccess: (response) => {
+          clearFormDraft(storageKey);
           (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
+            queryInvalidate.invalidateOntology(
+              data?.data?.conceptMetadata?.ontologySlug ?? '',
+            ),
             toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
           router.push(`/concept/${response.data?.slug}`);
         },
@@ -179,6 +306,9 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           onSubmit={handleSubmit}
           isPending={isPending}
           defaultValues={defaultValues}
+          editing={true}
+          storageKey={storageKey}
+          conceptIri={data?.data?.conceptDetail?.iri}
         />
       )}
     </div>

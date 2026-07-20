@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -14,35 +14,35 @@ import { DeleteDialog } from './DeleteDialog';
 import { DownloadDialog } from './DownloadDialog';
 
 interface Props {
-  isPublished: boolean;
   ontologyID: number;
   name: string;
   user?: UserModel;
   commentsCount?: number;
   slug: string;
   updatedAt?: string;
+  iri?: string;
 }
 
 export const ControlPanel = ({
-  isPublished,
   ontologyID,
   name,
   user,
   commentsCount,
   slug,
   updatedAt,
+  iri,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   const tEdit = useTranslations('DictionaryDetail.EditOntology');
-  const { user: currentUser } = useCurrentUser();
+  const { user: currentUser, isAdmin } = useCurrentUser();
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
-  const handleCopyLink = async () => {
+  const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(text);
       toast(t('LinkCopied'), { type: 'success' });
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -52,7 +52,7 @@ export const ControlPanel = ({
   };
 
   const isOwner = user?.userId === currentUser?.userId;
-
+  const isEditAllowed = isOwner || isAdmin;
   const isLoggedOut = !currentUser?.userId;
 
   return (
@@ -64,7 +64,7 @@ export const ControlPanel = ({
       )}
       <div className="flex gap-2 flex-col items-end">
         <div className="flex gap-8">
-          {isOwner && (
+          {isEditAllowed && (
             <GovButton
               nativeType="button"
               color="primary"
@@ -104,7 +104,7 @@ export const ControlPanel = ({
           )}
         </div>
 
-        {isOwner && (
+        {isEditAllowed && (
           <GovButton
             nativeType="button"
             color="primary"
@@ -128,12 +128,45 @@ export const ControlPanel = ({
           ariaLabel={t('Download')}
           onClick={() => setOpenDownload(true)}
         />
-        <ControlPanelButton
-          iconName="link"
-          ariaLabel={t('GetLink')}
-          onClick={() => handleCopyLink()}
-        />
-        {!isPublished && isOwner && (
+        <GovDropdown id="copy-link-ismd" position="left">
+          <GovButton
+            color={'primary'}
+            type="base"
+            size="m"
+            className="h-8! [&_button]:h-8!"
+          >
+            <GovIcon
+              name="link"
+              size="m"
+              aria-label={t('GetLink')}
+              className="text-white"
+            />
+          </GovButton>
+          <ul slot="list">
+            {iri && (
+              <GovButton
+                color="primary"
+                type="base"
+                size="s"
+                onGovClick={() => copyToClipboard(iri)}
+                className="w-full! [&_button]:w-full! max-w-none!"
+              >
+                {t('CopyIRI')}
+              </GovButton>
+            )}
+            <GovButton
+              color="primary"
+              type="base"
+              size="s"
+              onGovClick={() => copyToClipboard(window.location.href)}
+              className="w-full! [&_button]:w-full! max-w-none!"
+            >
+              {t('CopyURL')}
+            </GovButton>
+          </ul>
+        </GovDropdown>
+
+        {isEditAllowed && (
           <ControlPanelButton
             iconName="trash"
             ariaLabel={t('Delete')}
@@ -149,12 +182,14 @@ export const ControlPanel = ({
         onClose={() => setOpenDelete(false)}
         name={name}
         type="ONTOLOGY"
+        slug={slug}
       />
       <DownloadDialog
         ontologyID={ontologyID}
         open={openDownload}
         type="ISMD"
         onClose={() => setOpenDownload(false)}
+        ontologyName={name.replace(/\s+/g, '_').toLowerCase()}
       />
     </div>
   );

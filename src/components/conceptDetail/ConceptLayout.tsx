@@ -2,7 +2,6 @@ import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
-import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ConceptRelation } from './ConceptRelation';
 import { MissingConceptFields } from './MissingConceptFields';
@@ -20,6 +19,10 @@ interface Props {
   conceptType?: 'TRIDA' | 'VLASTNOST' | 'VZTAH';
   children?: React.ReactNode;
   source: 'NKD' | 'ISMD';
+  slug: string;
+  isOwnerLoggedIn?: boolean;
+  ontologyIri?: string;
+  ontologySlug?: string;
 }
 
 export const ConceptLayout = ({
@@ -27,9 +30,12 @@ export const ConceptLayout = ({
   conceptType,
   children,
   source,
+  slug,
+  isOwnerLoggedIn,
+  ontologyIri,
+  ontologySlug,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
-  const { user } = useCurrentUser();
   const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start px-5">
@@ -44,10 +50,17 @@ export const ConceptLayout = ({
           resolved={resolvedRelations}
         />
 
-        {conceptType === 'TRIDA' && (
+        {conceptType === 'TRIDA' && conceptDetail.iri && (
           <PropertiesRelationsSection
             properties={conceptDetail.conceptProperties}
             relationships={conceptDetail.conceptRelationships}
+            classIri={conceptDetail.iri || ''}
+            conceptName={conceptDetail['název']?.cs}
+            classSlug={slug}
+            isOwnerLoggedIn={isOwnerLoggedIn}
+            resolvedRelations={resolvedRelations}
+            ontologyIri={ontologyIri}
+            ontologySlug={ontologySlug}
           />
         )}
 
@@ -61,32 +74,44 @@ export const ConceptLayout = ({
                   resolvedRelations={resolvedRelations}
                 />
               )}
-              {conceptDetail['obor-hodnot-resolved'] && (
+              {conceptDetail['obor-hodnot-resolved'] ? (
                 <RangeItem
                   title={t('Sections.Range')}
                   item={conceptDetail['obor-hodnot-resolved']}
                 />
-              )}
+              ) : conceptDetail['obor-hodnot'] ? (
+                <ConceptRelation
+                  title={t('Sections.Range')}
+                  iri={conceptDetail['obor-hodnot']}
+                  resolvedRelations={resolvedRelations}
+                />
+              ) : undefined}
             </div>
           )}
 
         {conceptType === 'VLASTNOST' &&
           conceptDetail['nadřazená-vlastnost'] && (
-            <Section title={t('Sections.SupersededProperty')}>
-              <SuperClassList
-                items={conceptDetail['nadřazená-vlastnost']}
-                resolved={resolvedRelations}
-              />
-            </Section>
+            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+              <Section title={t('Sections.SupersededProperty')}>
+                <SuperClassList
+                  items={conceptDetail['nadřazená-vlastnost']}
+                  resolved={resolvedRelations}
+                  type="VLASTNOST"
+                />
+              </Section>
+            </div>
           )}
 
         {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (
-          <Section title={t('Sections.SupersededRelation')}>
-            <SuperClassList
-              items={conceptDetail['nadřazený-vztah']}
-              resolved={resolvedRelations}
-            />
-          </Section>
+          <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+            <Section title={t('Sections.SupersededRelation')}>
+              <SuperClassList
+                items={conceptDetail['nadřazený-vztah']}
+                resolved={resolvedRelations}
+                type="VZTAH"
+              />
+            </Section>
+          </div>
         )}
         <LegalSection
           definujiciUstanoveni={
@@ -100,6 +125,7 @@ export const ConceptLayout = ({
         />
 
         <AgendaSection
+          ppdf={conceptDetail['je-ppdf']}
           agenda={conceptDetail['agenda-resolved'] ?? conceptDetail.agenda}
           agendovyInformacniSystem={
             conceptDetail['agendový-informační-systém-resolved'] ??
@@ -116,8 +142,9 @@ export const ConceptLayout = ({
           zpusobZiskaniUdaje={conceptDetail['způsob-získání-údaje']}
         />
 
-        {source === 'ISMD' && user?.userId && (
+        {source === 'ISMD' && isOwnerLoggedIn && (
           <MissingConceptFields
+            slug={slug}
             conceptDetail={conceptDetail}
             conceptType={conceptType}
           />

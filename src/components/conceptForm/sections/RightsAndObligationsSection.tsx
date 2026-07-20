@@ -1,14 +1,18 @@
-import { GovFormLabel } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
+import { CheckBox } from '@/components/shared/CheckBox';
+import { LegislativeSourceArrayInput } from '@/components/shared/LegislativeSourceInput/LegislativeSourceArrayInput';
 import { RPPInput } from '@/components/shared/RPPInput';
 import { FormSection } from '../components/FormSection';
+import { ConceptForm } from '../schema/conceptFormSchema';
 
 export const RightsAndObligationsSection = () => {
-  const { register } = useFormContext();
   const tRegistry = useTranslations('ConceptDetail.Registry');
   const tSection = useTranslations('CreateConcept.RightsAndObligationsSection');
+
+  const { watch } = useFormContext<ConceptForm>();
+  const isPublic = watch('isPublic');
 
   return (
     <FormSection label={tRegistry('Title')} icon="shield-check">
@@ -24,24 +28,15 @@ export const RightsAndObligationsSection = () => {
         placeholder={tSection('AISPlaceholder')}
         type="AIS"
       />
-      <div className="grid-cols-7 grid">
-        <div className="flex gap-2 col-start-2 ml-10 col-span-5">
-          <input type="checkbox" {...register('isPublic')} className="w-fit" />
-          <GovFormLabel size="m" className="w-fit mb-0!">
-            <span className="font-bold">{tRegistry('NonPublic')}</span>
-          </GovFormLabel>
-        </div>
-      </div>
-
-      {/* TODO add Ustanoveni dokladajici neverejnost udaje */}
-      <div className="grid-cols-7 grid">
-        <div className="flex gap-2 col-start-2 ml-10 col-span-5">
-          <input type="checkbox" {...register('isInPPDF')} className="w-fit" />
-          <GovFormLabel size="m" className="w-fit mb-0!">
-            <span className="font-bold">{tRegistry('PPDF')}</span>
-          </GovFormLabel>
-        </div>
-      </div>
+      <CheckBox name="isPublic" label={tRegistry('NonPublic')} />
+      {!isPublic && (
+        <LegislativeSourceArrayInput<ConceptForm>
+          label="Ustanovení dokládající neveřejnost údaje"
+          name="privacyProvisions"
+          anchor="privacyProvisions"
+        />
+      )}
+      <CheckBox name="isInPPDF" label={tRegistry('PPDF')} />
     </FormSection>
   );
 };

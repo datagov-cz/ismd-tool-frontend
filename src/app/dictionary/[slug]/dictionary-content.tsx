@@ -1,5 +1,7 @@
 'use client';
 
+import { GovButton } from '@gov-design-system-ce/react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
@@ -21,7 +23,7 @@ export const DictionaryContent = ({ slug }: Props) => {
   const { user } = useCurrentUser();
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
-
+  const router = useRouter();
   useVisitedOntology(
     {
       slug,
@@ -36,7 +38,20 @@ export const DictionaryContent = ({ slug }: Props) => {
         <CircularLoader />
       </div>
     );
-  if (!ontologyDetail || !ontologyMetadata) return null;
+
+  if (!ontologyDetail || !ontologyMetadata)
+    return (
+      <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
+        <h1 className="text-2xl">{t('NotFound')}</h1>
+        <GovButton
+          type="solid"
+          color="primary"
+          onGovClick={() => router.back()}
+        >
+          {t('Back')}
+        </GovButton>
+      </div>
+    );
 
   const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
     const parentLocalName = parentTerm.iri?.split('/').pop();
@@ -66,7 +81,7 @@ export const DictionaryContent = ({ slug }: Props) => {
   return (
     <OntologyLayout
       source="ISMD"
-      title={ontologyDetail.název?.cs || ontologyMetadata.name || ''}
+      title={ontologyDetail.název}
       popis={ontologyDetail.popis}
       fallbackPopis={ontologyMetadata.popis}
       statusLabel={
@@ -74,6 +89,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           ? t('Main.DictionaryStatus.Published')
           : t('Main.DictionaryStatus.Draft')
       }
+      isPublished={ontologyMetadata.isPublished}
       concepts={ontologyDetail.pojmy}
       getConceptSlug={getConceptSlug}
       getRelatedTerms={getRelatedTerms}
@@ -83,7 +99,6 @@ export const DictionaryContent = ({ slug }: Props) => {
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}
-        isPublished={ontologyMetadata.isPublished || false}
         name={ontologyDetail.název?.cs || ''}
         user={ontologyMetadata.user}
         commentsCount={ontologyMetadata.comments?.length}
@@ -92,6 +107,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           ontologyDetail['časový-okamžik-poslední-změny'] ||
           ontologyMetadata.updatedAt
         }
+        iri={ontologyDetail.iri}
       />
       {user?.userId && (
         <CommentSidebox
@@ -101,7 +117,7 @@ export const DictionaryContent = ({ slug }: Props) => {
           userId={user.userId}
         />
       )}
-      <ValidationSidebox />
+      <ValidationSidebox concepts={ontologyMetadata.concepts} />
     </OntologyLayout>
   );
 };

@@ -5,7 +5,11 @@ import {
   GovFormLabel,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+
+import { ButtonInput } from '@/components/shared/ButtonInput';
+import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 type SourceItem = {
   name: string;
@@ -186,6 +190,8 @@ export const NonLegislativeSourceInput = ({
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({ control, name });
 
+  const isActive = useActiveAnchor(name);
+
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [savedIndices, setSavedIndices] = useState<Set<number>>(new Set());
 
@@ -231,7 +237,13 @@ export const NonLegislativeSourceInput = ({
   };
 
   return (
-    <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
+    <div
+      className={clsx(
+        'w-full grid grid-cols-7 gap-y-4 gap-x-2 p-2.5 rounded-lg',
+        isActive && 'bg-blue-subtle',
+      )}
+      id={name}
+    >
       <GovFormLabel className="w-fit! pt-2.5">
         <span className="font-bold">{label}</span>
       </GovFormLabel>
@@ -267,22 +279,14 @@ export const NonLegislativeSourceInput = ({
 
         {editingIndex === null &&
           (fields.length === 0 ? (
-            <button
-              type="button"
-              className="w-full border rounded-lg border-gray-border flex justify-between items-center py-2 px-4 text-card-description"
-              onClick={handleAddNew}
-            >
+            <ButtonInput onClick={handleAddNew}>
               Zadejte zdroj
               <GovIcon type="components" name="plus" size="s" color="primary" />
-            </button>
+            </ButtonInput>
           ) : (
-            <button
-              type="button"
-              onClick={handleAddNew}
-              className="self-start text-sm text-blue-primary hover:underline cursor-pointer mt-2 font-medium flex items-center gap-1"
-            >
+            <ButtonInput onClick={handleAddNew}>
               + Přidat další zdroj
-            </button>
+            </ButtonInput>
           ))}
       </div>
     </div>

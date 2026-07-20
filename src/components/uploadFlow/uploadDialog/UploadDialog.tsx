@@ -20,12 +20,20 @@ import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { FileController } from './FileController';
+import {
+  getMissingInSchemeError,
+  InSchemeDecisionData,
+} from './inSchemeDecision';
 
 interface UploadDialogProps {
   setSuccess: (_value: OntologyMetadataModel) => void;
+  setDecisionRequired: (_value: InSchemeDecisionData) => void;
 }
 
-export const UploadDialog = ({ setSuccess }: UploadDialogProps) => {
+export const UploadDialog = ({
+  setSuccess,
+  setDecisionRequired,
+}: UploadDialogProps) => {
   const [submitError, setSubmitError] = useState<string>();
 
   const isOnline = useIsOnline();
@@ -45,6 +53,8 @@ export const UploadDialog = ({ setSuccess }: UploadDialogProps) => {
         }
       },
       onError: (error) => {
+        // The decision case is handled per-call in onSubmit — don't show it as an error.
+        if (getMissingInSchemeError(error)) return;
         setSubmitError(getErrorMessage(error, tError));
       },
     },
@@ -122,11 +132,26 @@ export const UploadDialog = ({ setSuccess }: UploadDialogProps) => {
       }
     }
 
-    mutation.mutate({
-      data: {
-        file: data.file,
+    mutation.mutate(
+      {
+        data: {
+          file: data.file,
+        },
       },
-    });
+      {
+        onError: (error) => {
+          const decision = getMissingInSchemeError(error);
+          if (decision) {
+            setSubmitError(undefined);
+            setDecisionRequired({
+              file: data.file,
+              graphName: decision.data.graphName,
+              conceptsMissingInScheme: decision.data.conceptsMissingInScheme,
+            });
+          }
+        },
+      },
+    );
   };
 
   return (

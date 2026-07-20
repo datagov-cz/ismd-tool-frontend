@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-// Reusable base schemas
-const NameModelSchema = z.object({
-  name: z.record(z.string(), z.string().min(1, 'Název je povinný')),
+const ConceptRef = z.object({
+  iri: z.string(),
+  label: z.string(),
+  ontologyLabel: z.string().optional(),
+  id: z.number().optional(),
 });
-
-const ConceptRef = z.object({ iri: z.string(), label: z.string() });
 const AgendaRef = z.object({
   iri: z.string().optional(),
   nazev: z.string().optional(),
@@ -27,12 +27,33 @@ const DigitalObject = z.object({
   url: z.url().optional(),
 });
 
+const RequiredNameModelSchema = z
+  .array(
+    z.object({
+      languageTag: z.string(),
+      name: z.string(),
+    }),
+  )
+  .min(1, 'NameRequired')
+  .superRefine((entries, ctx) => {
+    const hasValue = entries.some((e) => e.name.trim() !== '');
+    if (!hasValue) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'NameRequired',
+        path: [0, 'name'],
+      });
+    }
+  });
+
 // Shared base fields
 const ConceptCreateModelSchema = z.object({
   ontologyGraphName: z.string().min(1),
   conceptType: z.string().min(1),
   namespace: z.string().optional(),
-  nameModel: NameModelSchema,
+  nameModel: z.object({
+    name: RequiredNameModelSchema,
+  }),
   identifier: z.string().optional(),
   altNameModel: z
     .object({
@@ -76,7 +97,12 @@ const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
 // Property concept (VLASTNOST)
 const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
   conceptTypeEnum: z.literal('VLASTNOST'),
-  dataType: z.string().optional(),
+  dataType: z
+    .object({
+      code: z.string().optional(),
+      label: z.string().optional(),
+    })
+    .optional(),
   domain: ConceptRef.optional(),
   superProperty: z.array(ConceptRef).optional(),
   isInPPDF: z.boolean().optional(),
@@ -122,7 +148,12 @@ const ConceptFormSchema = z.object({
   type: z.string().optional(),
   broaderConcept: z.array(ConceptRef).optional(),
   // VLASTNOST
-  dataType: z.string().optional(),
+  dataType: z
+    .object({
+      code: z.string().optional(),
+      label: z.string().optional(),
+    })
+    .optional(),
   superProperty: z.array(ConceptRef).optional(),
   // VZTAH
   range: ConceptRef.optional(),
@@ -141,7 +172,6 @@ const ConceptFormSchema = z.object({
 });
 
 // Inferred types
-export type NameModel = z.infer<typeof NameModelSchema>;
 export type ConceptCreateModel = z.infer<typeof ConceptCreateModelSchema>;
 export type ClassConceptModel = z.infer<typeof ClassConceptModelSchema>;
 export type PropertyConceptModel = z.infer<typeof PropertyConceptModelSchema>;
@@ -152,7 +182,6 @@ export type CreateConceptBody = z.infer<typeof CreateConceptBodySchema>;
 export type ConceptForm = z.infer<typeof ConceptFormSchema>;
 
 export {
-  NameModelSchema,
   ConceptCreateModelSchema,
   ClassConceptModelSchema,
   PropertyConceptModelSchema,
@@ -160,3 +189,8 @@ export {
   CreateConceptBodySchema,
   ConceptFormSchema,
 };
+
+export {
+  AddPropertyModelSchema,
+  AddRelationModelSchema,
+} from '../../conceptDetail/AddPropertyRelation/addPropertyRelationSchema';

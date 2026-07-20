@@ -7,12 +7,18 @@ import {
   GovTag,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel, OntologyMetadataModel } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  OntologyDetailModelNázev,
+  OntologyMetadataModel,
+} from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
 import { LanguageSwitcher } from '../conceptDetail/LanguageSwitcher';
+import { Section } from '../conceptDetail/Section';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
 import { ValidationSummary } from './validation/ValidationSummary';
@@ -23,7 +29,7 @@ export interface TermWithSlug {
 }
 
 interface Props {
-  title: string;
+  title?: OntologyDetailModelNázev;
   popis?: Record<string, string> | null;
   source: 'NKD' | 'ISMD';
   fallbackPopis?: string;
@@ -35,6 +41,7 @@ interface Props {
   conceptCount?: number;
   metaData?: OntologyMetadataModel;
   slug?: string;
+  isPublished?: boolean;
 }
 
 export const OntologyLayout = ({
@@ -50,10 +57,11 @@ export const OntologyLayout = ({
   conceptCount,
   slug,
   metaData,
+  isPublished,
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
-  const { user } = useCurrentUser();
+  const { user, isAdmin } = useCurrentUser();
 
   const [filterQuery, setFilterQuery] = useState('');
 
@@ -100,7 +108,9 @@ export const OntologyLayout = ({
       );
   }, [concepts, filterQuery, getRelatedTerms]);
 
-  const isLoggedOutOrNKD = !user?.userId || source === 'NKD';
+  const isLoggedOutOrNKD =
+    (user?.userId !== metaData?.user?.userId || source === 'NKD') &&
+    (!isAdmin || source === 'NKD');
 
   return (
     <div className="w-full h-full flex-1">
@@ -118,27 +128,68 @@ export const OntologyLayout = ({
                 <GovIcon slot="icon-start" name="chevron-left" size="m" />
                 {t('Main.BackToHome')}
               </GovButton>
-              <div className="flex w-full justify-between">
-                <GovTag
-                  color="success"
-                  size="xs"
-                  type="subtle"
-                  className="w-fit [&_span]:font-bold!"
-                >
-                  <GovIcon
-                    slot="icon-start"
-                    name="journal-text"
-                    size="l"
-                    className="text-white"
-                  />
-                  {t('Main.Ontology')}
-                  <span> / {source}</span>
-                  {statusLabel && <span> / {statusLabel}</span>}
-                </GovTag>
-              </div>
-              <h1 className="text-[32px] font-medium">{title}</h1>
+              <Link
+                href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
+                className="cursor-pointer! hover:underline"
+              >
+                <div className="flex w-full justify-between">
+                  <GovTag
+                    color={isPublished ? 'success' : 'secondary'}
+                    size="xs"
+                    type="subtle"
+                    className={clsx(
+                      'w-fit [&_span]:font-bold! [&_span]:cursor-pointer!',
+                    )}
+                  >
+                    <GovIcon
+                      slot="icon-start"
+                      name="journal-text"
+                      size="l"
+                      className="text-white"
+                    />
+                    <span
+                      className={clsx(
+                        !isPublished && 'text-status-warning-700!',
+                      )}
+                    >
+                      {t('Main.Ontology')}
+                    </span>
+                    <span
+                      className={clsx(
+                        !isPublished && 'text-status-warning-700',
+                      )}
+                    >
+                      {`/ ${source}`}
+                    </span>
+                    {statusLabel && (
+                      <span
+                        className={clsx(
+                          !isPublished && 'text-status-warning-700',
+                        )}
+                      >
+                        {`/ ${statusLabel}`}
+                      </span>
+                    )}
+                  </GovTag>
+                </div>
+              </Link>
+              <h1 className="text-[32px] font-medium">
+                {title?.cs || title?.en || title?.sk}
+              </h1>
+              {title && (
+                <div className="flex gap-2 items-center">
+                  {(Object.keys(title).includes('en') ||
+                    Object.keys(title).includes('sk')) && (
+                    <Section title={t('Main.Name')}>
+                      <LanguageSwitcher item={title!} hideCs />
+                    </Section>
+                  )}
+                </div>
+              )}
               {popis ? (
-                <LanguageSwitcher item={popis} />
+                <Section title={t('Main.Description')}>
+                  <LanguageSwitcher item={popis} />
+                </Section>
               ) : (
                 <p className="text-md">{fallbackPopis}</p>
               )}
@@ -194,6 +245,19 @@ export const OntologyLayout = ({
               </GovFormGroup>
             </div>
             <div className="col-span-4 space-y-2">
+              {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
+                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
+                  <span className="text-xl font-bold text-status-error-600 pb-2">
+                    {t('Main.NoResults.Title')}
+                  </span>
+                  <span>
+                    {t.rich('Main.NoResults.Description', {
+                      query: filterQuery,
+                      strong: (chunks) => <strong>{chunks}</strong>,
+                    })}
+                  </span>
+                </div>
+              )}
               {filteredParentTerms.map(({ concept, subterms }, index) => (
                 <Term
                   data={concept}

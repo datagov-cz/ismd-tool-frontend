@@ -20,9 +20,10 @@ export function useQueryInvalidator() {
         queryKey: getGetConceptDetailQueryKey(encodeURIComponent(slug)),
       });
     },
-    invalidateOntologyList: () =>
-      queryClient.invalidateQueries({
+    invalidateOntologyList: async () => {
+      return await queryClient.invalidateQueries({
         queryKey: getGetOntologyListQueryKey(),
-      }),
+      });
+    },
   };
 }

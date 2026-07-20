@@ -1,16 +1,22 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
+import { useFormDraft } from '@/hooks/useFormDraft';
 
 import { FormToolbar } from './components/FormToolbar';
+import { useConceptFormHints } from './components/hint/conceptFormHints';
+import { HintSidebar } from './components/hint/HintSidebar';
+import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
   ConceptFormSchema,
 } from './schema/conceptFormSchema';
 import { ConceptMeaningSection } from './sections/ConceptMeaningSection';
+import { LegalSourceAutofillSection } from './sections/LegalSourceAutofillSection';
 import { NamingSection } from './sections/NamingSection';
 import { OntologySection } from './sections/OntologySection';
 import { ProclamationSection } from './sections/ProclamationSection';
@@ -28,14 +34,14 @@ function getDomain(url: string): string | null {
   }
 }
 
-const BASE_DEFAULTS: Omit<
+export const BASE_DEFAULTS: Omit<
   ConceptFormValues,
   'ontologyGraphName' | 'namespace'
 > = {
   conceptType: 'TRIDA',
   conceptTypeEnum: 'TRIDA',
   identifier: undefined,
-  nameModel: { name: { cs: '' } },
+  nameModel: { name: [{ languageTag: 'cs', name: '' }] },
   altNameModel: { altName: [{ languageTag: 'cs', name: '' }] },
   definitionModel: { definition: [{ languageTag: 'cs', name: '' }] },
   descriptionModel: { description: [{ languageTag: 'cs', name: '' }] },
@@ -68,6 +74,9 @@ interface ConceptFormProps {
   onSubmit: (_data: ConceptFormValues) => void;
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
+  editing?: boolean;
+  storageKey?: string;
+  conceptIri?: string;
 }
 
 export const ConceptForm = ({
@@ -75,7 +84,12 @@ export const ConceptForm = ({
   onSubmit,
   isPending,
   defaultValues: externalDefaults,
+  editing,
+  storageKey,
+  conceptIri,
 }: ConceptFormProps) => {
+  const tConcept = useTranslations('CreateConcept');
+
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
     defaultValues: {
@@ -86,29 +100,70 @@ export const ConceptForm = ({
     },
   });
 
+  useFormDraft(form, storageKey);
+
   const { errors } = form.formState;
+
+  const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
+
+  const { hint, open, setOpen, handleFocus } = useFormHints(
+    hints,
+    editing ? defaultHintEdit : defaultHint,
+  );
 
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
-      toast.error('Prosím opravte chyby ve formuláři.', {
-        position: 'bottom-right',
-      });
+      toast.error(tConcept('ValidationError'));
     }
   }, [errors]);
 
+  useEffect(() => {
+    if (!externalDefaults) return;
+
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById(hash)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [externalDefaults]);
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2.5">
-        <NamingSection />
-        <TypesSection />
-        <ConceptMeaningSection />
-        <SourcesSection />
-        <RightsAndObligationsSection />
-        <ProclamationSection />
-        <OntologySection />
-        <FormToolbar<ConceptFormType> isPending={isPending} />
-      </form>
+      <div className="relative w-full lg:max-w-160 xl:max-w-200">
+        <LegalSourceAutofillSection />
+        <div className="my-4 flex items-center gap-2 text-sm">
+          <span className="font-semibold">{tConcept('ConceptDataLabel')}</span>
+          <span className="flex-1 h-px bg-(--button-outlined-primary-hover)" />
+        </div>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          onFocus={handleFocus}
+          className="w-full space-y-2.5"
+        >
+          <NamingSection />
+          <TypesSection editing={editing} />
+          <ConceptMeaningSection blockedIri={conceptIri} />
+          <SourcesSection />
+          <RightsAndObligationsSection />
+          <ProclamationSection />
+          <OntologySection />
+          <FormToolbar<ConceptFormType> isPending={isPending} />
+        </form>
+
+        <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
+          {open && (
+            <HintSidebar
+              hint={hint}
+              onClose={() => setOpen(false)}
+              className="sticky top-22 w-full max-w-80"
+            />
+          )}
+        </div>
+      </div>
     </FormProvider>
   );
 };

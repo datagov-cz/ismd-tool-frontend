@@ -7,6 +7,7 @@ import { downloadFile, downloadNkdOntology } from '@/api/generated';
 type DownloadDialogProps = {
   open: boolean;
   onClose: () => void;
+  ontologyName: string;
 } & (
   | { type: 'ISMD'; ontologyID: number; ontologyIRI?: never }
   | { type: 'NKD'; ontologyIRI: string; ontologyID?: never }
@@ -18,6 +19,7 @@ export const DownloadDialog = ({
   ontologyID,
   ontologyIRI,
   type,
+  ontologyName,
 }: DownloadDialogProps) => {
   const t = useTranslations('DownloadDialog');
 
@@ -33,7 +35,7 @@ export const DownloadDialog = ({
       const url = window.URL.createObjectURL(file);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `file.${format}`;
+      a.download = `${ontologyName}.${format}`;
       document.body.appendChild(a);
       a.click();
       a.remove();

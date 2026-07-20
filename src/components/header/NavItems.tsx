@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
@@ -21,8 +20,6 @@ interface Props {
 
 export const NavItems = ({ session, handleLogin }: Props) => {
   const t = useTranslations('Header');
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const [isFeedbackDropdownOpen, setIsFeedbackDropdownOpen] = useState(false);
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
 
   const prefix = session ? 'NavLogged' : 'Nav';
@@ -42,16 +39,12 @@ export const NavItems = ({ session, handleLogin }: Props) => {
   return (
     <>
       {!session && (
-        <div className="xl:hidden">
+        <div className="desktop:hidden">
           <LoginButton size="m" onLogin={handleLogin} />
         </div>
       )}
       {session && (
-        <GovDropdown
-          id="nav-dropdown-user"
-          position="left"
-          onChange={() => setIsUserDropdownOpen((prev) => !prev)}
-        >
+        <GovDropdown id="nav-dropdown-user" position="left">
           <GovButton
             color="primary"
             size="m"
@@ -63,7 +56,6 @@ export const NavItems = ({ session, handleLogin }: Props) => {
               name="person"
               size="xl"
               slot="icon-start"
-              className={`transition-transform duration-200 ${isUserDropdownOpen ? '-rotate-180' : ''}`}
             />
             {session.user?.name}
           </GovButton>
@@ -115,11 +107,7 @@ export const NavItems = ({ session, handleLogin }: Props) => {
         </GovButton>
       </ConditionalTooltip>
 
-      <GovDropdown
-        id="nav-dropdown-feedback-user"
-        position="left"
-        onChange={() => setIsFeedbackDropdownOpen((prev) => !prev)}
-      >
+      <GovDropdown id="nav-dropdown-feedback-user" position="right">
         <ConditionalTooltip
           active={!!session}
           message={t('Nav.Dropdown.Label')}
@@ -135,7 +123,6 @@ export const NavItems = ({ session, handleLogin }: Props) => {
               name="chat-dots"
               size="m"
               slot="icon-start"
-              className={`transition-transform duration-200 ${isFeedbackDropdownOpen ? '-rotate-180' : ''}`}
             />
             {!session && t('Nav.Dropdown.Label')}
           </GovButton>
