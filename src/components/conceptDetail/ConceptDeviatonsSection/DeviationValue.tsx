@@ -6,19 +6,27 @@ import {
   LegislativeSource,
   NonLegislativeSource,
 } from '../sections/LegalSection';
+import { IriRelatedTerm } from '../Term/IriRelatedTerm';
 import { IriRelatedTermList } from '../Term/IriRelatedTermList';
 
 import {
+  ALT_NAME_KEYS,
+  CONCEPT_KEYS,
+  Deviation,
   DeviationKey,
+  DeviationResolvedMaps,
   DeviationSide,
   DeviationValue as DeviationValueType,
-  isAltName,
-  isConcept,
-  isLegalSource,
-  isMultiLang,
-  isNonLegalSource,
-  isPPDF,
-  isRPP,
+  IRI_LABEL_KEYS,
+  isOneOf,
+  LEGAL_SOURCE_KEYS,
+  MULTI_LANG_KEYS,
+  NONLEGAL_SOURCE_KEYS,
+  OBOR_HODNOT_KEYS,
+  PPDF_KEYS,
+  RPP_KEYS,
+  SHARING_KEYS,
+  TYP_KEYS,
 } from './deviation.types';
 import { labelFromIri } from './deviation.utils';
 
@@ -27,19 +35,23 @@ export const DeviationValue = ({
   data,
   side,
   resolved,
+  deviationResolved,
 }: {
   propertyKey: DeviationKey;
   data: DeviationValueType;
   side: DeviationSide;
   resolved?: ConceptDetailModelReferencovanéPojmyResolved;
+  deviationResolved?: DeviationResolvedMaps;
 }) => {
   const t = useTranslations('ConceptDeviations');
 
-  if (isLegalSource(propertyKey, data)) {
-    const value = data[side];
+  const deviation = { key: propertyKey, data } as Deviation;
+
+  if (isOneOf(deviation, LEGAL_SOURCE_KEYS)) {
+    const value = deviation.data[side];
     if (!value?.length) return null;
     return (
-      <>
+      <div className="space-y-2">
         {value.map((fragmentIri) => (
           <LegislativeSource
             key={fragmentIri}
@@ -47,12 +59,15 @@ export const DeviationValue = ({
             bg="white"
           />
         ))}
-      </>
+      </div>
     );
   }
 
-  if (isMultiLang(propertyKey, data) || isAltName(propertyKey, data)) {
-    const value = data[side];
+  if (
+    isOneOf(deviation, MULTI_LANG_KEYS) ||
+    isOneOf(deviation, ALT_NAME_KEYS)
+  ) {
+    const value = deviation.data[side];
     if (!value) return null;
     return (
       <div className="ml-10">
@@ -61,53 +76,78 @@ export const DeviationValue = ({
     );
   }
 
-  if (isPPDF(propertyKey, data)) {
-    const value = data[side];
+  if (isOneOf(deviation, PPDF_KEYS)) {
+    const value = deviation.data[side];
     if (value === undefined) return null;
     return <div>{value ? t('Yes') : t('No')}</div>;
   }
 
-  if (isConcept(propertyKey, data)) {
-    const value = data[side];
+  if (isOneOf(deviation, CONCEPT_KEYS)) {
+    const value = deviation.data[side];
     if (value === undefined) return null;
-    return <IriRelatedTermList iris={value} resolved={resolved} />;
+    if (!Array.isArray(value)) {
+      return <IriRelatedTerm iri={value} resolved={resolved} />;
+    }
+    return (
+      <div className="space-y-2">
+        <IriRelatedTermList iris={value} resolved={resolved} />
+      </div>
+    );
   }
 
-  if (isRPP(propertyKey, data)) {
-    const value = data[side];
+  if (isOneOf(deviation, RPP_KEYS)) {
+    const value = deviation.data[side];
     if (value === undefined) return null;
-    return <p>{value}</p>;
+
+    const entry = deviationResolved?.[`${deviation.key}-resolved`]?.[value];
+    if (!entry) return <p>{value}</p>;
+
+    return (
+      <p>
+        {entry.nazev ?? value}
+        {entry.code ? ` (${entry.code})` : ''}
+      </p>
+    );
   }
 
-  if (propertyKey === 'typ') {
-    const value = data[side];
+  if (isOneOf(deviation, TYP_KEYS)) {
+    const value = deviation.data[side];
     if (value === undefined) return null;
     return <p>{value.join(', ')}</p>;
   }
 
-  if (
-    propertyKey === 'typ-obsahu-údajů' ||
-    propertyKey === 'způsob-získání-údajů'
-  ) {
-    const value = data[side];
-    return <span>{labelFromIri(value?.toLocaleString())}</span>;
+  if (isOneOf(deviation, OBOR_HODNOT_KEYS)) {
+    const value = deviation.data[side];
+    if (value === undefined) return null;
+
+    const entry = deviationResolved?.['obor-hodnot-resolved']?.[value];
+    if (entry?.label) return <p>{entry.label}</p>;
+
+    if (value.includes('https://')) {
+      return <IriRelatedTermList iris={[value]} resolved={resolved} />;
+    }
+
+    return <p>{value}</p>;
   }
 
-  if (propertyKey === 'způsob-sdílení-údajů') {
-    const value = data[side];
+  if (isOneOf(deviation, IRI_LABEL_KEYS)) {
+    const value = deviation.data[side];
+    return <span>{labelFromIri(value)}</span>;
+  }
+
+  if (isOneOf(deviation, SHARING_KEYS)) {
+    const value = deviation.data[side];
     return (
       <div className="flex flex-col">
         {value?.map((item) => (
-          <span key={item?.toLocaleString()}>
-            {labelFromIri(item?.toLocaleString())}
-          </span>
+          <span key={item}>{labelFromIri(item)}</span>
         ))}
       </div>
     );
   }
 
-  if (isNonLegalSource(propertyKey, data)) {
-    const value = data[side];
+  if (isOneOf(deviation, NONLEGAL_SOURCE_KEYS)) {
+    const value = deviation.data[side];
     return (
       <>
         {value?.map((item) => (

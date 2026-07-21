@@ -242,7 +242,6 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
 
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
-
     const originalLanguageTags = {
       name: Object.keys(conceptDetail?.['název'] ?? {}),
       altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),

@@ -123,6 +123,7 @@
     "Title": "Změny proti publikovanému zdroji [{count}]",
     "Description": "V publikované verzi došlo ke změnám. Vyberte změny které chcete převzít do tohoto pojmu.",
     "DifferencesLabel": "Rozdíly charakteristik oproti publikované verzi:",
+    "DifferencesLabelConcept": "Rozdíly charakteristik v navázaném pojmu - ",
     "ExpandAria": "Zobrazit změny",
     "CollapseAria": "Sbalit změny",
     "SelectAll": "Vybrat vše",
@@ -204,6 +205,8 @@
         "NotFound": "Pojem nenalezen",
         "InOntology": "Ve slovníku"
       },
+      "Draft": "Rozpracovaný",
+      "WorkingCopy": "Pracovní kopie",
       "Public": "Veřejný",
       "NonPublic": "Neveřejný",
       "Name": "Název",

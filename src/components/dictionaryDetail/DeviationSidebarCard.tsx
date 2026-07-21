@@ -28,7 +28,9 @@ export const DeviationSidebarCard = ({
   return (
     <div className="w-auto rounded-md border border-status-warning-600 bg-status-warning-300 px-3 py-2.5">
       <div>
-        <span className="font-medium">{t('SidebarTitle')}</span>
+        <span className="font-medium">
+          {t('SidebarTitle')} [{filteredDeviations.length}]
+        </span>
         <p className="text-sm">{t('SidebarDescription')}</p>
       </div>
       <div className="flex flex-col gap-2 pt-3 max-h-62 overflow-y-scroll">

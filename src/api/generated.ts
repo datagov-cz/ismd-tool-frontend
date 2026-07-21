@@ -41,6 +41,15 @@ export const ConceptMetadataModelConceptType = {
   KONCEPT: 'KONCEPT',
 } as const;
 
+export type ConceptMetadataModelSourceTag =
+  (typeof ConceptMetadataModelSourceTag)[keyof typeof ConceptMetadataModelSourceTag];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ConceptMetadataModelSourceTag = {
+  DRAFT: 'DRAFT',
+  WORKING_COPY: 'WORKING_COPY',
+} as const;
+
 export interface ConceptMetadataModel {
   id?: number;
   slug?: string;
@@ -51,11 +60,21 @@ export interface ConceptMetadataModel {
   conceptName?: string;
   user?: UserModel;
   isPublished?: boolean;
+  sourceTag?: ConceptMetadataModelSourceTag;
   inTezaurus?: boolean;
   comments?: CommentModel[];
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type OntologyMetadataModelSourceTag =
+  (typeof OntologyMetadataModelSourceTag)[keyof typeof OntologyMetadataModelSourceTag];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OntologyMetadataModelSourceTag = {
+  DRAFT: 'DRAFT',
+  WORKING_COPY: 'WORKING_COPY',
+} as const;
 
 export type OntologyMetadataModelLastValidationStatus =
   (typeof OntologyMetadataModelLastValidationStatus)[keyof typeof OntologyMetadataModelLastValidationStatus];
@@ -74,6 +93,7 @@ export interface OntologyMetadataModel {
   name?: string;
   user?: UserModel;
   isPublished?: boolean;
+  sourceTag?: OntologyMetadataModelSourceTag;
   comments?: CommentModel[];
   popis?: string;
   concepts?: ConceptMetadataModel[];
@@ -156,7 +176,7 @@ export interface OntologyCreateModel {
   descriptionModel: DescriptionModel;
 }
 
-export type AltNameModelAltName = { [key: string]: string };
+export type AltNameModelAltName = { [key: string]: string[] };
 
 export interface AltNameModel {
   altName?: AltNameModelAltName;
@@ -264,11 +284,95 @@ export interface ApiResponseDtoConceptMetadataModel {
   errorCode?: string;
 }
 
-export interface ApiResponseDtoLinkSnapshotDto {
-  data?: LinkSnapshotDto;
+export interface WorkingCopySyncRequestDto {
+  /** @minItems 1 */
+  fieldsToAccept: string[];
+}
+
+export interface ApiResponseDtoGetConceptDto {
+  data?: GetConceptDto;
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export type ConceptDetailModelNázev = { [key: string]: string };
+
+export type ConceptDetailModelAlternativníNázev = { [key: string]: unknown };
+
+export type ConceptDetailModelDefinice = { [key: string]: string };
+
+export type ConceptDetailModelPopis = { [key: string]: string };
+
+export type ConceptDetailModelReferencovanéPojmyResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export interface ConceptDetailModel {
+  conceptProperties?: ConceptPropertiesModel[];
+  conceptRelationships?: ConceptRelationshipsModel[];
+  iri?: string;
+  typ?: string[];
+  název?: ConceptDetailModelNázev;
+  'alternativní-název'?: ConceptDetailModelAlternativníNázev;
+  definice?: ConceptDetailModelDefinice;
+  popis?: ConceptDetailModelPopis;
+  identifikátor?: string;
+  'ekvivalentní-pojem'?: string[];
+  'definiční-obor'?: string;
+  'obor-hodnot'?: string;
+  'obor-hodnot-resolved'?: DataTypeDto;
+  'nadřazená-třída'?: string[];
+  'nadřazený-vztah'?: string[];
+  'nadřazená-vlastnost'?: string[];
+  'definující-ustanovení-právního-předpisu'?: string[];
+  'související-ustanovení-právního-předpisu'?: string[];
+  'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'definující-nelegislativní-zdroj'?: NonLegalSourceDto[];
+  'související-nelegislativní-zdroj'?: NonLegalSourceDto[];
+  'způsob-sdílení-údaje'?: string[];
+  'způsob-získání-údaje'?: string;
+  'typ-obsahu-údaje'?: string;
+  'je-ppdf'?: boolean;
+  'agendový-informační-systém'?: string;
+  agenda?: string;
+  'agendový-informační-systém-resolved'?: RppIsvs;
+  'agenda-resolved'?: RppAgenda;
+  'ustanovení-dokládající-neveřejnost-údaje'?: string[];
+  'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
+  'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
+}
+
+export interface ConceptPropertiesModel {
+  name?: string;
+  iri?: string;
+  ref?: string;
+  range?: string;
+  rangeResolved?: DataTypeDto;
+}
+
+export interface ConceptRelationshipsModel {
+  name?: string;
+  iri?: string;
+  ref?: string;
+}
+
+export interface DataTypeDto {
+  code?: string;
+  label?: string;
+}
+
+export interface FragmentSegment {
+  kind?: string;
+  number?: string;
+}
+
+export interface GetConceptDto {
+  conceptMetadata?: ConceptMetadataModel;
+  conceptDetail?: ConceptDetailModel;
+  publishedConceptDeviationModel?: PublishedConceptDeviationModel;
+  linkSnapshots?: LinkSnapshotDto[];
 }
 
 export type LinkSnapshotDtoLinkPredicate =
@@ -287,7 +391,7 @@ export type LinkSnapshotDtoOrigin =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LinkSnapshotDtoOrigin = {
-  SELF_PUBLISHED: 'SELF_PUBLISHED',
+  WORKING_COPY: 'WORKING_COPY',
   LINK_TARGET: 'LINK_TARGET',
 } as const;
 
@@ -408,9 +512,36 @@ export const PublishedConceptDeviationModelStatus = {
   PENDING: 'PENDING',
 } as const;
 
+export type PublishedConceptDeviationModelOrigin =
+  (typeof PublishedConceptDeviationModelOrigin)[keyof typeof PublishedConceptDeviationModelOrigin];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PublishedConceptDeviationModelOrigin = {
+  WORKING_COPY: 'WORKING_COPY',
+  LINK_TARGET: 'LINK_TARGET',
+} as const;
+
+export type PublishedConceptDeviationModelReferencovanéPojmyResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export type PublishedConceptDeviationModelOborHodnotResolved = {
+  [key: string]: DataTypeDto;
+};
+
+export type PublishedConceptDeviationModelAgendaResolved = {
+  [key: string]: RppAgenda;
+};
+
+export type PublishedConceptDeviationModelAisResolved = {
+  [key: string]: RppIsvs;
+};
+
 export interface PublishedConceptDeviationModel {
   status?: PublishedConceptDeviationModelStatus;
   errorMessage?: string;
+  origin?: PublishedConceptDeviationModelOrigin;
+  source?: NkdConceptRefDto;
   typ?: PropertyDeviationListString;
   název?: PropertyDeviationMapStringString;
   'alternativní-název'?: PropertyDeviationMapStringObject;
@@ -434,6 +565,101 @@ export interface PublishedConceptDeviationModel {
   ais?: PropertyDeviationString;
   agenda?: PropertyDeviationString;
   'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
+  'referencované-pojmy-resolved'?: PublishedConceptDeviationModelReferencovanéPojmyResolved;
+  'obor-hodnot-resolved'?: PublishedConceptDeviationModelOborHodnotResolved;
+  'agenda-resolved'?: PublishedConceptDeviationModelAgendaResolved;
+  'ais-resolved'?: PublishedConceptDeviationModelAisResolved;
+}
+
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
+}
+
+export type ResolvedLegalSourceDtoLevel =
+  (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoLevel = {
+  LAW: 'LAW',
+  VERSION: 'VERSION',
+  FRAGMENT: 'FRAGMENT',
+} as const;
+
+export type ResolvedLegalSourceDtoEnrichmentStatus =
+  (typeof ResolvedLegalSourceDtoEnrichmentStatus)[keyof typeof ResolvedLegalSourceDtoEnrichmentStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoEnrichmentStatus = {
+  OK: 'OK',
+  PENDING: 'PENDING',
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_FOUND: 'NOT_FOUND',
+  SKIPPED_NON_FRAGMENT: 'SKIPPED_NON_FRAGMENT',
+  INVALID_IRI: 'INVALID_IRI',
+} as const;
+
+export interface ResolvedLegalSourceDto {
+  originalUrl?: string;
+  eliPath?: string;
+  domain?: string;
+  level?: ResolvedLegalSourceDtoLevel;
+  lawIri?: string;
+  versionIri?: string;
+  fragmentIri?: string;
+  lawNumber?: string;
+  lawYear?: number;
+  sbirkaCode?: string;
+  versionDate?: string;
+  fragmentSegments?: FragmentSegment[];
+  displayLabel?: string;
+  fragmentCitation?: string;
+  fragmentBodyHtml?: string;
+  fragmentBody?: string;
+  versionValidUntil?: string;
+  isLatestVersion?: boolean;
+  enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
+}
+
+export interface RppAgenda {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+}
+
+export interface RppIsvs {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+  agendaIris?: string[];
+}
+
+export interface ApiResponseDtoLinkSnapshotDto {
+  data?: LinkSnapshotDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
 }
 
 export interface CommentCreateModel {
@@ -732,78 +958,6 @@ export interface ApiResponseDtoGetOntologyDto {
   errorCode?: string;
 }
 
-export type ConceptDetailModelNázev = { [key: string]: string };
-
-export type ConceptDetailModelAlternativníNázev = { [key: string]: unknown };
-
-export type ConceptDetailModelDefinice = { [key: string]: string };
-
-export type ConceptDetailModelPopis = { [key: string]: string };
-
-export type ConceptDetailModelReferencovanéPojmyResolved = {
-  [key: string]: ResolvedConceptDto;
-};
-
-export interface ConceptDetailModel {
-  conceptProperties?: ConceptPropertiesModel[];
-  conceptRelationships?: ConceptRelationshipsModel[];
-  iri?: string;
-  typ?: string[];
-  název?: ConceptDetailModelNázev;
-  'alternativní-název'?: ConceptDetailModelAlternativníNázev;
-  definice?: ConceptDetailModelDefinice;
-  popis?: ConceptDetailModelPopis;
-  identifikátor?: string;
-  'ekvivalentní-pojem'?: string[];
-  'definiční-obor'?: string;
-  'obor-hodnot'?: string;
-  'obor-hodnot-resolved'?: DataTypeDto;
-  'nadřazená-třída'?: string[];
-  'nadřazený-vztah'?: string[];
-  'nadřazená-vlastnost'?: string[];
-  'definující-ustanovení-právního-předpisu'?: string[];
-  'související-ustanovení-právního-předpisu'?: string[];
-  'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
-  'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
-  'definující-nelegislativní-zdroj'?: NonLegalSourceDto[];
-  'související-nelegislativní-zdroj'?: NonLegalSourceDto[];
-  'způsob-sdílení-údaje'?: string[];
-  'způsob-získání-údaje'?: string;
-  'typ-obsahu-údaje'?: string;
-  'je-ppdf'?: boolean;
-  'agendový-informační-systém'?: string;
-  agenda?: string;
-  'agendový-informační-systém-resolved'?: RppIsvs;
-  'agenda-resolved'?: RppAgenda;
-  'ustanovení-dokládající-neveřejnost-údaje'?: string[];
-  'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
-  'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
-}
-
-export interface ConceptPropertiesModel {
-  name?: string;
-  iri?: string;
-  ref?: string;
-  range?: string;
-  rangeResolved?: DataTypeDto;
-}
-
-export interface ConceptRelationshipsModel {
-  name?: string;
-  iri?: string;
-  ref?: string;
-}
-
-export interface DataTypeDto {
-  code?: string;
-  label?: string;
-}
-
-export interface FragmentSegment {
-  kind?: string;
-  number?: string;
-}
-
 export type GetOntologyDtoPublishedConceptDeviations = {
   [key: string]: PublishedConceptDeviationModel;
 };
@@ -853,90 +1007,6 @@ export interface PublishedOntologyDeviationModel {
   typ?: PropertyDeviationListString;
   název?: PropertyDeviationMapStringString;
   popis?: PropertyDeviationMapStringString;
-}
-
-export type ResolvedConceptDtoConceptName = { [key: string]: string };
-
-export type ResolvedConceptDtoOntologyName = { [key: string]: string };
-
-export type ResolvedConceptDtoSource =
-  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedConceptDtoSource = {
-  NKD: 'NKD',
-  ISMD: 'ISMD',
-  UNPUBLISHED: 'UNPUBLISHED',
-  ALL: 'ALL',
-} as const;
-
-export interface ResolvedConceptDto {
-  iri?: string;
-  conceptName?: ResolvedConceptDtoConceptName;
-  conceptSlug?: string;
-  ontologyIri?: string;
-  ontologyName?: ResolvedConceptDtoOntologyName;
-  source?: ResolvedConceptDtoSource;
-  resolvedDomain?: ResolvedConceptDto;
-  resolvedRange?: ResolvedConceptDto;
-}
-
-export type ResolvedLegalSourceDtoLevel =
-  (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedLegalSourceDtoLevel = {
-  LAW: 'LAW',
-  VERSION: 'VERSION',
-  FRAGMENT: 'FRAGMENT',
-} as const;
-
-export type ResolvedLegalSourceDtoEnrichmentStatus =
-  (typeof ResolvedLegalSourceDtoEnrichmentStatus)[keyof typeof ResolvedLegalSourceDtoEnrichmentStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedLegalSourceDtoEnrichmentStatus = {
-  OK: 'OK',
-  PENDING: 'PENDING',
-  UNAVAILABLE: 'UNAVAILABLE',
-  NOT_FOUND: 'NOT_FOUND',
-  SKIPPED_NON_FRAGMENT: 'SKIPPED_NON_FRAGMENT',
-  INVALID_IRI: 'INVALID_IRI',
-} as const;
-
-export interface ResolvedLegalSourceDto {
-  originalUrl?: string;
-  eliPath?: string;
-  domain?: string;
-  level?: ResolvedLegalSourceDtoLevel;
-  lawIri?: string;
-  versionIri?: string;
-  fragmentIri?: string;
-  lawNumber?: string;
-  lawYear?: number;
-  sbirkaCode?: string;
-  versionDate?: string;
-  fragmentSegments?: FragmentSegment[];
-  displayLabel?: string;
-  fragmentCitation?: string;
-  fragmentBodyHtml?: string;
-  fragmentBody?: string;
-  versionValidUntil?: string;
-  isLatestVersion?: boolean;
-  enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
-}
-
-export interface RppAgenda {
-  iri?: string;
-  code?: string;
-  nazev?: string;
-}
-
-export interface RppIsvs {
-  iri?: string;
-  code?: string;
-  nazev?: string;
-  agendaIris?: string[];
 }
 
 export interface ApiResponseDtoListOntologyMetadataModel {
@@ -1097,19 +1167,6 @@ export interface LawContentDto {
   versions?: LawVersionDto[];
   fragments?: FragmentDto[];
   bodyHtml?: string;
-}
-
-export interface ApiResponseDtoGetConceptDto {
-  data?: GetConceptDto;
-  message?: string;
-  success?: boolean;
-  errorCode?: string;
-}
-
-export interface GetConceptDto {
-  conceptMetadata?: ConceptMetadataModel;
-  conceptDetail?: ConceptDetailModel;
-  publishedConceptDeviationModel?: PublishedConceptDeviationModel;
 }
 
 export interface ApiResponseDtoListConceptMetadataModel {
@@ -1744,6 +1801,97 @@ export const useCreateConcept = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateConceptMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Převezme vybrané odlišné vlastnosti z NKD. Přijetí VŠECH odlišných vlastností ponechá pojem pracovní kopií; přijetí pouze NĚKTERÝCH pojem odpojí od NKD a změní jej na koncept. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Synchronizace pracovní kopie s publikovaným pojmem v NKD
+ */
+export const syncWorkingCopy = (
+  conceptId: number,
+  workingCopySyncRequestDto: WorkingCopySyncRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoGetConceptDto>(
+    {
+      url: `/api/concept/${conceptId}/sync`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: workingCopySyncRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getSyncWorkingCopyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof syncWorkingCopy>>,
+    TError,
+    { conceptId: number; data: WorkingCopySyncRequestDto },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof syncWorkingCopy>>,
+  TError,
+  { conceptId: number; data: WorkingCopySyncRequestDto },
+  TContext
+> => {
+  const mutationKey = ['syncWorkingCopy'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof syncWorkingCopy>>,
+    { conceptId: number; data: WorkingCopySyncRequestDto }
+  > = (props) => {
+    const { conceptId, data } = props ?? {};
+
+    return syncWorkingCopy(conceptId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SyncWorkingCopyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof syncWorkingCopy>>
+>;
+export type SyncWorkingCopyMutationBody = WorkingCopySyncRequestDto;
+export type SyncWorkingCopyMutationError = unknown;
+
+/**
+ * @summary Synchronizace pracovní kopie s publikovaným pojmem v NKD
+ */
+export const useSyncWorkingCopy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof syncWorkingCopy>>,
+      TError,
+      { conceptId: number; data: WorkingCopySyncRequestDto },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof syncWorkingCopy>>,
+  TError,
+  { conceptId: number; data: WorkingCopySyncRequestDto },
+  TContext
+> => {
+  const mutationOptions = getSyncWorkingCopyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };

@@ -2,6 +2,7 @@ import { useTranslations } from 'next-intl';
 
 import {
   ConceptDetailModel,
+  LinkSnapshotDto,
   PublishedConceptDeviationModel,
 } from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
@@ -29,6 +30,7 @@ interface Props {
   ontologySlug?: string;
   deviations?: PublishedConceptDeviationModel;
   conceptId?: number;
+  linkSnapshots?: LinkSnapshotDto[];
 }
 
 export const ConceptLayout = ({
@@ -42,18 +44,19 @@ export const ConceptLayout = ({
   ontologySlug,
   deviations,
   conceptId,
+  linkSnapshots,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start px-5">
-      {deviations && conceptId && (
+      {((deviations && conceptId) || (linkSnapshots && conceptId)) && (
         <div className="col-span-10">
           <ConceptDeviationSection
             deviations={deviations}
             resolved={resolvedRelations}
-            snapshotId={0}
             conceptId={conceptId}
+            linkSnapshots={linkSnapshots}
           />
         </div>
       )}

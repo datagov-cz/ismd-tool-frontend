@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { GovButton, GovChip, GovIcon } from '@gov-design-system-ce/react';
+import axios from 'axios';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 import {
   ConceptDetailModelReferencovanéPojmyResolved,
   PublishedConceptDeviationModel,
+  useSyncWorkingCopy,
   useUpdateLocalCopy,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { DeviationKey } from './deviation.types';
 import { formatKey } from './deviation.utils';
@@ -19,20 +23,25 @@ export const DeviationGroup = ({
   resolved,
   conceptId,
   snapshotId,
+  conceptLabel,
 }: {
   keys: DeviationKey[];
   deviations: PublishedConceptDeviationModel;
   resolved?: ConceptDetailModelReferencovanéPojmyResolved;
   conceptId: number;
-  snapshotId: number;
+  snapshotId?: number;
+  conceptLabel?: string;
 }) => {
   const t = useTranslations('ConceptDeviations');
   const [expanded, setExpanded] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<DeviationKey[]>([]);
 
   const mutation = useUpdateLocalCopy();
+  const mutationSync = useSyncWorkingCopy();
 
   const allSelected = selectedKeys.length === keys.length;
+
+  const invalidator = useQueryInvalidator();
 
   const toggleKey = (key: DeviationKey) => {
     setSelectedKeys((prev) =>
@@ -44,41 +53,63 @@ export const DeviationGroup = ({
     setSelectedKeys(allSelected ? [] : [...keys]);
   };
 
-  /** Full update — keep the link to the published source and take everything */
   const handleUpdateLocalCopy = () => {
+    if (!snapshotId) return null;
     mutation.mutate(
       { conceptId, snapshotId },
       {
         onSuccess: () => {
-          // optionally: invalidate the concept detail query / close the panel
           setExpanded(false);
         },
         onError: (error) => {
           console.error('Failed to update local copy', error);
+          const message = axios.isAxiosError(error)
+            ? (error.response?.data?.message ?? error.message)
+            : 'Something went wrong';
+
+          toast(message, { position: 'bottom-right', type: 'error' });
         },
       },
     );
   };
 
-  /** Partial update — take only the selected deviations */
   const handleSubmitSelected = () => {
     if (!selectedKeys.length) return;
 
-    // TODO: wire to the correct endpoint — payload below
-    const payload = {
-      conceptId,
-      snapshotId,
-      selectedKeys, // DeviationKey[]
-    };
-    console.log('submitting selected deviations', payload);
+    mutationSync.mutate(
+      { conceptId, data: { fieldsToAccept: selectedKeys } },
+      {
+        onSuccess: (data) => {
+          invalidator.invalidateConcept(data.data?.conceptMetadata?.slug ?? '');
+          invalidator.invalidateOntology(
+            data.data?.conceptMetadata?.ontologySlug ?? '',
+          );
+          setExpanded(false);
+        },
+        onError: (error) => {
+          console.error('Failed to update local copy', error);
+          const message = axios.isAxiosError(error)
+            ? (error.response?.data?.message ?? error.message)
+            : 'Something went wrong';
 
-    // e.g. mutation.mutate({ conceptId, snapshotId, data: selectedKeys }, { onSuccess: ... })
+          toast(message, { position: 'bottom-right', type: 'error' });
+        },
+      },
+    );
+  };
+
+  const completeResolved = {
+    ...resolved,
+    ...deviations['referencované-pojmy-resolved'],
   };
 
   return (
     <div className="p-2 border border-border-primary-subtle rounded-sm space-y-2 bg-white">
       <span className="text-sm font-bold mb-3 block">
-        {t('DifferencesLabel')}{' '}
+        {t(snapshotId ? 'DifferencesLabelConcept' : 'DifferencesLabel')}{' '}
+        {conceptLabel && (
+          <span className="text-blue-hover font-bold">{conceptLabel}</span>
+        )}
       </span>
 
       {!expanded ? (
@@ -95,9 +126,11 @@ export const DeviationGroup = ({
             key={item}
             propertyKey={item}
             data={deviations[item]}
-            resolved={resolved}
+            resolved={completeResolved}
             checked={selectedKeys.includes(item)}
             onToggle={toggleKey}
+            noCheckBox={!!snapshotId}
+            deviations={deviations}
           />
         ))
       )}
@@ -105,10 +138,10 @@ export const DeviationGroup = ({
       <div
         className={clsx(
           'flex items-center pt-3 w-full',
-          expanded ? 'justify-between' : 'justify-end',
+          expanded && !snapshotId ? 'justify-between' : 'justify-end',
         )}
       >
-        {expanded && (
+        {expanded && !snapshotId && (
           <div className="flex gap-2 items-center">
             <GovButton
               type="outlined"
@@ -149,7 +182,7 @@ export const DeviationGroup = ({
             {expanded ? t('HideDifferences') : t('ShowDifferences')}
           </GovButton>
 
-          {expanded ? (
+          {!snapshotId ? (
             <GovButton
               type="solid"
               color="primary"

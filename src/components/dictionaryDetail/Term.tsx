@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -40,7 +41,15 @@ type DeviatedItem = {
 
 const changedFields = (deviation: DeviationEntry) =>
   Object.keys(deviation).filter(
-    (key) => key !== 'status' && key !== 'errorMessage',
+    (key) =>
+      key !== 'status' &&
+      key !== 'errorMessage' &&
+      key !== 'origin' &&
+      key !== 'source' &&
+      key !== 'obor-hodnot-resolved' &&
+      key !== 'referencované-pojmy-resolved' &&
+      key !== 'agenda-resolved' &&
+      key !== 'ais-resolved',
   );
 
 const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
@@ -63,7 +72,7 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
         {items.map((item, index) => {
           const fields = changedFields(item.deviation);
           const hasError = item.deviation.status !== 'HAS_DEVIATIONS';
-          const href = `${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${item.slug}`;
+          const href = `/concept/${item.slug}`;
 
           return (
             <div
@@ -74,15 +83,25 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
               )}
             >
               <div className="min-w-0">
-                {items.length > 1 && (
+                <div className="flex gap-1">
+                  <span className="text-sm text-black">{t('LocatedIn')}</span>
+                  <Link
+                    href={href}
+                    className="text-blue-hover font-bold text-sm hover:underline block truncate"
+                  >
+                    {item.data.název?.cs}
+                  </Link>
+                </div>
+                {item.deviation.source?.label && (
                   <div className="flex gap-1">
-                    <span className="text-sm text-black">{t('LocatedIn')}</span>
-                    <a
-                      href={href}
+                    <span className="text-sm text-black">Ze zdroje</span>
+                    <Link
+                      href={`/concept/nkd?iri=${item.deviation.source.iri}`}
                       className="text-card-description font-bold text-sm hover:underline block truncate"
+                      target="__blank"
                     >
-                      {item.data.název?.cs}
-                    </a>
+                      {item.deviation.source.label}
+                    </Link>
                   </div>
                 )}
                 {hasError ? (
@@ -94,12 +113,12 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
                     {t('CheckChanges')}
                     {fields.map((field, i) => (
                       <span key={field}>
-                        <a
+                        <Link
                           href={href}
                           className="font-medium text-sm underline hover:no-underline"
                         >
                           {fieldLabel(field)}
-                        </a>
+                        </Link>
                         {i !== fields.length - 1 && ', '}
                       </span>
                     ))}
