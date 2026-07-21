@@ -56,7 +56,9 @@ async function refreshAccessToken(
     });
 
     const refreshed: RefreshedKeycloakTokens = await response.json();
-    if (!response.ok) throw refreshed;
+    if (!response.ok) {
+      return refreshFailed(token, refreshed);
+    }
 
     return {
       ...token,
@@ -67,17 +69,28 @@ async function refreshAccessToken(
       error: undefined,
     };
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to refresh access token', error);
-    return { ...token, error: 'RefreshAccessTokenError' };
+    return refreshFailed(token, error);
   }
 }
 
-async function revokeKeycloakSession(token: KeycloakToken): Promise<void> {
+function refreshFailed(token: KeycloakToken, error: unknown): KeycloakToken {
+  // eslint-disable-next-line no-console
+  console.error('Failed to refresh access token', error);
+  return { ...token, error: 'RefreshAccessTokenError' };
+}
+
+/**
+ * Builds Keycloak's RP-initiated logout URL. The BROWSER must navigate here — a
+ * server-side fetch ends the Keycloak session but cannot clear the upstream
+ * identity provider's cookie, so the next login is silently re-authenticated as the
+ * same user. Only a real redirect lets Keycloak front-channel the browser on to
+ * CAAIS's end_session. See /api/auth/federated-logout.
+ */
+export function keycloakLogoutUrl(idToken: string): string {
   const logoutUrl = new URL(keycloakUrl('logout'));
-  logoutUrl.searchParams.set('id_token_hint', token.idToken);
+  logoutUrl.searchParams.set('id_token_hint', idToken);
   logoutUrl.searchParams.set('post_logout_redirect_uri', NEXTAUTH_URL);
-  await fetch(logoutUrl.toString());
+  return logoutUrl.toString();
 }
 
 export const authOptions: NextAuthOptions = {
@@ -103,11 +116,6 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = keycloakToken.accessToken;
       session.error = keycloakToken.error;
       return session;
-    },
-  },
-  events: {
-    async signOut({ token }) {
-      await revokeKeycloakSession(token as KeycloakToken);
     },
   },
 };
