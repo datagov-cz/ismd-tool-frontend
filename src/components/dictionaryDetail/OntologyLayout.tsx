@@ -130,62 +130,86 @@ export const OntologyLayout = ({
       <div className="w-full relative max-w-250 mx-auto p-5">
         <div className="w-full space-y-6 relative">
           <div className="space-y-3 flex gap-5">
-            <div className="flex flex-col gap-2 flex-1 relative">
+            <div className="flex flex-col gap-2 flex-1 relative justify-center">
               <GovButton
                 type="base"
                 color="primary"
                 size="s"
                 onGovClick={() => router.back()}
-                className="lg:absolute lg:-top-1 lg:left-0 lg:-translate-x-full px-0! lg:px-4!"
+                className="lg:absolute lg:top-0 lg:left-0 lg:-translate-x-full px-0! lg:px-4!"
               >
                 <GovIcon slot="icon-start" name="chevron-left" size="m" />
                 {t('Main.BackToHome')}
               </GovButton>
-              <Link
-                href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
-                className="cursor-pointer! hover:underline"
-              >
-                <div className="flex w-full justify-between">
-                  <GovTag
-                    color={isPublished ? 'success' : 'secondary'}
-                    size="xs"
-                    type="subtle"
-                    className={clsx(
-                      'w-fit [&_span]:font-bold! [&_span]:cursor-pointer!',
-                    )}
-                  >
-                    <GovIcon
-                      slot="icon-start"
-                      name="journal-text"
-                      size="l"
-                      className="text-white"
-                    />
-                    <span
+              <div className="flex gap-2 items-center">
+                <Link
+                  href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
+                  className="cursor-pointer! hover:underline"
+                >
+                  <div className="flex w-full gap-2 items-center">
+                    <GovTag
+                      color={isPublished ? 'success' : 'secondary'}
+                      size="xs"
+                      type="subtle"
                       className={clsx(
-                        !isPublished && 'text-status-warning-700!',
+                        'w-fit [&_span]:font-bold! [&_span]:cursor-pointer!',
                       )}
                     >
-                      {t('Main.Ontology')}
-                    </span>
-                    <span
-                      className={clsx(
-                        !isPublished && 'text-status-warning-700',
-                      )}
-                    >
-                      {`/ ${source}`}
-                    </span>
-                    {statusLabel && (
+                      <GovIcon
+                        slot="icon-start"
+                        name="journal-text"
+                        size="l"
+                        className="text-white"
+                      />
+                      <span
+                        className={clsx(
+                          !isPublished && 'text-status-warning-700!',
+                        )}
+                      >
+                        {t('Main.Ontology')}
+                      </span>
                       <span
                         className={clsx(
                           !isPublished && 'text-status-warning-700',
                         )}
                       >
-                        {`/ ${statusLabel}`}
+                        {`/ ${source}`}
                       </span>
-                    )}
+                      {statusLabel && (
+                        <span
+                          className={clsx(
+                            !isPublished && 'text-status-warning-700',
+                          )}
+                        >
+                          {`/ ${statusLabel}`}
+                        </span>
+                      )}
+                    </GovTag>
+                  </div>
+                </Link>
+                {metaData?.sourceTag && (
+                  <GovTag
+                    color={
+                      metaData?.sourceTag === 'DRAFT' ? 'warning' : 'neutral'
+                    }
+                    type="subtle"
+                    size="xs"
+                    className="h-fit whitespace-nowrap my-1!"
+                  >
+                    <GovIcon
+                      name={metaData?.sourceTag === 'DRAFT' ? 'gear' : 'copy'}
+                      slot="icon-start"
+                      type="components"
+                    />
+                    <span className="font-bold">
+                      {metaData?.sourceTag === 'DRAFT'
+                        ? t('Main.Draft')
+                        : t('Main.WorkingCopy')}
+                    </span>
                   </GovTag>
-                </div>
-              </Link>
+                )}
+              </div>
+
               <h1 className="text-[32px] font-medium">
                 {title?.cs || title?.en || title?.sk}
               </h1>

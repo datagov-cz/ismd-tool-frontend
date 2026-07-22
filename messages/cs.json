@@ -325,6 +325,8 @@
         "Draft": "Rozpracovaný slovník",
         "Published": "Publikovaný slovník"
       },
+      "Draft": "Rozpracovaný",
+      "WorkingCopy": "Pracovní kopie",
       "Sections": {
         "Definition": "Definice",
         "Description": "Popis",
