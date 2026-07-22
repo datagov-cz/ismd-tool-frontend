@@ -23,6 +23,8 @@ export const DictionaryContent = ({ slug }: Props) => {
   const { user } = useCurrentUser();
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
+  const publishedConceptDeviations =
+    ontology.data?.data?.publishedConceptDeviations;
   const router = useRouter();
   useVisitedOntology(
     {
@@ -96,6 +98,7 @@ export const DictionaryContent = ({ slug }: Props) => {
       conceptCount={ontologyDetail.pojmy?.length}
       metaData={ontologyMetadata}
       slug={slug}
+      deviations={publishedConceptDeviations}
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}

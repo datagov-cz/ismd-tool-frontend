@@ -79,7 +79,7 @@ export const DictionaryCard = ({
   };
 
   return (
-    <div className="rounded-xl border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
+    <div className="rounded-xl border border-border-grey overflow-hidden shadow-subtle flex flex-col">
       <Link
         href={link}
         className="grow px-3 py-2 flex gap-2 transition-shadow duration-200 hover:shadow-md cursor-pointer bg-white dark:bg-dark-bg text-black dark:text-white"

@@ -119,6 +119,26 @@
     "HintHeader": "Nápověda k formuláři",
     "Suggestion": "Doporučení"
   },
+  "ConceptDeviations": {
+    "Title": "Změny proti publikovanému zdroji [{count}]",
+    "Description": "V publikované verzi došlo ke změnám. Vyberte změny které chcete převzít do tohoto pojmu.",
+    "DifferencesLabel": "Rozdíly charakteristik oproti publikované verzi:",
+    "DifferencesLabelConcept": "Rozdíly charakteristik v navázaném pojmu - ",
+    "ExpandAria": "Zobrazit změny",
+    "CollapseAria": "Sbalit změny",
+    "SelectAll": "Vybrat vše",
+    "DeselectAll": "Zrušit výběr",
+    "SelectedCount": "Vybráno: {selected} ze {total} změn",
+    "ShowDifferences": "Zobrazit rozdíly",
+    "HideDifferences": "Sbalit rozdíly",
+    "AcceptSelected": "Převzít vybrané změny",
+    "UpdateAndKeepLink": "Zachovat propojení a aktualizovat",
+    "Updating": "Aktualizuji…",
+    "LocalVersion": "Lokální verze",
+    "PublishedVersion": "Publikovaná verze",
+    "Yes": "ANO",
+    "No": "NE"
+  },
   "ConceptDetail": {
     "Sections": {
       "AlternativeName": "Alternativní název",
@@ -185,6 +205,8 @@
         "NotFound": "Pojem nenalezen",
         "InOntology": "Ve slovníku"
       },
+      "Draft": "Rozpracovaný",
+      "WorkingCopy": "Pracovní kopie",
       "Public": "Veřejný",
       "NonPublic": "Neveřejný",
       "Name": "Název",
@@ -285,6 +307,16 @@
       },
       "OwnComment": "Vlastní komentář",
       "Send": "Odeslat"
+    },
+    "Deviations": {
+      "ToggleLabel": "Se změnou návazností",
+      "FooterTitle": "Změny v navázaných pojmech",
+      "LocatedIn": "Nachází se v: ",
+      "VerifyError": "Pojem nebylo možné ověřit v NKD",
+      "CheckChanges": "Zkontrolovat změny: ",
+      "SidebarTitle": "Pojmy se změněnou návazností",
+      "SidebarDescription": "Tyto pojmy jsou navázané na publikované pojmy, které byly mezitím změněny.",
+      "Differences": "Rozdíly"
     },
     "Main": {
       "Name": "Název",

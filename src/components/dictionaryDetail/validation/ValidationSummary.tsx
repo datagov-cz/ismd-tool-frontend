@@ -87,14 +87,14 @@ export const ValidationSummary = ({
 
   if (validate.isPending)
     return (
-      <div className="h-full flex items-start justify-center w-full col-span-4">
+      <div className="h-full flex items-start justify-center w-full">
         <CircularLoader />
       </div>
     );
 
   if (!validationReport || !grouped)
     return (
-      <div className="col-span-4 flex flex-col items-center pl-10">
+      <div className="flex flex-col items-center">
         <p className="font-medium text-lg mb-3">{t('NotValidated')}</p>
         <GovButton
           type="solid"
@@ -114,7 +114,7 @@ export const ValidationSummary = ({
     );
 
   return (
-    <div className="col-span-4 flex flex-col w-full pl-10">
+    <div className="flex flex-col w-full">
       <div className="w-full flex justify-between items-center mb-3">
         <span className="font-medium text-lg">
           {t('ValidationResult')}{' '}

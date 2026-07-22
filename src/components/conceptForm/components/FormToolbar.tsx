@@ -67,7 +67,7 @@ export const FormToolbar = <T extends FieldValues>({
           'sticky bottom-0 z-10 py-5 px-6 bg-white flex justify-between items-center transition-shadow duration-200',
           isFloating
             ? 'shadow-[0px_16px_40px_0px_rgba(0,0,0,0.3)]'
-            : 'rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]',
+            : 'rounded-lg shadow-subtle',
         )}
       >
         <div className="flex items-center gap-6">

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import {
+  AltNameModelAltName,
   CreateConceptBody,
   useCreateConcept,
   useGetOntologyDetail,
@@ -41,6 +42,25 @@ export const normalizeFormData = (
     return record;
   };
 
+  const toAltNameRecord = (
+    entries?: { languageTag: string; name: string }[],
+    originalTags?: string[],
+  ): AltNameModelAltName => {
+    const record: AltNameModelAltName = {};
+
+    entries?.forEach(({ languageTag, name }) => {
+      const trimmed = name?.trim();
+      if (!trimmed) return;
+      (record[languageTag] ??= []).push(trimmed);
+    });
+
+    originalTags?.forEach((tag) => {
+      record[tag] ??= [];
+    });
+
+    return record;
+  };
+
   const toIri = (refs?: { iri: string; label: string }[]) =>
     refs?.map((r) => r.iri);
   return {
@@ -49,7 +69,7 @@ export const normalizeFormData = (
       ? { name: toRecord(formData.nameModel.name, originalLanguageTags?.name) }
       : { name: {} },
     altNameModel: {
-      altName: toRecord(
+      altName: toAltNameRecord(
         formData.altNameModel?.altName,
         originalLanguageTags?.altName,
       ),

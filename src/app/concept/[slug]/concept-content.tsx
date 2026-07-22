@@ -75,6 +75,7 @@ export const ConceptContent = ({ slug }: Props) => {
             ? buildRelation(conceptDetail, slug)
             : undefined
         }
+        sourceTag={conceptMetadata.sourceTag}
       />
 
       <ConceptLayout
@@ -87,6 +88,11 @@ export const ConceptContent = ({ slug }: Props) => {
         }
         ontologyIri={conceptMetadata.graphName || ''}
         ontologySlug={conceptMetadata.ontologySlug || ''}
+        deviations={concept.data.data?.publishedConceptDeviationModel}
+        conceptId={conceptMetadata.id}
+        linkSnapshots={concept.data.data?.linkSnapshots?.filter(
+          (item) => item.owningConceptId === conceptMetadata.id,
+        )}
       >
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}
