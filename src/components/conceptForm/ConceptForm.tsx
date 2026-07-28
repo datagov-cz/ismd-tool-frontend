@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
@@ -71,7 +71,10 @@ export const BASE_DEFAULTS: Omit<
 
 interface ConceptFormProps {
   ontologyGraphName: string;
-  onSubmit: (_data: ConceptFormValues) => void;
+  onSubmit: (
+    _data: ConceptFormValues,
+    _form: UseFormReturn<ConceptFormValues>,
+  ) => void;
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
   editing?: boolean;
@@ -140,7 +143,7 @@ export const ConceptForm = ({
           <span className="flex-1 h-px bg-(--button-outlined-primary-hover)" />
         </div>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit((data) => onSubmit(data, form))}
           onFocus={handleFocus}
           className="w-full space-y-2.5"
         >

@@ -1,27 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
+import { onlineManager } from '@tanstack/react-query';
 
+// Backed by TanStack's onlineManager so UI indicators and paused-mutation
+// resume share one online/offline source of truth.
 export const useIsOnline = () => {
-  const initialOnline =
-    typeof navigator !== 'undefined' && 'onLine' in navigator
-      ? navigator.onLine
-      : true;
-
-  const [isOnline, setIsOnline] = useState(initialOnline);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  return isOnline;
+  return useSyncExternalStore(
+    (onStoreChange) => onlineManager.subscribe(onStoreChange),
+    () => onlineManager.isOnline(),
+    () => true,
+  );
 };

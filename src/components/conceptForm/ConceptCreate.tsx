@@ -3,7 +3,7 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
+import { UseFormReturn } from 'react-hook-form';
 
 import {
   AltNameModelAltName,
@@ -11,8 +11,8 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
-import { clearFormDraft } from '@/hooks/useFormDraft';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
+import { draftKeys } from '@/lib/draftKeys';
 
 import { ConceptForm } from './ConceptForm';
 import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
@@ -101,31 +101,27 @@ export const normalizeFormData = (
 
 export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const { data } = useGetOntologyDetail(ontology);
-  const { mutate: createConcept, isPending } = useCreateConcept();
+  const { mutate: createConcept, isPending, isPaused } = useCreateConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
-  const queryInvalidate = useQueryInvalidator();
+  const submitForm = useSubmitForm();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
-  const storageKey = `concept-draft:create:${ontology}`;
+  const storageKey = draftKeys.conceptCreate(ontology);
 
-  const handleSubmit = (formData: ConceptFormValues) => {
-    createConcept(
-      { slug: ontology, data: normalizeFormData(formData) },
-      {
-        onSuccess: (response) => {
-          clearFormDraft(storageKey);
-          queryInvalidate.invalidateOntology(ontology);
-          queryInvalidate.invalidateConcept(response.data?.slug || '');
-          toast.success(t('ToastSuccess'), { position: 'bottom-right' });
-          router.push(`/concept/${response.data?.slug}`);
-        },
-        onError: () => {
-          toast.error(t('ToastError'), { position: 'bottom-right' });
-        },
-      },
-    );
+  const handleSubmit = (
+    formData: ConceptFormValues,
+    form: UseFormReturn<ConceptFormValues>,
+  ) => {
+    submitForm({
+      mutate: createConcept,
+      variables: { slug: ontology, data: normalizeFormData(formData) },
+      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      draftKey: storageKey,
+      reset: () => form.reset(),
+      offlineMessage: t('SavedOffline'),
+    });
   };
 
   return (
@@ -158,7 +154,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
         <ConceptForm
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
-          isPending={isPending}
+          isPending={isPending && !isPaused}
           storageKey={storageKey}
         />
       )}

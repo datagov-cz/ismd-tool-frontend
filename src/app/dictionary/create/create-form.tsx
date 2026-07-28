@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import { OntologyCreateModel, useCreateOntology } from '@/api/generated';
 import { FormSection } from '@/components/conceptForm/components/FormSection';
@@ -15,16 +13,19 @@ import { HintSidebar } from '@/components/conceptForm/components/hint/HintSideba
 import { useFormHints } from '@/components/conceptForm/components/hint/useFormHints';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
-import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
-import { useIsOnline } from '@/hooks/useIsOnline';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useFormDraft } from '@/hooks/useFormDraft';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { NAMESPACE } from '@/lib/constants';
-import { db, type OntologyDraft } from '@/lib/db';
+import { draftKeys } from '@/lib/draftKeys';
 import { createOntologySchema, OntologySchemaType } from '@/lib/formSchemas';
 
-const STORAGE_KEY = 'ontology-create-form';
-
 type LanguageEntry = { name?: string; languageTag?: string };
+
+const DEFAULT_VALUES = {
+  namespace: NAMESPACE,
+  nameModel: [{ name: '', languageTag: 'cs' }],
+  descriptionModel: [{ name: '', languageTag: 'cs' }],
+};
 
 const toLanguageMap = (
   entries: LanguageEntry[] | undefined,
@@ -39,28 +40,23 @@ const toLanguageMap = (
 
 export const CreateForm = () => {
   const t = useTranslations('CreateOntology');
-  const isOnline = useIsOnline();
   const router = useRouter();
-  const invalidator = useQueryInvalidator();
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
     resolver: zodResolver(createOntologySchema(t)),
-    defaultValues: {
-      namespace: NAMESPACE,
-      nameModel: [{ name: '', languageTag: 'cs' }],
-      descriptionModel: [{ name: '', languageTag: 'cs' }],
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
-  useFormDraft(form, STORAGE_KEY);
+  useFormDraft(form, draftKeys.ontologyCreate);
 
   const { hints, defaultHint } = useDictionaryFormHints();
 
   const { hint, open, setOpen, handleFocus } = useFormHints(hints, defaultHint);
 
-  const { mutate, isPending } = useCreateOntology();
+  const { mutate, isPending, isPaused } = useCreateOntology();
   const { handleSubmit } = form;
+  const submitForm = useSubmitForm();
 
   const buildPayload = (data: OntologySchemaType): OntologyCreateModel => {
     const name = toLanguageMap(data.nameModel);
@@ -72,74 +68,19 @@ export const CreateForm = () => {
     };
   };
 
-  const syncOfflineData = async () => {
-    try {
-      const drafts = await db.ontologyDrafts.toArray();
-      for (const draft of drafts) {
-        mutate(
-          { data: draft.payload },
-          {
-            onSuccess: async () => {
-              await db.ontologyDrafts.delete(draft.id!);
-              toast(t('Form.CreateNewDictSuccess'));
-            },
-            onError: () => toast(t('Form.CreateNewDictSyncError')),
-          },
-        );
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Sync failed:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (isOnline) syncOfflineData();
-  }, [isOnline]);
-
-  const onSubmit = async (data: OntologySchemaType) => {
-    const payload = buildPayload(data);
-
-    if (!isOnline) {
-      try {
-        const draft: OntologyDraft = {
-          namespace: data.namespace,
-          payload,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        await db.ontologyDrafts.add(draft);
-        form.reset();
-        clearFormDraft(STORAGE_KEY);
-        toast(
-          t('Form.SavedOffline') || 'Saved offline. Will sync when online.',
-        );
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to save offline:', error);
-        toast(t('Form.CreateNewDictError'));
-      }
-      return;
-    }
-
-    mutate(
-      { data: payload },
-      {
-        onSuccess: (response) => {
-          clearFormDraft(STORAGE_KEY);
-          toast(t('Form.CreateNewDictSuccess'));
-          invalidator.invalidateOntologyList();
-          if (response.data?.slug) {
-            router.push(`/dictionary/${response.data?.slug}`);
-          }
-        },
-        onError: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Failed to create ontology:', error);
-          toast(t('Form.CreateNewDictError'));
-        },
+  const onSubmit = (data: OntologySchemaType) => {
+    submitForm({
+      mutate,
+      variables: { data: buildPayload(data) },
+      onSuccess: (response) => {
+        if (response.data?.slug) {
+          router.push(`/dictionary/${response.data.slug}`);
+        }
       },
-    );
+      draftKey: draftKeys.ontologyCreate,
+      reset: () => form.reset(DEFAULT_VALUES),
+      offlineMessage: t('Form.SavedOffline'),
+    });
   };
 
   return (
@@ -168,7 +109,7 @@ export const CreateForm = () => {
               placeholder={t('Form.DescriptionPlaceholder')}
             />
           </FormSection>
-          <FormToolbar<OntologySchemaType> isPending={isPending} />
+          <FormToolbar<OntologySchemaType> isPending={isPending && !isPaused} />
         </form>
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
           {open && (
