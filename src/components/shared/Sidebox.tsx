@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { useScrollLock } from 'usehooks-ts';
 
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 
@@ -26,14 +27,23 @@ export const Sidebox = ({
 
   const t = useTranslations('Shared');
 
+  const { isLocked, lock, unlock } = useScrollLock({
+    autoLock: false,
+    lockTarget: 'html',
+    widthReflow: false,
+  });
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('overflow-y-hidden');
-    } else {
-      document.body.classList.remove('overflow-y-hidden');
+    if (isOpen === isLocked) {
+      return;
     }
-    return () => document.body.classList.remove('overflow-y-hidden');
-  }, [isOpen]);
+
+    if (isOpen) {
+      lock();
+    } else {
+      unlock();
+    }
+  }, [isOpen, isLocked, lock, unlock]);
 
   return (
     <>

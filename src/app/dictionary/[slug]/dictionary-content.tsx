@@ -1,7 +1,5 @@
 'use client';
 
-import { GovButton } from '@gov-design-system-ce/react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
@@ -10,7 +8,8 @@ import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { ValidationSidebox } from '@/components/dictionaryDetail/validation/ValidationSidebox';
-import { CircularLoader } from '@/components/shared/CircularLoader';
+import { NotFoundState } from '@/components/shared/NotFoundState';
+import { PageLoader } from '@/components/shared/PageLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
 
 interface Props {
@@ -25,35 +24,16 @@ export const DictionaryContent = ({ slug }: Props) => {
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
   const publishedConceptDeviations =
     ontology.data?.data?.publishedConceptDeviations;
-  const router = useRouter();
-  useVisitedOntology(
-    {
-      slug,
-      source: 'ISMD',
-    },
-    user?.userId,
-  );
 
-  if (ontology.isLoading)
-    return (
-      <div className="h-full flex items-center justify-center w-full">
-        <CircularLoader />
-      </div>
-    );
+  useVisitedOntology({ slug, source: 'ISMD' }, user?.userId);
 
-  if (!ontologyDetail || !ontologyMetadata)
-    return (
-      <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
-        <h1 className="text-2xl">{t('NotFound')}</h1>
-        <GovButton
-          type="solid"
-          color="primary"
-          onGovClick={() => router.back()}
-        >
-          {t('Back')}
-        </GovButton>
-      </div>
-    );
+  if (ontology.isPending) {
+    return <PageLoader />;
+  }
+
+  if (!ontologyDetail || !ontologyMetadata) {
+    return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
+  }
 
   const getRelatedTerms = (parentTerm: ConceptDetailModel) => {
     const parentLocalName = parentTerm.iri?.split('/').pop();

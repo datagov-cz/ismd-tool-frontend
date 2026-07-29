@@ -1,14 +1,13 @@
 'use client';
 
-import { GovButton } from '@gov-design-system-ce/react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { useGetNkdConceptDetail } from '@/api/generated';
 import { ConceptHeaderNKD } from '@/components/conceptDetail/ConceptHeaderNKD';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
-import { CircularLoader } from '@/components/shared/CircularLoader';
+import { NotFoundState } from '@/components/shared/NotFoundState';
+import { PageLoader } from '@/components/shared/PageLoader';
 
 interface Props {
   slug: string;
@@ -16,29 +15,15 @@ interface Props {
 
 export const ConceptContentNKD = ({ slug }: Props) => {
   const concept = useGetNkdConceptDetail({ iri: slug });
-  const router = useRouter();
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
-  if (concept.isLoading)
-    return (
-      <div className="h-full flex items-center justify-center w-full">
-        <CircularLoader />
-      </div>
-    );
+  if (concept.isPending) {
+    return <PageLoader />;
+  }
 
-  if (!concept.data)
-    return (
-      <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
-        <h1 className="text-2xl">{t('NotFound')}</h1>
-        <GovButton
-          type="solid"
-          color="primary"
-          onGovClick={() => router.back()}
-        >
-          {t('Back')}
-        </GovButton>
-      </div>
-    );
+  if (!concept.data) {
+    return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
+  }
 
   const conceptDetail = concept.data.data?.conceptDetail;
   if (!conceptDetail) return null;
