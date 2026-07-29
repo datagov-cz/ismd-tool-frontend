@@ -56,7 +56,7 @@ export const ControlPanel = ({
   const isLoggedIn = !!currentUser?.userId;
 
   return (
-    <div className="flex flex-col gap-2 h-full justify-between items-end relative">
+    <div className="flex flex-col gap-2 h-full justify-between w-full relative">
       {updatedAt && (
         <span className="text-sm text-dark-primary">
           {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
@@ -68,7 +68,7 @@ export const ControlPanel = ({
             <GovButton
               nativeType="button"
               color="primary"
-              type="solid"
+              type="outlined"
               size="s"
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
             >
@@ -110,6 +110,7 @@ export const ControlPanel = ({
             color="primary"
             type="outlined"
             size="s"
+            expanded
             disabled
           >
             <GovIcon
@@ -122,7 +123,7 @@ export const ControlPanel = ({
           </GovButton>
         )}
       </div>
-      <div className="flex">
+      <div className="flex justify-end">
         <ControlPanelButton
           iconName="download"
           ariaLabel={t('Download')}

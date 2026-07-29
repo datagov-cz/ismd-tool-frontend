@@ -125,100 +125,85 @@ export const OntologyLayout = ({
     (user?.userId !== metaData?.user?.userId || source === 'NKD') &&
     (!isAdmin || source === 'NKD');
 
+  const showValidationSummary = !isLoggedOutOrNKD && !!slug && !!metaData;
+  const hasSidebar = !!visibleDeviations || showValidationSummary;
+
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full relative max-w-250 mx-auto py-5">
-        <div className="w-full space-y-6 relative">
-          <div className="space-y-3 flex gap-5">
-            <div className="flex flex-col gap-2 flex-1 relative justify-center">
-              <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center relative">
-                <GovButton
-                  type="base"
-                  color="primary"
-                  size="s"
-                  onGovClick={() => router.back()}
-                  className="lg:absolute lg:top-1/2 lg:left-0 lg:-ml-2 lg:-translate-x-full lg:-translate-y-1/2 px-0! lg:px-4!"
+      <div className="w-full max-w-250 mx-auto py-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2 flex flex-col gap-2">
+          <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center relative">
+            <GovButton
+              type="base"
+              color="primary"
+              size="s"
+              onGovClick={() => router.back()}
+              className="lg:absolute lg:top-1/2 lg:left-0 lg:-ml-2 lg:-translate-x-full lg:-translate-y-1/2 px-0! lg:px-4!"
+            >
+              <GovIcon slot="icon-start" name="chevron-left" size="m" />
+              {t('Main.BackToHome')}
+            </GovButton>
+            <Link
+              href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
+              className="cursor-pointer! hover:underline"
+            >
+              <GovTag
+                color={isPublished ? 'success' : 'secondary'}
+                size="xs"
+                type="subtle"
+                className="w-fit [&_span]:font-bold! [&_span]:cursor-pointer!"
+              >
+                <GovIcon
+                  slot="icon-start"
+                  name="journal-text"
+                  size="l"
+                  className="text-white"
+                />
+                <span
+                  className={clsx(!isPublished && 'text-status-warning-700!')}
                 >
-                  <GovIcon slot="icon-start" name="chevron-left" size="m" />
-                  {t('Main.BackToHome')}
-                </GovButton>
-                <Link
-                  href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
-                  className="cursor-pointer! hover:underline"
+                  {t('Main.Ontology')}
+                </span>
+                <span
+                  className={clsx(!isPublished && 'text-status-warning-700')}
                 >
-                  <div className="flex w-full gap-2 items-center">
-                    <GovTag
-                      color={isPublished ? 'success' : 'secondary'}
-                      size="xs"
-                      type="subtle"
-                      className={clsx(
-                        'w-fit [&_span]:font-bold! [&_span]:cursor-pointer!',
-                      )}
-                    >
-                      <GovIcon
-                        slot="icon-start"
-                        name="journal-text"
-                        size="l"
-                        className="text-white"
-                      />
-                      <span
-                        className={clsx(
-                          !isPublished && 'text-status-warning-700!',
-                        )}
-                      >
-                        {t('Main.Ontology')}
-                      </span>
-                      <span
-                        className={clsx(
-                          !isPublished && 'text-status-warning-700',
-                        )}
-                      >
-                        {`/ ${source}`}
-                      </span>
-                      {statusLabel && (
-                        <span
-                          className={clsx(
-                            !isPublished && 'text-status-warning-700',
-                          )}
-                        >
-                          {`/ ${statusLabel}`}
-                        </span>
-                      )}
-                    </GovTag>
-                  </div>
-                </Link>
-              </div>
-
-              <h1 className="text-[32px] font-medium">
-                {title?.cs || title?.en || title?.sk}
-              </h1>
-              {title && (
-                <div className="flex gap-2 items-center">
-                  {(Object.keys(title).includes('en') ||
-                    Object.keys(title).includes('sk')) && (
-                    <Section title={t('Main.Name')}>
-                      <LanguageSwitcher item={title!} hideCs />
-                    </Section>
-                  )}
-                </div>
-              )}
-              {popis ? (
-                <Section title={t('Main.Description')}>
-                  <LanguageSwitcher item={popis} />
-                </Section>
-              ) : (
-                <p className="text-md">{fallbackPopis}</p>
-              )}
-            </div>
-            {children}
+                  {`/ ${source}`}
+                </span>
+                {statusLabel && (
+                  <span
+                    className={clsx(!isPublished && 'text-status-warning-700')}
+                  >
+                    {`/ ${statusLabel}`}
+                  </span>
+                )}
+              </GovTag>
+            </Link>
           </div>
+
+          <h1 className="text-[32px] font-medium">
+            {title?.cs || title?.en || title?.sk}
+          </h1>
+
+          {(title?.en || title?.sk) && (
+            <Section title={t('Main.Name')}>
+              <LanguageSwitcher item={title} hideCs />
+            </Section>
+          )}
+
+          {popis ? (
+            <Section title={t('Main.Description')}>
+              <LanguageSwitcher item={popis} />
+            </Section>
+          ) : (
+            <p className="text-md">{fallbackPopis}</p>
+          )}
         </div>
+
+        <div className="lg:col-span-1">{children}</div>
       </div>
       <div className="w-full bg-primary-subtlest flex-1 h-full px-5">
-        <div className="w-full relative max-w-250 mx-auto py-3 grid grid-cols-10 ">
-          <div
-            className={clsx(isLoggedOutOrNKD ? 'col-span-10' : 'col-span-6')}
-          >
+        <div className="w-full max-w-250 mx-auto py-3 grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+          <div className={hasSidebar ? 'lg:col-span-2' : 'lg:col-span-3'}>
             <p className="font-medium text-lg mb-3">
               {t('Main.Sections.Terms')}{' '}
               <span className="opacity-60">[{conceptCount}]</span>
@@ -289,7 +274,7 @@ export const OntologyLayout = ({
                 </GovFormGroup>
               </div>
             </div>
-            <div className="col-span-4 space-y-2">
+            <div className="space-y-2">
               {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
                 <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-subtle flex flex-col">
                   <span className="text-xl font-bold text-status-error-600 pb-2">
@@ -315,17 +300,19 @@ export const OntologyLayout = ({
               ))}
             </div>
           </div>
-          <div className="col-span-4 flex flex-col items-center pl-10 gap-10 sticky top-24 self-start">
-            {visibleDeviations && (
-              <DeviationSidebarCard
-                deviations={visibleDeviations}
-                concepts={concepts}
-              />
-            )}
-            {!isLoggedOutOrNKD && slug && metaData && (
-              <ValidationSummary slug={slug} metaData={metaData} />
-            )}
-          </div>
+          {hasSidebar && (
+            <div className="order-first lg:order-none lg:col-span-1 flex flex-col gap-10 lg:sticky lg:top-24 self-start">
+              {visibleDeviations && (
+                <DeviationSidebarCard
+                  deviations={visibleDeviations}
+                  concepts={concepts}
+                />
+              )}
+              {showValidationSummary && (
+                <ValidationSummary slug={slug} metaData={metaData} />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
