@@ -53,17 +53,17 @@ export const ControlPanel = ({
 
   const isOwner = user?.userId === currentUser?.userId;
   const isEditAllowed = isOwner || isAdmin;
-  const isLoggedOut = !currentUser?.userId;
+  const isLoggedIn = !!currentUser?.userId;
 
   return (
-    <div className="flex flex-col gap-2 h-full w-fit justify-between items-end relative">
+    <div className="flex flex-col gap-2 h-full justify-between items-end relative">
       {updatedAt && (
         <span className="text-sm text-dark-primary">
           {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
         </span>
       )}
       <div className="flex gap-2 flex-col items-end">
-        <div className="flex gap-8">
+        <div className="flex justify-between w-full">
           {isEditAllowed && (
             <GovButton
               nativeType="button"
@@ -82,7 +82,7 @@ export const ControlPanel = ({
             </GovButton>
           )}
 
-          {!isLoggedOut && (
+          {isLoggedIn && (
             <GovButton
               nativeType="button"
               color="primary"
