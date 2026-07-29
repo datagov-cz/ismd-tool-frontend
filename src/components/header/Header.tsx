@@ -122,7 +122,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                   size="m"
                   type="solid"
                   color="primary"
-                  className="max-tablet:hidden!"
+                  className="max-desktop:hidden!"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/`}
                 >
                   <GovIcon slot="icon-start" name="home" />
@@ -159,12 +159,12 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
           )}
           <div
             className={clsx(
-              'flex flex-none desktop:flex-1 justify-end',
+              'flex flex-none desktop:flex-1 justify-end items-center gap-x-2 desktop:gap-x-3',
               isSearchOpen && 'hidden',
             )}
           >
             <nav>
-              <ul className="hidden gap-x-2 px-1 desktop:gap-x-3 desktop:px-3 w-full flex-col tablet:flex-row flex-nowrap items-center justify-end tablet:flex">
+              <ul className="hidden gap-x-2 desktop:gap-x-3 max-desktop:[--padding-x:0.5rem] w-full flex-col tablet:flex-row flex-nowrap items-center justify-end tablet:flex">
                 {!isAuthenticated && (
                   <LoginButton
                     size="s"
@@ -175,7 +175,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 <NavItems session={session} />
               </ul>
             </nav>
-            <div className="flex gap-x-2 desktop:gap-x-4 items-center">
+            <div className="flex gap-x-2 desktop:gap-x-3 items-center">
               <ThemeSwitch />
               <GovButton
                 size="m"
