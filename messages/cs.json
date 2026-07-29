@@ -6,7 +6,7 @@
     },
     "Ontology": "Slovník",
     "LogoTitle": "Informační systém pro modelování dat",
-    "LogoTitleMobile": "ISMD",
+    "Search": "Vyhledávání",
     "LoginButton": "Přihlásit se přes CAAIS",
     "Nav": {
       "Link1": "Nápověda",
@@ -31,6 +31,7 @@
       "Settings": "Obecné nastavení"
     },
     "MenuButtonAria": "Otevřít navigaci",
+    "MenuCloseAria": "Zavřít navigaci",
     "Hintbox": {
       "Title": "Nápověda",
       "ISMD": "Nápověda ISMD",
@@ -77,8 +78,8 @@
   "Home": {
     "MainControls": {
       "OpenDictFromFile": "Importovat ze souboru",
-      "SearchPlaceholder": "[Cmnd/Ctrl+K] Hledat pojmy a slovníky...",
-      "SearchPlaceholderMobile": "Hledat pojmy a slovníky",
+      "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "CloseSearch": "Zavřít vyhledávání",
       "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ import { ThemeSwitch } from '../shared/ThemeSwitch';
 
 import { HintSidebox } from './hintSidebox/HintSidebox';
 import { LoginButton } from './LoginButton';
+import { MobileMenu } from './MobileMenu';
 import { NavItems } from './NavItems';
 import { OnlineIndicator } from './OnlineIndicator';
 
@@ -28,7 +29,33 @@ interface Props {
 
 export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const t = useTranslations('Header');
+
+  useEffect(() => {
+    if (!isSearchOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsSearchOpen(false);
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    const breakpoint = getComputedStyle(
+      document.documentElement,
+    ).getPropertyValue('--breakpoint-desktop');
+    const mediaQuery = window.matchMedia(`(width >= ${breakpoint})`);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setIsSearchOpen(false);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   const pathname = usePathname();
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
@@ -66,8 +93,11 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-200 transition-colors duration-300">
-        <section className="mx-auto max-w-full-hd px-5 flex justify-between items-center gap-x-4">
-          {isAuthenticated && (
+        <section className="mx-auto max-w-full-hd px-5 min-h-12 flex justify-between items-center gap-x-2 desktop:gap-x-4">
+          {isSearchOpen && (
+            <SearchInput autoFocus onClose={() => setIsSearchOpen(false)} />
+          )}
+          {isAuthenticated && !isSearchOpen && (
             <div className="flex items-center gap-4 flex-1">
               <Link
                 href="/"
@@ -81,30 +111,45 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 />
                 <span className="text-xl">ISMD</span>
                 <OnlineIndicator />
-                <span className="inline-block tablet:hidden">
-                  {t('LogoTitleMobile')}
-                </span>
               </Link>
             </div>
           )}
 
-          {isAuthenticated && (
-            <div className="flex-auto 2xl:flex-2 flex justify-center items-center gap-4">
+          {isAuthenticated && !isSearchOpen && (
+            <div className="flex-none desktop:flex-auto 2xl:flex-2 flex justify-center items-center gap-2 desktop:gap-4">
               {!isHomepage && (
                 <GovButton
                   size="m"
                   type="solid"
                   color="primary"
+                  className="max-tablet:hidden!"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/`}
                 >
                   <GovIcon slot="icon-start" name="home" />
                 </GovButton>
               )}
-              <SearchInput />
               <GovButton
                 size="m"
                 type="solid"
                 color="primary"
+                className="desktop:hidden!"
+                aria-expanded={isSearchOpen}
+                onGovClick={() => setIsSearchOpen((prev) => !prev)}
+              >
+                <GovIcon
+                  slot="icon-start"
+                  type="components"
+                  name="search"
+                  size="s"
+                />
+                <span className="hidden tablet:inline">{t('Search')}</span>
+              </GovButton>
+              <SearchInput className="hidden desktop:block max-w-150" />
+              <GovButton
+                size="m"
+                type="solid"
+                color="primary"
+                className="max-desktop:hidden!"
                 href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
               >
                 <GovIcon slot="icon-start" name="plus" />
@@ -112,21 +157,32 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
               </GovButton>
             </div>
           )}
-          <div className="flex flex-1 justify-end">
+          <div
+            className={clsx(
+              'flex flex-none desktop:flex-1 justify-end',
+              isSearchOpen && 'hidden',
+            )}
+          >
             <nav>
-              <ul className="hidden gap-x-3 px-3 w-full flex-col desktop:flex-row flex-nowrap items-center justify-end desktop:flex">
-                <LoginButton size="s" className="mx-2" onLogin={handleLogin} />
-                <NavItems session={session} handleLogin={handleLogin} />
+              <ul className="hidden gap-x-2 px-1 desktop:gap-x-3 desktop:px-3 w-full flex-col tablet:flex-row flex-nowrap items-center justify-end tablet:flex">
+                {!isAuthenticated && (
+                  <LoginButton
+                    size="s"
+                    className="mx-2"
+                    onLogin={handleLogin}
+                  />
+                )}
+                <NavItems session={session} />
               </ul>
             </nav>
-            <div className="flex gap-x-4 items-center">
+            <div className="flex gap-x-2 desktop:gap-x-4 items-center">
               <ThemeSwitch />
               <GovButton
                 size="m"
                 type="outlined"
                 aria-label={t('MenuButtonAria')}
                 color="primary"
-                className="desktop:hidden!"
+                className="tablet:hidden!"
                 onGovClick={() => setIsMenuOpen((prev) => !prev)}
               >
                 <GovIcon slot="icon-start" name="list" color="white" />
@@ -164,18 +220,12 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
         />
       )}
 
-      <aside
-        className={clsx(
-          'fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-3000 transform transition-all duration-300 ease-in-out desktop:hidden',
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full',
-        )}
-      >
-        <nav>
-          <ul className="flex flex-col p-4 gap-3">
-            <NavItems session={session} handleLogin={handleLogin} />
-          </ul>
-        </nav>
-      </aside>
+      <MobileMenu
+        isOpen={isMenuOpen}
+        session={session}
+        handleLogin={handleLogin}
+        onClose={() => setIsMenuOpen(false)}
+      />
 
       <HintSidebox />
       <div className={clsx(!session && isHomepage ? 'min-h-58' : 'min-h-18')} />

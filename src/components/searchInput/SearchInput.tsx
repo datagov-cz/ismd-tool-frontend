@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  GovButton,
   GovFormGroup,
   GovFormInput,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -20,7 +22,13 @@ import {
   SearchTypesPopover,
 } from './SearchTypesPopover';
 
-export const SearchInput = () => {
+type Props = {
+  autoFocus?: boolean;
+  className?: string;
+  onClose?: () => void;
+};
+
+export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
   const t = useTranslations('Home.MainControls');
   const router = useRouter();
 
@@ -59,6 +67,13 @@ export const SearchInput = () => {
   useEffect(() => {
     setDebouncedQuery(query);
   }, [filters]);
+
+  useEffect(() => {
+    if (!autoFocus) return;
+
+    const frame = requestAnimationFrame(focusInput);
+    return () => cancelAnimationFrame(frame);
+  }, [autoFocus, focusInput]);
 
   useEffect(() => {
     const handleShortcut = (e: KeyboardEvent) => {
@@ -101,13 +116,11 @@ export const SearchInput = () => {
     (query.trim().length > 0 && query.trim().length <= 3);
 
   return (
-    <div className="w-full max-w-150 relative" ref={ref}>
+    <div className={clsx('w-full relative', className)} ref={ref}>
       <GovFormGroup className="relative">
         <GovFormInput
           ref={inputRef}
-          placeholder={t(
-            size === 'l' ? 'SearchPlaceholder' : 'SearchPlaceholderMobile',
-          )}
+          placeholder={t('SearchPlaceholder')}
           size={size}
           value={query}
           onGovInput={handleInput}
@@ -124,7 +137,23 @@ export const SearchInput = () => {
             size="s"
           />
         </GovFormInput>
-        <SearchTypesPopover value={filters} onChange={setFilters} />
+        <SearchTypesPopover
+          value={filters}
+          onChange={setFilters}
+          offsetClassName={onClose ? 'right-10!' : 'right-0!'}
+        />
+        {onClose && (
+          <GovButton
+            type="base"
+            color="neutral"
+            size="s"
+            aria-label={t('CloseSearch')}
+            className="absolute! top-1/2! right-1! -translate-y-1/2! z-100 hover:bg-transparent!"
+            onGovClick={onClose}
+          >
+            <GovIcon type="components" name="x-lg" size="s" slot="icon-start" />
+          </GovButton>
+        )}
       </GovFormGroup>
 
       {showResults && (

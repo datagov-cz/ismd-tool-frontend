@@ -8,17 +8,14 @@ import { useHintboxStore } from '@/store/hintboxStore';
 import { federatedSignOut } from '@/utils/federatedSignOut';
 import { ConditionalTooltip } from '../shared/ConditionalTooltip';
 
-import { LoginButton } from './LoginButton';
+import { GITHUB_BASE } from './constants';
 import { NavDropdownItem, NavDropdownList } from './NavDropdownList';
-
-const GITHUB_BASE = 'https://github.com/datagov-cz/ismd-org/issues/new';
 
 interface Props {
   session: Session | null;
-  handleLogin: () => void;
 }
 
-export const NavItems = ({ session, handleLogin }: Props) => {
+export const NavItems = ({ session }: Props) => {
   const t = useTranslations('Header');
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
 
@@ -38,11 +35,6 @@ export const NavItems = ({ session, handleLogin }: Props) => {
 
   return (
     <>
-      {!session && (
-        <div className="desktop:hidden">
-          <LoginButton size="m" onLogin={handleLogin} />
-        </div>
-      )}
       {session && (
         <GovDropdown id="nav-dropdown-user" position="left">
           <GovButton
