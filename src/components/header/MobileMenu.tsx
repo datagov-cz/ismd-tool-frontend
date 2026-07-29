@@ -21,6 +21,7 @@ type MenuItem = {
   icon: string;
   label: string;
   href?: string;
+  external?: boolean;
   onClick?: () => void;
 };
 
@@ -31,10 +32,20 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
   const prefix = session ? 'NavLogged' : 'Nav';
 
   const items: MenuItem[] = [
+    ...(session
+      ? [
+          {
+            icon: 'plus',
+            label: t('Ontology'),
+            href: `${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`,
+          },
+        ]
+      : []),
     {
       icon: 'book',
       label: 'Dokumentace API',
       href: `${process.env.NEXT_PUBLIC_BASE_PATH}/swagger-ui/index.html`,
+      external: true,
     },
     {
       icon: 'question-square',
@@ -44,17 +55,13 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
     {
       icon: 'chat-dots',
       label: t(`${prefix}.Dropdown.Label`),
-      href: GITHUB_BASE,
+      href: `${GITHUB_BASE}/choose`,
+      external: true,
     },
   ];
 
   const accountItems: MenuItem[] = session
     ? [
-        {
-          icon: 'gear',
-          label: t('NavLogged.Settings'),
-          onClick: () => {},
-        },
         {
           icon: 'upload',
           label: t('NavLogged.Logout'),
@@ -63,7 +70,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
       ]
     : [];
 
-  const renderItem = ({ icon, label, href, onClick }: MenuItem) => (
+  const renderItem = ({ icon, label, href, external, onClick }: MenuItem) => (
     <li key={label}>
       <GovButton
         expanded
@@ -71,7 +78,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
         color="primary"
         size="m"
         href={href}
-        target={href ? '_blank' : undefined}
+        target={external ? '_blank' : undefined}
         className="no-underline [&_.element]:justify-start! [&_.element]:text-left!"
         onGovClick={() => {
           onClick?.();
@@ -86,6 +93,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
 
   return (
     <aside
+      inert={!isOpen}
       className={clsx(
         'fixed top-0 left-0 h-full w-72 bg-white shadow-lg z-3000 flex flex-col transform transition-all duration-300 ease-in-out tablet:hidden',
         isOpen ? 'translate-x-0' : '-translate-x-full',

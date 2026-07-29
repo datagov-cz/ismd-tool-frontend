@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -32,16 +32,31 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const t = useTranslations('Header');
 
+  const searchToggleRef = useRef<HTMLGovButtonElement>(null);
+  const restoreSearchFocus = useRef(false);
+
+  const closeSearch = useCallback(() => {
+    restoreSearchFocus.current = true;
+    setIsSearchOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (isSearchOpen || !restoreSearchFocus.current) return;
+
+    restoreSearchFocus.current = false;
+    void searchToggleRef.current?.getRef().then((element) => element.focus());
+  }, [isSearchOpen]);
+
   useEffect(() => {
     if (!isSearchOpen) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsSearchOpen(false);
+      if (e.key === 'Escape') closeSearch();
     };
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isSearchOpen]);
+  }, [isSearchOpen, closeSearch]);
 
   useEffect(() => {
     const breakpoint = getComputedStyle(
@@ -50,11 +65,27 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
     const mediaQuery = window.matchMedia(`(width >= ${breakpoint})`);
 
     const handleChange = (e: MediaQueryListEvent) => {
-      if (e.matches) setIsSearchOpen(false);
+      if (e.matches) {
+        setIsSearchOpen(false);
+        setIsMenuOpen(false);
+      }
+    };
+
+    const handleShortcut = (e: KeyboardEvent) => {
+      if (e.key !== 'k' || (!e.ctrlKey && !e.metaKey) || mediaQuery.matches) {
+        return;
+      }
+
+      e.preventDefault();
+      setIsSearchOpen(true);
     };
 
     mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    document.addEventListener('keydown', handleShortcut);
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+      document.removeEventListener('keydown', handleShortcut);
+    };
   }, []);
 
   const pathname = usePathname();
@@ -95,9 +126,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
     <>
       <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-200 transition-colors duration-300">
         <section className="mx-auto max-w-full-hd px-5 min-h-12 flex justify-between items-center gap-x-2 desktop:gap-x-4">
-          {isSearchOpen && (
-            <SearchInput autoFocus onClose={() => setIsSearchOpen(false)} />
-          )}
+          {isSearchOpen && <SearchInput autoFocus onClose={closeSearch} />}
           {showHeaderContent && !isSearchOpen && (
             <div className="flex items-center gap-2 desktop:gap-4 flex-1">
               <Link
@@ -130,12 +159,13 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 </GovButton>
               )}
               <GovButton
+                ref={searchToggleRef}
                 size="m"
                 type="solid"
                 color="primary"
                 className="desktop:hidden!"
                 aria-expanded={isSearchOpen}
-                onGovClick={() => setIsSearchOpen((prev) => !prev)}
+                onGovClick={() => setIsSearchOpen(true)}
               >
                 <GovIcon
                   slot="icon-start"
@@ -221,7 +251,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
 
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-2000"
+          className="fixed inset-0 bg-black/40 z-2000 tablet:hidden"
           onClick={() => setIsMenuOpen(false)}
         />
       )}

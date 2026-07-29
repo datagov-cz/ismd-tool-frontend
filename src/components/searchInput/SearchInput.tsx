@@ -79,7 +79,7 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
     const handleShortcut = (e: KeyboardEvent) => {
       const isCtrlK = e.key === 'k' && (e.ctrlKey || e.metaKey);
 
-      if (isCtrlK) {
+      if (isCtrlK && inputRef.current?.offsetParent) {
         e.preventDefault();
         focusInput();
       }
@@ -106,8 +106,9 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
       if (type) params.set('type', type);
       if (source) params.set('source', source);
       router.push(`/search?${params.toString()}`);
+      onClose?.();
     },
-    [query, type, source, router],
+    [query, type, source, router, onClose],
   );
 
   const showResults =
@@ -117,7 +118,7 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
 
   return (
     <div className={clsx('w-full relative', className)} ref={ref}>
-      <GovFormGroup className="relative">
+      <GovFormGroup className={clsx('relative', onClose && '[&_input]:pr-36!')}>
         <GovFormInput
           ref={inputRef}
           placeholder={t('SearchPlaceholder')}
@@ -161,7 +162,10 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
           data={data?.data}
           query={debouncedQuery}
           type={type}
-          onClose={() => setDebouncedQuery('')}
+          onClose={() => {
+            setDebouncedQuery('');
+            onClose?.();
+          }}
           loading={isLoading}
         />
       )}

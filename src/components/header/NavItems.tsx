@@ -73,6 +73,7 @@ export const NavItems = ({ session }: Props) => {
           size="m"
           type="solid"
           className="no-underline"
+          aria-label={'Dokumentace API'}
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/swagger-ui/index.html`}
           target="_blank"
         >
@@ -85,6 +86,7 @@ export const NavItems = ({ session }: Props) => {
           color="primary"
           size="m"
           type="solid"
+          aria-label={t(`${prefix}.Link1`)}
           onGovClick={() => setIsHintboxOpen(true)}
         >
           <GovIcon
@@ -103,6 +105,7 @@ export const NavItems = ({ session }: Props) => {
             size="m"
             type="solid"
             className="no-underline"
+            aria-label={t('Nav.Dropdown.Label')}
           >
             <GovIcon
               type="components"
