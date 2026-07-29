@@ -65,6 +65,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
 
   const isHomepage = pathname === '/';
   const isAuthenticated = !!session;
+  const showHeaderContent = isAuthenticated || !isHomepage;
   const isGated = isGatedProp ?? isGatedPath(pathname);
 
   const handleLogin = () => signIn('keycloak', { callbackUrl }, { prompt: 'login' });
@@ -97,8 +98,8 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
           {isSearchOpen && (
             <SearchInput autoFocus onClose={() => setIsSearchOpen(false)} />
           )}
-          {isAuthenticated && !isSearchOpen && (
-            <div className="flex items-center gap-4 flex-1">
+          {showHeaderContent && !isSearchOpen && (
+            <div className="flex items-center gap-2 desktop:gap-4 flex-1">
               <Link
                 href="/"
                 className="no-underline flex items-center text-white font-medium gap-4"
@@ -110,12 +111,12 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                   alt="lion"
                 />
                 <span className="text-xl">ISMD</span>
-                <OnlineIndicator />
+                {isAuthenticated && <OnlineIndicator />}
               </Link>
             </div>
           )}
 
-          {isAuthenticated && !isSearchOpen && (
+          {showHeaderContent && !isSearchOpen && (
             <div className="flex-none desktop:flex-auto 2xl:flex-2 flex justify-center items-center gap-2 desktop:gap-4">
               {!isHomepage && (
                 <GovButton
@@ -145,47 +146,52 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 <span className="hidden tablet:inline">{t('Search')}</span>
               </GovButton>
               <SearchInput className="hidden desktop:block max-w-150" />
-              <GovButton
-                size="m"
-                type="solid"
-                color="primary"
-                className="max-desktop:hidden!"
-                href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
-              >
-                <GovIcon slot="icon-start" name="plus" />
-                {t('Ontology')}
-              </GovButton>
+              {!isAuthenticated && !isHomepage && (
+                <LoginButton
+                  size="s"
+                  className="max-desktop:order-first"
+                  onLogin={handleLogin}
+                />
+              )}
+              {isAuthenticated && (
+                <GovButton
+                  size="m"
+                  type="solid"
+                  color="primary"
+                  className="max-desktop:hidden!"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
+                >
+                  <GovIcon slot="icon-start" name="plus" />
+                  {t('Ontology')}
+                </GovButton>
+              )}
             </div>
           )}
           <div
             className={clsx(
               'flex flex-none desktop:flex-1 justify-end items-center gap-x-2 desktop:gap-x-3',
+              !isAuthenticated && 'ml-auto',
               isSearchOpen && 'hidden',
             )}
           >
-            <nav>
-              <ul className="hidden gap-x-2 desktop:gap-x-3 max-desktop:[--padding-x:0.5rem] w-full flex-col tablet:flex-row flex-nowrap items-center justify-end tablet:flex">
-                {!isAuthenticated && (
-                  <LoginButton
-                    size="s"
-                    className="mx-2"
-                    onLogin={handleLogin}
-                  />
-                )}
+            <nav className="hidden tablet:block">
+              <ul className="hidden gap-x-2 desktop:gap-x-3 max-desktop:[--padding-x:0.75rem] max-desktop:[&_.element]:min-w-11! w-full flex-col tablet:flex-row flex-nowrap items-center justify-end tablet:flex">
                 <NavItems session={session} />
               </ul>
             </nav>
             <div className="flex gap-x-2 desktop:gap-x-3 items-center">
-              <ThemeSwitch />
+              <div className="hidden tablet:flex items-center">
+                <ThemeSwitch />
+              </div>
               <GovButton
                 size="m"
-                type="outlined"
+                type="solid"
                 aria-label={t('MenuButtonAria')}
                 color="primary"
                 className="tablet:hidden!"
                 onGovClick={() => setIsMenuOpen((prev) => !prev)}
               >
-                <GovIcon slot="icon-start" name="list" color="white" />
+                <GovIcon slot="icon-start" type="components" name="list" />
               </GovButton>
             </div>
           </div>
@@ -223,7 +229,6 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
       <MobileMenu
         isOpen={isMenuOpen}
         session={session}
-        handleLogin={handleLogin}
         onClose={() => setIsMenuOpen(false)}
       />
 

@@ -67,7 +67,7 @@ export const NavItems = ({ session }: Props) => {
           />
         </GovDropdown>
       )}
-      <ConditionalTooltip active={!!session} message={'Dokumentace API'}>
+      <ConditionalTooltip active message={'Dokumentace API'}>
         <GovButton
           color="primary"
           size="m"
@@ -77,11 +77,10 @@ export const NavItems = ({ session }: Props) => {
           target="_blank"
         >
           <GovIcon type="components" name="book" size="xl" slot="icon-start" />
-          {!session && 'Dokumentace API'}
         </GovButton>
       </ConditionalTooltip>
 
-      <ConditionalTooltip active={!!session} message={t(`${prefix}.Link1`)}>
+      <ConditionalTooltip active message={t(`${prefix}.Link1`)}>
         <GovButton
           color="primary"
           size="m"
@@ -94,15 +93,11 @@ export const NavItems = ({ session }: Props) => {
             slot="icon-start"
             size="m"
           />
-          {!session && t('Nav.Link1')}
         </GovButton>
       </ConditionalTooltip>
 
       <GovDropdown id="nav-dropdown-feedback-user" position="right">
-        <ConditionalTooltip
-          active={!!session}
-          message={t('Nav.Dropdown.Label')}
-        >
+        <ConditionalTooltip active message={t('Nav.Dropdown.Label')}>
           <GovButton
             color="primary"
             size="m"
@@ -115,7 +110,6 @@ export const NavItems = ({ session }: Props) => {
               size="m"
               slot="icon-start"
             />
-            {!session && t('Nav.Dropdown.Label')}
           </GovButton>
         </ConditionalTooltip>
         <NavDropdownList items={feedbackItems} />

@@ -6,14 +6,14 @@ import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
 import { useHintboxStore } from '@/store/hintboxStore';
+import { federatedSignOut } from '@/utils/federatedSignOut';
+import { ThemeSwitch } from '../shared/ThemeSwitch';
 
 import { GITHUB_BASE } from './constants';
-import { LoginButton } from './LoginButton';
 
 interface Props {
   isOpen: boolean;
   session: Session | null;
-  handleLogin: () => void;
   onClose: () => void;
 }
 
@@ -24,12 +24,7 @@ type MenuItem = {
   onClick?: () => void;
 };
 
-export const MobileMenu = ({
-  isOpen,
-  session,
-  handleLogin,
-  onClose,
-}: Props) => {
+export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
   const t = useTranslations('Header');
   const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
 
@@ -53,6 +48,42 @@ export const MobileMenu = ({
     },
   ];
 
+  const accountItems: MenuItem[] = session
+    ? [
+        {
+          icon: 'gear',
+          label: t('NavLogged.Settings'),
+          onClick: () => {},
+        },
+        {
+          icon: 'upload',
+          label: t('NavLogged.Logout'),
+          onClick: () => void federatedSignOut(),
+        },
+      ]
+    : [];
+
+  const renderItem = ({ icon, label, href, onClick }: MenuItem) => (
+    <li key={label}>
+      <GovButton
+        expanded
+        type="base"
+        color="primary"
+        size="m"
+        href={href}
+        target={href ? '_blank' : undefined}
+        className="no-underline [&_.element]:justify-start! [&_.element]:text-left!"
+        onGovClick={() => {
+          onClick?.();
+          onClose();
+        }}
+      >
+        <GovIcon type="components" name={icon} size="m" slot="icon-start" />
+        {label}
+      </GovButton>
+    </li>
+  );
+
   return (
     <aside
       className={clsx(
@@ -61,18 +92,17 @@ export const MobileMenu = ({
       )}
     >
       <div className="flex items-center justify-between gap-2 p-4 border-b border-border-grey">
-        {session ? (
+        {session && (
           <span className="flex items-center gap-2 font-medium">
             <GovIcon type="components" name="person" size="l" />
             {session.user?.name}
           </span>
-        ) : (
-          <LoginButton size="m" onLogin={handleLogin} />
         )}
         <GovButton
           type="base"
           color="neutral"
           size="s"
+          className="ml-auto"
           aria-label={t('MenuCloseAria')}
           onGovClick={onClose}
         >
@@ -81,34 +111,21 @@ export const MobileMenu = ({
       </div>
 
       <nav>
-        <ul className="flex flex-col p-2 gap-1">
-          {items.map(({ icon, label, href, onClick }) => (
-            <li key={label}>
-              <GovButton
-                expanded
-                type="base"
-                color="primary"
-                size="m"
-                href={href}
-                target={href ? '_blank' : undefined}
-                className="no-underline [&_.element]:justify-start! [&_.element]:text-left!"
-                onGovClick={() => {
-                  onClick?.();
-                  onClose();
-                }}
-              >
-                <GovIcon
-                  type="components"
-                  name={icon}
-                  size="m"
-                  slot="icon-start"
-                />
-                {label}
-              </GovButton>
-            </li>
-          ))}
-        </ul>
+        <ul className="flex flex-col p-2 gap-1">{items.map(renderItem)}</ul>
       </nav>
+
+      <div className="mt-auto">
+        {accountItems.length > 0 && (
+          <ul className="flex flex-col p-2 gap-1 border-t border-border-grey">
+            {accountItems.map(renderItem)}
+          </ul>
+        )}
+
+        <div className="flex items-center justify-between gap-2 p-4 border-t border-border-grey">
+          <span className="font-medium">{t('ThemeSwitchLabel')}</span>
+          <ThemeSwitch />
+        </div>
+      </div>
     </aside>
   );
 };
