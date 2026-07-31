@@ -45,6 +45,7 @@ interface Props {
   slug?: string;
   deviations?: GetOntologyDtoPublishedConceptDeviations;
   isPublished?: boolean;
+  updatedAt?: string;
 }
 
 export const OntologyLayout = ({
@@ -62,6 +63,7 @@ export const OntologyLayout = ({
   metaData,
   deviations,
   isPublished,
+  updatedAt,
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
@@ -130,76 +132,86 @@ export const OntologyLayout = ({
 
   return (
     <div className="w-full h-full flex-1">
-      <div className="w-full max-w-250 mx-auto py-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 flex flex-col gap-2">
-          <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center relative">
-            <GovButton
-              type="base"
-              color="primary"
-              size="s"
-              onGovClick={() => router.back()}
-              className="lg:absolute lg:top-1/2 lg:left-0 lg:-ml-2 lg:-translate-x-full lg:-translate-y-1/2 px-0! lg:px-4!"
+      <div className="w-full max-w-250 mx-auto px-5 desktop:px-0 py-5 flex flex-col gap-5">
+        <div className="flex flex-wrap gap-2 items-center relative">
+          <GovButton
+            type="base"
+            color="primary"
+            size="s"
+            onGovClick={() => router.back()}
+            className="desktop:absolute desktop:top-1/2 desktop:left-0 desktop:-ml-2 desktop:-translate-x-full desktop:-translate-y-1/2 px-0! desktop:px-4!"
+          >
+            <GovIcon slot="icon-start" name="chevron-left" size="m" />
+            {t('Main.BackToHome')}
+          </GovButton>
+
+          <Link
+            href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
+            className="cursor-pointer! hover:underline"
+          >
+            <GovTag
+              color={isPublished ? 'success' : 'secondary'}
+              size="xs"
+              type="subtle"
+              className="w-fit [&_span]:font-bold! [&_span]:cursor-pointer!"
             >
-              <GovIcon slot="icon-start" name="chevron-left" size="m" />
-              {t('Main.BackToHome')}
-            </GovButton>
-            <Link
-              href={`/dictionary${source === 'NKD' ? '/nkd' : ''}/list`}
-              className="cursor-pointer! hover:underline"
-            >
-              <GovTag
-                color={isPublished ? 'success' : 'secondary'}
-                size="xs"
-                type="subtle"
-                className="w-fit [&_span]:font-bold! [&_span]:cursor-pointer!"
+              <GovIcon
+                slot="icon-start"
+                name="journal-text"
+                size="l"
+                className="text-white"
+              />
+              <span
+                className={clsx(!isPublished && 'text-status-warning-700!')}
               >
-                <GovIcon
-                  slot="icon-start"
-                  name="journal-text"
-                  size="l"
-                  className="text-white"
-                />
-                <span
-                  className={clsx(!isPublished && 'text-status-warning-700!')}
-                >
-                  {t('Main.Ontology')}
-                </span>
+                {t('Main.Ontology')}
+              </span>
+              <span className={clsx(!isPublished && 'text-status-warning-700')}>
+                {`/ ${source}`}
+              </span>
+              {statusLabel && (
                 <span
                   className={clsx(!isPublished && 'text-status-warning-700')}
                 >
-                  {`/ ${source}`}
+                  {`/ ${statusLabel}`}
                 </span>
-                {statusLabel && (
-                  <span
-                    className={clsx(!isPublished && 'text-status-warning-700')}
-                  >
-                    {`/ ${statusLabel}`}
-                  </span>
-                )}
-              </GovTag>
-            </Link>
-          </div>
+              )}
+            </GovTag>
+          </Link>
 
-          <h1 className="text-[32px] font-medium">
-            {title?.cs || title?.en || title?.sk}
-          </h1>
-
-          {(title?.en || title?.sk) && (
-            <Section title={t('Main.Name')}>
-              <LanguageSwitcher item={title} hideCs />
-            </Section>
-          )}
-
-          {popis ? (
-            <Section title={t('Main.Description')}>
-              <LanguageSwitcher item={popis} />
-            </Section>
-          ) : (
-            <p className="text-md">{fallbackPopis}</p>
+          {updatedAt && (
+            <span className="ml-auto text-sm font-semibold text-dark-primary whitespace-nowrap">
+              {t('Main.ControlPanel.Updated')}:{' '}
+              {new Date(updatedAt).toLocaleDateString('CS')}
+            </span>
           )}
         </div>
 
-        <div className="lg:col-span-1">{children}</div>
+        <div className="grid grid-cols-12 gap-5">
+          <div className="col-span-12 tablet:col-span-9 desktop:col-span-8 flex flex-col gap-2">
+            <h1 className="text-[32px] font-medium">
+              {title?.cs || title?.en || title?.sk}
+            </h1>
+
+            {(title?.en || title?.sk) && (
+              <Section title={t('Main.Name')}>
+                <LanguageSwitcher item={title} hideCs />
+              </Section>
+            )}
+
+            {popis ? (
+              <Section title={t('Main.Description')}>
+                <LanguageSwitcher item={popis} />
+              </Section>
+            ) : (
+              <p className="text-md">{fallbackPopis}</p>
+            )}
+          </div>
+
+          <div className="col-span-12 tablet:col-span-3 desktop:col-span-4">
+            {children}
+          </div>
+        </div>
       </div>
       <div className="w-full bg-primary-subtlest flex-1 h-full px-5">
         <div className="w-full max-w-250 mx-auto py-3 grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">

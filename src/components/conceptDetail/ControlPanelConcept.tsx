@@ -53,7 +53,7 @@ export const ControlPanelConcept = ({
   return (
     <div className="flex flex-col gap-2 justify-between h-full">
       {((loggedIn && source === 'ISMD') || editAllowed) && (
-        <div className="flex gap-8">
+        <div className="flex flex-col gap-2 items-end">
           {editAllowed && (
             <GovButton
               type="solid"
@@ -81,7 +81,9 @@ export const ControlPanelConcept = ({
                 slot="icon-start"
                 type="components"
               />
-              {tConcept('ConceptComments')}{' '}
+              <span className="hidden desktop:inline">
+                {tConcept('ConceptComments')}
+              </span>{' '}
               <span className="font-normal">[{commentsCount}]</span>
             </GovButton>
           )}

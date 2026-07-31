@@ -79,6 +79,10 @@ export const DictionaryContent = ({ slug }: Props) => {
       metaData={ontologyMetadata}
       slug={slug}
       deviations={publishedConceptDeviations}
+      updatedAt={
+        ontologyDetail['časový-okamžik-poslední-změny'] ||
+        ontologyMetadata.updatedAt
+      }
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}
@@ -86,10 +90,6 @@ export const DictionaryContent = ({ slug }: Props) => {
         user={ontologyMetadata.user}
         commentsCount={ontologyMetadata.comments?.length}
         slug={slug}
-        updatedAt={
-          ontologyDetail['časový-okamžik-poslední-změny'] ||
-          ontologyMetadata.updatedAt
-        }
         iri={ontologyDetail.iri}
       />
       {user?.userId && (

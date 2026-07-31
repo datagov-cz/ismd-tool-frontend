@@ -19,7 +19,6 @@ interface Props {
   user?: UserModel;
   commentsCount?: number;
   slug: string;
-  updatedAt?: string;
   iri?: string;
 }
 
@@ -29,7 +28,6 @@ export const ControlPanel = ({
   user,
   commentsCount,
   slug,
-  updatedAt,
   iri,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
@@ -57,13 +55,8 @@ export const ControlPanel = ({
 
   return (
     <div className="flex flex-col gap-2 h-full justify-between w-full relative">
-      {updatedAt && (
-        <span className="text-sm text-dark-primary">
-          {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
-        </span>
-      )}
       <div className="flex gap-2 flex-col items-end">
-        <div className="flex justify-between w-full">
+        <div className="flex justify-between w-full gap-x-2">
           {isEditAllowed && (
             <GovButton
               nativeType="button"
@@ -78,7 +71,7 @@ export const ControlPanel = ({
                 slot="icon-start"
                 type="components"
               />
-              {tEdit('Title')}
+              <span className="hidden desktop:inline">{tEdit('Title')}</span>
             </GovButton>
           )}
 
@@ -96,7 +89,7 @@ export const ControlPanel = ({
                 slot="icon-start"
                 type="components"
               />
-              {tEdit('Comments')}
+              <span className="hidden desktop:inline">{tEdit('Comments')}</span>
               {(commentsCount ?? 0) > 0 && (
                 <span className="font-normal">[{commentsCount}]</span>
               )}
