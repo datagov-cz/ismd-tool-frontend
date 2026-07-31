@@ -6,6 +6,9 @@ const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER!;
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID!;
 const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET!;
 const NEXTAUTH_URL = process.env.NEXTAUTH_URL!;
+// Optional: alias of a Keycloak identity provider to jump straight to,
+// bypassing the Keycloak login page. Set to `caais` in deployed envs.
+const KEYCLOAK_IDP_HINT = process.env.KEYCLOAK_IDP_HINT;
 
 interface KeycloakToken extends JWT {
   accessToken: string;
@@ -99,6 +102,13 @@ export const authOptions: NextAuthOptions = {
       clientId: KEYCLOAK_CLIENT_ID,
       clientSecret: KEYCLOAK_CLIENT_SECRET,
       issuer: KEYCLOAK_ISSUER,
+      // When KEYCLOAK_IDP_HINT is set (e.g. `caais` in deployed envs), skip
+      // Keycloak's own login screen and redirect straight to that identity
+      // provider. Left unset locally so the Keycloak login page (and the
+      // `testuser` local account) stays reachable for dev without CAAIS.
+      ...(KEYCLOAK_IDP_HINT
+        ? { authorization: { params: { kc_idp_hint: KEYCLOAK_IDP_HINT } } }
+        : {}),
     }),
   ],
   session: { strategy: 'jwt' },
