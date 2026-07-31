@@ -83,6 +83,19 @@ function refreshFailed(token: KeycloakToken, error: unknown): KeycloakToken {
 }
 
 /**
+ * App home URL (origin + base path) users should land on after logout.
+ *
+ * NEXTAUTH_URL points at NextAuth's API base (`<base>/api/auth`); using it directly
+ * as post_logout_redirect_uri dumps the user on that internal route instead of a
+ * real page. Strip the `/api/auth` suffix and keep a trailing slash so it matches
+ * the client's registered `<base>/*` post-logout URI (Keycloak's `/*` wildcard does
+ * not match the bare base without the slash).
+ */
+export function appHomeUrl(): string {
+  return `${NEXTAUTH_URL.replace(/\/api\/auth\/?$/, '')}/`;
+}
+
+/**
  * Builds Keycloak's RP-initiated logout URL. The BROWSER must navigate here — a
  * server-side fetch ends the Keycloak session but cannot clear the upstream
  * identity provider's cookie, so the next login is silently re-authenticated as the
@@ -92,7 +105,7 @@ function refreshFailed(token: KeycloakToken, error: unknown): KeycloakToken {
 export function keycloakLogoutUrl(idToken: string): string {
   const logoutUrl = new URL(keycloakUrl('logout'));
   logoutUrl.searchParams.set('id_token_hint', idToken);
-  logoutUrl.searchParams.set('post_logout_redirect_uri', NEXTAUTH_URL);
+  logoutUrl.searchParams.set('post_logout_redirect_uri', appHomeUrl());
   return logoutUrl.toString();
 }
 
