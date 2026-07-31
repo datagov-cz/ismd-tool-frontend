@@ -5,11 +5,11 @@ import clsx from 'clsx';
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
-import { useHintboxStore } from '@/store/hintboxStore';
+import { usePageScrollLock } from '@/hooks/usePageScrollLock';
 import { federatedSignOut } from '@/utils/federatedSignOut';
 import { ThemeSwitch } from '../shared/ThemeSwitch';
 
-import { GITHUB_BASE } from './constants';
+import { NavLink, useNavigation } from './useNavigation';
 
 interface Props {
   isOpen: boolean;
@@ -17,50 +17,20 @@ interface Props {
   onClose: () => void;
 }
 
-type MenuItem = {
-  icon: string;
-  label: string;
-  href?: string;
-  external?: boolean;
-  onClick?: () => void;
-};
-
 export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
   const t = useTranslations('Header');
-  const setIsHintboxOpen = useHintboxStore((state) => state.setIsOpen);
+  const { apiDocs, help, feedback, createDictionary } = useNavigation(session);
 
-  const prefix = session ? 'NavLogged' : 'Nav';
+  usePageScrollLock(isOpen);
 
-  const items: MenuItem[] = [
-    ...(session
-      ? [
-          {
-            icon: 'plus',
-            label: t('Ontology'),
-            href: `${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`,
-          },
-        ]
-      : []),
-    {
-      icon: 'book',
-      label: 'Dokumentace API',
-      href: `${process.env.NEXT_PUBLIC_BASE_PATH}/swagger-ui/index.html`,
-      external: true,
-    },
-    {
-      icon: 'question-square',
-      label: t(`${prefix}.Link1`),
-      onClick: () => setIsHintboxOpen(true),
-    },
-    {
-      icon: 'chat-dots',
-      label: t(`${prefix}.Dropdown.Label`),
-      href: `${GITHUB_BASE}/choose`,
-      external: true,
-    },
+  const items: NavLink[] = [
+    ...(session ? [createDictionary] : []),
+    apiDocs,
+    help,
+    feedback,
   ];
 
-  const accountItems: MenuItem[] = session
+  const accountItems: NavLink[] = session
     ? [
         {
           icon: 'upload',
@@ -70,7 +40,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
       ]
     : [];
 
-  const renderItem = ({ icon, label, href, external, onClick }: MenuItem) => (
+  const renderItem = ({ icon, label, href, external, onClick }: NavLink) => (
     <li key={label}>
       <GovButton
         expanded

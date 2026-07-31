@@ -1,10 +1,10 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import { useScrollLock } from 'usehooks-ts';
 
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { usePageScrollLock } from '@/hooks/usePageScrollLock';
 
 interface Props {
   title?: ReactNode;
@@ -27,23 +27,7 @@ export const Sidebox = ({
 
   const t = useTranslations('Shared');
 
-  const { isLocked, lock, unlock } = useScrollLock({
-    autoLock: false,
-    lockTarget: 'html',
-    widthReflow: false,
-  });
-
-  useEffect(() => {
-    if (isOpen === isLocked) {
-      return;
-    }
-
-    if (isOpen) {
-      lock();
-    } else {
-      unlock();
-    }
-  }, [isOpen, isLocked, lock, unlock]);
+  usePageScrollLock(isOpen);
 
   return (
     <>

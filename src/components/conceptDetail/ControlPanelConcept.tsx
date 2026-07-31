@@ -74,6 +74,7 @@ export const ControlPanelConcept = ({
               type="outlined"
               color="primary"
               size="s"
+              aria-label={tConcept('ConceptComments')}
               onGovClick={() => setIsCommentBoxOpen(true)}
             >
               <GovIcon

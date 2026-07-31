@@ -5,6 +5,7 @@
       "ToDark": "Přepnout na tmavý režim"
     },
     "Ontology": "Slovník",
+    "ApiDocs": "Dokumentace API",
     "LogoTitle": "Informační systém pro modelování dat",
     "Search": "Vyhledávání",
     "LoginButton": "Přihlásit se přes CAAIS",
@@ -328,8 +329,6 @@
         "Draft": "Rozpracovaný slovník",
         "Published": "Publikovaný slovník"
       },
-      "Draft": "Rozpracovaný",
-      "WorkingCopy": "Pracovní kopie",
       "Sections": {
         "Definition": "Definice",
         "Description": "Popis",

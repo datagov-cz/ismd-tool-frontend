@@ -11,6 +11,7 @@ import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { isQueryLoading } from '@/lib/query';
 import { extractOntologyFromUrl } from '@/utils/conceptDetailUtils';
 
 interface Props {
@@ -22,7 +23,7 @@ export const ConceptContent = ({ slug }: Props) => {
   const { user, isAdmin } = useCurrentUser();
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
-  if (concept.isPending) {
+  if (isQueryLoading(concept)) {
     return <PageLoader />;
   }
 

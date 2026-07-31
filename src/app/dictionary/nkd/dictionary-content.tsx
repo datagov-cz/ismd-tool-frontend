@@ -9,6 +9,7 @@ import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
+import { isQueryLoading } from '@/lib/query';
 
 interface Props {
   slug: string;
@@ -26,7 +27,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
     user?.userId,
   );
 
-  if (ontology.isPending) {
+  if (isQueryLoading(ontology)) {
     return <PageLoader />;
   }
 

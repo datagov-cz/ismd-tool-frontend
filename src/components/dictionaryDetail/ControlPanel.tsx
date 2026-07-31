@@ -63,6 +63,7 @@ export const ControlPanel = ({
               color="primary"
               type="outlined"
               size="s"
+              aria-label={tEdit('Title')}
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
             >
               <GovIcon
@@ -81,6 +82,7 @@ export const ControlPanel = ({
               color="primary"
               type="outlined"
               size="s"
+              aria-label={tEdit('Comments')}
               onGovClick={() => setIsCommentBoxOpen(true)}
             >
               <GovIcon

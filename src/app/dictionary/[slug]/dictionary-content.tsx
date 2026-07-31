@@ -11,6 +11,7 @@ import { ValidationSidebox } from '@/components/dictionaryDetail/validation/Vali
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
+import { isQueryLoading } from '@/lib/query';
 
 interface Props {
   slug: string;
@@ -27,7 +28,7 @@ export const DictionaryContent = ({ slug }: Props) => {
 
   useVisitedOntology({ slug, source: 'ISMD' }, user?.userId);
 
-  if (ontology.isPending) {
+  if (isQueryLoading(ontology)) {
     return <PageLoader />;
   }
 

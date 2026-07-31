@@ -8,6 +8,7 @@ import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { isQueryLoading } from '@/lib/query';
 
 interface Props {
   slug: string;
@@ -17,7 +18,7 @@ export const ConceptContentNKD = ({ slug }: Props) => {
   const concept = useGetNkdConceptDetail({ iri: slug });
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
-  if (concept.isPending) {
+  if (isQueryLoading(concept)) {
     return <PageLoader />;
   }
 

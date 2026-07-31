@@ -59,32 +59,33 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
   }, [isSearchOpen, closeSearch]);
 
   useEffect(() => {
-    const breakpoint = getComputedStyle(
-      document.documentElement,
-    ).getPropertyValue('--breakpoint-desktop');
-    const mediaQuery = window.matchMedia(`(width >= ${breakpoint})`);
+    const breakpointQuery = (name: string) => {
+      const breakpoint = getComputedStyle(
+        document.documentElement,
+      ).getPropertyValue(name);
+      return window.matchMedia(`(width >= ${breakpoint})`);
+    };
 
-    const handleChange = (e: MediaQueryListEvent) => {
+    const desktop = breakpointQuery('--breakpoint-desktop');
+    const tablet = breakpointQuery('--breakpoint-tablet');
+
+    const closeSearchOnDesktop = (e: MediaQueryListEvent) => {
       if (e.matches) {
         setIsSearchOpen(false);
+      }
+    };
+
+    const closeMenuOnTablet = (e: MediaQueryListEvent) => {
+      if (e.matches) {
         setIsMenuOpen(false);
       }
     };
 
-    const handleShortcut = (e: KeyboardEvent) => {
-      if (e.key !== 'k' || (!e.ctrlKey && !e.metaKey) || mediaQuery.matches) {
-        return;
-      }
-
-      e.preventDefault();
-      setIsSearchOpen(true);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    document.addEventListener('keydown', handleShortcut);
+    desktop.addEventListener('change', closeSearchOnDesktop);
+    tablet.addEventListener('change', closeMenuOnTablet);
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-      document.removeEventListener('keydown', handleShortcut);
+      desktop.removeEventListener('change', closeSearchOnDesktop);
+      tablet.removeEventListener('change', closeMenuOnTablet);
     };
   }, []);
 
@@ -164,7 +165,6 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 type="solid"
                 color="primary"
                 className="desktop:hidden!"
-                aria-expanded={isSearchOpen}
                 onGovClick={() => setIsSearchOpen(true)}
               >
                 <GovIcon
