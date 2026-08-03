@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-import { keycloakLogoutUrl } from '@/lib/auth';
-
-const NEXTAUTH_URL = process.env.NEXTAUTH_URL!;
+import { appHomeUrl, keycloakLogoutUrl } from '@/lib/auth';
 
 /**
  * Returns the URL the browser must navigate to in order to log out of Keycloak and,
@@ -18,7 +16,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // No session (or no id_token): nothing to log out of upstream — just go home.
   if (typeof idToken !== 'string') {
-    return NextResponse.json({ url: NEXTAUTH_URL }, { status: 200 });
+    return NextResponse.json({ url: appHomeUrl() }, { status: 200 });
   }
 
   return NextResponse.json(

@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   basePath,
   pageExtensions: ['ts', 'tsx', 'mdx'],
+  // Keep the Azure Monitor OpenTelemetry distro out of the webpack bundle. Its
+  // auto-instrumentation hooks Node's module loader (require-in-the-middle),
+  // which only works when the package is required from node_modules at runtime
+  // rather than bundled. See src/instrumentation.node.ts.
+  serverExternalPackages: ['@azure/monitor-opentelemetry'],
   async rewrites() {
     return [
       // NOTE: the root /favicon.ico 404 (browsers probe the origin root,
