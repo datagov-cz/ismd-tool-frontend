@@ -4,6 +4,7 @@ import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import {
   ConceptType,
   getMissingConceptFieldGroups,
@@ -31,9 +32,7 @@ export const MissingConceptFields = ({
   return (
     <div className="mt-2 pl-4">
       <div>
-        <span className="font-bold text-blue-primary text-lg">
-          {t('UdajeKDoplneni.Title')}
-        </span>
+        <SectionTitle label={t('UdajeKDoplneni.Title')} size="lg" />
         {missingGroups.map((group) => (
           <div
             key={group.groupLabelKey}

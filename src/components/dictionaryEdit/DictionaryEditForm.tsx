@@ -12,6 +12,7 @@ import {
   OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useFormDraft } from '@/hooks/useFormDraft';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
@@ -169,9 +170,7 @@ export const DictionaryEditForm = ({
                     slot="icon-start"
                     type="components"
                   />
-                  <span className="font-bold text-blue-primary">
-                    {detail?.['název']?.cs}
-                  </span>
+                  <SectionTitle label={detail?.['název']?.cs} />
                 </GovTag>
               </Link>
             </div>

@@ -10,6 +10,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
@@ -299,9 +300,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           className="w-fit border bg-white!"
         >
           <GovIcon name="journal-text" slot="icon-start" type="components" />
-          <span className="font-bold text-blue-primary">
-            {conceptDetail?.['název']?.cs ?? slug}
-          </span>
+          <SectionTitle label={conceptDetail?.['název']?.cs ?? slug} />
         </GovTag>
       </div>
 

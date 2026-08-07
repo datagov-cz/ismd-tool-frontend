@@ -11,6 +11,7 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
@@ -144,9 +145,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           className="w-fit border bg-white!"
         >
           <GovIcon name="journal-text" slot="icon-start" type="components" />
-          <span className="font-bold text-blue-primary">
-            {data?.data?.ontologyDetail?.název?.cs}
-          </span>
+          <SectionTitle label={data?.data?.ontologyDetail?.název?.cs} />
         </GovTag>
       </div>
 
