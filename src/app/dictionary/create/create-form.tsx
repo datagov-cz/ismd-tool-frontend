@@ -12,6 +12,7 @@ import { FormToolbar } from '@/components/conceptForm/components/FormToolbar';
 import { useDictionaryFormHints } from '@/components/conceptForm/components/hint/conceptFormHints';
 import { HintSidebar } from '@/components/conceptForm/components/hint/HintSidebar';
 import { useFormHints } from '@/components/conceptForm/components/hint/useFormHints';
+import { AiSuggestionSection } from '@/components/dictionaryCreate/AiSuggestionSection';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { useFormDraft } from '@/hooks/useFormDraft';
@@ -122,6 +123,7 @@ export const CreateForm = () => {
               placeholder={t('Form.DescriptionPlaceholder')}
             />
           </FormSection>
+          <AiSuggestionSection />
           <FormToolbar<OntologySchemaType>
             isPending={isPending && !isPaused}
             onCancel={handleCancel}
