@@ -263,6 +263,10 @@
         "Language": "Jazyk",
         "Description": "Popis"
       },
+      "FormSchema": {
+        "NameRequired": "Název je povinný",
+        "CSNameRequired": "Název (CS) je povinný"
+      },
       "SuccessMessage": "Slovník byl úspěšně upraven",
       "ErrorMessage": "Chyba při úpravě slovníku"
     },
@@ -452,7 +456,8 @@
   },
   "Errors": {
     "UnknownError": "Neznámý error",
-    "NameRequired": "Název je povinný"
+    "NameRequired": "Název je povinný",
+    "CSNameRequired": "Název (CS) je povinný"
   },
   "CreateOntology": {
     "Form": {
@@ -477,6 +482,7 @@
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",
       "NameRequired": "Název je povinný",
+      "CSNameRequired": "Název (CS) je povinný",
       "DescriptionRequired": "Popis je povinný",
       "LanguageTagRequired": "Jazykový tag je povinný"
     }
