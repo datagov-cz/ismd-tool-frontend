@@ -10,7 +10,7 @@ export const WelcomeSection = () => {
     <div className="max-w-171 mx-auto flex flex-col items-center gap-y-6 text-center p-10">
       <h2 className="text-xl font-bold">{t('WelcomeSection.Title')}</h2>
       <p className="text-lg">{t('WelcomeSection.Description')}</p>
-      <SearchInput />
+      <SearchInput className="max-w-150" />
       <Link
         href="/dictionary/nkd/list"
         className="underline text-sm text-dark-primary"

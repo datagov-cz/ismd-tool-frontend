@@ -37,7 +37,7 @@ export function NewsSlider() {
   }, []);
 
   return (
-    <div className="py-21 max-w-191.5 w-full">
+    <div className="py-21 w-full">
       <h3 className="font-medium text-lg lg:text-xl mb-3">{t('News.Title')}</h3>
       <div className="space-y-4 lg:space-y-6">
         <Carousel
@@ -51,7 +51,10 @@ export function NewsSlider() {
           <CarouselContent className="w-full">
             {blogPosts.length > 0 &&
               blogPosts.map((article) => (
-                <CarouselItem className="basis-1/2!" key={article.href}>
+                <CarouselItem
+                  className="basis-full! tablet:basis-1/2!"
+                  key={article.href}
+                >
                   <NewsArticle
                     key={article.id}
                     date={article.date}
