@@ -11,8 +11,7 @@ const formSection = cva(
     variants: {
       variant: {
         default: 'bg-white',
-        neutral:
-          'bg-(--background-neutral-subtlest) border border-(--border-subtle)',
+        neutral: 'bg-neutral-subtlest border border-border-subtle',
         primary: 'bg-primary-subtlest',
       },
     },

@@ -99,7 +99,7 @@ export const LegalSourceAutofillSection = () => {
           label: tLabels('Definition'),
           anchor: 'definition',
           value: (
-            <span className="text-sm line-clamp-2 text-(--text-secondary)">
+            <span className="text-sm line-clamp-2 text-muted">
               {prefilled.definition}
             </span>
           ),
@@ -109,7 +109,7 @@ export const LegalSourceAutofillSection = () => {
           anchor: 'definingLegalSource',
           value: (
             <span className="flex min-w-0 flex-col items-start text-left">
-              <span className="block w-full truncate text-sm leading-4 text-(--text-secondary)">
+              <span className="block w-full truncate text-sm leading-4 text-muted">
                 {prefilled.legalSourceLabel}
               </span>
               <span
@@ -149,13 +149,13 @@ export const LegalSourceAutofillSection = () => {
       {prefilled ? (
         <div className="px-2.5 space-y-2">
           <div className="text-sm font-semibold">{t('PrefilledSummary')}</div>
-          <ul className="flex flex-col divide-y divide-(--border-subtle) rounded-lg border border-(--border-subtle) bg-(--background-status-success-subtlest)">
+          <ul className="flex flex-col divide-y divide-border-subtle rounded-lg border border-border-subtle bg-success-subtlest">
             {prefilledRows.map((row) => (
               <li
                 key={row.anchor}
                 className="grid h-14 grid-cols-[auto_minmax(0,1fr)_minmax(0,2fr)_auto] items-center gap-2 px-2.5"
               >
-                <span className="flex items-center justify-center rounded-full border border-(--background-status-success) p-0.5 text-(--background-status-success)">
+                <span className="flex items-center justify-center rounded-full border border-success p-0.5 text-success">
                   <GovIcon type="components" name="check-lg" size="xs" />
                 </span>
                 <span className="font-semibold text-sm">{row.label}</span>
@@ -197,7 +197,7 @@ export const LegalSourceAutofillSection = () => {
                 {t('SelectAll')}
               </span>
             </GovButton>
-            <span className="text-sm text-(--text-secondary)">
+            <span className="text-sm text-muted">
               {t('SelectedCount', {
                 selected: selectedSuggestions.length,
                 total: SUGGESTION_KEYS.length,
@@ -227,9 +227,7 @@ export const LegalSourceAutofillSection = () => {
             onToggle={() => toggleSuggestion('description')}
           />
           <div className="flex items-center justify-center gap-2">
-            <span className="text-sm text-(--text-secondary)">
-              {t('SuggestionUseful')}
-            </span>
+            <span className="text-sm text-muted">{t('SuggestionUseful')}</span>
             <GovButton
               type="base"
               color="primary"
