@@ -16,6 +16,7 @@ import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
 import { DictionaryCard } from '@/components/shared/DictionaryCard/DictionaryCard';
+import { PageLoader } from '@/components/shared/PageLoader';
 
 const LIMIT = 20;
 
@@ -163,11 +164,7 @@ const Search = () => {
           </div>
         </div>
 
-        {isLoading && (
-          <div className="h-full flex-1 flex items-center justify-center">
-            <CircularLoader />
-          </div>
-        )}
+        {isLoading && <PageLoader className="flex-1" />}
 
         {results.map((item) => {
           if (item.type === 'ONTOLOGY') {
