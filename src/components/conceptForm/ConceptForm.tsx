@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -80,6 +81,7 @@ interface ConceptFormProps {
   editing?: boolean;
   storageKey?: string;
   conceptIri?: string;
+  slug?: string;
 }
 
 export const ConceptForm = ({
@@ -90,9 +92,10 @@ export const ConceptForm = ({
   editing,
   storageKey,
   conceptIri,
+  slug,
 }: ConceptFormProps) => {
   const tConcept = useTranslations('CreateConcept');
-
+  const t = useTranslations('DictionaryDetail.EditOntology');
   const form = useForm<ConceptFormValues>({
     resolver: zodResolver(ConceptFormSchema),
     defaultValues: {
@@ -102,6 +105,8 @@ export const ConceptForm = ({
       ...externalDefaults,
     },
   });
+
+  const router = useRouter();
 
   useFormDraft(form, storageKey);
 
@@ -134,6 +139,22 @@ export const ConceptForm = ({
     });
   }, [externalDefaults]);
 
+  const handleCancel = () => {
+    if (
+      form.formState.isDirty &&
+      !window.confirm(t('DiscardChangesConfirmation'))
+    ) {
+      return;
+    }
+
+    form.reset();
+    if (slug) {
+      router.push(`/concept/${slug}`);
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
@@ -154,7 +175,10 @@ export const ConceptForm = ({
           <RightsAndObligationsSection />
           <ProclamationSection />
           <OntologySection />
-          <FormToolbar<ConceptFormType> isPending={isPending} />
+          <FormToolbar<ConceptFormType>
+            isPending={isPending}
+            onCancel={handleCancel}
+          />
         </form>
 
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">

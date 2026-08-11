@@ -116,6 +116,18 @@ export const DictionaryEditForm = ({
     });
   };
 
+  const handleCancel = () => {
+    if (
+      form.formState.isDirty &&
+      !window.confirm(t('DiscardChangesConfirmation'))
+    ) {
+      return;
+    }
+
+    form.reset();
+    router.push(`/dictionary/${metadata.slug}`);
+  };
+
   return (
     <div className="w-full h-full flex-1 bg-primary-subtlest px-5">
       <div className="w-full relative max-w-250 mx-auto py-5">
@@ -176,6 +188,7 @@ export const DictionaryEditForm = ({
 
                 <FormToolbar<OntologyEditModel>
                   isPending={isPending && !isPaused}
+                  onCancel={handleCancel}
                 />
               </form>
             </FormProvider>
