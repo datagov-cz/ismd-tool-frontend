@@ -81,11 +81,13 @@ export const AddPropertyModal = ({
       },
       {
         onSuccess: (response) => {
-          queryInvalidate.invalidateConcept(response.data?.slug || classSlug);
+          queryInvalidate.invalidateConcept(response.data?.slug || '');
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           queryInvalidate.invalidateOntology(
             response.data?.ontologySlug || ontologySlug || '',
           );
           setOpen(false);
+          formAdd.reset({ concept: null });
         },
       },
     );
@@ -100,11 +102,17 @@ export const AddPropertyModal = ({
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateConcept(response.data?.slug || '');
-          queryInvalidate.invalidateConcept(classSlug);
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           queryInvalidate.invalidateOntology(
             response.data?.ontologySlug || ontologySlug || '',
           );
           setOpen(false);
+          formCreate.reset({
+            ...BASE_DEFAULTS,
+            ontologyGraphName: ontologyGraphName,
+            conceptType: 'VLASTNOST',
+            conceptTypeEnum: 'VLASTNOST',
+          });
         },
       },
     );
