@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
-import { CircularLoader } from '@/components/shared/CircularLoader';
+import { PageLoader } from '@/components/shared/PageLoader';
 import { UploadFlow } from '@/components/uploadFlow/UploadFlow';
 
 import { CreateForm } from './create-form';
@@ -15,12 +15,9 @@ const CreateDictionary = () => {
   const t = useTranslations('CreateOntology');
   const router = useRouter();
 
-  if (isLoading)
-    return (
-      <div className="h-full flex-1 flex items-center justify-center">
-        <CircularLoader />
-      </div>
-    );
+  if (isLoading) {
+    return <PageLoader className="flex-1" />;
+  }
 
   if (!user?.userId) return null;
 

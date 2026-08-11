@@ -69,9 +69,14 @@ export function filterToApiParams(filters: SearchFilter[]): {
 type Props = {
   value: SearchFilter[];
   onChange: (_value: SearchFilter[]) => void;
+  offsetClassName?: string;
 };
 
-export const SearchTypesPopover = ({ value, onChange }: Props) => {
+export const SearchTypesPopover = ({
+  value,
+  onChange,
+  offsetClassName = 'right-0!',
+}: Props) => {
   const t = useTranslations('SearchTypes');
   const [open, setOpen] = useState(false);
   const { user } = useCurrentUser();
@@ -94,9 +99,12 @@ export const SearchTypesPopover = ({ value, onChange }: Props) => {
   return (
     <GovDropdown
       id="search-type-dropdown"
-      position="left"
+      position="right"
       onChange={() => setOpen((prev) => !prev)}
-      className="absolute! top-1/2! right-0! -translate-y-1/2! z-100"
+      className={clsx(
+        'absolute! top-1/2! -translate-y-1/2! z-100',
+        offsetClassName,
+      )}
     >
       <GovButton
         type="base"
@@ -112,12 +120,12 @@ export const SearchTypesPopover = ({ value, onChange }: Props) => {
           className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         />
         {allOrNone ? (
-          <span className="font-normal hidden md:text-xs lg:text-sm lg:block">
+          <span className="font-normal text-xs lg:text-sm">
             {t('AllTypes')}
           </span>
         ) : (
           <span className="flex items-center gap-2 font-normal bg-white">
-            <span className="hidden lg:block"> {t('Selected')}</span>
+            <span className="text-xs lg:text-sm"> {t('Selected')}</span>
             {visibleFilters
               .filter((f) => value.includes(f.key))
               .map((f) => (

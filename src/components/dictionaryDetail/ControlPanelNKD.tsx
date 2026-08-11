@@ -27,7 +27,7 @@ export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 h-full w-fit justify-between items-end relative">
+    <div className="flex flex-col gap-2 h-full justify-between items-end relative">
       <div className="flex">
         <GovButton
           nativeType="button"
