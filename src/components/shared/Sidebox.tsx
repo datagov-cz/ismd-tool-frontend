@@ -1,9 +1,10 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import { usePageScrollLock } from '@/hooks/usePageScrollLock';
 
 interface Props {
   title?: ReactNode;
@@ -26,14 +27,7 @@ export const Sidebox = ({
 
   const t = useTranslations('Shared');
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('overflow-y-hidden');
-    } else {
-      document.body.classList.remove('overflow-y-hidden');
-    }
-    return () => document.body.classList.remove('overflow-y-hidden');
-  }, [isOpen]);
+  usePageScrollLock(isOpen);
 
   return (
     <>
