@@ -84,7 +84,7 @@ export const Autocomplete = <T,>({
       </GovFormInput>
 
       {showDropdown && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
           {isFetching && results.length === 0 ? (
             <div className="flex items-center justify-center gap-2 p-4 text-sm text-gray-500">
               <GovIcon

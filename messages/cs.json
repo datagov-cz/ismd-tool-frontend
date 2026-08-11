@@ -492,6 +492,20 @@
       "CSNameRequired": "Název (CS) je povinný",
       "DescriptionRequired": "Popis je povinný",
       "LanguageTagRequired": "Jazykový tag je povinný"
+    },
+    "AiSuggestion": {
+      "SectionLabel": "AI návrh slovníku z e-Sbírky",
+      "Optional": "volitelné",
+      "SectionDescription": "Vyberte zdroj ze Sbírky zákonů a AI vám navrhne pojmy, vazby, vlastnosti a další strukturu slovníku. Vše zkontrolujete a rozhodnete, co do slovníku převezmete.",
+      "AIAssistDetail": "AI návrhy jsou připravené. Teď je zkontrolujte a rozhodněte, co převzít.",
+      "SelectAll": "Vybrat vše",
+      "SelectedCount": "Vybráno: {selected} ze {total} návrhů",
+      "Properties": "Vlastnosti",
+      "Relations": "Vztahy",
+      "SuggestionUseful": "Je tento návrh použitelný?",
+      "SuggestionUsefulYes": "Návrh je použitelný",
+      "SuggestionUsefulNo": "Návrh není použitelný",
+      "ApplySelected": "Převzít vybrané návrhy"
     }
   },
   "CreateConcept": {
