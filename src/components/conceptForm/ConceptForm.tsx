@@ -134,6 +134,8 @@ export const ConceptForm = ({
     });
   }, [externalDefaults]);
 
+  const type = form.watch('conceptType');
+
   return (
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
@@ -152,7 +154,7 @@ export const ConceptForm = ({
           <ConceptMeaningSection blockedIri={conceptIri} />
           <SourcesSection />
           <RightsAndObligationsSection />
-          <ProclamationSection />
+          {type !== 'TRIDA' && <ProclamationSection />}
           <OntologySection />
           <FormToolbar<ConceptFormType> isPending={isPending} />
         </form>
