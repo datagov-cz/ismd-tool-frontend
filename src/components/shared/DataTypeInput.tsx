@@ -64,6 +64,7 @@ export const DataTypeInput = ({
                 }}
               >
                 {isLoading && <CircularLoader />}
+                <option value="" label="" />
                 {data?.data?.map((input) => (
                   <option
                     key={input.code}

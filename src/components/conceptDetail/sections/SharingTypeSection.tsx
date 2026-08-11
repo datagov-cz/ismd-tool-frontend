@@ -12,8 +12,7 @@ export const SharingTypeSection = ({
   zpusobZiskaniUdaje?: string;
 }) => {
   const t = useTranslations('ConceptDetail');
-
-  if (!typObsahuUdaje && !zpusobSdileniUdaje && !zpusobSdileniUdaje) {
+  if (!typObsahuUdaje && !zpusobSdileniUdaje && !zpusobZiskaniUdaje) {
     return null;
   }
 

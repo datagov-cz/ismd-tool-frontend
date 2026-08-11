@@ -216,7 +216,11 @@ export function mapDetailToFormValues(
     acquisitionMethod: mapAcquisitionMethod(detail['způsob-získání-údaje']),
     sharingMethod: mapSharingMethods(detail['způsob-sdílení-údaje']),
     isInPPDF: detail['je-ppdf'] ?? false,
-    isPublic: detail.typ?.includes('Veřejný údaj'),
+    isPublic: detail.typ?.includes('Veřejný údaj')
+      ? true
+      : detail.typ?.includes('Neveřejný údaj')
+        ? false
+        : undefined,
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
   };
 }

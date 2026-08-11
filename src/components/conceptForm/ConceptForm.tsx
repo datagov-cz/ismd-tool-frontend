@@ -63,7 +63,7 @@ export const BASE_DEFAULTS: Omit<
   acquisitionMethod: '',
   sharingMethod: [],
   isInPPDF: false,
-  isPublic: false,
+  isPublic: undefined,
   privacyProvisions: [],
   domain: undefined,
   codeListDataset: undefined,

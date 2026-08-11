@@ -53,6 +53,7 @@ export const ConceptHeader = ({
     text.charAt(0).toUpperCase() + text.slice(1);
 
   const isPublic = conceptDetail['typ']?.includes('Veřejný údaj');
+  const notPublic = conceptDetail['typ']?.includes('Neveřejný údaj');
 
   const router = useRouter();
 
@@ -126,21 +127,25 @@ export const ConceptHeader = ({
                       )}
                   </span>
                 </GovTag>
-                <GovTag
-                  color={isPublic ? 'success' : 'neutral'}
-                  type="subtle"
-                  size="xs"
-                  className="h-fit whitespace-nowrap my-1!"
-                >
-                  <GovIcon
-                    name={isPublic ? 'globe' : 'lock-fill'}
-                    slot="icon-start"
-                    type="components"
-                  />
-                  <span className="font-bold">
-                    {isPublic ? t('Main.Public') : t('Main.NonPublic')}
-                  </span>
-                </GovTag>
+                {(isPublic || notPublic) && (
+                  <>
+                    <GovTag
+                      color={isPublic ? 'success' : 'neutral'}
+                      type="subtle"
+                      size="xs"
+                      className="h-fit whitespace-nowrap my-1!"
+                    >
+                      <GovIcon
+                        name={isPublic ? 'globe' : 'lock-fill'}
+                        slot="icon-start"
+                        type="components"
+                      />
+                      <span className="font-bold">
+                        {isPublic ? t('Main.Public') : t('Main.NonPublic')}
+                      </span>
+                    </GovTag>
+                  </>
+                )}
                 {sourceTag && (
                   <GovTag
                     color={sourceTag === 'DRAFT' ? 'warning' : 'neutral'}
