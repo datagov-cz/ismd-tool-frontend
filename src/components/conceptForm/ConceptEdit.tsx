@@ -3,7 +3,6 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
 
 import {
   ConceptDetailModel,
@@ -11,8 +10,8 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
-import { clearFormDraft } from '@/hooks/useFormDraft';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
+import { draftKeys } from '@/lib/draftKeys';
 
 import { normalizeFormData } from './ConceptCreate';
 import { ConceptForm } from './ConceptForm';
@@ -224,16 +223,16 @@ export function mapDetailToFormValues(
 
 export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const { data, isLoading } = useGetConceptDetail(slug);
-  const { mutate: editConcept, isPending } = useEditConcept();
+  const { mutate: editConcept, isPending, isPaused } = useEditConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptEditWrapper');
   const router = useRouter();
-  const queryInvalidate = useQueryInvalidator();
+  const submitForm = useSubmitForm();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
   const graphName = conceptMetadata?.graphName ?? '';
-  const storageKey = `concept-draft:edit:${slug}`;
+  const storageKey = draftKeys.conceptEdit(slug);
 
   const defaultValues =
     conceptDetail && graphName
@@ -242,7 +241,6 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
 
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
-
     const originalLanguageTags = {
       name: Object.keys(conceptDetail?.['název'] ?? {}),
       altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),
@@ -250,40 +248,29 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       description: Object.keys(conceptDetail?.['popis'] ?? {}),
     };
 
-    editConcept(
-      {
+    submitForm({
+      mutate: editConcept,
+      variables: {
         conceptId: conceptMetadata.id,
         data: normalizeFormData(formData, originalLanguageTags),
       },
-      {
-        onSuccess: (response) => {
-          clearFormDraft(storageKey);
-          (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
-            queryInvalidate.invalidateOntology(
-              data?.data?.conceptMetadata?.ontologySlug ?? '',
-            ),
-            toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
-          router.push(`/concept/${response.data?.slug}`);
-        },
-        onError: () => {
-          toast.error(t('ToastError'), { position: 'bottom-right' });
-        },
-      },
-    );
+      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      draftKey: storageKey,
+    });
   };
 
   return (
     <div className="w-full max-w-250 mx-auto flex flex-col gap-5 p-5">
-      <div className="relative">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => router.back()}
-          className="lg:absolute top-0 lg:-left-5 pt-1 pb-4 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+          className="flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
         </button>
 
-        <span className="font-medium text-md">{t('EditConcept')} </span>
+        <span className="font-medium text-md">{t('EditConcept')}</span>
 
         <GovTag
           color="success"
@@ -304,7 +291,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         <ConceptForm
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
-          isPending={isPending}
+          isPending={isPending && !isPaused}
           defaultValues={defaultValues}
           editing={true}
           storageKey={storageKey}

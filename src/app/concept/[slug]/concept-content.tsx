@@ -1,7 +1,5 @@
 'use client';
 
-import { GovButton } from '@gov-design-system-ce/react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { useGetConceptDetail } from '@/api/generated';
@@ -11,7 +9,9 @@ import { buildRelation } from '@/components/conceptDetail/lib/buildRelation';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
-import { CircularLoader } from '@/components/shared/CircularLoader';
+import { NotFoundState } from '@/components/shared/NotFoundState';
+import { PageLoader } from '@/components/shared/PageLoader';
+import { isQueryLoading } from '@/lib/query';
 import { extractOntologyFromUrl } from '@/utils/conceptDetailUtils';
 
 interface Props {
@@ -23,28 +23,13 @@ export const ConceptContent = ({ slug }: Props) => {
   const { user, isAdmin } = useCurrentUser();
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
 
-  const router = useRouter();
+  if (isQueryLoading(concept)) {
+    return <PageLoader />;
+  }
 
-  if (concept.isLoading)
-    return (
-      <div className="h-full flex items-center justify-center w-full">
-        <CircularLoader />
-      </div>
-    );
-
-  if (!concept.data)
-    return (
-      <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
-        <h1 className="text-2xl">{t('NotFound')}</h1>
-        <GovButton
-          type="solid"
-          color="primary"
-          onGovClick={() => router.back()}
-        >
-          {t('Back')}
-        </GovButton>
-      </div>
-    );
+  if (!concept.data) {
+    return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
+  }
 
   const conceptDetail = concept.data.data?.conceptDetail;
   const conceptMetadata = concept.data.data?.conceptMetadata;
@@ -75,6 +60,7 @@ export const ConceptContent = ({ slug }: Props) => {
             ? buildRelation(conceptDetail, slug)
             : undefined
         }
+        sourceTag={conceptMetadata.sourceTag}
       />
 
       <ConceptLayout
@@ -87,6 +73,11 @@ export const ConceptContent = ({ slug }: Props) => {
         }
         ontologyIri={conceptMetadata.graphName || ''}
         ontologySlug={conceptMetadata.ontologySlug || ''}
+        deviations={concept.data.data?.publishedConceptDeviationModel}
+        conceptId={conceptMetadata.id}
+        linkSnapshots={concept.data.data?.linkSnapshots?.filter(
+          (item) => item.owningConceptId === conceptMetadata.id,
+        )}
       >
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}

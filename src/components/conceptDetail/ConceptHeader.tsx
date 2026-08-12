@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import {
   ConceptDetailModel,
   ConceptMetadataModelConceptType,
+  ConceptMetadataModelSourceTag,
 } from '@/api/generated';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
@@ -30,6 +31,7 @@ type Props = {
   relation?: { start: RelationItem; middle: RelationItem; end: RelationItem };
   conceptType?: ConceptMetadataModelConceptType;
   ontologySlug?: string;
+  sourceTag?: ConceptMetadataModelSourceTag;
 };
 
 export const ConceptHeader = ({
@@ -44,6 +46,7 @@ export const ConceptHeader = ({
   relation,
   conceptType,
   ontologySlug,
+  sourceTag,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
@@ -138,6 +141,25 @@ export const ConceptHeader = ({
                     {isPublic ? t('Main.Public') : t('Main.NonPublic')}
                   </span>
                 </GovTag>
+                {sourceTag && (
+                  <GovTag
+                    color={sourceTag === 'DRAFT' ? 'warning' : 'neutral'}
+                    type="subtle"
+                    size="xs"
+                    className="h-fit whitespace-nowrap my-1!"
+                  >
+                    <GovIcon
+                      name={sourceTag === 'DRAFT' ? 'gear' : 'copy'}
+                      slot="icon-start"
+                      type="components"
+                    />
+                    <span className="font-bold">
+                      {sourceTag === 'DRAFT'
+                        ? t('Main.Draft')
+                        : t('Main.WorkingCopy')}
+                    </span>
+                  </GovTag>
+                )}
               </div>
             </div>
             <div>

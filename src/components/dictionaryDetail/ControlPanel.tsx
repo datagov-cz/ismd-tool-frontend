@@ -19,7 +19,6 @@ interface Props {
   user?: UserModel;
   commentsCount?: number;
   slug: string;
-  updatedAt?: string;
   iri?: string;
 }
 
@@ -29,7 +28,6 @@ export const ControlPanel = ({
   user,
   commentsCount,
   slug,
-  updatedAt,
   iri,
 }: Props) => {
   const [openDownload, setOpenDownload] = useState(false);
@@ -53,23 +51,19 @@ export const ControlPanel = ({
 
   const isOwner = user?.userId === currentUser?.userId;
   const isEditAllowed = isOwner || isAdmin;
-  const isLoggedOut = !currentUser?.userId;
+  const isLoggedIn = !!currentUser?.userId;
 
   return (
-    <div className="flex flex-col gap-2 h-full w-fit justify-between items-end relative">
-      {updatedAt && (
-        <span className="text-sm text-dark-primary">
-          {t('Updated')}: {new Date(updatedAt).toLocaleDateString('CS')}
-        </span>
-      )}
+    <div className="flex flex-col gap-2 h-full justify-between w-full relative">
       <div className="flex gap-2 flex-col items-end">
-        <div className="flex gap-8">
+        <div className="flex justify-between w-full gap-x-2">
           {isEditAllowed && (
             <GovButton
               nativeType="button"
               color="primary"
-              type="solid"
+              type="outlined"
               size="s"
+              aria-label={tEdit('Title')}
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
             >
               <GovIcon
@@ -78,16 +72,17 @@ export const ControlPanel = ({
                 slot="icon-start"
                 type="components"
               />
-              {tEdit('Title')}
+              <span className="hidden desktop:inline">{tEdit('Title')}</span>
             </GovButton>
           )}
 
-          {!isLoggedOut && (
+          {isLoggedIn && (
             <GovButton
               nativeType="button"
               color="primary"
               type="outlined"
               size="s"
+              aria-label={tEdit('Comments')}
               onGovClick={() => setIsCommentBoxOpen(true)}
             >
               <GovIcon
@@ -96,7 +91,7 @@ export const ControlPanel = ({
                 slot="icon-start"
                 type="components"
               />
-              {tEdit('Comments')}
+              <span className="hidden desktop:inline">{tEdit('Comments')}</span>
               {(commentsCount ?? 0) > 0 && (
                 <span className="font-normal">[{commentsCount}]</span>
               )}
@@ -110,8 +105,8 @@ export const ControlPanel = ({
             color="neutral"
             type="outlined"
             size="s"
-            className="w-full! max-w-none!"
             href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/diagram`}
+            expanded
           >
             <GovIcon
               name="diagram-3"
@@ -123,7 +118,7 @@ export const ControlPanel = ({
           </GovButton>
         )}
       </div>
-      <div className="flex">
+      <div className="flex justify-end">
         <ControlPanelButton
           iconName="download"
           ariaLabel={t('Download')}

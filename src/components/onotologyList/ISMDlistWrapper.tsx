@@ -30,7 +30,7 @@ export const ISMDListWrapper = () => {
   const { user } = useCurrentUser();
 
   const { data, isFetching } = useGetOntologyList(
-    { userId: user?.userId, isPublished: false },
+    { userId: user?.userId },
     { query: { enabled: !!user?.userId } },
   );
 
