@@ -82,6 +82,7 @@ export const ConceptLayout = ({
             resolvedRelations={resolvedRelations}
             ontologyIri={ontologyIri}
             ontologySlug={ontologySlug}
+            instantions={conceptDetail['instance-definovány-číselníkem']}
           />
         )}
 

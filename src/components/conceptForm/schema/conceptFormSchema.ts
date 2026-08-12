@@ -46,6 +46,35 @@ const RequiredNameModelSchema = z
     }
   });
 
+const NKOD_DATASET_PATTERN =
+  /^https:\/\/data\.gov\.cz\/zdroj\/datové-sady\/.*$/;
+
+const ABSOLUTE_IRI_PATTERN = /^https?:\/\/\S+$/;
+
+const CodeListDatasetSchema = z
+  .string()
+  .optional()
+  .refine(
+    (value) =>
+      value == null || value.trim() === '' || NKOD_DATASET_PATTERN.test(value),
+    {
+      message: 'Neplatná URL datové sady v NKOD',
+    },
+  );
+
+const CodeListIriSchema = z
+  .string()
+  .optional()
+  .refine(
+    (value) =>
+      value == null ||
+      value.trim() === '' ||
+      ABSOLUTE_IRI_PATTERN.test(value.trim()),
+    {
+      message: 'Neplatné IRI číselníku',
+    },
+  );
+
 // Shared base fields
 const ConceptCreateModelSchema = z.object({
   ontologyGraphName: z.string().min(1),
@@ -91,7 +120,8 @@ const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
   isPublic: z.boolean().optional(),
   privacyProvisions: z.array(z.string()).optional(),
   broaderConcept: z.array(ConceptRef).optional(),
-  codeListDataset: z.string().optional(),
+  codeListDataset: CodeListDatasetSchema,
+  codeListIri: CodeListIriSchema,
 });
 
 // Property concept (VLASTNOST)
@@ -168,7 +198,8 @@ const ConceptFormSchema = z.object({
   isPublic: z.boolean().optional(),
   privacyProvisions: z.array(z.string()).optional(),
   domain: ConceptRef.optional(),
-  codeListDataset: z.string().optional(),
+  codeListIri: CodeListIriSchema.optional(),
+  codeListDataset: CodeListDatasetSchema.optional(),
 });
 
 // Inferred types

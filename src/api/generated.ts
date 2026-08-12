@@ -145,9 +145,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -193,6 +193,7 @@ export type ClassConceptModelAllOf = {
   isPublic?: boolean;
   privacyProvisions?: string[];
   broaderConcept?: string[];
+  codeListIri?: string;
   codeListDataset?: string;
 };
 
@@ -253,7 +254,6 @@ export type PropertyConceptModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type PropertyConceptModel = ConceptCreateModel &
@@ -271,7 +271,6 @@ export type RelationshipConceptModelAllOf = {
   isInPPDF?: boolean;
   isPublic?: boolean;
   privacyProvisions?: string[];
-  codeListDataset?: string;
 };
 
 export type RelationshipConceptModel = ConceptCreateModel &
@@ -294,6 +293,12 @@ export interface ApiResponseDtoGetConceptDto {
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface CodeListDto {
+  iri?: string;
+  typ?: string;
+  'datová-sada-v-nkod'?: string;
 }
 
 export type ConceptDetailModelNázev = { [key: string]: string };
@@ -341,6 +346,7 @@ export interface ConceptDetailModel {
   'agenda-resolved'?: RppAgenda;
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
   'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
+  'instance-definovány-číselníkem'?: CodeListDto;
   'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
@@ -562,6 +568,8 @@ export interface PublishedConceptDeviationModel {
   'způsob-získání-údajů'?: PropertyDeviationString;
   'typ-obsahu-údajů'?: PropertyDeviationString;
   'je-ppdf'?: PropertyDeviationBoolean;
+  'typ-objektu-subjektu'?: PropertyDeviationString;
+  'veřejnost-údaje'?: PropertyDeviationBoolean;
   ais?: PropertyDeviationString;
   agenda?: PropertyDeviationString;
   'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
@@ -748,6 +756,7 @@ export type ClassConceptEditModelAllOf = {
   privacyProvisions?: string[];
   broaderConcept?: string[];
   isInPPDF?: boolean;
+  codeListIri?: string;
   codeListDataset?: string;
 };
 
@@ -795,7 +804,6 @@ export type PropertyConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type PropertyConceptEditModel = ConceptEditModel &
@@ -813,7 +821,6 @@ export type RelationshipConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type RelationshipConceptEditModel = ConceptEditModel &
