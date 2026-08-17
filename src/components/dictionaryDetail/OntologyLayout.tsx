@@ -129,7 +129,7 @@ export const OntologyLayout = ({
 
   const showValidationSummary = !isLoggedOutOrNKD && !!slug && !!metaData;
   const hasSidebar = !!visibleDeviations || showValidationSummary;
-  console.log(popis, 'test');
+
   return (
     <div className="w-full h-full flex-1">
       <div className="w-full max-w-250 mx-auto px-5 desktop:px-0 py-5 flex flex-col gap-5">
