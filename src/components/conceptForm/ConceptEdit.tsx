@@ -296,6 +296,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           editing={true}
           storageKey={storageKey}
           conceptIri={data?.data?.conceptDetail?.iri}
+          slug={slug}
         />
       )}
     </div>

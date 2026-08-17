@@ -83,6 +83,18 @@ export const CreateForm = () => {
     });
   };
 
+  const handleCancel = () => {
+    if (
+      form.formState.isDirty &&
+      !window.confirm(t('DiscardChangesConfirmation'))
+    ) {
+      return;
+    }
+
+    form.reset();
+    router.back();
+  };
+
   return (
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
@@ -109,7 +121,10 @@ export const CreateForm = () => {
               placeholder={t('Form.DescriptionPlaceholder')}
             />
           </FormSection>
-          <FormToolbar<OntologySchemaType> isPending={isPending && !isPaused} />
+          <FormToolbar<OntologySchemaType>
+            isPending={isPending && !isPaused}
+            onCancel={handleCancel}
+          />
         </form>
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
           {open && (

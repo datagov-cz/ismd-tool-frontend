@@ -254,6 +254,7 @@
     "EditOntology": {
       "Title": "Upravit slovník",
       "EditedOntology": "Upravovaný slovník",
+      "DiscardChangesConfirmation": "Opravdu chcete zrušit změny?",
       "Save": "Uložit",
       "Back": "Zpět",
       "Ontology": "Slovníky",
