@@ -1,10 +1,20 @@
-import { useEffect, useRef } from 'react';
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 
 import type { RelationshipKind } from '../model/diagram';
 
 export type RelationshipChoice = { kind: RelationshipKind; swap?: boolean };
+
+const VIEWPORT_MARGIN = 8;
+const CHOOSER_OFFSET = 12;
 
 const OPTIONS: {
   symbol: string;
@@ -13,10 +23,16 @@ const OPTIONS: {
   choice: RelationshipChoice;
 }[] = [
   {
-    symbol: 'A - B',
-    title: 'Obecný vztah',
-    description: 'Spojí pojmy. Potom přidej vztah na čáru.',
+    symbol: 'A → B',
+    title: 'Obecný vztah z A do B',
+    description: 'A je definičním oborem vztahu a B je oborem hodnot vztahu',
     choice: { kind: 'obecny' },
+  },
+  {
+    symbol: 'B → A',
+    title: 'Obecný vztah z B do A',
+    description: 'B je definičním oborem vztahu a A je oborem hodnot vztahu',
+    choice: { kind: 'obecny', swap: true },
   },
   {
     symbol: 'A > B',
@@ -55,6 +71,7 @@ export const RelationshipChooser = ({
   targetLabel,
   onSelect,
   onClose,
+  onRemove,
   selectedKind,
 }: {
   x: number;
@@ -63,9 +80,59 @@ export const RelationshipChooser = ({
   targetLabel: string;
   onSelect: (_choice: RelationshipChoice) => void;
   onClose: () => void;
+  onRemove?: () => void;
   selectedKind?: RelationshipKind;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<CSSProperties>({
+    left: x,
+    top: y + CHOOSER_OFFSET,
+    transform: 'translateX(-50%)',
+  });
+
+  const keepInsideViewport = useCallback(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const containingBlock = element.offsetParent?.getBoundingClientRect();
+    if (!containingBlock) return;
+
+    const { width, height } = element.getBoundingClientRect();
+    const desiredLeft = containingBlock.left + x - width / 2;
+    const desiredTop = containingBlock.top + y + CHOOSER_OFFSET;
+    const maxLeft = Math.max(
+      VIEWPORT_MARGIN,
+      window.innerWidth - width - VIEWPORT_MARGIN,
+    );
+    const maxTop = Math.max(
+      VIEWPORT_MARGIN,
+      window.innerHeight - height - VIEWPORT_MARGIN,
+    );
+
+    setPosition({
+      left:
+        Math.min(Math.max(desiredLeft, VIEWPORT_MARGIN), maxLeft) -
+        containingBlock.left,
+      top:
+        Math.min(Math.max(desiredTop, VIEWPORT_MARGIN), maxTop) -
+        containingBlock.top,
+    });
+  }, [x, y]);
+
+  useLayoutEffect(() => {
+    keepInsideViewport();
+
+    const observer = new ResizeObserver(keepInsideViewport);
+    if (ref.current) observer.observe(ref.current);
+    window.addEventListener('resize', keepInsideViewport);
+    window.addEventListener('scroll', keepInsideViewport, true);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', keepInsideViewport);
+      window.removeEventListener('scroll', keepInsideViewport, true);
+    };
+  }, [keepInsideViewport]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -86,8 +153,8 @@ export const RelationshipChooser = ({
 
   return (
     <div
-      className="absolute z-10 w-[420px] -translate-x-1/2 bg-white rounded-lg border border-border-grey shadow-[0px_4px_12px_0px_rgba(0,0,0,0.15)] p-4 flex flex-col gap-3"
-      style={{ left: x, top: y + 12 }}
+      className="absolute z-10 w-[min(420px,calc(100vw-16px))] max-h-[calc(100dvh-16px)] overflow-y-auto bg-white rounded-lg border border-border-grey shadow-[0px_4px_12px_0px_rgba(0,0,0,0.15)] p-4 flex flex-col gap-3"
+      style={position}
       ref={ref}
     >
       <div className="flex items-center gap-2 font-bold border-b border-border-grey pb-3">
@@ -132,6 +199,19 @@ export const RelationshipChooser = ({
           );
         })}
       </div>
+
+      {onRemove && (
+        <div className="border-t border-border-grey pt-3">
+          <button
+            type="button"
+            onClick={onRemove}
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-status-error-600 px-4 py-2.5 font-bold text-status-error-600 transition-colors hover:bg-status-error-100"
+          >
+            <GovIcon name="trash" size="m" />
+            Odebrat vazbu
+          </button>
+        </div>
+      )}
     </div>
   );
 };

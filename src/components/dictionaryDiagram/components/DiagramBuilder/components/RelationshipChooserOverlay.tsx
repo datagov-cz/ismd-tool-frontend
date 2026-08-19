@@ -8,12 +8,14 @@ type RelationshipChooserOverlayProps = {
   chooser: ChooserState;
   onSelect: (_choice: RelationshipChoice) => void;
   onClose: () => void;
+  onRemove: () => void;
 };
 
 export const RelationshipChooserOverlay = ({
   chooser,
   onSelect,
   onClose,
+  onRemove,
 }: RelationshipChooserOverlayProps) => {
   if (!chooser) return null;
 
@@ -26,6 +28,7 @@ export const RelationshipChooserOverlay = ({
       selectedKind={chooser.kind}
       onSelect={onSelect}
       onClose={onClose}
+      onRemove={chooser.edgeId === 'pending' ? undefined : onRemove}
     />
   );
 };

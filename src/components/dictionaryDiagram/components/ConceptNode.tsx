@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GovButton, GovIcon, GovTag } from '@gov-design-system-ce/react';
-import { Handle, type NodeProps, Position } from '@xyflow/react';
+import { Handle, type NodeProps, Position, useStore } from '@xyflow/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 
 import { getConceptId, KIND_LABEL } from '../model/concept';
-import type { ConceptFlowNode, ConceptNodeData } from '../model/diagram';
+import type {
+  ConceptFlowEdge,
+  ConceptFlowNode,
+  ConceptNodeData,
+} from '../model/diagram';
 
-export const ConceptNode = ({ data, selected }: NodeProps<ConceptFlowNode>) => {
+import { useDiagramDispatch } from './diagramDispatchContext';
+
+export const ConceptNode = ({
+  id,
+  data,
+  selected,
+}: NodeProps<ConceptFlowNode>) => {
   const { concept, vlastnosti } = data;
   const [openDetail, setOpenDetail] = useState(false);
 
@@ -20,22 +30,32 @@ export const ConceptNode = ({ data, selected }: NodeProps<ConceptFlowNode>) => {
       )}
     >
       <ConceptNodeDetail
+        nodeId={id}
         data={data}
         open={openDetail}
         onClose={() => setOpenDetail(false)}
       />
-      <Handle id={concept.iri} type="target" position={Position.Top} />
+      <Handle type="target" position={Position.Top} />
 
       <div className="flex items-center gap-1.5 px-2.5 py-2 group-hover:bg-primary-subtlest justify-between rounded-t-md">
         <div className="flex flex-col gap-0.5">
           <span className="text-dark-blue-subtle font-medium text-sm leading-none">
-            {concept.název?.cs}
+            {concept.název?.cs ??
+              (concept.metadata &&
+                'label' in concept.metadata &&
+                concept.metadata?.label)}
           </span>
           <span className="text-xs font-medium text-card-description leading-none">
             {KIND_LABEL.trida}
           </span>
         </div>
-        <button onClick={() => setOpenDetail(true)}>
+        <button
+          onClick={(event) => {
+            event.stopPropagation();
+            data.onFocus?.();
+            setOpenDetail(true);
+          }}
+        >
           <GovIcon name="three-dots-vertical" size="xs" color="primary" />
         </button>
       </div>
@@ -72,26 +92,68 @@ export const ConceptNode = ({ data, selected }: NodeProps<ConceptFlowNode>) => {
         </div>
       )}
 
-      <Handle id={concept.iri} type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Bottom} />
     </div>
   );
 };
 
 const ConceptNodeDetail = ({
+  nodeId,
   data,
   open,
   onClose,
 }: {
+  nodeId: string;
   data: ConceptNodeData;
   open: boolean;
   onClose: () => void;
 }) => {
-  // const meta = data.concept.metadata;
+  const dispatch = useDiagramDispatch();
+  const [showAllProperties, setShowAllProperties] = useState(false);
+  const [showAllRelations, setShowAllRelations] = useState(false);
+  const edges = useStore((state) => state.edges) as ConceptFlowEdge[];
+  const nodes = useStore((state) => state.nodes) as ConceptFlowNode[];
+  const vztahy = useMemo(
+    () =>
+      edges.flatMap((edge) => {
+        const isHierarchy = edge.data?.kind === 'hierarchie';
+        const isOutgoing = edge.source === nodeId;
+        const isIncomingHierarchy = isHierarchy && edge.target === nodeId;
+
+        if (!isOutgoing && !isIncomingHierarchy) return [];
+
+        const relatedNodeId = isOutgoing ? edge.target : edge.source;
+        const relatedNode = nodes.find((node) => node.id === relatedNodeId);
+        const relatedConcept = relatedNode?.data;
+        const label = isHierarchy
+          ? isOutgoing
+            ? 'má podtyp'
+            : 'je podtyp'
+          : edge.data?.label;
+
+        if (!label) return [];
+
+        return [
+          {
+            id: edge.id,
+            label,
+            target: relatedConcept?.concept.název?.cs,
+          },
+        ];
+      }),
+    [edges, nodeId, nodes],
+  );
+  const visibleProperties = showAllProperties
+    ? data.vlastnosti
+    : data.vlastnosti.slice(0, 3);
+  const visibleRelations = showAllRelations ? vztahy : vztahy.slice(0, 3);
+  const hiddenPropertiesCount = data.vlastnosti.length - 3;
+  const hiddenRelationsCount = vztahy.length - 3;
 
   return (
     <div
       className={clsx(
-        'w-75 bg-white absolute -right-2 translate-x-full bottom-0 p-3 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] border rounded-md border-border-grey z-20 divide-y divide-border-grey space-y-2',
+        'w-75 bg-white absolute -right-2 translate-x-full bottom-0 p-3 shadow-subtle border rounded-md border-border-grey z-20 divide-y divide-border-grey space-y-2',
         !open && 'hidden',
       )}
     >
@@ -122,22 +184,73 @@ const ConceptNodeDetail = ({
       <div className="pb-2.5">
         <span className="font-medium text-xs">Vlastnosti</span>
         <div className="pl-5 space-y-1.5 pt-1.5">
-          {data.vlastnosti.map((v, i) => (
+          {visibleProperties.map((v, i) => (
             <div
               key={`${getConceptId(v)}-${i}`}
-              className="flex items-center gap-0.5 relative font-medium"
+              className="flex items-center justify-between gap-0.5 relative font-medium"
             >
-              <span className="size-1.5 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
+              <span className="flex min-w-0 items-center gap-0.5">
+                <span className="size-1.5 shrink-0 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
+                <span className="truncate text-xs text-card-description leading-none">
+                  {v.název?.cs}
+                </span>
+              </span>
+              <button
+                type="button"
+                aria-label={`Odebrat vlastnost ${v.název?.cs ?? ''}`}
+                className="flex shrink-0 items-center"
+                onClick={() =>
+                  dispatch({
+                    type: 'removeVlastnost',
+                    targetNodeId: nodeId,
+                    vlastnostId: getConceptId(v),
+                  })
+                }
+              >
+                <GovIcon name="trash" color="error" size="xs" />
+              </button>
+            </div>
+          ))}
+          {!showAllProperties && hiddenPropertiesCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllProperties(true)}
+              className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
+            >
+              + {hiddenPropertiesCount} dalších
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="pb-2.5">
+        <span className="font-medium text-xs">Vztahy</span>
+        <div className="space-y-1.5 pt-1.5 pl-2">
+          {visibleRelations.map((vztah) => (
+            <div
+              key={vztah.id}
+              className="flex items-center gap-2 relative font-medium"
+            >
+              <GovIcon
+                name="bezier"
+                size="s"
+                className="[&_svg]:text-[#67329E]!"
+              />
               <span className="text-xs text-card-description leading-none">
-                {v.název?.cs}
+                {vztah.label}
+                {vztah.target && ` → ${vztah.target}`}
               </span>
             </div>
           ))}
+          {!showAllRelations && hiddenRelationsCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllRelations(true)}
+              className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
+            >
+              + {hiddenRelationsCount} dalších
+            </button>
+          )}
         </div>
-      </div>
-      <div>
-        <span className="font-medium text-xs">Vazby</span>
-        <div className="pl-5 space-y-1.5 pt-1.5"></div>
       </div>
       <div>
         <span className="font-medium text-xs">Akce</span>

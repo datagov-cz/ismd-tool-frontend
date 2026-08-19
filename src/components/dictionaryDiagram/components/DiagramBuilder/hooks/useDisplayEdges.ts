@@ -13,19 +13,32 @@ type UseDisplayEdgesProps = {
   edges: ConceptFlowEdge[];
   dispatch: Dispatch<HistoryAction>;
   pending: Connection | null;
+  focusedNodeIds: ReadonlySet<string>;
 };
 
 export const useDisplayEdges = ({
   edges,
   dispatch,
   pending,
+  focusedNodeIds,
 }: UseDisplayEdgesProps) => {
   const displayEdges = useMemo(() => {
     const base = edges.map((e) => {
+      const isConnected =
+        focusedNodeIds.size === 0 ||
+        focusedNodeIds.has(e.source) ||
+        focusedNodeIds.has(e.target);
+      const emphasis: 'connected' | 'dimmed' | undefined =
+        focusedNodeIds.size === 0
+          ? undefined
+          : isConnected
+            ? 'connected'
+            : 'dimmed';
       const withCallbacks = {
         ...e,
         data: {
           ...e.data,
+          emphasis,
           onBendsChange: (bends?: XYPosition[]) =>
             dispatch({ type: 'setEdgeBends', edgeId: e.id, bends }),
           ...(e.data?.kind === 'obecny'
@@ -44,7 +57,7 @@ export const useDisplayEdges = ({
     });
 
     return pending ? [...base, createPendingEdge(pending)] : base;
-  }, [edges, pending, dispatch]);
+  }, [edges, pending, dispatch, focusedNodeIds]);
 
   return { displayEdges };
 };

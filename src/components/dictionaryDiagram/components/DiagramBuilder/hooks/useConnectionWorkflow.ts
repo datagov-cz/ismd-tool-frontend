@@ -126,6 +126,16 @@ export const useConnectionWorkflow = ({
     [pending, chooser, dispatch],
   );
 
+  const removeEdge = useCallback(() => {
+    if (!chooser || chooser.edgeId === 'pending') return;
+
+    dispatch({
+      type: 'edgesChange',
+      changes: [{ id: chooser.edgeId, type: 'remove' }],
+    });
+    closeChooser();
+  }, [chooser, closeChooser, dispatch]);
+
   return {
     chooser,
     pending,
@@ -133,5 +143,6 @@ export const useConnectionWorkflow = ({
     onConnect,
     closeChooser,
     selectRelationship,
+    removeEdge,
   };
 };

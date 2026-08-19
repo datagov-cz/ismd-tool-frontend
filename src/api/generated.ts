@@ -21,6 +21,83 @@ import type {
 } from '@tanstack/react-query';
 
 import { axiosInstance } from '../axios-instance';
+export interface DiagramLayoutDto {
+  version: number;
+  viewport?: ViewportDto;
+  nodes: Node[];
+  edges: Edge[];
+}
+
+export type EdgeEdgeKind = (typeof EdgeEdgeKind)[keyof typeof EdgeEdgeKind];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const EdgeEdgeKind = {
+  DOMAIN: 'DOMAIN',
+  RANGE: 'RANGE',
+  SUBCLASS_OF: 'SUBCLASS_OF',
+  SUB_PROPERTY: 'SUB_PROPERTY',
+  SUB_RELATION: 'SUB_RELATION',
+  EXACT_MATCH: 'EXACT_MATCH',
+} as const;
+
+export interface Edge {
+  /** @minLength 1 */
+  id: string;
+  /** @minLength 1 */
+  source: string;
+  /** @minLength 1 */
+  target: string;
+  edgeKind: EdgeEdgeKind;
+  sourceHandle?: string;
+  targetHandle?: string;
+  segments?: EdgeWaypoint[];
+}
+
+export interface EdgeWaypoint {
+  x?: number;
+  y?: number;
+}
+
+export interface Node {
+  /** @minLength 1 */
+  id: string;
+  position: PositionDto;
+  parentId?: string;
+  collapsed?: boolean;
+}
+
+export interface PositionDto {
+  x: number;
+  y: number;
+}
+
+export interface ViewportDto {
+  x?: number;
+  y?: number;
+  zoom?: number;
+}
+
+export interface ApiResponseDtoDiagramDto {
+  data?: DiagramDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface ConvertToHierarchy {
+  addBroaderOn?: string;
+  broader?: string;
+}
+
+export interface DiagramDto {
+  ontologySlug?: string;
+  version?: number;
+  viewport?: ViewportDto;
+  nodes?: Node[];
+  edges?: Edge[];
+  pendingChangeCount?: number;
+}
+
 export interface CommentModel {
   id?: number;
   userId?: string;
@@ -176,6 +253,60 @@ export interface OntologyCreateModel {
   descriptionModel: DescriptionModel;
 }
 
+export interface ApiResponseDtoMaterializeResultDto {
+  data?: MaterializeResultDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type FailedOp = (typeof FailedOp)[keyof typeof FailedOp];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const FailedOp = {
+  SWAP_DIRECTION: 'SWAP_DIRECTION',
+  CHANGE_HIERARCHY_TYPE: 'CHANGE_HIERARCHY_TYPE',
+  CHANGE_PROPERTY_PARENT: 'CHANGE_PROPERTY_PARENT',
+  CONVERT_TO_HIERARCHY: 'CONVERT_TO_HIERARCHY',
+} as const;
+
+export interface Failed {
+  nodeId?: number;
+  conceptIri?: string;
+  op?: FailedOp;
+  error?: string;
+  message?: string;
+  status?: number;
+}
+
+export interface MaterializeResultDto {
+  materialized?: Materialized[];
+  failed?: Failed[];
+  skippedStale?: SkippedStale[];
+}
+
+export type MaterializedOp =
+  (typeof MaterializedOp)[keyof typeof MaterializedOp];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const MaterializedOp = {
+  SWAP_DIRECTION: 'SWAP_DIRECTION',
+  CHANGE_HIERARCHY_TYPE: 'CHANGE_HIERARCHY_TYPE',
+  CHANGE_PROPERTY_PARENT: 'CHANGE_PROPERTY_PARENT',
+  CONVERT_TO_HIERARCHY: 'CONVERT_TO_HIERARCHY',
+} as const;
+
+export interface Materialized {
+  nodeId?: number;
+  conceptIri?: string;
+  op?: MaterializedOp;
+}
+
+export interface SkippedStale {
+  nodeId?: number;
+  conceptIri?: string;
+}
+
 export type AltNameModelAltName = { [key: string]: string[] };
 
 export interface AltNameModel {
@@ -193,6 +324,7 @@ export type ClassConceptModelAllOf = {
   isPublic?: boolean;
   privacyProvisions?: string[];
   broaderConcept?: string[];
+  codeListIri?: string;
   codeListDataset?: string;
 };
 
@@ -253,7 +385,6 @@ export type PropertyConceptModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type PropertyConceptModel = ConceptCreateModel &
@@ -271,7 +402,6 @@ export type RelationshipConceptModelAllOf = {
   isInPPDF?: boolean;
   isPublic?: boolean;
   privacyProvisions?: string[];
-  codeListDataset?: string;
 };
 
 export type RelationshipConceptModel = ConceptCreateModel &
@@ -294,6 +424,12 @@ export interface ApiResponseDtoGetConceptDto {
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface CodeListDto {
+  iri?: string;
+  typ?: string;
+  'datová-sada-v-nkod'?: string;
 }
 
 export type ConceptDetailModelNázev = { [key: string]: string };
@@ -341,6 +477,7 @@ export interface ConceptDetailModel {
   'agenda-resolved'?: RppAgenda;
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
   'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
+  'instance-definovány-číselníkem'?: CodeListDto;
   'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
@@ -562,6 +699,8 @@ export interface PublishedConceptDeviationModel {
   'způsob-získání-údajů'?: PropertyDeviationString;
   'typ-obsahu-údajů'?: PropertyDeviationString;
   'je-ppdf'?: PropertyDeviationBoolean;
+  'typ-objektu-subjektu'?: PropertyDeviationString;
+  'veřejnost-údaje'?: PropertyDeviationBoolean;
   ais?: PropertyDeviationString;
   agenda?: PropertyDeviationString;
   'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
@@ -737,6 +876,26 @@ export interface OntologyEditModel {
   descriptionModel?: DescriptionModel;
 }
 
+export interface NodeOverlayDto {
+  /** @minLength 1 */
+  nodeId: string;
+  domain?: string;
+  range?: string;
+  broaderConcept?: string[];
+  superProperty?: string[];
+  superRelation?: string[];
+  exactMatch?: string[];
+  convertToHierarchy?: ConvertToHierarchy;
+  empty?: boolean;
+}
+
+export interface ApiResponseDtoNode {
+  data?: Node;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
 export type ClassConceptEditModelAllOf = {
   type?: string;
   agendaCode?: string;
@@ -748,6 +907,7 @@ export type ClassConceptEditModelAllOf = {
   privacyProvisions?: string[];
   broaderConcept?: string[];
   isInPPDF?: boolean;
+  codeListIri?: string;
   codeListDataset?: string;
 };
 
@@ -795,7 +955,6 @@ export type PropertyConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type PropertyConceptEditModel = ConceptEditModel &
@@ -813,7 +972,6 @@ export type RelationshipConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type RelationshipConceptEditModel = ConceptEditModel &
@@ -852,6 +1010,7 @@ export interface SearchResponseDto {
   sourceStatuses?: SearchResponseDtoSourceStatuses;
   totalOntologies?: number;
   totalConcepts?: number;
+  totalDiagrams?: number;
 }
 
 export type SearchResultDtoType =
@@ -864,6 +1023,7 @@ export const SearchResultDtoType = {
   CLASS: 'CLASS',
   PROPERTY: 'PROPERTY',
   RELATIONSHIP: 'RELATIONSHIP',
+  DIAGRAM: 'DIAGRAM',
 } as const;
 
 export type SearchResultDtoSource =
@@ -935,6 +1095,7 @@ export interface SourceStatusDto {
   returnedCount?: number;
   totalOntologies?: number;
   totalConcepts?: number;
+  totalDiagrams?: number;
   message?: string;
 }
 
@@ -1169,6 +1330,21 @@ export interface LawContentDto {
   bodyHtml?: string;
 }
 
+export interface ApiResponseDtoListDiagramSummaryDto {
+  data?: DiagramSummaryDto[];
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface DiagramSummaryDto {
+  ontologySlug?: string;
+  ontologyName?: string;
+  graphName?: string;
+  nodeCount?: number;
+  updatedAt?: string;
+}
+
 export interface ApiResponseDtoListConceptMetadataModel {
   data?: ConceptMetadataModel[];
   message?: string;
@@ -1252,7 +1428,7 @@ export type SearchParams = {
    */
   q: string;
   /**
-   * Typ výsledku: ONTOLOGY, CONCEPT, CLASS, PROPERTY, RELATIONSHIP (CLASS/PROPERTY/RELATIONSHIP narrow to concepts of the given role)
+   * Typ výsledku: ONTOLOGY, CONCEPT, CLASS, PROPERTY, RELATIONSHIP, DIAGRAM (CLASS/PROPERTY/RELATIONSHIP narrow to concepts of the given role; DIAGRAM lists ontologies that have a diagram)
    */
   type?: SearchType;
   /**
@@ -1290,6 +1466,7 @@ export const SearchType = {
   CLASS: 'CLASS',
   PROPERTY: 'PROPERTY',
   RELATIONSHIP: 'RELATIONSHIP',
+  DIAGRAM: 'DIAGRAM',
 } as const;
 
 export type SearchSource = (typeof SearchSource)[keyof typeof SearchSource];
@@ -1435,6 +1612,95 @@ export type GetConceptListParams = {
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+/**
+ * Uloží rozvržení diagramu a překryvy pouze do databáze (bez zápisu do RDF). Sada uzlů je autoritativní pro členství na plátně — chybějící uzel je z plátna odebrán, nový je načten z živého RDF. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Uložení rozvržení diagramu
+ */
+export const saveLayout = (
+  ontologySlug: string,
+  diagramLayoutDto: DiagramLayoutDto,
+  options?: SecondParameter<typeof axiosInstance>,
+) => {
+  return axiosInstance<ApiResponseDtoDiagramDto>(
+    {
+      url: `/api/diagram/${ontologySlug}/layout`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: diagramLayoutDto,
+    },
+    options,
+  );
+};
+
+export const getSaveLayoutMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof saveLayout>>,
+    TError,
+    { ontologySlug: string; data: DiagramLayoutDto },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof saveLayout>>,
+  TError,
+  { ontologySlug: string; data: DiagramLayoutDto },
+  TContext
+> => {
+  const mutationKey = ['saveLayout'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof saveLayout>>,
+    { ontologySlug: string; data: DiagramLayoutDto }
+  > = (props) => {
+    const { ontologySlug, data } = props ?? {};
+
+    return saveLayout(ontologySlug, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SaveLayoutMutationResult = NonNullable<
+  Awaited<ReturnType<typeof saveLayout>>
+>;
+export type SaveLayoutMutationBody = DiagramLayoutDto;
+export type SaveLayoutMutationError = unknown;
+
+/**
+ * @summary Uložení rozvržení diagramu
+ */
+export const useSaveLayout = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof saveLayout>>,
+      TError,
+      { ontologySlug: string; data: DiagramLayoutDto },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof saveLayout>>,
+  TError,
+  { ontologySlug: string; data: DiagramLayoutDto },
+  TContext
+> => {
+  const mutationOptions = getSaveLayoutMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
 
 /**
  * Spustí validaci slovníku proti pravidlům SHACL/SKOS prostřednictvím externí validační služby. Výsledky validace jsou uloženy do databáze. Vyžaduje oprávnění vlastníka nebo administrátora.
@@ -1710,6 +1976,90 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Aplikuje všechny čekající (pending) změny přes existující CRUD pojmů → outbox → RDF a po úspěchu vyčistí jednotlivé překryvy. Vrací výsledek po jednotlivých změnách (materializované, neúspěšné, zastaralé). Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Převzetí (materializace) změn diagramu
+ */
+export const materialize = (
+  ontologySlug: string,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoMaterializeResultDto>(
+    { url: `/api/diagram/${ontologySlug}/materialize`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getMaterializeMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof materialize>>,
+    TError,
+    { ontologySlug: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof materialize>>,
+  TError,
+  { ontologySlug: string },
+  TContext
+> => {
+  const mutationKey = ['materialize'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof materialize>>,
+    { ontologySlug: string }
+  > = (props) => {
+    const { ontologySlug } = props ?? {};
+
+    return materialize(ontologySlug, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MaterializeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof materialize>>
+>;
+
+export type MaterializeMutationError = unknown;
+
+/**
+ * @summary Převzetí (materializace) změn diagramu
+ */
+export const useMaterialize = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof materialize>>,
+      TError,
+      { ontologySlug: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof materialize>>,
+  TError,
+  { ontologySlug: string },
+  TContext
+> => {
+  const mutationOptions = getMaterializeMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -2401,6 +2751,95 @@ export const useEditOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getEditOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Uloží překryv (pending edit) jednoho uzlu do databáze. Cílový uzel je určen polem `nodeId` v těle požadavku. Tělo bez jakéhokoli pole překryvu (pouze `nodeId`) překryv zahodí. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Uložení překryvu uzlu
+ */
+export const stageOverlay = (
+  ontologySlug: string,
+  nodeOverlayDto: NodeOverlayDto,
+  options?: SecondParameter<typeof axiosInstance>,
+) => {
+  return axiosInstance<ApiResponseDtoNode>(
+    {
+      url: `/api/diagram/${ontologySlug}/nodes/overlay`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: nodeOverlayDto,
+    },
+    options,
+  );
+};
+
+export const getStageOverlayMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof stageOverlay>>,
+    TError,
+    { ontologySlug: string; data: NodeOverlayDto },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof stageOverlay>>,
+  TError,
+  { ontologySlug: string; data: NodeOverlayDto },
+  TContext
+> => {
+  const mutationKey = ['stageOverlay'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof stageOverlay>>,
+    { ontologySlug: string; data: NodeOverlayDto }
+  > = (props) => {
+    const { ontologySlug, data } = props ?? {};
+
+    return stageOverlay(ontologySlug, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type StageOverlayMutationResult = NonNullable<
+  Awaited<ReturnType<typeof stageOverlay>>
+>;
+export type StageOverlayMutationBody = NodeOverlayDto;
+export type StageOverlayMutationError = unknown;
+
+/**
+ * @summary Uložení překryvu uzlu
+ */
+export const useStageOverlay = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof stageOverlay>>,
+      TError,
+      { ontologySlug: string; data: NodeOverlayDto },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof stageOverlay>>,
+  TError,
+  { ontologySlug: string; data: NodeOverlayDto },
+  TContext
+> => {
+  const mutationOptions = getStageOverlayMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -5283,6 +5722,290 @@ export function useGetLawContent<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetLawContentQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací render-ready diagram slovníku — rozvržení spojené s živým obsahem pojmů, s aplikovanými překryvy (pending edits) a projektovanými hranami. Vyžaduje oprávnění přihlášeného uživatele.
+ * @summary Načtení diagramu slovníku
+ */
+export const getDiagram = (
+  ontologySlug: string,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoDiagramDto>(
+    { url: `/api/diagram/${ontologySlug}/detail`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getGetDiagramQueryKey = (ontologySlug?: string) => {
+  return [`/api/diagram/${ontologySlug}/detail`] as const;
+};
+
+export const getGetDiagramQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDiagram>>,
+  TError = unknown,
+>(
+  ontologySlug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDiagram>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetDiagramQueryKey(ontologySlug);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDiagram>>> = ({
+    signal,
+  }) => getDiagram(ontologySlug, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!ontologySlug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getDiagram>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDiagramQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDiagram>>
+>;
+export type GetDiagramQueryError = unknown;
+
+export function useGetDiagram<
+  TData = Awaited<ReturnType<typeof getDiagram>>,
+  TError = unknown,
+>(
+  ontologySlug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDiagram>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDiagram>>,
+          TError,
+          Awaited<ReturnType<typeof getDiagram>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDiagram<
+  TData = Awaited<ReturnType<typeof getDiagram>>,
+  TError = unknown,
+>(
+  ontologySlug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDiagram>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDiagram>>,
+          TError,
+          Awaited<ReturnType<typeof getDiagram>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDiagram<
+  TData = Awaited<ReturnType<typeof getDiagram>>,
+  TError = unknown,
+>(
+  ontologySlug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDiagram>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Načtení diagramu slovníku
+ */
+
+export function useGetDiagram<
+  TData = Awaited<ReturnType<typeof getDiagram>>,
+  TError = unknown,
+>(
+  ontologySlug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDiagram>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetDiagramQueryOptions(ontologySlug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací odlehčený seznam všech diagramů (identita + počet uzlů), např. pro výběr diagramu. Vyžaduje oprávnění přihlášeného uživatele.
+ * @summary Seznam diagramů
+ */
+export const getAllDiagrams = (
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoListDiagramSummaryDto>(
+    { url: `/api/diagram/all`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getGetAllDiagramsQueryKey = () => {
+  return [`/api/diagram/all`] as const;
+};
+
+export const getGetAllDiagramsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAllDiagrams>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAllDiagramsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllDiagrams>>> = ({
+    signal,
+  }) => getAllDiagrams(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAllDiagrams>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAllDiagramsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAllDiagrams>>
+>;
+export type GetAllDiagramsQueryError = unknown;
+
+export function useGetAllDiagrams<
+  TData = Awaited<ReturnType<typeof getAllDiagrams>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllDiagrams>>,
+          TError,
+          Awaited<ReturnType<typeof getAllDiagrams>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllDiagrams<
+  TData = Awaited<ReturnType<typeof getAllDiagrams>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllDiagrams>>,
+          TError,
+          Awaited<ReturnType<typeof getAllDiagrams>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllDiagrams<
+  TData = Awaited<ReturnType<typeof getAllDiagrams>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Seznam diagramů
+ */
+
+export function useGetAllDiagrams<
+  TData = Awaited<ReturnType<typeof getAllDiagrams>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAllDiagramsQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

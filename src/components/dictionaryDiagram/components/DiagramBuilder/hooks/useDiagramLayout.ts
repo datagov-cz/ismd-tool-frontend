@@ -12,12 +12,14 @@ type UseDiagramLayoutProps = {
   nodes: ConceptFlowNode[];
   edges: ConceptFlowEdge[];
   dispatch: React.Dispatch<HistoryAction>;
+  autoLayout: boolean;
 };
 
 export const useDiagramLayout = ({
   nodes,
   edges,
   dispatch,
+  autoLayout,
 }: UseDiagramLayoutProps) => {
   const { fitView } = useReactFlow();
 
@@ -43,7 +45,7 @@ export const useDiagramLayout = ({
   );
 
   useEffect(() => {
-    if (!nodesInitialized) {
+    if (!autoLayout || !nodesInitialized) {
       return;
     }
 
@@ -58,7 +60,7 @@ export const useDiagramLayout = ({
     didAutoLayout.current = true;
 
     runLayout('TB');
-  }, [nodesInitialized, nodes.length, runLayout]);
+  }, [autoLayout, nodesInitialized, nodes.length, runLayout]);
 
   return {
     runLayout,

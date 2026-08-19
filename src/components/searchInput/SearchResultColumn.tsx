@@ -42,7 +42,19 @@ const TYPE_CONFIG = {
     emptyKey: 'NoConcepts' as const,
     hrefPrefix: '/concept',
   },
-};
+  [SearchType.DIAGRAM]: {
+    titleKey: 'Ontologies' as const,
+    emptyKey: 'NoOntologies' as const,
+    hrefPrefix: '/dictionary',
+  },
+} satisfies Record<
+  SearchType,
+  {
+    titleKey: 'Ontologies' | 'Concepts';
+    emptyKey: 'NoOntologies' | 'NoConcepts';
+    hrefPrefix: string;
+  }
+>;
 
 export const SearchResultColumn = ({
   type,

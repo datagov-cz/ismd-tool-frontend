@@ -4,20 +4,47 @@ import { GovButton, GovIcon, GovTag } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
+import { useSaveLayout } from '@/api/generated';
+
+import {
+  buildDiagramLayoutDto,
+  ConceptFlowEdge,
+  ConceptFlowNode,
+} from './model/diagram';
 import { capitalizeFirst } from './utils/capitalizeFirst';
 
 type DictionaryDiagramHeaderProps = {
   ontologyName?: string;
-  activeConceptCount: number;
+  ontologySlug: string;
+  nodes: ConceptFlowNode[];
+  edges: ConceptFlowEdge[];
+  diagramVersion?: number;
 };
 
 export const DictionaryDiagramHeader = ({
   ontologyName,
-  activeConceptCount,
+  ontologySlug,
+  nodes,
+  edges,
+  diagramVersion,
 }: DictionaryDiagramHeaderProps) => {
   const router = useRouter();
   const t = useTranslations('ConceptDetail');
+  const saveLayout = useSaveLayout({
+    mutation: {
+      onSuccess: () => toast.success('Návrh diagramu byl uložen.'),
+      onError: () => toast.error('Návrh diagramu se nepodařilo uložit.'),
+    },
+  });
+
+  const handleSaveLayout = () => {
+    saveLayout.mutate({
+      ontologySlug: encodeURIComponent(ontologySlug),
+      data: { ...buildDiagramLayoutDto(nodes, edges, diagramVersion ?? 0) },
+    });
+  };
 
   return (
     <div className="w-full flex justify-between">
@@ -60,17 +87,23 @@ export const DictionaryDiagramHeader = ({
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-sm text-card-description">
-          {activeConceptCount} pojmů v diagramu
-        </span>
-
         <GovButton type="outlined" color="neutral" size="s">
           Zavřít
         </GovButton>
 
+        <GovButton
+          type="solid"
+          color="secondary"
+          size="s"
+          disabled={saveLayout.isPending}
+          onGovClick={handleSaveLayout}
+        >
+          <GovIcon name="bookmark-plus" size="s" slot="icon-start" />
+          {saveLayout.isPending ? 'Ukládání…' : 'Uložit návrh'}
+        </GovButton>
         <GovButton type="solid" color="primary" size="s">
           <GovIcon name="floppy" size="s" slot="icon-start" />
-          Uložit
+          Propsat do slovníku
         </GovButton>
       </div>
     </div>

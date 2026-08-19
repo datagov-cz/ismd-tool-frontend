@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 
-import { ConceptDetailModel } from '@/api/generated';
-import { getConceptId, getConceptIri } from '../model/concept';
+import { getConceptId } from '../model/concept';
 import { ConceptFlowEdge, ConceptFlowNode } from '../model/diagram';
 
 export function useActiveConceptIds(
   nodes: ConceptFlowNode[],
   edges: ConceptFlowEdge[],
-  concepts: ConceptDetailModel[],
 ) {
   return useMemo(() => {
     const ids = new Set<string>();
@@ -20,20 +18,10 @@ export function useActiveConceptIds(
       }
     }
 
-    const usedVztahIris = new Set(
-      edges.map((e) => e.data?.vztahIri).filter(Boolean),
-    );
-
-    if (usedVztahIris.size) {
-      for (const concept of concepts) {
-        const iri = getConceptIri(concept);
-
-        if (iri && usedVztahIris.has(iri)) {
-          ids.add(getConceptId(concept));
-        }
-      }
+    for (const edge of edges) {
+      if (edge.data?.vztahIri) ids.add(edge.data.vztahIri);
     }
 
     return ids;
-  }, [nodes, edges, concepts]);
+  }, [nodes, edges]);
 }

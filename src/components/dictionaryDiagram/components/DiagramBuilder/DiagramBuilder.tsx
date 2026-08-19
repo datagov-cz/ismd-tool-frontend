@@ -14,10 +14,14 @@ export type DiagramBuilderProps = {
   concepts: Concept[];
   nodes: ConceptFlowNode[];
   edges: ConceptFlowEdge[];
+  autoLayout: boolean;
   dispatch: Dispatch<HistoryAction>;
   ontology: string;
   canUndo: boolean;
   canRedo: boolean;
+  focusRequest: { conceptId: string; requestId: number } | null;
+  onFocusRequestHandled: () => void;
+  onSelectedConceptIdsChange: (_conceptIds: Set<string>) => void;
 };
 
 export const DiagramBuilder = (props: DiagramBuilderProps) => (
