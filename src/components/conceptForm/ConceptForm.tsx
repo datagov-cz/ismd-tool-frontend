@@ -64,7 +64,7 @@ export const BASE_DEFAULTS: Omit<
   acquisitionMethod: '',
   sharingMethod: [],
   isInPPDF: false,
-  isPublic: false,
+  isPublic: undefined,
   privacyProvisions: [],
   domain: undefined,
   codeListDataset: undefined,
@@ -140,6 +140,8 @@ export const ConceptForm = ({
     });
   }, [externalDefaults]);
 
+  const type = form.watch('conceptType');
+
   const handleCancel = () => {
     if (
       form.formState.isDirty &&
@@ -174,7 +176,7 @@ export const ConceptForm = ({
           <ConceptMeaningSection blockedIri={conceptIri} />
           <SourcesSection />
           <RightsAndObligationsSection />
-          <ProclamationSection />
+          {type !== 'TRIDA' && <ProclamationSection />}
           <OntologySection />
           <FormToolbar<ConceptFormType>
             isPending={isPending}

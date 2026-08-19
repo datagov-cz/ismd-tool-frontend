@@ -191,7 +191,8 @@
     "Registry": {
       "Title": "Registr práv a povinností",
       "PPDF": "údaj je sdílen v PPDF",
-      "NonPublic": "údaj je veřejný",
+      "NonPublic": "údaj je neveřejný",
+      "Public": "údaj je veřejný",
       "AIS": "AIS",
       "Agenda": "Agenda"
     },
