@@ -8,6 +8,7 @@ import {
 import { AddPropertyModal } from '../AddPropertyRelation/AddPropertyModal';
 import { AddPropertyRelation } from '../AddPropertyRelation/AddPropertyRelation';
 import { AddRelationModal } from '../AddPropertyRelation/AddRelationModal';
+import { Section } from '../Section';
 
 interface Props {
   properties?: ConceptDetailModel['conceptProperties'];
@@ -19,6 +20,7 @@ interface Props {
   resolvedRelations?: ConceptDetailModelReferencovanéPojmyResolved;
   ontologyIri?: string;
   ontologySlug?: string;
+  instantions?: ConceptDetailModel['instance-definovány-číselníkem'];
 }
 
 export const PropertiesRelationsSection = ({
@@ -31,6 +33,7 @@ export const PropertiesRelationsSection = ({
   ontologyIri,
   ontologySlug,
   resolvedRelations,
+  instantions,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const [propertyOpen, setPropertyOpen] = useState(false);
@@ -63,6 +66,17 @@ export const PropertiesRelationsSection = ({
           openModal={() => setRelationOpen(true)}
           resolvedRelations={resolvedRelations}
         />
+        {instantions && Object.keys(instantions).length > 0 && (
+          <Section title={t('Sections.InstantiatedByCodeList')}>
+            <div className="space-y-2 w-full">
+              {Object.entries(instantions).map(([key, value]) => (
+                <Section key={key} title={key.split('-').join(' ')}>
+                  {value}
+                </Section>
+              ))}
+            </div>
+          </Section>
+        )}
       </div>
       {conceptName && isOwnerLoggedIn && (
         <>

@@ -100,9 +100,10 @@ export const AddRelationModal = ({
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateConcept(response.data?.slug || '');
-          queryInvalidate.invalidateConcept(classSlug);
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           setOpen(false);
           setCreateView(false);
+          formAdd.reset({ relation: null, otherConcept: null });
         },
       },
     );
@@ -117,12 +118,18 @@ export const AddRelationModal = ({
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateConcept(response.data?.slug || '');
-          queryInvalidate.invalidateConcept(classSlug);
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           queryInvalidate.invalidateOntology(
             response.data?.ontologySlug || ontologySlug || '',
           );
           setOpen(false);
           setCreateView(false);
+          formCreate.reset({
+            ...BASE_DEFAULTS,
+            ontologyGraphName: ontologyGraphName,
+            conceptType: 'VZTAH',
+            conceptTypeEnum: 'VZTAH',
+          });
         },
       },
     );

@@ -199,7 +199,7 @@ export const OntologyLayout = ({
               </Section>
             )}
 
-            {popis ? (
+            {popis && Object.keys(popis).length > 0 ? (
               <Section title={t('Main.Description')}>
                 <LanguageSwitcher item={popis} />
               </Section>

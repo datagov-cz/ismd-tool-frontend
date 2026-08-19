@@ -99,7 +99,8 @@ export const ControlPanel = ({
           )}
         </div>
 
-        {isEditAllowed && (
+        {/* TODO: ADD ONCE DIAGRAM CREATION IS IMPLEMENTED */}
+        {/* {isEditAllowed && (
           <GovButton
             nativeType="button"
             color="neutral"
@@ -116,7 +117,7 @@ export const ControlPanel = ({
             />
             {t('CreateDiagram')}
           </GovButton>
-        )}
+        )} */}
       </div>
       <div className="flex justify-end">
         <ControlPanelButton

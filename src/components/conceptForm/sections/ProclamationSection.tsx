@@ -35,6 +35,10 @@ export const ProclamationSection = () => {
       value: 'provozní',
       label: t('CommonConceptFields.Options.AcquisitionMethod.Operational'),
     },
+    {
+      value: 'vlastní',
+      label: t('CommonConceptFields.Options.AcquisitionMethod.Own'),
+    },
   ];
 
   const SHARING_METHOD_OPTIONS = [

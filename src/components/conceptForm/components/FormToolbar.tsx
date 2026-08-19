@@ -8,8 +8,10 @@ import { useFormHistory } from '@/hooks/useFormHistory';
 
 export const FormToolbar = <T extends FieldValues>({
   isPending,
+  onCancel,
 }: {
   isPending: boolean;
+  onCancel: () => void;
 }) => {
   const { undo, redo, canUndo, canRedo } = useFormHistory<T>();
   const {
@@ -122,7 +124,7 @@ export const FormToolbar = <T extends FieldValues>({
             type="outlined"
             color="neutral"
             size="s"
-            disabled={isPending}
+            onGovClick={onCancel}
           >
             {t('Cancel')}
           </GovButton>
