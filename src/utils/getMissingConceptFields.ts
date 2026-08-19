@@ -37,6 +37,12 @@ export const FIELD_GROUPS: FieldGroup[] = [
         anchor: '#superRelation',
       },
       {
+        key: 'instance-definovány-číselníkem',
+        labelKey: 'Sections.InstantiatedByCodeList',
+        types: ['TRIDA'],
+        anchor: '#codeListIri',
+      },
+      {
         key: 'definiční-obor',
         labelKey: 'Sections.DefinicniObor',
         types: ['VLASTNOST', 'VZTAH', undefined],

@@ -172,7 +172,8 @@
       "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
       "ConceptSource": "Zdroje pojmu",
       "DefiningNonLegislative": "Definujice nelegislativni zdroj",
-      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj"
+      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj",
+      "InstantiatedByCodeList": "Instance definovány číselníkem"
     },
     "Groups": {
       "TypesAndClassification": "Typy a zařazení",
@@ -209,6 +210,7 @@
         "NotFound": "Pojem nenalezen",
         "InOntology": "Ve slovníku"
       },
+      "DefinedByDictionary": "Definován číselníkem",
       "Draft": "Rozpracovaný",
       "WorkingCopy": "Pracovní kopie",
       "Public": "Veřejný",
@@ -541,7 +543,9 @@
       "Labels": {
         "ClassType": "Typ třídy",
         "BroaderConcept": "Nadřazená třída",
-        "ConceptType": "Typ pojmu"
+        "ConceptType": "Typ pojmu",
+        "CodeListIri": "Iri číselníku",
+        "CodeListDataset": "Dataset číselníku"
       },
       "Options": {
         "ClassType": {

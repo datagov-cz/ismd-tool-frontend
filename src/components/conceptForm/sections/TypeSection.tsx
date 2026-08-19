@@ -4,12 +4,13 @@ import { useFormContext } from 'react-hook-form';
 import { ConceptEditModelConceptTypeEnum } from '@/api/generated';
 import { ConceptInput } from '@/components/shared/ConceptInput';
 import { DataTypeInput } from '@/components/shared/DataTypeInput';
+import { Input } from '@/components/shared/Input';
 import { Select } from '@/components/shared/Select';
 import { FormSection } from '../components/FormSection';
 import { type ConceptForm } from '../schema/conceptFormSchema';
 
 export const TypesSection = ({ editing }: { editing?: boolean }) => {
-  const { watch } = useFormContext<ConceptForm>();
+  const { watch, register } = useFormContext<ConceptForm>();
   const type = watch('conceptType');
   const t = useTranslations('CreateConcept');
 
@@ -58,6 +59,25 @@ export const TypesSection = ({ editing }: { editing?: boolean }) => {
           options={TYPE_OPTIONS}
         />
       )}
+      {type === 'TRIDA' && (
+        <>
+          <Input
+            register={register}
+            name="codeListIri"
+            anchor="codeListIri"
+            label={t('ClassCreateFields.Labels.CodeListIri')}
+            placeholder=""
+          />
+          <Input
+            register={register}
+            name="codeListDataset"
+            anchor="codeListDataset"
+            label={t('ClassCreateFields.Labels.CodeListDataset')}
+            placeholder=""
+          />
+        </>
+      )}
+
       {type === 'VLASTNOST' && (
         <>
           <ConceptInput
