@@ -35,11 +35,15 @@ type LanguageEntry = { name?: string; languageTag?: string };
 const buildLanguageEntries = (
   base: string | undefined,
   optional: Record<string, string | undefined>,
+  includeEmpty = false,
 ): LanguageEntry[] => [
   { name: base ?? '', languageTag: 'cs' },
   ...Object.entries(optional)
-    .filter(([, value]) => Boolean(value))
-    .map(([languageTag, name]) => ({ languageTag, name: name! })),
+    .filter(([, value]) => includeEmpty || Boolean(value))
+    .map(([languageTag, name]) => ({
+      languageTag,
+      name: name ?? '',
+    })),
 ];
 
 const toLanguageMap = <T extends Record<string, string>>(
@@ -67,10 +71,14 @@ export const DictionaryEditForm = ({
   const storageKey = draftKeys.ontologyEdit(metadata.slug ?? '');
 
   const buildValues = () => ({
-    nameModel: buildLanguageEntries(detail.název?.cs, {
-      sk: detail.název?.sk,
-      en: detail.název?.en,
-    }),
+    nameModel: buildLanguageEntries(
+      detail.název?.cs,
+      {
+        sk: detail.název?.sk,
+        en: detail.název?.en,
+      },
+      true,
+    ),
     descriptionModel: buildLanguageEntries(detail.popis?.cs, {
       sk: detail.popis?.sk,
       en: detail.popis?.en,
@@ -78,7 +86,7 @@ export const DictionaryEditForm = ({
   });
 
   const form = useForm<OntologyEditModel>({
-    resolver: zodResolver(ontologyEditModelSchema),
+    resolver: zodResolver(ontologyEditModelSchema(t)),
     defaultValues: buildValues(),
     values: buildValues(),
   });
@@ -114,6 +122,18 @@ export const DictionaryEditForm = ({
       onSuccess: (res) => router.push(`/dictionary/${res.data?.slug}`),
       draftKey: storageKey,
     });
+  };
+
+  const handleCancel = () => {
+    if (
+      form.formState.isDirty &&
+      !window.confirm(t('DiscardChangesConfirmation'))
+    ) {
+      return;
+    }
+
+    form.reset();
+    router.push(`/dictionary/${metadata.slug}`);
   };
 
   return (
@@ -176,6 +196,7 @@ export const DictionaryEditForm = ({
 
                 <FormToolbar<OntologyEditModel>
                   isPending={isPending && !isPaused}
+                  onCancel={handleCancel}
                 />
               </form>
             </FormProvider>

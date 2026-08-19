@@ -10,6 +10,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
@@ -222,6 +223,12 @@ export function mapDetailToFormValues(
         ? false
         : undefined,
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
+    codeListIri:
+      detail['instance-definovány-číselníkem'] &&
+      detail['instance-definovány-číselníkem'].iri,
+    codeListDataset:
+      detail['instance-definovány-číselníkem'] &&
+      detail['instance-definovány-číselníkem']['datová-sada-v-nkod'],
   };
 }
 
@@ -232,6 +239,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const t = useTranslations('ConceptEditWrapper');
   const router = useRouter();
   const submitForm = useSubmitForm();
+  const queryInvalidate = useQueryInvalidator();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
@@ -258,7 +266,15 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         conceptId: conceptMetadata.id,
         data: normalizeFormData(formData, originalLanguageTags),
       },
-      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      onSuccess: (response) => {
+        queryInvalidate.invalidateConcept(
+          decodeURIComponent(response.data?.slug || ''),
+        );
+        queryInvalidate.invalidateOntology(
+          response.data?.ontologySlug || graphName,
+        );
+        router.push(`/concept/${response.data?.slug}`);
+      },
       draftKey: storageKey,
     });
   };
@@ -300,6 +316,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           editing={true}
           storageKey={storageKey}
           conceptIri={data?.data?.conceptDetail?.iri}
+          slug={slug}
         />
       )}
     </div>

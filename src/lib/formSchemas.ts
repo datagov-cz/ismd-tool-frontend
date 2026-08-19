@@ -21,10 +21,29 @@ const languageSchema = z.object({
   name: z.string().optional(),
 });
 
+const createNameModelSchema = (t: (_key: string) => string) =>
+  z
+    .array(languageSchema)
+    .min(1, t('FormSchema.NameRequired'))
+    .superRefine((entries, ctx) => {
+      const czechIndex = entries.findIndex(
+        ({ languageTag }) => languageTag === 'cs',
+      );
+      const czechName = entries[czechIndex]?.name;
+
+      if (czechIndex === -1 || !czechName?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t('FormSchema.CSNameRequired'),
+          path: [Math.max(czechIndex, 0), 'name'],
+        });
+      }
+    });
+
 export const createOntologySchema = (t: (_key: string) => string) =>
   z.object({
     namespace: z.string().min(1, t('FormSchema.NamespaceRequired')),
-    nameModel: z.array(languageSchema).min(1, t('FormSchema.NameRequired')),
+    nameModel: createNameModelSchema(t),
     descriptionModel: z.array(languageSchema).optional(),
   });
 
@@ -32,9 +51,12 @@ export type OntologySchemaType = z.infer<
   ReturnType<typeof createOntologySchema>
 >;
 
-export const ontologyEditModelSchema = z.object({
-  nameModel: z.array(languageSchema).optional(),
-  descriptionModel: z.array(languageSchema).optional(),
-});
+export const ontologyEditModelSchema = (t: (_key: string) => string) =>
+  z.object({
+    nameModel: createNameModelSchema(t),
+    descriptionModel: z.array(languageSchema).optional(),
+  });
 
-export type OntologyEditModel = z.infer<typeof ontologyEditModelSchema>;
+export type OntologyEditModel = z.infer<
+  ReturnType<typeof ontologyEditModelSchema>
+>;

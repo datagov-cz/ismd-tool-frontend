@@ -165,6 +165,25 @@ export const ConceptHeader = ({
                     </span>
                   </GovTag>
                 )}
+                {conceptDetail['instance-definovány-číselníkem'] &&
+                  Object.keys(conceptDetail['instance-definovány-číselníkem'])
+                    .length > 0 && (
+                    <GovTag
+                      color="neutral"
+                      type="subtle"
+                      size="xs"
+                      className="h-fit whitespace-nowrap my-1!"
+                    >
+                      <GovIcon
+                        name="signpost-2-fill"
+                        slot="icon-start"
+                        type="components"
+                      />
+                      <span className="font-bold">
+                        {t('Main.DefinedByDictionary')}
+                      </span>
+                    </GovTag>
+                  )}
               </div>
             </div>
             <div>

@@ -172,7 +172,8 @@
       "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
       "ConceptSource": "Zdroje pojmu",
       "DefiningNonLegislative": "Definujice nelegislativni zdroj",
-      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj"
+      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj",
+      "InstantiatedByCodeList": "Instance definovány číselníkem"
     },
     "Groups": {
       "TypesAndClassification": "Typy a zařazení",
@@ -210,6 +211,7 @@
         "NotFound": "Pojem nenalezen",
         "InOntology": "Ve slovníku"
       },
+      "DefinedByDictionary": "Definován číselníkem",
       "Draft": "Rozpracovaný",
       "WorkingCopy": "Pracovní kopie",
       "Public": "Veřejný",
@@ -255,6 +257,7 @@
     "EditOntology": {
       "Title": "Upravit slovník",
       "EditedOntology": "Upravovaný slovník",
+      "DiscardChangesConfirmation": "Opravdu chcete zrušit změny?",
       "Save": "Uložit",
       "Back": "Zpět",
       "Ontology": "Slovníky",
@@ -263,6 +266,10 @@
         "Name": "Název",
         "Language": "Jazyk",
         "Description": "Popis"
+      },
+      "FormSchema": {
+        "NameRequired": "Název je povinný",
+        "CSNameRequired": "Název (CS) je povinný"
       },
       "SuccessMessage": "Slovník byl úspěšně upraven",
       "ErrorMessage": "Chyba při úpravě slovníku"
@@ -453,7 +460,8 @@
   },
   "Errors": {
     "UnknownError": "Neznámý error",
-    "NameRequired": "Název je povinný"
+    "NameRequired": "Název je povinný",
+    "CSNameRequired": "Název (CS) je povinný"
   },
   "CreateOntology": {
     "Form": {
@@ -478,6 +486,7 @@
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",
       "NameRequired": "Název je povinný",
+      "CSNameRequired": "Název (CS) je povinný",
       "DescriptionRequired": "Popis je povinný",
       "LanguageTagRequired": "Jazykový tag je povinný"
     }
@@ -541,7 +550,9 @@
       "Labels": {
         "ClassType": "Typ třídy",
         "BroaderConcept": "Nadřazená třída",
-        "ConceptType": "Typ pojmu"
+        "ConceptType": "Typ pojmu",
+        "CodeListIri": "Iri číselníku",
+        "CodeListDataset": "Dataset číselníku"
       },
       "Options": {
         "ClassType": {

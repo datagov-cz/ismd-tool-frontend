@@ -39,11 +39,6 @@ export const NavItems = ({ session }: Props) => {
           <NavDropdownList
             items={[
               {
-                icon: 'gear',
-                label: t('NavLogged.Settings'),
-                onClick: () => {},
-              },
-              {
                 icon: 'upload',
                 label: t('NavLogged.Logout'),
                 onClick: () => void federatedSignOut(),
