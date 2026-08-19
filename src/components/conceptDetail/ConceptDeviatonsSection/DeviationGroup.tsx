@@ -80,7 +80,9 @@ export const DeviationGroup = ({
       { conceptId, data: { fieldsToAccept: selectedKeys } },
       {
         onSuccess: (data) => {
-          invalidator.invalidateConcept(data.data?.conceptMetadata?.slug ?? '');
+          invalidator.invalidateConcept(
+            decodeURIComponent(data.data?.conceptMetadata?.slug || ''),
+          );
           invalidator.invalidateOntology(
             data.data?.conceptMetadata?.ontologySlug ?? '',
           );

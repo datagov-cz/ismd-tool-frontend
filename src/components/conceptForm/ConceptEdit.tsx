@@ -10,6 +10,7 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
@@ -234,6 +235,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const t = useTranslations('ConceptEditWrapper');
   const router = useRouter();
   const submitForm = useSubmitForm();
+  const queryInvalidate = useQueryInvalidator();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
@@ -260,7 +262,15 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         conceptId: conceptMetadata.id,
         data: normalizeFormData(formData, originalLanguageTags),
       },
-      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      onSuccess: (response) => {
+        queryInvalidate.invalidateConcept(
+          decodeURIComponent(response.data?.slug || ''),
+        );
+        queryInvalidate.invalidateOntology(
+          response.data?.ontologySlug || graphName,
+        );
+        router.push(`/concept/${response.data?.slug}`);
+      },
       draftKey: storageKey,
     });
   };
