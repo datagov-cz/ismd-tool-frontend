@@ -45,6 +45,14 @@ const groupByRuleName = (items: ValidationResult[]): ValidationRule[] => {
   return Array.from(map.values());
 };
 
+const groupValidationResults = (
+  results: ValidationResult[],
+): GroupedValidation => ({
+  errors: groupByRuleName(results.filter((r) => r.severity === 'ERROR')),
+  warnings: groupByRuleName(results.filter((r) => r.severity === 'WARNING')),
+  infos: groupByRuleName(results.filter((r) => r.severity === 'INFO')),
+});
+
 export const ValidationSummary = ({
   slug,
   metaData,
@@ -66,20 +74,11 @@ export const ValidationSummary = ({
       {
         onSuccess: (data) => {
           const report = data.data;
+          if (!report) return;
+
           setValidationReport(report);
 
-          const results = report?.results ?? [];
-          setGrouped({
-            errors: groupByRuleName(
-              results.filter((r) => r.severity === 'ERROR'),
-            ),
-            warnings: groupByRuleName(
-              results.filter((r) => r.severity === 'WARNING'),
-            ),
-            infos: groupByRuleName(
-              results.filter((r) => r.severity === 'INFO'),
-            ),
-          });
+          setGrouped(groupValidationResults(report.results ?? []));
         },
       },
     );
@@ -208,17 +207,22 @@ const ValidationSection = ({
   onRuleClick: (_rule: ValidationRule) => void;
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div>
-      <span
+      <button
+        type="button"
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+        aria-expanded={isExpanded}
+        aria-label={isExpanded ? t('CollapseSection') : t('ExpandSection')}
         className={clsx(
           {
             'text-status-error-700': severity === 'ERROR',
             'text-status-warning-700': severity === 'WARNING',
             'text-footer-separator': severity === 'INFO',
           },
-          'font-bold text-sm flex gap-2 items-center pb-2.5',
+          'font-bold text-sm flex gap-2 items-center pb-2.5 w-full text-left',
         )}
       >
         <GovIcon
@@ -239,21 +243,36 @@ const ValidationSection = ({
                 : 'shield-check'
           }
         />
-        {label}{' '}
-        <span className="text-black/70 font-normal">[{totalCount}]</span>
-      </span>
-      <div className="space-y-2">
-        {rules.map((rule) => (
-          <ValidationCard
-            key={rule.ruleName}
-            label={rule.message}
-            count={rule.items.length}
-            onClick={() => onRuleClick(rule)}
-            severity={severity}
-            showConceptsLabel={t('ShowConcepts')}
+        <span>
+          {label}{' '}
+          <span className="text-black/70 font-normal">[{totalCount}]</span>
+        </span>
+        <span className="ml-auto flex items-center justify-center text-current">
+          <GovIcon
+            type="components"
+            name="chevron-down"
+            size="s"
+            className={clsx(
+              isExpanded && 'rotate-180',
+              'text-current transition-transform duration-200',
+            )}
           />
-        ))}
-      </div>
+        </span>
+      </button>
+      {isExpanded && (
+        <div className="space-y-2">
+          {rules.map((rule) => (
+            <ValidationCard
+              key={rule.ruleName}
+              label={rule.message}
+              count={rule.items.length}
+              onClick={() => onRuleClick(rule)}
+              severity={severity}
+              showConceptsLabel={t('ShowConcepts')}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
