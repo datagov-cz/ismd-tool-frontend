@@ -125,8 +125,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -149,9 +149,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -351,6 +351,8 @@ export interface ConceptDetailModel {
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
   'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
   'instance-definovány-číselníkem'?: CodeListDto;
+  'počet-cizích-vlastností'?: number;
+  'počet-cizích-vztahů'?: number;
   'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
@@ -707,10 +709,10 @@ export interface Jwt {
   expiresAt?: string;
   headers?: JwtHeaders;
   claims?: JwtClaims;
+  audience?: string[];
+  subject?: string;
   notBefore?: string;
   issuer?: string;
-  subject?: string;
-  audience?: string[];
   id?: string;
 }
 

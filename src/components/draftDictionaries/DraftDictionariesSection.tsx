@@ -38,6 +38,17 @@ export const DraftDictionariesSection = () => {
           <CircularLoader />
         ) : (
           ontologies.data?.data
+            ?.slice()
+            .sort((a, b) => {
+              const aUpdatedAt = a.updatedAt
+                ? new Date(a.updatedAt).getTime()
+                : 0;
+              const bUpdatedAt = b.updatedAt
+                ? new Date(b.updatedAt).getTime()
+                : 0;
+
+              return (bUpdatedAt || 0) - (aUpdatedAt || 0);
+            })
             ?.slice(0, 8)
             .map(
               ({ id, name, slug, popis, concepts, updatedAt }) =>
