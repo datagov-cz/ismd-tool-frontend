@@ -10,6 +10,7 @@ import { CircularLoader } from '../shared/CircularLoader';
 import {
   DictionaryCard,
   DictionaryCardProps,
+  getPreferredTranslation,
 } from '../shared/DictionaryCard/DictionaryCard';
 
 export type VisitedEntry = {
@@ -79,9 +80,11 @@ export const VisitedOntologies = () => {
       ? [
           {
             type: 'ISMD' as const,
-            title: item.name || '',
+            title: getPreferredTranslation(item.name) ?? '',
+            titleTranslations: item.name,
             id: item.id,
-            text: item.popis,
+            text: getPreferredTranslation(item.popis),
+            textTranslations: item.popis,
             modified: item.updatedAt ? new Date(item.updatedAt) : undefined,
             concepts: item.conceptCount || 0,
             link: getOntologyHref({ slug: item.slug || '', source: 'ISMD' }),
@@ -94,8 +97,10 @@ export const VisitedOntologies = () => {
   const nkdOntologies = (nkd?.data?.ontologies ?? []).map(
     (item): DictionaryCardProps => ({
       type: 'NKD',
-      title: item.název?.cs || '',
-      text: item.popis?.cs || '',
+      title: getPreferredTranslation(item.název) ?? '',
+      titleTranslations: item.název,
+      text: getPreferredTranslation(item.popis),
+      textTranslations: item.popis,
       modified: item['časový-okamžik-poslední-změny']
         ? new Date(item['časový-okamžik-poslední-změny'])
         : undefined,
@@ -123,7 +128,7 @@ export const VisitedOntologies = () => {
       </h2>
       <div className="space-y-4">
         {visitedOntologies.map((item) => (
-          <DictionaryCard {...item} key={item.title} />
+          <DictionaryCard {...item} key={`${item.type}-${item.link}`} />
         ))}
         {(isLoadingISMD || isLoadingNKD) && <CircularLoader />}
       </div>
