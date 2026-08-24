@@ -46,9 +46,10 @@ export const DraftDictionariesSection = () => {
                   <DictionaryCard
                     type="ISMD"
                     key={id}
-                    title={name}
+                    title=""
+                    titleTranslations={name}
                     link={`/dictionary/${slug}`}
-                    text={popis || ''}
+                    textTranslations={popis}
                     concepts={concepts?.length ?? 0}
                     modified={updatedAt ? new Date(updatedAt) : undefined}
                     id={id}
