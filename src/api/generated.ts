@@ -125,8 +125,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -149,9 +149,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -351,6 +351,8 @@ export interface ConceptDetailModel {
   'ustanovení-dokládající-neveřejnost-údaje'?: string[];
   'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
   'instance-definovány-číselníkem'?: CodeListDto;
+  'počet-cizích-vlastností'?: number;
+  'počet-cizích-vztahů'?: number;
   'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
 }
 
@@ -707,10 +709,10 @@ export interface Jwt {
   expiresAt?: string;
   headers?: JwtHeaders;
   claims?: JwtClaims;
+  audience?: string[];
   notBefore?: string;
   issuer?: string;
   subject?: string;
-  audience?: string[];
   id?: string;
 }
 
@@ -1029,6 +1031,20 @@ export interface RppSearchResultDto {
   iri?: string;
   code?: string;
   nazev?: string;
+}
+
+export interface ApiResponseDtoValidationReportDto {
+  data?: ValidationReportDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface ValidationReportDto {
+  results?: ValidationResult[];
+  timestamp?: string;
+  ontologyIri?: string;
+  id?: number;
 }
 
 export interface ApiResponseDtoGetOntologyDto {
@@ -3978,6 +3994,175 @@ export function useSearchAgendas<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getSearchAgendasQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací výsledky poslední uložené kontroly slovníku. Zpráva se ukládá při nahrání slovníku a při ručním spuštění kontroly; nevzniká automaticky při úpravě pojmů. Slovník, který dosud nebyl zkontrolován, vrací prázdný seznam výsledků. Veřejný endpoint.
+ * @summary Zpráva z poslední kontroly slovníku
+ */
+export const getValidationReport = (
+  slug: string,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoValidationReportDto>(
+    { url: `/api/ontology/${slug}/validation-report`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getGetValidationReportQueryKey = (slug?: string) => {
+  return [`/api/ontology/${slug}/validation-report`] as const;
+};
+
+export const getGetValidationReportQueryOptions = <
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetValidationReportQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getValidationReport>>
+  > = ({ signal }) => getValidationReport(slug, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getValidationReport>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetValidationReportQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getValidationReport>>
+>;
+export type GetValidationReportQueryError = unknown;
+
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getValidationReport>>,
+          TError,
+          Awaited<ReturnType<typeof getValidationReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getValidationReport>>,
+          TError,
+          Awaited<ReturnType<typeof getValidationReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Zpráva z poslední kontroly slovníku
+ */
+
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetValidationReportQueryOptions(slug, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

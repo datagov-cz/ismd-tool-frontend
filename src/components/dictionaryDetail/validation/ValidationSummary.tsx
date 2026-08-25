@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import {
   OntologyMetadataModel,
+  useGetValidationReport,
   useValidateOntology,
   ValidationReport,
   ValidationResult,
@@ -65,26 +66,42 @@ export const ValidationSummary = ({
   const [validationReport, setValidationReport] = useState<ValidationReport>();
   const [grouped, setGrouped] = useState<GroupedValidation>();
 
-  const validate = useValidateOntology();
+  const createValidationReport = useValidateOntology();
+  const getValidationReport = useGetValidationReport(slug, {
+    query: { enabled: false },
+  });
   const openRule = useValidationSideboxStore((state) => state.openRule);
 
-  const handleValidate = () => {
-    validate.mutate(
+  const setReport = (report?: ValidationReport) => {
+    if (!report) return;
+
+    setValidationReport(report);
+    setGrouped(groupValidationResults(report.results ?? []));
+  };
+
+  const handleValidate = async () => {
+    const updatedAt = metaData.updatedAt
+      ? new Date(metaData.updatedAt).getTime()
+      : Number.NaN;
+    const lastValidationAt = metaData.lastValidationAt
+      ? new Date(metaData.lastValidationAt).getTime()
+      : Number.NaN;
+
+    if (!Number.isNaN(lastValidationAt) && updatedAt <= lastValidationAt) {
+      const { data } = await getValidationReport.refetch();
+      setReport(data?.data);
+      return;
+    }
+
+    createValidationReport.mutate(
       { slug: slug, data: metaData },
       {
-        onSuccess: (data) => {
-          const report = data.data;
-          if (!report) return;
-
-          setValidationReport(report);
-
-          setGrouped(groupValidationResults(report.results ?? []));
-        },
+        onSuccess: (data) => setReport(data.data),
       },
     );
   };
 
-  if (validate.isPending)
+  if (createValidationReport.isPending || getValidationReport.isFetching)
     return (
       <div className="h-full flex items-start justify-center w-full">
         <CircularLoader />
