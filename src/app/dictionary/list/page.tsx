@@ -1,4 +1,4 @@
-import { ISMDListWrapper } from '@/components/onotologyList/ISMDlistWrapper';
+import { ISMDListWrapper } from '@/components/ontologyList/ISMDlistWrapper';
 
 const ISMDList = async () => {
   return (
