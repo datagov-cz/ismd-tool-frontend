@@ -1,4 +1,4 @@
-import { FullListWrapper } from '@/components/onotologyList/FullListWrapper';
+import { FullListWrapper } from '@/components/ontologyList/FullListWrapper';
 
 const FullList = async () => {
   return (
