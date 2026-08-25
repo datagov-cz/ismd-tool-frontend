@@ -8,6 +8,7 @@ import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { ControlPanel } from '@/components/dictionaryDetail/ControlPanel';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
 import { ValidationSidebox } from '@/components/dictionaryDetail/validation/ValidationSidebox';
+import { getPreferredTranslation } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
@@ -66,7 +67,7 @@ export const DictionaryContent = ({ slug }: Props) => {
       source="ISMD"
       title={ontologyDetail.název}
       popis={ontologyDetail.popis}
-      fallbackPopis={ontologyMetadata.popis}
+      fallbackPopis={getPreferredTranslation(ontologyMetadata.popis)}
       statusLabel={
         ontologyMetadata.isPublished
           ? t('Main.DictionaryStatus.Published')
@@ -87,7 +88,7 @@ export const DictionaryContent = ({ slug }: Props) => {
     >
       <ControlPanel
         ontologyID={ontologyMetadata?.id || 0}
-        name={ontologyDetail.název?.cs || ''}
+        name={getPreferredTranslation(ontologyDetail.název) ?? ''}
         user={ontologyMetadata.user}
         commentsCount={ontologyMetadata.comments?.length}
         slug={slug}
