@@ -1,4 +1,4 @@
-import { NKDListWrapper } from '@/components/onotologyList/NKDlistWrapper';
+import { NKDListWrapper } from '@/components/ontologyList/NKDlistWrapper';
 
 const NKDList = async () => {
   return (

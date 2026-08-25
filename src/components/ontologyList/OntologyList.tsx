@@ -16,7 +16,7 @@ import {
 } from '../shared/DictionaryCard/DictionaryCard';
 
 type OntologyListProps = {
-  type: 'NKD' | 'ISMD';
+  type?: 'NKD' | 'ISMD';
   items: DictionaryCardProps[];
   isFetching: boolean;
   hasMore?: boolean;
@@ -58,7 +58,11 @@ export const OntologyList = ({
     <div className="space-y-4 max-w-250 mx-auto py-8">
       <div>
         <h1 className="pb-3 text-xl font-medium">
-          {isISMD ? t('ISMDTitle') : t('NKDTitle')}
+          {type === 'ISMD'
+            ? t('ISMDTitle')
+            : type === 'NKD'
+              ? t('NKDTitle')
+              : t('AllTitle')}
         </h1>
         {!isISMD && (
           <GovFormGroup className="relative w-full max-w-60">
@@ -86,7 +90,14 @@ export const OntologyList = ({
 
       <div className={clsx(isISMD ? 'grid grid-cols-2 gap-3' : 'space-y-3')}>
         {items.map((item) => (
-          <DictionaryCard key={item.title} {...item} />
+          <DictionaryCard
+            key={
+              item.type === 'ISMD'
+                ? `ismd-${item.id}`
+                : `nkd-${item.ontologyIRI}`
+            }
+            {...item}
+          />
         ))}
       </div>
 
