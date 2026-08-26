@@ -38,6 +38,17 @@ export const DraftDictionariesSection = () => {
           <CircularLoader />
         ) : (
           ontologies.data?.data
+            ?.slice()
+            .sort((a, b) => {
+              const aUpdatedAt = a.updatedAt
+                ? new Date(a.updatedAt).getTime()
+                : 0;
+              const bUpdatedAt = b.updatedAt
+                ? new Date(b.updatedAt).getTime()
+                : 0;
+
+              return (bUpdatedAt || 0) - (aUpdatedAt || 0);
+            })
             ?.slice(0, 8)
             .map(
               ({ id, name, slug, popis, concepts, updatedAt }) =>
@@ -46,9 +57,10 @@ export const DraftDictionariesSection = () => {
                   <DictionaryCard
                     type="ISMD"
                     key={id}
-                    title={name}
+                    title=""
+                    titleTranslations={name}
                     link={`/dictionary/${slug}`}
-                    text={popis || ''}
+                    textTranslations={popis}
                     concepts={concepts?.length ?? 0}
                     modified={updatedAt ? new Date(updatedAt) : undefined}
                     id={id}

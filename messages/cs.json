@@ -294,7 +294,9 @@
       "RevalidateShort": "Znovu ověřit",
       "IncompleteCatalogRecord": "Nekompletní katalogizační záznam",
       "OpenConcept": "Otevřít",
-      "ShowConcepts": "Zobrazit pojmy"
+      "ShowConcepts": "Zobrazit pojmy",
+      "ExpandSection": "Rozbalit sekci",
+      "CollapseSection": "Sbalit sekci"
     },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
@@ -374,6 +376,7 @@
   },
   "OntologyList": {
     "NKDTitle": "Publikované slovníky",
+    "AllTitle": "Výpis slovníků",
     "ISMDTitle": "Moje rozpracované slovníky",
     "SearchOntologies": "Hledat slovníky",
     "NoMoreResults": "Žádné další výsledky"
