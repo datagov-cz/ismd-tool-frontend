@@ -140,7 +140,7 @@ export const LegislativeSource = ({
       >
         <div className="flex items-center gap-2">
           <GovIcon type="components" name="book" color="neutral" />
-          <span className="font-medium text-start">
+          <span className="font-medium text-start break-normal">
             {data?.data?.displayLabel ?? item.displayLabel}
           </span>
         </div>
@@ -155,14 +155,17 @@ export const LegislativeSource = ({
 
       {open && (
         <div className="pt-3">
-          {data?.data?.fragmentBodyHtml && (
-            <div
-              className="border-y p-4 border-gray-border"
-              dangerouslySetInnerHTML={{
-                __html: data.data.fragmentBodyHtml ?? item.fragmentBodyHtml,
-              }}
-            />
-          )}
+          <div
+            className="border-y p-4 border-gray-border"
+            dangerouslySetInnerHTML={{
+              __html:
+                data?.data?.fragmentBodyHtml ??
+                item.fragmentBodyHtml ??
+                item.fragmentIri ??
+                item.originalUrl ??
+                '',
+            }}
+          />
 
           <GovButton
             color="primary"
