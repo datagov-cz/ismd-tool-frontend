@@ -313,7 +313,7 @@ export const OntologyLayout = ({
             </div>
           </div>
           {hasSidebar && (
-            <div className="order-first lg:order-none lg:col-span-1 flex flex-col gap-10 lg:sticky lg:top-24 self-start">
+            <div className="order-first lg:order-0 lg:col-span-1 flex flex-col gap-10 lg:sticky lg:top-24 self-start">
               {visibleDeviations && (
                 <DeviationSidebarCard
                   deviations={visibleDeviations}

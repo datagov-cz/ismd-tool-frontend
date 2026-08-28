@@ -710,9 +710,9 @@ export interface Jwt {
   headers?: JwtHeaders;
   claims?: JwtClaims;
   audience?: string[];
-  subject?: string;
   notBefore?: string;
   issuer?: string;
+  subject?: string;
   id?: string;
 }
 
