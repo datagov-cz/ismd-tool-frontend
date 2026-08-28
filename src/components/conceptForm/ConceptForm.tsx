@@ -6,7 +6,9 @@ import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
-import { useFormDraft } from '@/hooks/useFormDraft';
+import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
+import { useIsOnline } from '@/hooks/useIsOnline';
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 
 import { FormToolbar } from './components/FormToolbar';
 import { useConceptFormHints } from './components/hint/conceptFormHints';
@@ -108,10 +110,16 @@ export const ConceptForm = ({
   });
 
   const router = useRouter();
+  const isOnline = useIsOnline();
 
   useFormDraft(form, storageKey);
 
-  const { errors } = form.formState;
+  const { errors, isDirty } = form.formState;
+  useUnsavedChangesGuard({
+    enabled: Boolean(editing && isDirty && isOnline),
+    message: t('UnsavedChangesConfirmation'),
+    draftKey: storageKey,
+  });
 
   const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
 
@@ -151,6 +159,7 @@ export const ConceptForm = ({
     }
 
     form.reset();
+    clearFormDraft(storageKey);
     if (slug) {
       router.push(`/concept/${slug}`);
     } else {
