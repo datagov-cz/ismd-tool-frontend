@@ -5,8 +5,9 @@
       "ToDark": "Přepnout na tmavý režim"
     },
     "Ontology": "Slovník",
+    "ApiDocs": "Dokumentace API",
     "LogoTitle": "Informační systém pro modelování dat",
-    "LogoTitleMobile": "ISMD",
+    "Search": "Vyhledávání",
     "LoginButton": "Přihlásit se přes CAAIS",
     "Nav": {
       "Link1": "Nápověda",
@@ -31,6 +32,8 @@
       "Settings": "Obecné nastavení"
     },
     "MenuButtonAria": "Otevřít navigaci",
+    "MenuCloseAria": "Zavřít navigaci",
+    "ThemeSwitchLabel": "Tmavý režim",
     "Hintbox": {
       "Title": "Nápověda",
       "ISMD": "Nápověda ISMD",
@@ -77,8 +80,8 @@
   "Home": {
     "MainControls": {
       "OpenDictFromFile": "Importovat ze souboru",
-      "SearchPlaceholder": "[Cmnd/Ctrl+K] Hledat pojmy a slovníky...",
-      "SearchPlaceholderMobile": "Hledat pojmy a slovníky",
+      "SearchPlaceholder": "Hledat pojmy a slovníky...",
+      "CloseSearch": "Zavřít vyhledávání",
       "CreateNewDict": "Vytvořit nový slovník",
       "Logged": {
         "DraftDictionaries": "Rozpracované slovníky",
@@ -109,7 +112,8 @@
   "ConceptCreateWrapper": {
     "NewConceptFor": "Nový pojem k:",
     "ToastSuccess": "Koncept byl úspěšně vytvořen.",
-    "ToastError": "Při ukládání konceptu došlo k chybě."
+    "ToastError": "Při ukládání konceptu došlo k chybě.",
+    "SavedOffline": "Pojem byl uložen offline a bude odeslán po obnovení připojení. Můžete rovnou vytvářet další pojmy."
   },
   "ConceptEditWrapper": {
     "EditConcept": "Upravit pojem:",
@@ -118,6 +122,26 @@
     "ToastError": "Při ukládání konceptu došlo k chybě.",
     "HintHeader": "Nápověda k formuláři",
     "Suggestion": "Doporučení"
+  },
+  "ConceptDeviations": {
+    "Title": "Změny proti publikovanému zdroji [{count}]",
+    "Description": "V publikované verzi došlo ke změnám. Vyberte změny které chcete převzít do tohoto pojmu.",
+    "DifferencesLabel": "Rozdíly charakteristik oproti publikované verzi:",
+    "DifferencesLabelConcept": "Rozdíly charakteristik v navázaném pojmu - ",
+    "ExpandAria": "Zobrazit změny",
+    "CollapseAria": "Sbalit změny",
+    "SelectAll": "Vybrat vše",
+    "DeselectAll": "Zrušit výběr",
+    "SelectedCount": "Vybráno: {selected} ze {total} změn",
+    "ShowDifferences": "Zobrazit rozdíly",
+    "HideDifferences": "Sbalit rozdíly",
+    "AcceptSelected": "Převzít vybrané změny",
+    "UpdateAndKeepLink": "Zachovat propojení a aktualizovat",
+    "Updating": "Aktualizuji…",
+    "LocalVersion": "Lokální verze",
+    "PublishedVersion": "Publikovaná verze",
+    "Yes": "ANO",
+    "No": "NE"
   },
   "ConceptDetail": {
     "Sections": {
@@ -147,8 +171,9 @@
       "AgendaInfoSystem": "Agendový informační systém",
       "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
       "ConceptSource": "Zdroje pojmu",
-      "DefiningNonLegislative": "Definujice nelegislativni zdroj",
-      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj"
+      "DefiningNonLegislative": "Definující nelegislativní zdroj",
+      "RelatedNonLeagislative": "Související nelegislativní zdroj",
+      "InstantiatedByCodeList": "Instance definovány číselníkem"
     },
     "Groups": {
       "TypesAndClassification": "Typy a zařazení",
@@ -166,7 +191,8 @@
     "Registry": {
       "Title": "Registr práv a povinností",
       "PPDF": "údaj je sdílen v PPDF",
-      "NonPublic": "údaj je veřejný",
+      "NonPublic": "údaj je neveřejný",
+      "Public": "údaj je veřejný",
       "AIS": "AIS",
       "Agenda": "Agenda"
     },
@@ -185,6 +211,9 @@
         "NotFound": "Pojem nenalezen",
         "InOntology": "Ve slovníku"
       },
+      "DefinedByDictionary": "Definován číselníkem",
+      "Draft": "Rozpracovaný",
+      "WorkingCopy": "Pracovní kopie",
       "Public": "Veřejný",
       "NonPublic": "Neveřejný",
       "Name": "Název",
@@ -228,14 +257,20 @@
     "EditOntology": {
       "Title": "Upravit slovník",
       "EditedOntology": "Upravovaný slovník",
+      "DiscardChangesConfirmation": "Opravdu chcete zrušit změny?",
+      "UnsavedChangesConfirmation": "Máte neuložené změny. Opravdu chcete odejít? Pokud odejdete, změny budou zahozeny.",
       "Save": "Uložit",
       "Back": "Zpět",
       "Ontology": "Slovníky",
-      "Comments": "Komentáře ke slovníku",
+      "Comments": "Komentáře",
       "Labels": {
         "Name": "Název",
         "Language": "Jazyk",
         "Description": "Popis"
+      },
+      "FormSchema": {
+        "NameRequired": "Název je povinný",
+        "CSNameRequired": "Název (CS) je povinný"
       },
       "SuccessMessage": "Slovník byl úspěšně upraven",
       "ErrorMessage": "Chyba při úpravě slovníku"
@@ -260,7 +295,9 @@
       "RevalidateShort": "Znovu ověřit",
       "IncompleteCatalogRecord": "Nekompletní katalogizační záznam",
       "OpenConcept": "Otevřít",
-      "ShowConcepts": "Zobrazit pojmy"
+      "ShowConcepts": "Zobrazit pojmy",
+      "ExpandSection": "Rozbalit sekci",
+      "CollapseSection": "Sbalit sekci"
     },
     "Sidebar": {
       "SearchbarPlaceholder": "Hledat pojmy, slovníky a diagramy...",
@@ -285,6 +322,16 @@
       },
       "OwnComment": "Vlastní komentář",
       "Send": "Odeslat"
+    },
+    "Deviations": {
+      "ToggleLabel": "Se změnou návazností",
+      "FooterTitle": "Změny v navázaných pojmech",
+      "LocatedIn": "Nachází se v: ",
+      "VerifyError": "Pojem nebylo možné ověřit v NKD",
+      "CheckChanges": "Zkontrolovat změny: ",
+      "SidebarTitle": "Pojmy se změněnou návazností",
+      "SidebarDescription": "Tyto pojmy jsou navázané na publikované pojmy, které byly mezitím změněny.",
+      "Differences": "Rozdíly"
     },
     "Main": {
       "Name": "Název",
@@ -325,8 +372,12 @@
       }
     }
   },
+  "Offline": {
+    "SavedOffline": "Změny byly uloženy offline a budou odeslány po obnovení připojení."
+  },
   "OntologyList": {
     "NKDTitle": "Publikované slovníky",
+    "AllTitle": "Výpis slovníků",
     "ISMDTitle": "Moje rozpracované slovníky",
     "SearchOntologies": "Hledat slovníky",
     "NoMoreResults": "Žádné další výsledky"
@@ -343,7 +394,11 @@
     "Collapse": "Sbalit",
     "Expand": "Rozbalit",
     "SelectFragment": "Vybrat ustanovení",
-    "AddAnother": "Přidat další ustanovení"
+    "AddAnother": "Přidat další ustanovení",
+    "EnterManually": "Zadat IRI zákona ručně",
+    "ManualPlaceholder": "Zadejte IRI zákona",
+    "SelectFromList": "Vyhledat IRI zákona",
+    "RemoveManualEntry": "Odebrat IRI zákona"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
@@ -413,7 +468,8 @@
   },
   "Errors": {
     "UnknownError": "Neznámý error",
-    "NameRequired": "Název je povinný"
+    "NameRequired": "Název je povinný",
+    "CSNameRequired": "Název (CS) je povinný"
   },
   "CreateOntology": {
     "Form": {
@@ -430,15 +486,15 @@
       "SubmitButton": "Vytvořit",
       "CreateNewDict": "Vytvořit nový slovník...",
       "CreateNewDictError": "Chyba při vytváření nového slovníku",
-      "CreateNewDictSyncError": "Chyba při syncrhonizaci slovníku, zkuste se znova přihlásit",
       "CreateNewDictSuccess": "Nový slovník byl úspěšně vytvořen",
-      "SavedOffline": "Slovník byl uložen offline. Pro uložení do Národního katalogu dat se musí obnovit vaše spojení.",
+      "SavedOffline": "Slovník byl uložen offline a bude odeslán po obnovení připojení. Můžete rovnou vytvářet další slovníky.",
       "Or": "nebo",
       "Back": "Zpět"
     },
     "FormSchema": {
       "NamespaceRequired": "Prostor názvů je povinný",
       "NameRequired": "Název je povinný",
+      "CSNameRequired": "Název (CS) je povinný",
       "DescriptionRequired": "Popis je povinný",
       "LanguageTagRequired": "Jazykový tag je povinný"
     }
@@ -487,11 +543,13 @@
         },
         "AcquisitionMethod": {
           "FromOtherAgendas": "Jiných agend",
+          "BasicRegister": "Základních registrů",
           "Own": "Vlastní",
           "Operational": "Provozní"
         },
         "SharingMethod": {
           "PubliclyAccessible": "Veřejně přístupné",
+          "NotShared": "Nesdílené",
           "ProvidedOnRequest": "Poskytované na žádost",
           "AccessibleForAgendaExecution": "Zpřístupňované pro výkon agendy"
         }
@@ -502,7 +560,9 @@
       "Labels": {
         "ClassType": "Typ třídy",
         "BroaderConcept": "Nadřazená třída",
-        "ConceptType": "Typ pojmu"
+        "ConceptType": "Typ pojmu",
+        "CodeListIri": "IRI číselníku",
+        "CodeListDataset": "Dataset číselníku"
       },
       "Options": {
         "ClassType": {

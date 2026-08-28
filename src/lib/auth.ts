@@ -6,6 +6,9 @@ const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER!;
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID!;
 const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET!;
 const NEXTAUTH_URL = process.env.NEXTAUTH_URL!;
+// Optional: alias of a Keycloak identity provider to jump straight to,
+// bypassing the Keycloak login page. Set to `caais` in deployed envs.
+const KEYCLOAK_IDP_HINT = process.env.KEYCLOAK_IDP_HINT;
 
 interface KeycloakToken extends JWT {
   accessToken: string;
@@ -56,7 +59,9 @@ async function refreshAccessToken(
     });
 
     const refreshed: RefreshedKeycloakTokens = await response.json();
-    if (!response.ok) throw refreshed;
+    if (!response.ok) {
+      return refreshFailed(token, refreshed);
+    }
 
     return {
       ...token,
@@ -67,17 +72,41 @@ async function refreshAccessToken(
       error: undefined,
     };
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to refresh access token', error);
-    return { ...token, error: 'RefreshAccessTokenError' };
+    return refreshFailed(token, error);
   }
 }
 
-async function revokeKeycloakSession(token: KeycloakToken): Promise<void> {
+function refreshFailed(token: KeycloakToken, error: unknown): KeycloakToken {
+  // eslint-disable-next-line no-console
+  console.error('Failed to refresh access token', error);
+  return { ...token, error: 'RefreshAccessTokenError' };
+}
+
+/**
+ * App home URL (origin + base path) users should land on after logout.
+ *
+ * NEXTAUTH_URL points at NextAuth's API base (`<base>/api/auth`); using it directly
+ * as post_logout_redirect_uri dumps the user on that internal route instead of a
+ * real page. Strip the `/api/auth` suffix and keep a trailing slash so it matches
+ * the client's registered `<base>/*` post-logout URI (Keycloak's `/*` wildcard does
+ * not match the bare base without the slash).
+ */
+export function appHomeUrl(): string {
+  return `${NEXTAUTH_URL.replace(/\/api\/auth\/?$/, '')}/`;
+}
+
+/**
+ * Builds Keycloak's RP-initiated logout URL. The BROWSER must navigate here — a
+ * server-side fetch ends the Keycloak session but cannot clear the upstream
+ * identity provider's cookie, so the next login is silently re-authenticated as the
+ * same user. Only a real redirect lets Keycloak front-channel the browser on to
+ * CAAIS's end_session. See /api/auth/federated-logout.
+ */
+export function keycloakLogoutUrl(idToken: string): string {
   const logoutUrl = new URL(keycloakUrl('logout'));
-  logoutUrl.searchParams.set('id_token_hint', token.idToken);
-  logoutUrl.searchParams.set('post_logout_redirect_uri', NEXTAUTH_URL);
-  await fetch(logoutUrl.toString());
+  logoutUrl.searchParams.set('id_token_hint', idToken);
+  logoutUrl.searchParams.set('post_logout_redirect_uri', appHomeUrl());
+  return logoutUrl.toString();
 }
 
 export const authOptions: NextAuthOptions = {
@@ -86,6 +115,13 @@ export const authOptions: NextAuthOptions = {
       clientId: KEYCLOAK_CLIENT_ID,
       clientSecret: KEYCLOAK_CLIENT_SECRET,
       issuer: KEYCLOAK_ISSUER,
+      // When KEYCLOAK_IDP_HINT is set (e.g. `caais` in deployed envs), skip
+      // Keycloak's own login screen and redirect straight to that identity
+      // provider. Left unset locally so the Keycloak login page (and the
+      // `testuser` local account) stays reachable for dev without CAAIS.
+      ...(KEYCLOAK_IDP_HINT
+        ? { authorization: { params: { kc_idp_hint: KEYCLOAK_IDP_HINT } } }
+        : {}),
     }),
   ],
   session: { strategy: 'jwt' },
@@ -103,11 +139,6 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = keycloakToken.accessToken;
       session.error = keycloakToken.error;
       return session;
-    },
-  },
-  events: {
-    async signOut({ token }) {
-      await revokeKeycloakSession(token as KeycloakToken);
     },
   },
 };

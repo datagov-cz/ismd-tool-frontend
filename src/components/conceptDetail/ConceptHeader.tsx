@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import {
   ConceptDetailModel,
   ConceptMetadataModelConceptType,
+  ConceptMetadataModelSourceTag,
 } from '@/api/generated';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
@@ -30,6 +31,7 @@ type Props = {
   relation?: { start: RelationItem; middle: RelationItem; end: RelationItem };
   conceptType?: ConceptMetadataModelConceptType;
   ontologySlug?: string;
+  sourceTag?: ConceptMetadataModelSourceTag;
 };
 
 export const ConceptHeader = ({
@@ -44,12 +46,14 @@ export const ConceptHeader = ({
   relation,
   conceptType,
   ontologySlug,
+  sourceTag,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const capitalizeFirst = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
   const isPublic = conceptDetail['typ']?.includes('Veřejný údaj');
+  const notPublic = conceptDetail['typ']?.includes('Neveřejný údaj');
 
   const router = useRouter();
 
@@ -123,21 +127,63 @@ export const ConceptHeader = ({
                       )}
                   </span>
                 </GovTag>
-                <GovTag
-                  color={isPublic ? 'success' : 'neutral'}
-                  type="subtle"
-                  size="xs"
-                  className="h-fit whitespace-nowrap my-1!"
-                >
-                  <GovIcon
-                    name={isPublic ? 'globe' : 'lock-fill'}
-                    slot="icon-start"
-                    type="components"
-                  />
-                  <span className="font-bold">
-                    {isPublic ? t('Main.Public') : t('Main.NonPublic')}
-                  </span>
-                </GovTag>
+                {(isPublic || notPublic) && (
+                  <>
+                    <GovTag
+                      color={isPublic ? 'success' : 'neutral'}
+                      type="subtle"
+                      size="xs"
+                      className="h-fit whitespace-nowrap my-1!"
+                    >
+                      <GovIcon
+                        name={isPublic ? 'globe' : 'lock-fill'}
+                        slot="icon-start"
+                        type="components"
+                      />
+                      <span className="font-bold">
+                        {isPublic ? t('Main.Public') : t('Main.NonPublic')}
+                      </span>
+                    </GovTag>
+                  </>
+                )}
+                {sourceTag && (
+                  <GovTag
+                    color={sourceTag === 'DRAFT' ? 'warning' : 'neutral'}
+                    type="subtle"
+                    size="xs"
+                    className="h-fit whitespace-nowrap my-1!"
+                  >
+                    <GovIcon
+                      name={sourceTag === 'DRAFT' ? 'gear' : 'copy'}
+                      slot="icon-start"
+                      type="components"
+                    />
+                    <span className="font-bold">
+                      {sourceTag === 'DRAFT'
+                        ? t('Main.Draft')
+                        : t('Main.WorkingCopy')}
+                    </span>
+                  </GovTag>
+                )}
+                {conceptDetail['instance-definovány-číselníkem'] &&
+                  Object.keys(conceptDetail['instance-definovány-číselníkem'])
+                    .length > 0 && (
+                    <GovTag
+                      color="neutral"
+                      type="subtle"
+                      size="xs"
+                      className="h-fit whitespace-nowrap my-1!"
+                    >
+                      <GovIcon
+                        name="signpost-2-fill"
+                        slot="icon-start"
+                        type="components"
+                      />
+                      <span className="font-bold">
+                        {t('Main.DefinedByDictionary')}
+                      </span>
+                    </GovTag>
+                  )}
               </div>
             </div>
             <div>

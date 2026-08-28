@@ -83,10 +83,9 @@ const FragmentItem = ({
         ) : (
           <span className="shrink-0 w-4" aria-hidden />
         )}
-        <span
-          className="leading-5 font-semibold not-italic [&_var]:not-italic [&_var]:font-semibold"
-          dangerouslySetInnerHTML={{ __html: fragment.bodyHtml ?? '' }}
-        />
+        <span className="leading-5 font-semibold not-italic [&_var]:not-italic [&_var]:font-semibold">
+          {fragment.citation}
+        </span>
       </div>
       {hasChildren && open ? (
         <LegislativeSourceFragmentNav

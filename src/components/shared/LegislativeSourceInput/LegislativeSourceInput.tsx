@@ -8,6 +8,7 @@ interface Props<T extends FieldValues> {
   onRemove?: () => void;
   autoFocus?: boolean;
   id: string;
+  initialManualEntry?: boolean;
 }
 
 export const LegislativeSourceInput = <T extends FieldValues>({
@@ -16,16 +17,20 @@ export const LegislativeSourceInput = <T extends FieldValues>({
   onRemove,
   autoFocus,
   id,
+  initialManualEntry,
 }: Props<T>) => {
-  const { setValue, watch } = useFormContext<T>();
+  const { formState, getFieldState, setValue, trigger, watch } =
+    useFormContext<T>();
 
   const value = (watch(name) as string | undefined) ?? '';
+  const error = getFieldState(name, formState).error?.message;
 
   const handleChange = (iri: string) =>
     setValue(name, iri as PathValue<T, Path<T>>, {
       shouldDirty: true,
-      shouldValidate: true,
     });
+
+  const handleBlur = () => void trigger(name);
 
   return (
     <LegislativeSourcePicker
@@ -35,6 +40,9 @@ export const LegislativeSourceInput = <T extends FieldValues>({
       onRemove={onRemove}
       autoFocus={autoFocus}
       id={id}
+      initialManualEntry={initialManualEntry}
+      onBlur={handleBlur}
+      error={error}
     />
   );
 };

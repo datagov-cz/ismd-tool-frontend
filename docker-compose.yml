@@ -29,6 +29,10 @@ services:
       - KEYCLOAK_ISSUER=http://localhost:8080/realms/ismd
       - KEYCLOAK_CLIENT_ID=ismd-app
       - KEYCLOAK_CLIENT_SECRET=secret123
+      # Set to `caais` to skip the Keycloak login page and redirect straight to
+      # the CAAIS identity provider. Empty (default) shows Keycloak's own page
+      # so the local `testuser` account stays usable.
+      - KEYCLOAK_IDP_HINT=${KEYCLOAK_IDP_HINT:-}
     ports:
       - "3001:3000"
     extra_hosts:

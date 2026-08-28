@@ -4,25 +4,29 @@ import { useState } from 'react';
 
 import { OntologyMetadataModel, useGetOntologyList } from '@/api/generated';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
-import { DictionaryCardProps } from '../shared/DictionaryCard/DictionaryCard';
+import {
+  DictionaryCardProps,
+  getPreferredTranslation,
+} from '../shared/DictionaryCard/DictionaryCard';
 
 import { OntologyList } from './OntologyList';
 
 const toCardItem = (
   item: OntologyMetadataModel,
-): DictionaryCardProps | null | undefined => {
-  if (!item.name && !item.popis && !item.id) return null;
+): DictionaryCardProps | null => {
+  if (!item.id || (!item.name && !item.popis)) return null;
 
-  if (item.id)
-    return {
-      title: item.name ?? '',
-      text: item.popis,
-      concepts: item.conceptCount ?? 0,
-      modified: item.updatedAt ? new Date(item.updatedAt) : undefined,
-      id: item.id,
-      type: 'ISMD',
-      link: `/dictionary/${item.slug}`,
-    };
+  return {
+    title: getPreferredTranslation(item.name) ?? '',
+    titleTranslations: item.name,
+    text: getPreferredTranslation(item.popis),
+    textTranslations: item.popis,
+    concepts: item.conceptCount ?? 0,
+    modified: item.updatedAt ? new Date(item.updatedAt) : undefined,
+    id: item.id,
+    type: 'ISMD',
+    link: `/dictionary/${item.slug}`,
+  };
 };
 
 export const ISMDListWrapper = () => {
@@ -30,7 +34,7 @@ export const ISMDListWrapper = () => {
   const { user } = useCurrentUser();
 
   const { data, isFetching } = useGetOntologyList(
-    { userId: user?.userId, isPublished: false },
+    { userId: user?.userId },
     { query: { enabled: !!user?.userId } },
   );
 

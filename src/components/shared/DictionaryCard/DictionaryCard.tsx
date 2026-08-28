@@ -11,8 +11,10 @@ import { CardStat } from './CardStat';
 
 export type DictionaryCardProps = {
   title: string;
+  titleTranslations?: Record<string, string>;
   link: string;
   text?: string;
+  textTranslations?: Record<string, string>;
   modified?: Date;
   concepts: number;
   isPublished?: boolean;
@@ -55,10 +57,17 @@ const TruncatedText = ({ text }: { text: string }) => {
   );
 };
 
+export const getPreferredTranslation = (
+  translations?: Record<string, string>,
+): string | undefined =>
+  translations?.cs || translations?.sk || translations?.en;
+
 export const DictionaryCard = ({
   title,
+  titleTranslations,
   link,
   text,
+  textTranslations,
   modified,
   concepts,
   id,
@@ -68,6 +77,8 @@ export const DictionaryCard = ({
 }: DictionaryCardProps) => {
   const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+  const displayedTitle = getPreferredTranslation(titleTranslations) || title;
+  const displayedText = getPreferredTranslation(textTranslations) || text;
 
   const handleCopyLink = async () => {
     try {
@@ -79,7 +90,7 @@ export const DictionaryCard = ({
   };
 
   return (
-    <div className="rounded-xl border border-border-grey overflow-hidden shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] flex flex-col">
+    <div className="rounded-xl border border-border-grey overflow-hidden shadow-subtle flex flex-col">
       <Link
         href={link}
         className="grow px-3 py-2 flex gap-2 transition-shadow duration-200 hover:shadow-md cursor-pointer bg-white dark:bg-dark-bg text-black dark:text-white"
@@ -93,8 +104,10 @@ export const DictionaryCard = ({
           className="mt-0.5!"
         />
         <span>
-          <p className="font-medium text-blue-primary text-[16px]">{title}</p>
-          {text && <TruncatedText text={text} />}
+          <p className="font-medium text-blue-primary text-[16px]">
+            {displayedTitle}
+          </p>
+          {displayedText && <TruncatedText text={displayedText} />}
         </span>
       </Link>
 
@@ -124,7 +137,7 @@ export const DictionaryCard = ({
           : { type, ontologyIRI })}
         open={openDownload}
         onClose={() => setOpenDownload(false)}
-        ontologyName={title.replace(/[ ]/g, '-').toLowerCase()}
+        ontologyName={displayedTitle.replace(/[ ]/g, '-').toLowerCase()}
       />
     </div>
   );

@@ -20,7 +20,7 @@ export const FormSection = ({
   return (
     <div
       className={clsx(
-        'py-5 px-3 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] transition-colors duration-300 ease-in',
+        'py-5 px-3 rounded-lg shadow-subtle transition-colors duration-300 ease-in',
         variant === 'neutral'
           ? 'bg-(--background-neutral-subtlest) border border-(--border-subtle)'
           : 'bg-white',

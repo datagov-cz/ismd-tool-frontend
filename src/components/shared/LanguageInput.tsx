@@ -7,7 +7,6 @@ import {
   GovIcon,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
-import { useTranslations } from 'next-intl';
 import {
   ArrayPath,
   FieldArray,
@@ -58,8 +57,6 @@ export const LanguageInput = <T extends FieldValues>({
     formState: { errors },
   } = useFormContext<T>();
 
-  const t = useTranslations('Errors');
-
   const isActive = useActiveAnchor(anchor);
 
   const { fields, append, remove } = useFieldArray({
@@ -74,6 +71,13 @@ export const LanguageInput = <T extends FieldValues>({
   const remainingLanguages = availableLanguages.filter(
     (lang) => !usedTags.includes(lang),
   );
+  const languageErrors = get(errors, name);
+  const errorMessage =
+    languageErrors?.message ??
+    languageErrors?.root?.message ??
+    (Array.isArray(languageErrors)
+      ? languageErrors.find((error) => error?.name?.message)?.name?.message
+      : undefined);
 
   return (
     <div
@@ -88,7 +92,6 @@ export const LanguageInput = <T extends FieldValues>({
         const fieldPath = `${name}.${index}.name` as Parameters<
           typeof register
         >[0];
-        const fieldError = get(errors, `${name}.${index}.name`);
 
         return (
           <div
@@ -120,14 +123,6 @@ export const LanguageInput = <T extends FieldValues>({
                   multiline={multiline}
                   rows={multiline ? 4 : undefined}
                 />
-                {fieldError?.message && (
-                  <span
-                    className="text-red-600 text-sm absolute bottom-0 left-0 translate-y-full"
-                    role="alert"
-                  >
-                    {t(String(fieldError.message))}
-                  </span>
-                )}
               </div>
 
               {index === 0 && (
@@ -162,6 +157,23 @@ export const LanguageInput = <T extends FieldValues>({
           </div>
         );
       })}
+      {errorMessage && (
+        <div
+          className={clsx(
+            'w-full',
+            layout === 'grid'
+              ? 'grid grid-cols-7 gap-y-4 gap-x-2'
+              : 'flex flex-col',
+          )}
+        >
+          <span
+            className="block text-red-600 text-sm col-start-2 pl-10 col-span-4"
+            role="alert"
+          >
+            {errorMessage}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

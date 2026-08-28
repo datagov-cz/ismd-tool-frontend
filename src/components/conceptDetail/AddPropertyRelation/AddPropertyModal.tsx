@@ -13,6 +13,7 @@ import { BASE_DEFAULTS } from '@/components/conceptForm/ConceptForm';
 import {
   ConceptForm,
   ConceptFormSchema,
+  createConceptFormSchema,
 } from '@/components/conceptForm/schema/conceptFormSchema';
 import { ConceptInput } from '@/components/shared/ConceptInput';
 import { DataTypeInput } from '@/components/shared/DataTypeInput';
@@ -41,12 +42,17 @@ export const AddPropertyModal = ({
   classSlug,
 }: Props) => {
   const queryInvalidate = useQueryInvalidator();
-  const { mutate: editConcept } = useEditConcept();
-  const { mutate: createConcept } = useCreateConcept();
+  const { mutate: editConcept } = useEditConcept({
+    mutation: { networkMode: 'always' },
+  });
+  const { mutate: createConcept } = useCreateConcept({
+    mutation: { networkMode: 'always' },
+  });
   const [createView, setCreateView] = useState(false);
 
   const t = useTranslations('ConceptDetail.Main');
   const tLabels = useTranslations('CreateConcept');
+  const tError = useTranslations('Errors');
 
   const formAdd = useForm({
     mode: 'onChange',
@@ -56,7 +62,7 @@ export const AddPropertyModal = ({
 
   const formCreate = useForm({
     mode: 'onChange',
-    resolver: zodResolver(ConceptFormSchema),
+    resolver: zodResolver(createConceptFormSchema(tError)),
     defaultValues: {
       ...BASE_DEFAULTS,
       ontologyGraphName: ontologyGraphName,
@@ -77,11 +83,13 @@ export const AddPropertyModal = ({
       },
       {
         onSuccess: (response) => {
-          queryInvalidate.invalidateConcept(response.data?.slug || classSlug);
+          queryInvalidate.invalidateConcept(response.data?.slug || '');
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           queryInvalidate.invalidateOntology(
             response.data?.ontologySlug || ontologySlug || '',
           );
           setOpen(false);
+          formAdd.reset({ concept: null });
         },
       },
     );
@@ -96,11 +104,17 @@ export const AddPropertyModal = ({
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateConcept(response.data?.slug || '');
-          queryInvalidate.invalidateConcept(classSlug);
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           queryInvalidate.invalidateOntology(
             response.data?.ontologySlug || ontologySlug || '',
           );
           setOpen(false);
+          formCreate.reset({
+            ...BASE_DEFAULTS,
+            ontologyGraphName: ontologyGraphName,
+            conceptType: 'VLASTNOST',
+            conceptTypeEnum: 'VLASTNOST',
+          });
         },
       },
     );

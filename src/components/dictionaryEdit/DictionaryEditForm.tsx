@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import {
   DescriptionModelDescription,
@@ -13,8 +12,9 @@ import {
   OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
-import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useFormDraft } from '@/hooks/useFormDraft';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
+import { draftKeys } from '@/lib/draftKeys';
 import { OntologyEditModel, ontologyEditModelSchema } from '@/lib/formSchemas';
 import { FormSection } from '../conceptForm/components/FormSection';
 import { FormToolbar } from '../conceptForm/components/FormToolbar';
@@ -35,11 +35,15 @@ type LanguageEntry = { name?: string; languageTag?: string };
 const buildLanguageEntries = (
   base: string | undefined,
   optional: Record<string, string | undefined>,
+  includeEmpty = false,
 ): LanguageEntry[] => [
   { name: base ?? '', languageTag: 'cs' },
   ...Object.entries(optional)
-    .filter(([, value]) => Boolean(value))
-    .map(([languageTag, name]) => ({ languageTag, name: name! })),
+    .filter(([, value]) => includeEmpty || Boolean(value))
+    .map(([languageTag, name]) => ({
+      languageTag,
+      name: name ?? '',
+    })),
 ];
 
 const toLanguageMap = <T extends Record<string, string>>(
@@ -62,15 +66,19 @@ export const DictionaryEditForm = ({
   detail,
 }: DictionaryEditProps) => {
   const t = useTranslations('DictionaryDetail.EditOntology');
-  const invalidator = useQueryInvalidator();
   const router = useRouter();
-  const storageKey = `dictionary-draft:edit:${metadata.slug}`;
+  const submitForm = useSubmitForm();
+  const storageKey = draftKeys.ontologyEdit(metadata.slug ?? '');
 
   const buildValues = () => ({
-    nameModel: buildLanguageEntries(detail.název?.cs, {
-      sk: detail.název?.sk,
-      en: detail.název?.en,
-    }),
+    nameModel: buildLanguageEntries(
+      detail.název?.cs,
+      {
+        sk: detail.název?.sk,
+        en: detail.název?.en,
+      },
+      true,
+    ),
     descriptionModel: buildLanguageEntries(detail.popis?.cs, {
       sk: detail.popis?.sk,
       en: detail.popis?.en,
@@ -78,7 +86,7 @@ export const DictionaryEditForm = ({
   });
 
   const form = useForm<OntologyEditModel>({
-    resolver: zodResolver(ontologyEditModelSchema),
+    resolver: zodResolver(ontologyEditModelSchema(t)),
     defaultValues: buildValues(),
     values: buildValues(),
   });
@@ -93,19 +101,7 @@ export const DictionaryEditForm = ({
     defaultHintEdit,
   );
 
-  const { mutate: editOntology, isPending } = useEditOntology({
-    mutation: {
-      onSuccess: async (res) => {
-        clearFormDraft(storageKey);
-        await invalidator.invalidateOntology(res.data?.slug || '');
-        toast.success(t('SuccessMessage'), { position: 'bottom-right' });
-        router.push(`/dictionary/${res.data?.slug}`);
-      },
-      onError: () => {
-        toast.error(t('ErrorMessage'), { position: 'bottom-right' });
-      },
-    },
-  });
+  const { mutate: editOntology, isPending, isPaused } = useEditOntology();
 
   const onSubmit = (data: OntologyEditModel) => {
     const name = toLanguageMap(data.nameModel, emptyLangs) as NameModelName;
@@ -114,13 +110,30 @@ export const DictionaryEditForm = ({
       emptyLangs,
     ) as DescriptionModelDescription;
 
-    editOntology({
-      data: {
-        nameModel: { name },
-        descriptionModel: { description },
+    submitForm({
+      mutate: editOntology,
+      variables: {
+        data: {
+          nameModel: { name },
+          descriptionModel: { description },
+        },
+        ontologyId: ontologyID,
       },
-      ontologyId: ontologyID,
+      onSuccess: (res) => router.push(`/dictionary/${res.data?.slug}`),
+      draftKey: storageKey,
     });
+  };
+
+  const handleCancel = () => {
+    if (
+      form.formState.isDirty &&
+      !window.confirm(t('DiscardChangesConfirmation'))
+    ) {
+      return;
+    }
+
+    form.reset();
+    router.push(`/dictionary/${metadata.slug}`);
   };
 
   return (
@@ -181,7 +194,10 @@ export const DictionaryEditForm = ({
                   />
                 </FormSection>
 
-                <FormToolbar<OntologyEditModel> isPending={isPending} />
+                <FormToolbar<OntologyEditModel>
+                  isPending={isPending && !isPaused}
+                  onCancel={handleCancel}
+                />
               </form>
             </FormProvider>
           </div>

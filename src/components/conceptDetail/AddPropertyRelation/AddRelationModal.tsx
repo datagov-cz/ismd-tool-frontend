@@ -13,6 +13,7 @@ import { BASE_DEFAULTS } from '@/components/conceptForm/ConceptForm';
 import {
   ConceptForm,
   ConceptFormSchema,
+  createConceptFormSchema,
 } from '@/components/conceptForm/schema/conceptFormSchema';
 import { ConceptInput } from '@/components/shared/ConceptInput';
 import { LanguageInput } from '@/components/shared/LanguageInput';
@@ -45,10 +46,16 @@ export const AddRelationModal = ({
 
   const t = useTranslations('ConceptDetail.Main');
   const tLabels = useTranslations('CreateConcept');
+  const tError = useTranslations('Errors');
 
   const queryInvalidate = useQueryInvalidator();
-  const { mutate: editConcept } = useEditConcept();
-  const { mutate: createConcept } = useCreateConcept();
+
+  const { mutate: editConcept } = useEditConcept({
+    mutation: { networkMode: 'always' },
+  });
+  const { mutate: createConcept } = useCreateConcept({
+    mutation: { networkMode: 'always' },
+  });
 
   const [createView, setCreateView] = useState(false);
 
@@ -60,7 +67,7 @@ export const AddRelationModal = ({
 
   const formCreate = useForm({
     mode: 'onChange',
-    resolver: zodResolver(ConceptFormSchema),
+    resolver: zodResolver(createConceptFormSchema(tError)),
     defaultValues: {
       ...BASE_DEFAULTS,
       ontologyGraphName: ontologyGraphName,
@@ -95,9 +102,10 @@ export const AddRelationModal = ({
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateConcept(response.data?.slug || '');
-          queryInvalidate.invalidateConcept(classSlug);
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           setOpen(false);
           setCreateView(false);
+          formAdd.reset({ relation: null, otherConcept: null });
         },
       },
     );
@@ -112,12 +120,18 @@ export const AddRelationModal = ({
       {
         onSuccess: (response) => {
           queryInvalidate.invalidateConcept(response.data?.slug || '');
-          queryInvalidate.invalidateConcept(classSlug);
+          queryInvalidate.invalidateConcept(decodeURIComponent(classSlug));
           queryInvalidate.invalidateOntology(
             response.data?.ontologySlug || ontologySlug || '',
           );
           setOpen(false);
           setCreateView(false);
+          formCreate.reset({
+            ...BASE_DEFAULTS,
+            ontologyGraphName: ontologyGraphName,
+            conceptType: 'VZTAH',
+            conceptTypeEnum: 'VZTAH',
+          });
         },
       },
     );

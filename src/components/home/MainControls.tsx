@@ -1,6 +1,7 @@
 'use client';
 
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 export const MainControls = () => {
@@ -8,7 +9,7 @@ export const MainControls = () => {
 
   return (
     <div className="space-y-4 pb-4 pt-2 w-full">
-      <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-195">
+      <div className="flex gap-4 flex-wrap justify-center mx-auto max-w-195 items-center">
         <GovButton
           type="solid"
           size="m"
@@ -26,6 +27,13 @@ export const MainControls = () => {
           />
           {t('MainControls.CreateNewDict')}
         </GovButton>
+
+        <Link
+          href="/dictionary/list-all"
+          className="underline text-sm text-dark-primary"
+        >
+          {t('WelcomeSection.BrowseDictionaries')}
+        </Link>
       </div>
     </div>
   );

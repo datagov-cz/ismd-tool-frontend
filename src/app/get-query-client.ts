@@ -1,13 +1,24 @@
 import { isServer, QueryClient } from '@tanstack/react-query';
 
+import { registerOfflineMutationDefaults } from '@/lib/offlineMutationDefaults';
+
 const makeQueryClient = () => {
-  return new QueryClient({
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60,
       },
+      mutations: {
+        networkMode: 'always',
+      },
     },
   });
+
+  // Must run before PersistQueryClientProvider restores + resumes paused
+  // mutations — module scope guarantees registration precedes render.
+  registerOfflineMutationDefaults(queryClient);
+
+  return queryClient;
 };
 
 let browserQueryClient: QueryClient | undefined = undefined;

@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 import {
   OntologyMetadataModel,
+  useGetValidationReport,
   useValidateOntology,
   ValidationReport,
   ValidationResult,
@@ -12,6 +14,7 @@ import {
 } from '@/api/generated';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useValidationSideboxStore } from '@/store/validationBoxStore';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export type ValidationRule = {
   ruleName: string;
@@ -45,6 +48,14 @@ const groupByRuleName = (items: ValidationResult[]): ValidationRule[] => {
   return Array.from(map.values());
 };
 
+const groupValidationResults = (
+  results: ValidationResult[],
+): GroupedValidation => ({
+  errors: groupByRuleName(results.filter((r) => r.severity === 'ERROR')),
+  warnings: groupByRuleName(results.filter((r) => r.severity === 'WARNING')),
+  infos: groupByRuleName(results.filter((r) => r.severity === 'INFO')),
+});
+
 export const ValidationSummary = ({
   slug,
   metaData,
@@ -53,48 +64,59 @@ export const ValidationSummary = ({
   metaData: OntologyMetadataModel;
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
+  const tError = useTranslations('Errors');
 
   const [validationReport, setValidationReport] = useState<ValidationReport>();
   const [grouped, setGrouped] = useState<GroupedValidation>();
 
-  const validate = useValidateOntology();
+  const createValidationReport = useValidateOntology();
+  const getValidationReport = useGetValidationReport(slug, {
+    query: { enabled: false },
+  });
   const openRule = useValidationSideboxStore((state) => state.openRule);
 
-  const handleValidate = () => {
-    validate.mutate(
+  const setReport = (report?: ValidationReport) => {
+    if (!report) return;
+
+    setValidationReport(report);
+    setGrouped(groupValidationResults(report.results ?? []));
+  };
+
+  const handleValidate = async () => {
+    const updatedAt = metaData.updatedAt
+      ? new Date(metaData.updatedAt).getTime()
+      : Number.NaN;
+    const lastValidationAt = metaData.lastValidationAt
+      ? new Date(metaData.lastValidationAt).getTime()
+      : Number.NaN;
+
+    if (!Number.isNaN(lastValidationAt) && updatedAt <= lastValidationAt) {
+      const { data } = await getValidationReport.refetch();
+      setReport(data?.data);
+      return;
+    }
+
+    createValidationReport.mutate(
       { slug: slug, data: metaData },
       {
-        onSuccess: (data) => {
-          const report = data.data;
-          setValidationReport(report);
-
-          const results = report?.results ?? [];
-          setGrouped({
-            errors: groupByRuleName(
-              results.filter((r) => r.severity === 'ERROR'),
-            ),
-            warnings: groupByRuleName(
-              results.filter((r) => r.severity === 'WARNING'),
-            ),
-            infos: groupByRuleName(
-              results.filter((r) => r.severity === 'INFO'),
-            ),
-          });
+        onSuccess: (data) => setReport(data.data),
+        onError: (error) => {
+          toast.error(getErrorMessage(error, tError));
         },
       },
     );
   };
 
-  if (validate.isPending)
+  if (createValidationReport.isPending || getValidationReport.isFetching)
     return (
-      <div className="h-full flex items-start justify-center w-full col-span-4">
+      <div className="h-full flex items-start justify-center w-full">
         <CircularLoader />
       </div>
     );
 
   if (!validationReport || !grouped)
     return (
-      <div className="col-span-4 flex flex-col items-center pl-10">
+      <div className="flex flex-col items-center">
         <p className="font-medium text-lg mb-3">{t('NotValidated')}</p>
         <GovButton
           type="solid"
@@ -114,7 +136,7 @@ export const ValidationSummary = ({
     );
 
   return (
-    <div className="col-span-4 flex flex-col w-full pl-10">
+    <div className="flex flex-col w-full">
       <div className="w-full flex justify-between items-center mb-3">
         <span className="font-medium text-lg">
           {t('ValidationResult')}{' '}
@@ -208,17 +230,22 @@ const ValidationSection = ({
   onRuleClick: (_rule: ValidationRule) => void;
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div>
-      <span
+      <button
+        type="button"
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+        aria-expanded={isExpanded}
+        aria-label={isExpanded ? t('CollapseSection') : t('ExpandSection')}
         className={clsx(
           {
             'text-status-error-700': severity === 'ERROR',
             'text-status-warning-700': severity === 'WARNING',
             'text-footer-separator': severity === 'INFO',
           },
-          'font-bold text-sm flex gap-2 items-center pb-2.5',
+          'font-bold text-sm flex gap-2 items-center pb-2.5 w-full text-left',
         )}
       >
         <GovIcon
@@ -239,21 +266,36 @@ const ValidationSection = ({
                 : 'shield-check'
           }
         />
-        {label}{' '}
-        <span className="text-black/70 font-normal">[{totalCount}]</span>
-      </span>
-      <div className="space-y-2">
-        {rules.map((rule) => (
-          <ValidationCard
-            key={rule.ruleName}
-            label={rule.message}
-            count={rule.items.length}
-            onClick={() => onRuleClick(rule)}
-            severity={severity}
-            showConceptsLabel={t('ShowConcepts')}
+        <span>
+          {label}{' '}
+          <span className="text-black/70 font-normal">[{totalCount}]</span>
+        </span>
+        <span className="ml-auto flex items-center justify-center text-current">
+          <GovIcon
+            type="components"
+            name="chevron-down"
+            size="s"
+            className={clsx(
+              isExpanded && 'rotate-180',
+              'text-current transition-transform duration-200',
+            )}
           />
-        ))}
-      </div>
+        </span>
+      </button>
+      {isExpanded && (
+        <div className="space-y-2">
+          {rules.map((rule) => (
+            <ValidationCard
+              key={rule.ruleName}
+              label={rule.message}
+              count={rule.items.length}
+              onClick={() => onRuleClick(rule)}
+              severity={severity}
+              showConceptsLabel={t('ShowConcepts')}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

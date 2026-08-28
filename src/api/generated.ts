@@ -41,6 +41,15 @@ export const ConceptMetadataModelConceptType = {
   KONCEPT: 'KONCEPT',
 } as const;
 
+export type ConceptMetadataModelSourceTag =
+  (typeof ConceptMetadataModelSourceTag)[keyof typeof ConceptMetadataModelSourceTag];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ConceptMetadataModelSourceTag = {
+  DRAFT: 'DRAFT',
+  WORKING_COPY: 'WORKING_COPY',
+} as const;
+
 export interface ConceptMetadataModel {
   id?: number;
   slug?: string;
@@ -51,11 +60,25 @@ export interface ConceptMetadataModel {
   conceptName?: string;
   user?: UserModel;
   isPublished?: boolean;
+  sourceTag?: ConceptMetadataModelSourceTag;
   inTezaurus?: boolean;
   comments?: CommentModel[];
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type OntologyMetadataModelName = { [key: string]: string };
+
+export type OntologyMetadataModelSourceTag =
+  (typeof OntologyMetadataModelSourceTag)[keyof typeof OntologyMetadataModelSourceTag];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OntologyMetadataModelSourceTag = {
+  DRAFT: 'DRAFT',
+  WORKING_COPY: 'WORKING_COPY',
+} as const;
+
+export type OntologyMetadataModelPopis = { [key: string]: string };
 
 export type OntologyMetadataModelLastValidationStatus =
   (typeof OntologyMetadataModelLastValidationStatus)[keyof typeof OntologyMetadataModelLastValidationStatus];
@@ -71,11 +94,12 @@ export interface OntologyMetadataModel {
   id?: number;
   slug?: string;
   graphName?: string;
-  name?: string;
+  name?: OntologyMetadataModelName;
   user?: UserModel;
   isPublished?: boolean;
+  sourceTag?: OntologyMetadataModelSourceTag;
   comments?: CommentModel[];
-  popis?: string;
+  popis?: OntologyMetadataModelPopis;
   concepts?: ConceptMetadataModel[];
   createdAt?: string;
   updatedAt?: string;
@@ -125,9 +149,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -156,7 +180,7 @@ export interface OntologyCreateModel {
   descriptionModel: DescriptionModel;
 }
 
-export type AltNameModelAltName = { [key: string]: string };
+export type AltNameModelAltName = { [key: string]: string[] };
 
 export interface AltNameModel {
   altName?: AltNameModelAltName;
@@ -173,6 +197,7 @@ export type ClassConceptModelAllOf = {
   isPublic?: boolean;
   privacyProvisions?: string[];
   broaderConcept?: string[];
+  codeListIri?: string;
   codeListDataset?: string;
 };
 
@@ -233,7 +258,6 @@ export type PropertyConceptModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type PropertyConceptModel = ConceptCreateModel &
@@ -251,7 +275,6 @@ export type RelationshipConceptModelAllOf = {
   isInPPDF?: boolean;
   isPublic?: boolean;
   privacyProvisions?: string[];
-  codeListDataset?: string;
 };
 
 export type RelationshipConceptModel = ConceptCreateModel &
@@ -264,11 +287,104 @@ export interface ApiResponseDtoConceptMetadataModel {
   errorCode?: string;
 }
 
-export interface ApiResponseDtoLinkSnapshotDto {
-  data?: LinkSnapshotDto;
+export interface WorkingCopySyncRequestDto {
+  /** @minItems 1 */
+  fieldsToAccept: string[];
+}
+
+export interface ApiResponseDtoGetConceptDto {
+  data?: GetConceptDto;
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface CodeListDto {
+  iri?: string;
+  typ?: string;
+  'datová-sada-v-nkod'?: string;
+}
+
+export type ConceptDetailModelNázev = { [key: string]: string };
+
+export type ConceptDetailModelAlternativníNázev = { [key: string]: unknown };
+
+export type ConceptDetailModelDefinice = { [key: string]: string };
+
+export type ConceptDetailModelPopis = { [key: string]: string };
+
+export type ConceptDetailModelReferencovanéPojmyResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export interface ConceptDetailModel {
+  conceptProperties?: ConceptPropertiesModel[];
+  conceptRelationships?: ConceptRelationshipsModel[];
+  iri?: string;
+  typ?: string[];
+  název?: ConceptDetailModelNázev;
+  'alternativní-název'?: ConceptDetailModelAlternativníNázev;
+  definice?: ConceptDetailModelDefinice;
+  popis?: ConceptDetailModelPopis;
+  identifikátor?: string;
+  'ekvivalentní-pojem'?: string[];
+  'definiční-obor'?: string;
+  'obor-hodnot'?: string;
+  'obor-hodnot-resolved'?: DataTypeDto;
+  'nadřazená-třída'?: string[];
+  'nadřazený-vztah'?: string[];
+  'nadřazená-vlastnost'?: string[];
+  'definující-ustanovení-právního-předpisu'?: string[];
+  'související-ustanovení-právního-předpisu'?: string[];
+  'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
+  'definující-nelegislativní-zdroj'?: NonLegalSourceDto[];
+  'související-nelegislativní-zdroj'?: NonLegalSourceDto[];
+  'způsob-sdílení-údaje'?: string[];
+  'způsob-získání-údaje'?: string;
+  'typ-obsahu-údaje'?: string;
+  'je-ppdf'?: boolean;
+  'agendový-informační-systém'?: string;
+  agenda?: string;
+  'agendový-informační-systém-resolved'?: RppIsvs;
+  'agenda-resolved'?: RppAgenda;
+  'ustanovení-dokládající-neveřejnost-údaje'?: string[];
+  'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
+  'instance-definovány-číselníkem'?: CodeListDto;
+  'počet-cizích-vlastností'?: number;
+  'počet-cizích-vztahů'?: number;
+  'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
+}
+
+export interface ConceptPropertiesModel {
+  name?: string;
+  iri?: string;
+  ref?: string;
+  range?: string;
+  rangeResolved?: DataTypeDto;
+}
+
+export interface ConceptRelationshipsModel {
+  name?: string;
+  iri?: string;
+  ref?: string;
+}
+
+export interface DataTypeDto {
+  code?: string;
+  label?: string;
+}
+
+export interface FragmentSegment {
+  kind?: string;
+  number?: string;
+}
+
+export interface GetConceptDto {
+  conceptMetadata?: ConceptMetadataModel;
+  conceptDetail?: ConceptDetailModel;
+  publishedConceptDeviationModel?: PublishedConceptDeviationModel;
+  linkSnapshots?: LinkSnapshotDto[];
 }
 
 export type LinkSnapshotDtoLinkPredicate =
@@ -287,7 +403,7 @@ export type LinkSnapshotDtoOrigin =
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LinkSnapshotDtoOrigin = {
-  SELF_PUBLISHED: 'SELF_PUBLISHED',
+  WORKING_COPY: 'WORKING_COPY',
   LINK_TARGET: 'LINK_TARGET',
 } as const;
 
@@ -408,9 +524,36 @@ export const PublishedConceptDeviationModelStatus = {
   PENDING: 'PENDING',
 } as const;
 
+export type PublishedConceptDeviationModelOrigin =
+  (typeof PublishedConceptDeviationModelOrigin)[keyof typeof PublishedConceptDeviationModelOrigin];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PublishedConceptDeviationModelOrigin = {
+  WORKING_COPY: 'WORKING_COPY',
+  LINK_TARGET: 'LINK_TARGET',
+} as const;
+
+export type PublishedConceptDeviationModelReferencovanéPojmyResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export type PublishedConceptDeviationModelOborHodnotResolved = {
+  [key: string]: DataTypeDto;
+};
+
+export type PublishedConceptDeviationModelAgendaResolved = {
+  [key: string]: RppAgenda;
+};
+
+export type PublishedConceptDeviationModelAisResolved = {
+  [key: string]: RppIsvs;
+};
+
 export interface PublishedConceptDeviationModel {
   status?: PublishedConceptDeviationModelStatus;
   errorMessage?: string;
+  origin?: PublishedConceptDeviationModelOrigin;
+  source?: NkdConceptRefDto;
   typ?: PropertyDeviationListString;
   název?: PropertyDeviationMapStringString;
   'alternativní-název'?: PropertyDeviationMapStringObject;
@@ -431,9 +574,106 @@ export interface PublishedConceptDeviationModel {
   'způsob-získání-údajů'?: PropertyDeviationString;
   'typ-obsahu-údajů'?: PropertyDeviationString;
   'je-ppdf'?: PropertyDeviationBoolean;
+  'typ-objektu-subjektu'?: PropertyDeviationString;
+  'veřejnost-údaje'?: PropertyDeviationBoolean;
   ais?: PropertyDeviationString;
   agenda?: PropertyDeviationString;
   'ustanovení-dokládající-neveřejnost-údaje'?: PropertyDeviationListString;
+  'referencované-pojmy-resolved'?: PublishedConceptDeviationModelReferencovanéPojmyResolved;
+  'obor-hodnot-resolved'?: PublishedConceptDeviationModelOborHodnotResolved;
+  'agenda-resolved'?: PublishedConceptDeviationModelAgendaResolved;
+  'ais-resolved'?: PublishedConceptDeviationModelAisResolved;
+}
+
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
+}
+
+export type ResolvedLegalSourceDtoLevel =
+  (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoLevel = {
+  LAW: 'LAW',
+  VERSION: 'VERSION',
+  FRAGMENT: 'FRAGMENT',
+} as const;
+
+export type ResolvedLegalSourceDtoEnrichmentStatus =
+  (typeof ResolvedLegalSourceDtoEnrichmentStatus)[keyof typeof ResolvedLegalSourceDtoEnrichmentStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedLegalSourceDtoEnrichmentStatus = {
+  OK: 'OK',
+  PENDING: 'PENDING',
+  UNAVAILABLE: 'UNAVAILABLE',
+  NOT_FOUND: 'NOT_FOUND',
+  SKIPPED_NON_FRAGMENT: 'SKIPPED_NON_FRAGMENT',
+  INVALID_IRI: 'INVALID_IRI',
+} as const;
+
+export interface ResolvedLegalSourceDto {
+  originalUrl?: string;
+  eliPath?: string;
+  domain?: string;
+  level?: ResolvedLegalSourceDtoLevel;
+  lawIri?: string;
+  versionIri?: string;
+  fragmentIri?: string;
+  lawNumber?: string;
+  lawYear?: number;
+  sbirkaCode?: string;
+  versionDate?: string;
+  fragmentSegments?: FragmentSegment[];
+  displayLabel?: string;
+  fragmentCitation?: string;
+  fragmentBodyHtml?: string;
+  fragmentBody?: string;
+  versionValidUntil?: string;
+  isLatestVersion?: boolean;
+  enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
+}
+
+export interface RppAgenda {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+}
+
+export interface RppIsvs {
+  iri?: string;
+  code?: string;
+  nazev?: string;
+  agendaIris?: string[];
+}
+
+export interface ApiResponseDtoLinkSnapshotDto {
+  data?: LinkSnapshotDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
 }
 
 export interface CommentCreateModel {
@@ -447,6 +687,58 @@ export interface ApiResponseDtoCommentModel {
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface AiFeedbackRequestDto {
+  /** Identifier of the suggestion job. */
+  jobId: string;
+  /**
+   * Suggestion identifiers to which the feedback applies.
+   * @minItems 1
+   */
+  suggestionIds: string[];
+}
+
+/**
+ * Input for generating suggestions for a selected class. The backend adds only the configured suggestion count.
+ */
+export interface AiSelectedClassSuggestionRequestDto {
+  /** @minLength 1 */
+  selectedClassId: string;
+  structuralElementIds?: string[];
+  contextText?: string;
+  /** Slugs of ontologies merged into the known conceptual model. */
+  knownConceptualModelSlugs?: string[];
+}
+
+/**
+ * Initial processing status of the job.
+ */
+export type AiJobStartResponseDtoStatus =
+  (typeof AiJobStartResponseDtoStatus)[keyof typeof AiJobStartResponseDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiJobStartResponseDtoStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export interface AiJobStartResponseDto {
+  /** Identifier of the newly started suggestion job. */
+  jobId: string;
+  /** Initial processing status of the job. */
+  status: AiJobStartResponseDtoStatus;
+}
+
+/**
+ * Input for generating class suggestions. The backend adds only the configured suggestion count.
+ */
+export interface AiClassSuggestionRequestDto {
+  structuralElementIds?: string[];
+  contextText?: string;
+  /** Slugs of ontologies merged into the known conceptual model. */
+  knownConceptualModelSlugs?: string[];
 }
 
 export interface ApiResponseDtoReconciliationReportDto {
@@ -522,6 +814,7 @@ export type ClassConceptEditModelAllOf = {
   privacyProvisions?: string[];
   broaderConcept?: string[];
   isInPPDF?: boolean;
+  codeListIri?: string;
   codeListDataset?: string;
 };
 
@@ -569,7 +862,6 @@ export type PropertyConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type PropertyConceptEditModel = ConceptEditModel &
@@ -587,7 +879,6 @@ export type RelationshipConceptEditModelAllOf = {
   sharingMethod?: string[];
   acquisitionMethod?: string;
   contentType?: string;
-  codeListDataset?: string;
 };
 
 export type RelationshipConceptEditModel = ConceptEditModel &
@@ -725,83 +1016,25 @@ export interface RppSearchResultDto {
   nazev?: string;
 }
 
-export interface ApiResponseDtoGetOntologyDto {
-  data?: GetOntologyDto;
+export interface ApiResponseDtoValidationReportDto {
+  data?: ValidationReportDto;
   message?: string;
   success?: boolean;
   errorCode?: string;
 }
 
-export type ConceptDetailModelNázev = { [key: string]: string };
-
-export type ConceptDetailModelAlternativníNázev = { [key: string]: unknown };
-
-export type ConceptDetailModelDefinice = { [key: string]: string };
-
-export type ConceptDetailModelPopis = { [key: string]: string };
-
-export type ConceptDetailModelReferencovanéPojmyResolved = {
-  [key: string]: ResolvedConceptDto;
-};
-
-export interface ConceptDetailModel {
-  conceptProperties?: ConceptPropertiesModel[];
-  conceptRelationships?: ConceptRelationshipsModel[];
-  iri?: string;
-  typ?: string[];
-  název?: ConceptDetailModelNázev;
-  'alternativní-název'?: ConceptDetailModelAlternativníNázev;
-  definice?: ConceptDetailModelDefinice;
-  popis?: ConceptDetailModelPopis;
-  identifikátor?: string;
-  'ekvivalentní-pojem'?: string[];
-  'definiční-obor'?: string;
-  'obor-hodnot'?: string;
-  'obor-hodnot-resolved'?: DataTypeDto;
-  'nadřazená-třída'?: string[];
-  'nadřazený-vztah'?: string[];
-  'nadřazená-vlastnost'?: string[];
-  'definující-ustanovení-právního-předpisu'?: string[];
-  'související-ustanovení-právního-předpisu'?: string[];
-  'definující-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
-  'související-ustanovení-právního-předpisu-resolved'?: ResolvedLegalSourceDto[];
-  'definující-nelegislativní-zdroj'?: NonLegalSourceDto[];
-  'související-nelegislativní-zdroj'?: NonLegalSourceDto[];
-  'způsob-sdílení-údaje'?: string[];
-  'způsob-získání-údaje'?: string;
-  'typ-obsahu-údaje'?: string;
-  'je-ppdf'?: boolean;
-  'agendový-informační-systém'?: string;
-  agenda?: string;
-  'agendový-informační-systém-resolved'?: RppIsvs;
-  'agenda-resolved'?: RppAgenda;
-  'ustanovení-dokládající-neveřejnost-údaje'?: string[];
-  'ustanovení-dokládající-neveřejnost-údaje-resolved'?: ResolvedLegalSourceDto[];
-  'referencované-pojmy-resolved'?: ConceptDetailModelReferencovanéPojmyResolved;
+export interface ValidationReportDto {
+  results?: ValidationResult[];
+  timestamp?: string;
+  ontologyIri?: string;
+  id?: number;
 }
 
-export interface ConceptPropertiesModel {
-  name?: string;
-  iri?: string;
-  ref?: string;
-  range?: string;
-  rangeResolved?: DataTypeDto;
-}
-
-export interface ConceptRelationshipsModel {
-  name?: string;
-  iri?: string;
-  ref?: string;
-}
-
-export interface DataTypeDto {
-  code?: string;
-  label?: string;
-}
-
-export interface FragmentSegment {
-  kind?: string;
-  number?: string;
+export interface ApiResponseDtoGetOntologyDto {
+  data?: GetOntologyDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
 }
 
 export type GetOntologyDtoPublishedConceptDeviations = {
@@ -853,90 +1086,6 @@ export interface PublishedOntologyDeviationModel {
   typ?: PropertyDeviationListString;
   název?: PropertyDeviationMapStringString;
   popis?: PropertyDeviationMapStringString;
-}
-
-export type ResolvedConceptDtoConceptName = { [key: string]: string };
-
-export type ResolvedConceptDtoOntologyName = { [key: string]: string };
-
-export type ResolvedConceptDtoSource =
-  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedConceptDtoSource = {
-  NKD: 'NKD',
-  ISMD: 'ISMD',
-  UNPUBLISHED: 'UNPUBLISHED',
-  ALL: 'ALL',
-} as const;
-
-export interface ResolvedConceptDto {
-  iri?: string;
-  conceptName?: ResolvedConceptDtoConceptName;
-  conceptSlug?: string;
-  ontologyIri?: string;
-  ontologyName?: ResolvedConceptDtoOntologyName;
-  source?: ResolvedConceptDtoSource;
-  resolvedDomain?: ResolvedConceptDto;
-  resolvedRange?: ResolvedConceptDto;
-}
-
-export type ResolvedLegalSourceDtoLevel =
-  (typeof ResolvedLegalSourceDtoLevel)[keyof typeof ResolvedLegalSourceDtoLevel];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedLegalSourceDtoLevel = {
-  LAW: 'LAW',
-  VERSION: 'VERSION',
-  FRAGMENT: 'FRAGMENT',
-} as const;
-
-export type ResolvedLegalSourceDtoEnrichmentStatus =
-  (typeof ResolvedLegalSourceDtoEnrichmentStatus)[keyof typeof ResolvedLegalSourceDtoEnrichmentStatus];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedLegalSourceDtoEnrichmentStatus = {
-  OK: 'OK',
-  PENDING: 'PENDING',
-  UNAVAILABLE: 'UNAVAILABLE',
-  NOT_FOUND: 'NOT_FOUND',
-  SKIPPED_NON_FRAGMENT: 'SKIPPED_NON_FRAGMENT',
-  INVALID_IRI: 'INVALID_IRI',
-} as const;
-
-export interface ResolvedLegalSourceDto {
-  originalUrl?: string;
-  eliPath?: string;
-  domain?: string;
-  level?: ResolvedLegalSourceDtoLevel;
-  lawIri?: string;
-  versionIri?: string;
-  fragmentIri?: string;
-  lawNumber?: string;
-  lawYear?: number;
-  sbirkaCode?: string;
-  versionDate?: string;
-  fragmentSegments?: FragmentSegment[];
-  displayLabel?: string;
-  fragmentCitation?: string;
-  fragmentBodyHtml?: string;
-  fragmentBody?: string;
-  versionValidUntil?: string;
-  isLatestVersion?: boolean;
-  enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
-}
-
-export interface RppAgenda {
-  iri?: string;
-  code?: string;
-  nazev?: string;
-}
-
-export interface RppIsvs {
-  iri?: string;
-  code?: string;
-  nazev?: string;
-  agendaIris?: string[];
 }
 
 export interface ApiResponseDtoListOntologyMetadataModel {
@@ -1078,6 +1227,7 @@ export interface FragmentDto {
   citation?: string;
   order?: string;
   bodyHtml?: string;
+  navigable?: boolean;
   children?: FragmentDto[];
 }
 
@@ -1094,22 +1244,10 @@ export interface LawContentDto {
   versionIri?: string;
   versionEliPath?: string;
   versionDate?: string;
+  versionLatest?: boolean;
   versions?: LawVersionDto[];
   fragments?: FragmentDto[];
   bodyHtml?: string;
-}
-
-export interface ApiResponseDtoGetConceptDto {
-  data?: GetConceptDto;
-  message?: string;
-  success?: boolean;
-  errorCode?: string;
-}
-
-export interface GetConceptDto {
-  conceptMetadata?: ConceptMetadataModel;
-  conceptDetail?: ConceptDetailModel;
-  publishedConceptDeviationModel?: PublishedConceptDeviationModel;
 }
 
 export interface ApiResponseDtoListConceptMetadataModel {
@@ -1124,6 +1262,118 @@ export interface ApiResponseDtoListDataTypeDto {
   message?: string;
   success?: boolean;
   errorCode?: string;
+}
+
+export interface AiIdReferenceDto {
+  /** Identifier of the referenced conceptual-model term. */
+  id: string;
+}
+
+export type AiRelationshipSuggestionDtoName = { [key: string]: string };
+
+export type AiRelationshipSuggestionDtoDefinition = { [key: string]: string };
+
+export type AiRelationshipSuggestionDtoExplanation = { [key: string]: string };
+
+export interface AiRelationshipSuggestionDto {
+  suggestionId: string;
+  sourceClass: AiIdReferenceDto;
+  targetClass: AiIdReferenceDto;
+  name: AiRelationshipSuggestionDtoName;
+  definition: AiRelationshipSuggestionDtoDefinition;
+  explanation: AiRelationshipSuggestionDtoExplanation;
+  legalAct: string;
+}
+
+export type AiRelationshipSuggestionsJobResponseDtoStatus =
+  (typeof AiRelationshipSuggestionsJobResponseDtoStatus)[keyof typeof AiRelationshipSuggestionsJobResponseDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiRelationshipSuggestionsJobResponseDtoStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export interface AiRelationshipSuggestionsJobResponseDto {
+  jobId: string;
+  selectedClassId: string;
+  status: AiRelationshipSuggestionsJobResponseDtoStatus;
+  newRelationshipSuggestions: AiRelationshipSuggestionDto[];
+}
+
+export type AiAttributeSuggestionDtoName = { [key: string]: string };
+
+export type AiAttributeSuggestionDtoDefinition = { [key: string]: string };
+
+export type AiAttributeSuggestionDtoExplanation = { [key: string]: string };
+
+export interface AiAttributeSuggestionDto {
+  suggestionId: string;
+  associatedClass: AiIdReferenceDto;
+  name: AiAttributeSuggestionDtoName;
+  definition: AiAttributeSuggestionDtoDefinition;
+  explanation: AiAttributeSuggestionDtoExplanation;
+  legalAct: string;
+}
+
+export type AiPropertySuggestionsJobResponseDtoStatus =
+  (typeof AiPropertySuggestionsJobResponseDtoStatus)[keyof typeof AiPropertySuggestionsJobResponseDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiPropertySuggestionsJobResponseDtoStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export interface AiPropertySuggestionsJobResponseDto {
+  jobId: string;
+  selectedClassId: string;
+  status: AiPropertySuggestionsJobResponseDtoStatus;
+  newAttributeSuggestions: AiAttributeSuggestionDto[];
+}
+
+export type AiClassSuggestionDtoName = { [key: string]: string };
+
+export type AiClassSuggestionDtoDefinition = { [key: string]: string };
+
+export type AiClassSuggestionDtoExplanation = { [key: string]: string };
+
+export type AiClassSuggestionDtoType =
+  (typeof AiClassSuggestionDtoType)[keyof typeof AiClassSuggestionDtoType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiClassSuggestionDtoType = {
+  CLASS: 'CLASS',
+  SUBJECT: 'SUBJECT',
+  OBJECT: 'OBJECT',
+} as const;
+
+export interface AiClassSuggestionDto {
+  suggestionId: string;
+  name: AiClassSuggestionDtoName;
+  definition: AiClassSuggestionDtoDefinition;
+  explanation: AiClassSuggestionDtoExplanation;
+  type: AiClassSuggestionDtoType;
+  specializes: AiIdReferenceDto[];
+  legalAct: string;
+}
+
+export type AiClassSuggestionsJobResponseDtoStatus =
+  (typeof AiClassSuggestionsJobResponseDtoStatus)[keyof typeof AiClassSuggestionsJobResponseDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiClassSuggestionsJobResponseDtoStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export interface AiClassSuggestionsJobResponseDto {
+  jobId: string;
+  status: AiClassSuggestionsJobResponseDtoStatus;
+  newSuggestions: AiClassSuggestionDto[];
 }
 
 export interface ApiResponseDtoOutboxStatusDto {
@@ -1370,11 +1620,24 @@ export type GetFragmentsParams = {
 
 export type GetLawContentParams = {
   law: string;
+  versionIri?: string;
 };
 
 export type GetConceptListParams = {
   userId?: string;
   isPublished?: boolean;
+};
+
+export type GetRelationshipSuggestionsParams = {
+  jobIds: string[];
+};
+
+export type GetPropertySuggestionsParams = {
+  jobIds: string[];
+};
+
+export type GetClassSuggestionsParams = {
+  jobIds: string[];
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -1749,6 +2012,97 @@ export const useCreateConcept = <TError = unknown, TContext = unknown>(
 };
 
 /**
+ * Převezme vybrané odlišné vlastnosti z NKD. Přijetí VŠECH odlišných vlastností ponechá pojem pracovní kopií; přijetí pouze NĚKTERÝCH pojem odpojí od NKD a změní jej na koncept. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * @summary Synchronizace pracovní kopie s publikovaným pojmem v NKD
+ */
+export const syncWorkingCopy = (
+  conceptId: number,
+  workingCopySyncRequestDto: WorkingCopySyncRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoGetConceptDto>(
+    {
+      url: `/api/concept/${conceptId}/sync`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: workingCopySyncRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getSyncWorkingCopyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof syncWorkingCopy>>,
+    TError,
+    { conceptId: number; data: WorkingCopySyncRequestDto },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof syncWorkingCopy>>,
+  TError,
+  { conceptId: number; data: WorkingCopySyncRequestDto },
+  TContext
+> => {
+  const mutationKey = ['syncWorkingCopy'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof syncWorkingCopy>>,
+    { conceptId: number; data: WorkingCopySyncRequestDto }
+  > = (props) => {
+    const { conceptId, data } = props ?? {};
+
+    return syncWorkingCopy(conceptId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SyncWorkingCopyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof syncWorkingCopy>>
+>;
+export type SyncWorkingCopyMutationBody = WorkingCopySyncRequestDto;
+export type SyncWorkingCopyMutationError = unknown;
+
+/**
+ * @summary Synchronizace pracovní kopie s publikovaným pojmem v NKD
+ */
+export const useSyncWorkingCopy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof syncWorkingCopy>>,
+      TError,
+      { conceptId: number; data: WorkingCopySyncRequestDto },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof syncWorkingCopy>>,
+  TError,
+  { conceptId: number; data: WorkingCopySyncRequestDto },
+  TContext
+> => {
+  const mutationOptions = getSyncWorkingCopyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
  * Znovu načte propojený publikovaný pojem z NKD, obnoví lokální kopii a vrátí přepočítanou odchylku. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
  * @summary Aktualizace lokální kopie NKD pojmu
  */
@@ -1923,6 +2277,666 @@ export const usePostComment = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getPostCommentMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Uloží pozitivní zpětnou vazbu uživatele k vybraným návrhům z uvedených úloh,
+aniž by tím vyjadřoval jejich přijetí do modelu. Vyžaduje autentizaci.
+
+ * @summary Označí návrhy jako užitečné
+ */
+export const likeSuggestions = (
+  aiFeedbackRequestDto: AiFeedbackRequestDto[],
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<void>(
+    {
+      url: `/api/ai/like-suggestion`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiFeedbackRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getLikeSuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof likeSuggestions>>,
+    TError,
+    { data: AiFeedbackRequestDto[] },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof likeSuggestions>>,
+  TError,
+  { data: AiFeedbackRequestDto[] },
+  TContext
+> => {
+  const mutationKey = ['likeSuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof likeSuggestions>>,
+    { data: AiFeedbackRequestDto[] }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return likeSuggestions(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LikeSuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof likeSuggestions>>
+>;
+export type LikeSuggestionsMutationBody = AiFeedbackRequestDto[];
+export type LikeSuggestionsMutationError = unknown;
+
+/**
+ * @summary Označí návrhy jako užitečné
+ */
+export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof likeSuggestions>>,
+      TError,
+      { data: AiFeedbackRequestDto[] },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof likeSuggestions>>,
+  TError,
+  { data: AiFeedbackRequestDto[] },
+  TContext
+> => {
+  const mutationOptions = getLikeSuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Vytvoří asynchronní úlohu pro návrh nových vztahů vybrané zdrojové třídy. Klient
+v těle požadavku předá identifikátor vybrané třídy, vybrané části právního aktu,
+volitelný textový kontext a volitelné slugy slovníků známého konceptuálního modelu.
+Backend podle slugů sestaví společný známý konceptuální model, doplní počet návrhů
+z konfigurace a požadavek předá službě ISMD AI. Vyžaduje autentizaci.
+
+ * @summary Spustí generování návrhů vztahů vybrané třídy z právního aktu
+ */
+export const startRelationshipSuggestions = (
+  year: number,
+  number: number,
+  date: string,
+  aiSelectedClassSuggestionRequestDto: AiSelectedClassSuggestionRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiJobStartResponseDto>(
+    {
+      url: `/api/ai/legal-acts/${year}/${number}/${date}/relationship-suggestions`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiSelectedClassSuggestionRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getStartRelationshipSuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof startRelationshipSuggestions>>,
+    TError,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiSelectedClassSuggestionRequestDto;
+    },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof startRelationshipSuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiSelectedClassSuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationKey = ['startRelationshipSuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof startRelationshipSuggestions>>,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiSelectedClassSuggestionRequestDto;
+    }
+  > = (props) => {
+    const { year, number, date, data } = props ?? {};
+
+    return startRelationshipSuggestions(
+      year,
+      number,
+      date,
+      data,
+      requestOptions,
+    );
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type StartRelationshipSuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof startRelationshipSuggestions>>
+>;
+export type StartRelationshipSuggestionsMutationBody =
+  AiSelectedClassSuggestionRequestDto;
+export type StartRelationshipSuggestionsMutationError = unknown;
+
+/**
+ * @summary Spustí generování návrhů vztahů vybrané třídy z právního aktu
+ */
+export const useStartRelationshipSuggestions = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof startRelationshipSuggestions>>,
+      TError,
+      {
+        year: number;
+        number: number;
+        date: string;
+        data: AiSelectedClassSuggestionRequestDto;
+      },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof startRelationshipSuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiSelectedClassSuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationOptions =
+    getStartRelationshipSuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Vytvoří asynchronní úlohu pro návrh nových atributů vybrané třídy. Klient v těle
+požadavku předá identifikátor vybrané třídy, vybrané části právního aktu, volitelný
+textový kontext a volitelné slugy slovníků známého konceptuálního modelu. Backend
+podle slugů sestaví společný známý konceptuální model, doplní počet návrhů
+z konfigurace a požadavek předá službě ISMD AI. Vyžaduje autentizaci.
+
+ * @summary Spustí generování návrhů atributů vybrané třídy z právního aktu
+ */
+export const startPropertySuggestions = (
+  year: number,
+  number: number,
+  date: string,
+  aiSelectedClassSuggestionRequestDto: AiSelectedClassSuggestionRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiJobStartResponseDto>(
+    {
+      url: `/api/ai/legal-acts/${year}/${number}/${date}/property-suggestions`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiSelectedClassSuggestionRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getStartPropertySuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof startPropertySuggestions>>,
+    TError,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiSelectedClassSuggestionRequestDto;
+    },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof startPropertySuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiSelectedClassSuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationKey = ['startPropertySuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof startPropertySuggestions>>,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiSelectedClassSuggestionRequestDto;
+    }
+  > = (props) => {
+    const { year, number, date, data } = props ?? {};
+
+    return startPropertySuggestions(year, number, date, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type StartPropertySuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof startPropertySuggestions>>
+>;
+export type StartPropertySuggestionsMutationBody =
+  AiSelectedClassSuggestionRequestDto;
+export type StartPropertySuggestionsMutationError = unknown;
+
+/**
+ * @summary Spustí generování návrhů atributů vybrané třídy z právního aktu
+ */
+export const useStartPropertySuggestions = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof startPropertySuggestions>>,
+      TError,
+      {
+        year: number;
+        number: number;
+        date: string;
+        data: AiSelectedClassSuggestionRequestDto;
+      },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof startPropertySuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiSelectedClassSuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationOptions = getStartPropertySuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Vytvoří asynchronní úlohu pro návrh nových tříd slovníku. Klient v těle požadavku
+předá vybrané části právního aktu, volitelný textový kontext a volitelné slugy
+slovníků známého konceptuálního modelu. Backend podle slugů sestaví společný známý
+konceptuální model, doplní počet návrhů z konfigurace a požadavek předá službě
+ISMD AI. Vyžaduje autentizaci.
+
+ * @summary Spustí generování návrhů tříd z právního aktu
+ */
+export const startClassSuggestions = (
+  year: number,
+  number: number,
+  date: string,
+  aiClassSuggestionRequestDto: AiClassSuggestionRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiJobStartResponseDto>(
+    {
+      url: `/api/ai/legal-acts/${year}/${number}/${date}/class-suggestions`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiClassSuggestionRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getStartClassSuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof startClassSuggestions>>,
+    TError,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiClassSuggestionRequestDto;
+    },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof startClassSuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiClassSuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationKey = ['startClassSuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof startClassSuggestions>>,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiClassSuggestionRequestDto;
+    }
+  > = (props) => {
+    const { year, number, date, data } = props ?? {};
+
+    return startClassSuggestions(year, number, date, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type StartClassSuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof startClassSuggestions>>
+>;
+export type StartClassSuggestionsMutationBody = AiClassSuggestionRequestDto;
+export type StartClassSuggestionsMutationError = unknown;
+
+/**
+ * @summary Spustí generování návrhů tříd z právního aktu
+ */
+export const useStartClassSuggestions = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof startClassSuggestions>>,
+      TError,
+      {
+        year: number;
+        number: number;
+        date: string;
+        data: AiClassSuggestionRequestDto;
+      },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof startClassSuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiClassSuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationOptions = getStartClassSuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Uloží negativní zpětnou vazbu uživatele k vybraným návrhům z uvedených úloh.
+Vyžaduje autentizaci.
+
+ * @summary Označí návrhy jako neužitečné
+ */
+export const dislikeSuggestions = (
+  aiFeedbackRequestDto: AiFeedbackRequestDto[],
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<void>(
+    {
+      url: `/api/ai/dislike-suggestion`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiFeedbackRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getDislikeSuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof dislikeSuggestions>>,
+    TError,
+    { data: AiFeedbackRequestDto[] },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof dislikeSuggestions>>,
+  TError,
+  { data: AiFeedbackRequestDto[] },
+  TContext
+> => {
+  const mutationKey = ['dislikeSuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof dislikeSuggestions>>,
+    { data: AiFeedbackRequestDto[] }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return dislikeSuggestions(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DislikeSuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof dislikeSuggestions>>
+>;
+export type DislikeSuggestionsMutationBody = AiFeedbackRequestDto[];
+export type DislikeSuggestionsMutationError = unknown;
+
+/**
+ * @summary Označí návrhy jako neužitečné
+ */
+export const useDislikeSuggestions = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof dislikeSuggestions>>,
+      TError,
+      { data: AiFeedbackRequestDto[] },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof dislikeSuggestions>>,
+  TError,
+  { data: AiFeedbackRequestDto[] },
+  TContext
+> => {
+  const mutationOptions = getDislikeSuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Uloží informaci, že uživatel vybrané návrhy z uvedených úloh přijal do
+konceptuálního modelu. Vyžaduje autentizaci.
+
+ * @summary Označí návrhy jako přijaté
+ */
+export const acceptSuggestions = (
+  aiFeedbackRequestDto: AiFeedbackRequestDto[],
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<void>(
+    {
+      url: `/api/ai/accept-suggestion`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiFeedbackRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getAcceptSuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof acceptSuggestions>>,
+    TError,
+    { data: AiFeedbackRequestDto[] },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof acceptSuggestions>>,
+  TError,
+  { data: AiFeedbackRequestDto[] },
+  TContext
+> => {
+  const mutationKey = ['acceptSuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof acceptSuggestions>>,
+    { data: AiFeedbackRequestDto[] }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return acceptSuggestions(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AcceptSuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof acceptSuggestions>>
+>;
+export type AcceptSuggestionsMutationBody = AiFeedbackRequestDto[];
+export type AcceptSuggestionsMutationError = unknown;
+
+/**
+ * @summary Označí návrhy jako přijaté
+ */
+export const useAcceptSuggestions = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof acceptSuggestions>>,
+      TError,
+      { data: AiFeedbackRequestDto[] },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof acceptSuggestions>>,
+  TError,
+  { data: AiFeedbackRequestDto[] },
+  TContext
+> => {
+  const mutationOptions = getAcceptSuggestionsMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -2909,6 +3923,175 @@ export function useSearchAgendas<
 }
 
 /**
+ * Vrací výsledky poslední uložené kontroly slovníku. Zpráva se ukládá při nahrání slovníku a při ručním spuštění kontroly; nevzniká automaticky při úpravě pojmů. Slovník, který dosud nebyl zkontrolován, vrací prázdný seznam výsledků. Veřejný endpoint.
+ * @summary Zpráva z poslední kontroly slovníku
+ */
+export const getValidationReport = (
+  slug: string,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoValidationReportDto>(
+    { url: `/api/ontology/${slug}/validation-report`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getGetValidationReportQueryKey = (slug?: string) => {
+  return [`/api/ontology/${slug}/validation-report`] as const;
+};
+
+export const getGetValidationReportQueryOptions = <
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetValidationReportQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getValidationReport>>
+  > = ({ signal }) => getValidationReport(slug, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getValidationReport>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetValidationReportQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getValidationReport>>
+>;
+export type GetValidationReportQueryError = unknown;
+
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getValidationReport>>,
+          TError,
+          Awaited<ReturnType<typeof getValidationReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getValidationReport>>,
+          TError,
+          Awaited<ReturnType<typeof getValidationReport>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Zpráva z poslední kontroly slovníku
+ */
+
+export function useGetValidationReport<
+  TData = Awaited<ReturnType<typeof getValidationReport>>,
+  TError = unknown,
+>(
+  slug: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getValidationReport>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetValidationReportQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací kompletní detail slovníku včetně všech pojmů, jejich vztahů a metadat. Obsahuje také informace o odchylkách od publikované verze, pokud existuje. Veřejný endpoint.
  * @summary Detail slovníku
  */
@@ -3077,7 +4260,7 @@ export function useGetOntologyDetail<
 }
 
 /**
- * Umožňuje stáhnout slovník v požadovaném formátu (TTL, JSON-LD). Pokud je povoleno omezení stahování slovníků s chybami, slovníky s validačními chybami nelze stáhnout. Veřejný endpoint.
+ * Umožňuje stáhnout slovník v požadovaném formátu (TTL, JSON-LD). Pokud je povoleno omezení stahování slovníků s chybami, slovníky s validačními chybami nelze stáhnout a endpoint vrací 400 s kódem ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION a seznamem blokujících chyb. Veřejný endpoint.
  * @summary Stažení slovníku
  */
 export const downloadFile = (
@@ -5004,7 +6187,7 @@ export function useGetFragments<
 }
 
 /**
- * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997"), vyhledá daný právní akt přesnou shodou, vybere jeho poslední znění a vrátí celé jeho znění: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
+ * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997") a vrací celé znění daného aktu: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Bez parametru "versionIri" se vrací poslední znění; s ním zvolené znění (IRI musí patřit k danému aktu, jinak 400). Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
  * @summary Celé znění právního aktu podle reference číslo/rok
  */
 export const getLawContent = (
@@ -5601,6 +6784,540 @@ export function usePropertyDatatypes<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getPropertyDatatypesQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrátí aktuální stav a případné návrhy vztahů pro všechny úlohy zadané opakovaným
+query parametrem jobIds. Výsledek každé úlohy obsahuje také identifikátor zdrojové třídy.
+Vyžaduje autentizaci.
+
+ * @summary Vrátí stav a výsledky úloh pro návrhy vztahů
+ */
+export const getRelationshipSuggestions = (
+  params: GetRelationshipSuggestionsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiRelationshipSuggestionsJobResponseDto[]>(
+    {
+      url: `/api/ai/legal-acts/relationship-suggestions-jobs`,
+      method: 'GET',
+      params,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getGetRelationshipSuggestionsQueryKey = (
+  params?: GetRelationshipSuggestionsParams,
+) => {
+  return [
+    `/api/ai/legal-acts/relationship-suggestions-jobs`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetRelationshipSuggestionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+  TError = unknown,
+>(
+  params: GetRelationshipSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetRelationshipSuggestionsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getRelationshipSuggestions>>
+  > = ({ signal }) =>
+    getRelationshipSuggestions(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetRelationshipSuggestionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRelationshipSuggestions>>
+>;
+export type GetRelationshipSuggestionsQueryError = unknown;
+
+export function useGetRelationshipSuggestions<
+  TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+  TError = unknown,
+>(
+  params: GetRelationshipSuggestionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getRelationshipSuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetRelationshipSuggestions<
+  TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+  TError = unknown,
+>(
+  params: GetRelationshipSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getRelationshipSuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetRelationshipSuggestions<
+  TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+  TError = unknown,
+>(
+  params: GetRelationshipSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vrátí stav a výsledky úloh pro návrhy vztahů
+ */
+
+export function useGetRelationshipSuggestions<
+  TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+  TError = unknown,
+>(
+  params: GetRelationshipSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRelationshipSuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetRelationshipSuggestionsQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrátí aktuální stav a případné návrhy atributů pro všechny úlohy zadané opakovaným
+query parametrem jobIds. Výsledek každé úlohy obsahuje také identifikátor vybrané třídy.
+Vyžaduje autentizaci.
+
+ * @summary Vrátí stav a výsledky úloh pro návrhy atributů
+ */
+export const getPropertySuggestions = (
+  params: GetPropertySuggestionsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiPropertySuggestionsJobResponseDto[]>(
+    {
+      url: `/api/ai/legal-acts/property-suggestions-jobs`,
+      method: 'GET',
+      params,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getGetPropertySuggestionsQueryKey = (
+  params?: GetPropertySuggestionsParams,
+) => {
+  return [
+    `/api/ai/legal-acts/property-suggestions-jobs`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetPropertySuggestionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
+  TError = unknown,
+>(
+  params: GetPropertySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPropertySuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPropertySuggestionsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPropertySuggestions>>
+  > = ({ signal }) => getPropertySuggestions(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPropertySuggestions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPropertySuggestionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPropertySuggestions>>
+>;
+export type GetPropertySuggestionsQueryError = unknown;
+
+export function useGetPropertySuggestions<
+  TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
+  TError = unknown,
+>(
+  params: GetPropertySuggestionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPropertySuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPropertySuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getPropertySuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPropertySuggestions<
+  TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
+  TError = unknown,
+>(
+  params: GetPropertySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPropertySuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPropertySuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getPropertySuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPropertySuggestions<
+  TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
+  TError = unknown,
+>(
+  params: GetPropertySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPropertySuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vrátí stav a výsledky úloh pro návrhy atributů
+ */
+
+export function useGetPropertySuggestions<
+  TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
+  TError = unknown,
+>(
+  params: GetPropertySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPropertySuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetPropertySuggestionsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrátí aktuální stav a případné návrhy tříd pro všechny úlohy zadané opakovaným
+query parametrem jobIds. Vyžaduje autentizaci.
+
+ * @summary Vrátí stav a výsledky úloh pro návrhy tříd
+ */
+export const getClassSuggestions = (
+  params: GetClassSuggestionsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiClassSuggestionsJobResponseDto[]>(
+    {
+      url: `/api/ai/legal-acts/class-suggestions-jobs`,
+      method: 'GET',
+      params,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getGetClassSuggestionsQueryKey = (
+  params?: GetClassSuggestionsParams,
+) => {
+  return [
+    `/api/ai/legal-acts/class-suggestions-jobs`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetClassSuggestionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getClassSuggestions>>,
+  TError = unknown,
+>(
+  params: GetClassSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClassSuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetClassSuggestionsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getClassSuggestions>>
+  > = ({ signal }) => getClassSuggestions(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getClassSuggestions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetClassSuggestionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getClassSuggestions>>
+>;
+export type GetClassSuggestionsQueryError = unknown;
+
+export function useGetClassSuggestions<
+  TData = Awaited<ReturnType<typeof getClassSuggestions>>,
+  TError = unknown,
+>(
+  params: GetClassSuggestionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClassSuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClassSuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getClassSuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClassSuggestions<
+  TData = Awaited<ReturnType<typeof getClassSuggestions>>,
+  TError = unknown,
+>(
+  params: GetClassSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClassSuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getClassSuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getClassSuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetClassSuggestions<
+  TData = Awaited<ReturnType<typeof getClassSuggestions>>,
+  TError = unknown,
+>(
+  params: GetClassSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClassSuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vrátí stav a výsledky úloh pro návrhy tříd
+ */
+
+export function useGetClassSuggestions<
+  TData = Awaited<ReturnType<typeof getClassSuggestions>>,
+  TError = unknown,
+>(
+  params: GetClassSuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getClassSuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetClassSuggestionsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

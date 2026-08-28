@@ -1,9 +1,9 @@
 'use client';
 
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
 
 import {
   ConceptDetailModel,
@@ -11,8 +11,9 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
-import { clearFormDraft } from '@/hooks/useFormDraft';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
+import { draftKeys } from '@/lib/draftKeys';
 
 import { normalizeFormData } from './ConceptCreate';
 import { ConceptForm } from './ConceptForm';
@@ -36,6 +37,7 @@ function toMultiLang(
 
 const SHARING_METHOD_IRI_MAP: Record<string, string> = {
   'veřejně-přístupné': 'veřejně přístupné',
+  nesdílené: 'nesdílené',
   'poskytované-na-žádost': 'poskytované na žádost',
   'zpřístupňované-pro-výkon-agendy': 'zpřístupňované pro výkon agendy',
 };
@@ -43,6 +45,8 @@ const SHARING_METHOD_IRI_MAP: Record<string, string> = {
 const ACQUISITION_METHOD_IRI_MAP: Record<string, string> = {
   'jiných-agend': 'jiných agend',
   provozní: 'provozní',
+  vlastní: 'vlastní',
+  'základních-registrů': 'základních registrů',
 };
 
 const CONTENT_TYPE_IRI_MAP: Record<string, string> = {
@@ -217,23 +221,34 @@ export function mapDetailToFormValues(
     acquisitionMethod: mapAcquisitionMethod(detail['způsob-získání-údaje']),
     sharingMethod: mapSharingMethods(detail['způsob-sdílení-údaje']),
     isInPPDF: detail['je-ppdf'] ?? false,
-    isPublic: detail.typ?.includes('Veřejný údaj'),
+    isPublic: detail.typ?.includes('Veřejný údaj')
+      ? true
+      : detail.typ?.includes('Neveřejný údaj')
+        ? false
+        : undefined,
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
+    codeListIri:
+      detail['instance-definovány-číselníkem'] &&
+      detail['instance-definovány-číselníkem'].iri,
+    codeListDataset:
+      detail['instance-definovány-číselníkem'] &&
+      detail['instance-definovány-číselníkem']['datová-sada-v-nkod'],
   };
 }
 
 export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   const { data, isLoading } = useGetConceptDetail(slug);
-  const { mutate: editConcept, isPending } = useEditConcept();
+  const { mutate: editConcept, isPending, isPaused } = useEditConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptEditWrapper');
   const router = useRouter();
+  const submitForm = useSubmitForm();
   const queryInvalidate = useQueryInvalidator();
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
   const graphName = conceptMetadata?.graphName ?? '';
-  const storageKey = `concept-draft:edit:${slug}`;
+  const storageKey = draftKeys.conceptEdit(slug);
 
   const defaultValues =
     conceptDetail && graphName
@@ -242,7 +257,6 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
 
   const handleSubmit = (formData: ConceptFormValues) => {
     if (conceptMetadata?.id === undefined) return;
-
     const originalLanguageTags = {
       name: Object.keys(conceptDetail?.['název'] ?? {}),
       altName: Object.keys(conceptDetail?.['alternativní-název'] ?? {}),
@@ -250,40 +264,37 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       description: Object.keys(conceptDetail?.['popis'] ?? {}),
     };
 
-    editConcept(
-      {
+    submitForm({
+      mutate: editConcept,
+      variables: {
         conceptId: conceptMetadata.id,
         data: normalizeFormData(formData, originalLanguageTags),
       },
-      {
-        onSuccess: (response) => {
-          clearFormDraft(storageKey);
-          (queryInvalidate.invalidateConcept(response.data?.slug ?? ''),
-            queryInvalidate.invalidateOntology(
-              data?.data?.conceptMetadata?.ontologySlug ?? '',
-            ),
-            toast.success(t('ToastSuccess'), { position: 'bottom-right' }));
-          router.push(`/concept/${response.data?.slug}`);
-        },
-        onError: () => {
-          toast.error(t('ToastError'), { position: 'bottom-right' });
-        },
+      onSuccess: (response) => {
+        queryInvalidate.invalidateConcept(
+          decodeURIComponent(response.data?.slug || ''),
+        );
+        queryInvalidate.invalidateOntology(
+          response.data?.ontologySlug || graphName,
+        );
+        router.push(`/concept/${response.data?.slug}`);
       },
-    );
+      draftKey: storageKey,
+    });
   };
 
   return (
     <div className="w-full max-w-250 mx-auto flex flex-col gap-5 p-5">
-      <div className="relative">
-        <button
-          onClick={() => router.back()}
-          className="lg:absolute top-0 lg:-left-5 pt-1 pb-4 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+      <div className="flex flex-wrap items-center gap-2">
+        <Link
+          href={`/concept/${slug}`}
+          className="flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
-        </button>
+        </Link>
 
-        <span className="font-medium text-md">{t('EditConcept')} </span>
+        <span className="font-medium text-md">{t('EditConcept')}</span>
 
         <GovTag
           color="success"
@@ -304,11 +315,12 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         <ConceptForm
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
-          isPending={isPending}
+          isPending={isPending && !isPaused}
           defaultValues={defaultValues}
           editing={true}
           storageKey={storageKey}
           conceptIri={data?.data?.conceptDetail?.iri}
+          slug={slug}
         />
       )}
     </div>

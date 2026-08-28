@@ -1,19 +1,17 @@
 'use client';
 
 import { ReactNode, useEffect } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 
 import { CurrentUserProvider } from '@/components/contexts/CurrentUserProvider';
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
+import { QueryProvider } from '@/components/contexts/QueryProvider';
 import { SessionGuard } from '@/components/contexts/SessionGuard';
 import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 import { normalizeBasePath } from '@/lib/basePath';
-
-import { getQueryClient } from './get-query-client';
 
 export default function Providers({
   children,
@@ -24,7 +22,6 @@ export default function Providers({
   environmentVariables: EnvironmentVariables;
   session: Session | null;
 }) {
-  const queryClient = getQueryClient();
   const normalizedBasePath = normalizeBasePath(
     environmentVariables.NEXT_PUBLIC_BASE_PATH,
   );
@@ -32,7 +29,7 @@ export default function Providers({
 
   useEffect(() => {
     if (
-      process.env.NODE_ENV === 'production' &&
+      !process.env.NEXT_PUBLIC_DISABLE_SW &&
       typeof window !== 'undefined' &&
       'serviceWorker' in navigator
     ) {
@@ -52,7 +49,7 @@ export default function Providers({
   return (
     <ThemeProvider>
       <Environment variables={environmentVariables}>
-        <QueryClientProvider client={queryClient}>
+        <QueryProvider>
           <SessionProvider session={session} basePath={nextAuthBasePath}>
             <SessionGuard>
               <CurrentUserProvider>
@@ -61,7 +58,7 @@ export default function Providers({
               </CurrentUserProvider>
             </SessionGuard>
           </SessionProvider>
-        </QueryClientProvider>
+        </QueryProvider>
       </Environment>
     </ThemeProvider>
   );

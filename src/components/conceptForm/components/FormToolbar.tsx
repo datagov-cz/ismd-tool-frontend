@@ -8,8 +8,10 @@ import { useFormHistory } from '@/hooks/useFormHistory';
 
 export const FormToolbar = <T extends FieldValues>({
   isPending,
+  onCancel,
 }: {
   isPending: boolean;
+  onCancel: () => void;
 }) => {
   const { undo, redo, canUndo, canRedo } = useFormHistory<T>();
   const {
@@ -67,7 +69,7 @@ export const FormToolbar = <T extends FieldValues>({
           'sticky bottom-0 z-10 py-5 px-6 bg-white flex justify-between items-center transition-shadow duration-200',
           isFloating
             ? 'shadow-[0px_16px_40px_0px_rgba(0,0,0,0.3)]'
-            : 'rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]',
+            : 'rounded-lg shadow-subtle',
         )}
       >
         <div className="flex items-center gap-6">
@@ -122,7 +124,7 @@ export const FormToolbar = <T extends FieldValues>({
             type="outlined"
             color="neutral"
             size="s"
-            disabled={isPending}
+            onGovClick={onCancel}
           >
             {t('Cancel')}
           </GovButton>

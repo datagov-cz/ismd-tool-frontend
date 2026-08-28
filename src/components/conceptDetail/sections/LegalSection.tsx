@@ -35,7 +35,7 @@ export const LegalSection = ({
   }
 
   return (
-    <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+    <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
       {definujiciUstanoveni && definujiciUstanoveni.length > 0 && (
         <Section title={t('Sections.Resource')}>
           <div className="space-y-2">
@@ -111,19 +111,27 @@ export const NonLegislativeSource = ({
 
 interface LegislativeSourceProps {
   item: ResolvedLegalSourceDto;
+  bg?: 'white' | 'blue';
 }
 
-export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
+export const LegislativeSource = ({
+  item,
+  bg = 'blue',
+}: LegislativeSourceProps) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations('ConceptDetail');
 
-  const { data } = useResolveLegalSource(
-    { iri: item.fragmentIri ?? '' },
-    { query: { enabled: !!item.fragmentIri && open } },
-  );
+  const { data } = useResolveLegalSource({
+    iri: item.fragmentIri ?? item.originalUrl ?? '',
+  });
 
   return (
-    <div className="border border-gray-border rounded-lg bg-status-warning-100 px-2 py-1">
+    <div
+      className={clsx(
+        'border rounded-lg border-border-primary px-2 py-1',
+        bg === 'white' ? 'bg-white ' : 'bg-primary-subtlest',
+      )}
+    >
       <button
         type="button"
         className="w-full flex justify-between items-center gap-2"
@@ -132,7 +140,9 @@ export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
       >
         <div className="flex items-center gap-2">
           <GovIcon type="components" name="book" color="neutral" />
-          <span className="font-medium text-start">{item.displayLabel}</span>
+          <span className="font-medium text-start break-normal">
+            {data?.data?.displayLabel ?? item.displayLabel}
+          </span>
         </div>
         <GovIcon
           type="components"
@@ -145,14 +155,17 @@ export const LegislativeSource = ({ item }: LegislativeSourceProps) => {
 
       {open && (
         <div className="pt-3">
-          {data?.data?.fragmentBodyHtml && (
-            <div
-              className="border-y p-4 border-gray-border"
-              dangerouslySetInnerHTML={{
-                __html: data.data.fragmentBodyHtml,
-              }}
-            />
-          )}
+          <div
+            className="border-y p-4 border-gray-border"
+            dangerouslySetInnerHTML={{
+              __html:
+                data?.data?.fragmentBodyHtml ??
+                item.fragmentBodyHtml ??
+                item.fragmentIri ??
+                item.originalUrl ??
+                '',
+            }}
+          />
 
           <GovButton
             color="primary"

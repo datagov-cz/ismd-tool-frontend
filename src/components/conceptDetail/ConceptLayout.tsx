@@ -1,8 +1,13 @@
 import { useTranslations } from 'next-intl';
 
-import { ConceptDetailModel } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  LinkSnapshotDto,
+  PublishedConceptDeviationModel,
+} from '@/api/generated';
 import { Section } from '@/components/conceptDetail/Section';
 
+import { ConceptDeviationSection } from './ConceptDeviatonsSection/ConceptDeviationSection';
 import { ConceptRelation } from './ConceptRelation';
 import { MissingConceptFields } from './MissingConceptFields';
 import { RangeItem } from './RangeItem';
@@ -23,6 +28,9 @@ interface Props {
   isOwnerLoggedIn?: boolean;
   ontologyIri?: string;
   ontologySlug?: string;
+  deviations?: PublishedConceptDeviationModel;
+  conceptId?: number;
+  linkSnapshots?: LinkSnapshotDto[];
 }
 
 export const ConceptLayout = ({
@@ -34,11 +42,24 @@ export const ConceptLayout = ({
   isOwnerLoggedIn,
   ontologyIri,
   ontologySlug,
+  deviations,
+  conceptId,
+  linkSnapshots,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const resolvedRelations = conceptDetail['referencované-pojmy-resolved'];
   return (
     <div className="w-full relative mx-auto max-w-250 grid grid-cols-10 items-start px-5">
+      {((deviations && conceptId) || (linkSnapshots && conceptId)) && (
+        <div className="col-span-10">
+          <ConceptDeviationSection
+            deviations={deviations}
+            resolved={resolvedRelations}
+            conceptId={conceptId}
+            linkSnapshots={linkSnapshots}
+          />
+        </div>
+      )}
       <div className="w-full py-6 col-span-6 flex flex-col gap-2">
         <AltNameSection altName={conceptDetail['alternativní-název']} />
         <DefiningSection
@@ -61,12 +82,13 @@ export const ConceptLayout = ({
             resolvedRelations={resolvedRelations}
             ontologyIri={ontologyIri}
             ontologySlug={ontologySlug}
+            instantions={conceptDetail['instance-definovány-číselníkem']}
           />
         )}
 
         {conceptType !== 'TRIDA' &&
           (conceptDetail['definiční-obor'] || conceptDetail['obor-hodnot']) && (
-            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+            <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
               {conceptDetail['definiční-obor'] && (
                 <ConceptRelation
                   title={t('Sections.DefinicniObor')}
@@ -91,7 +113,7 @@ export const ConceptLayout = ({
 
         {conceptType === 'VLASTNOST' &&
           conceptDetail['nadřazená-vlastnost'] && (
-            <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+            <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
               <Section title={t('Sections.SupersededProperty')}>
                 <SuperClassList
                   items={conceptDetail['nadřazená-vlastnost']}
@@ -103,7 +125,7 @@ export const ConceptLayout = ({
           )}
 
         {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (
-          <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+          <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
             <Section title={t('Sections.SupersededRelation')}>
               <SuperClassList
                 items={conceptDetail['nadřazený-vztah']}

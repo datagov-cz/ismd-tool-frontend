@@ -15,7 +15,7 @@ export const AltNameSection = ({
     return null;
   }
   return (
-    <div className="bg-white px-4 py-3 rounded-md shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)]">
+    <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
       <Section title={t('Sections.AlternativeName')}>
         <LanguageSwitcher item={altName} />
       </Section>

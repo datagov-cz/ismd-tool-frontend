@@ -3,15 +3,16 @@
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-toastify';
+import { UseFormReturn } from 'react-hook-form';
 
 import {
+  AltNameModelAltName,
   CreateConceptBody,
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
-import { clearFormDraft } from '@/hooks/useFormDraft';
-import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useSubmitForm } from '@/hooks/useSubmitForm';
+import { draftKeys } from '@/lib/draftKeys';
 
 import { ConceptForm } from './ConceptForm';
 import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
@@ -41,6 +42,25 @@ export const normalizeFormData = (
     return record;
   };
 
+  const toAltNameRecord = (
+    entries?: { languageTag: string; name: string }[],
+    originalTags?: string[],
+  ): AltNameModelAltName => {
+    const record: AltNameModelAltName = {};
+
+    entries?.forEach(({ languageTag, name }) => {
+      const trimmed = name?.trim();
+      if (!trimmed) return;
+      (record[languageTag] ??= []).push(trimmed);
+    });
+
+    originalTags?.forEach((tag) => {
+      record[tag] ??= [];
+    });
+
+    return record;
+  };
+
   const toIri = (refs?: { iri: string; label: string }[]) =>
     refs?.map((r) => r.iri);
   return {
@@ -49,7 +69,7 @@ export const normalizeFormData = (
       ? { name: toRecord(formData.nameModel.name, originalLanguageTags?.name) }
       : { name: {} },
     altNameModel: {
-      altName: toRecord(
+      altName: toAltNameRecord(
         formData.altNameModel?.altName,
         originalLanguageTags?.altName,
       ),
@@ -81,45 +101,41 @@ export const normalizeFormData = (
 
 export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const { data } = useGetOntologyDetail(ontology);
-  const { mutate: createConcept, isPending } = useCreateConcept();
+  const { mutate: createConcept, isPending, isPaused } = useCreateConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
-  const queryInvalidate = useQueryInvalidator();
+  const submitForm = useSubmitForm();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
-  const storageKey = `concept-draft:create:${ontology}`;
+  const storageKey = draftKeys.conceptCreate(ontology);
 
-  const handleSubmit = (formData: ConceptFormValues) => {
-    createConcept(
-      { slug: ontology, data: normalizeFormData(formData) },
-      {
-        onSuccess: (response) => {
-          clearFormDraft(storageKey);
-          queryInvalidate.invalidateOntology(ontology);
-          queryInvalidate.invalidateConcept(response.data?.slug || '');
-          toast.success(t('ToastSuccess'), { position: 'bottom-right' });
-          router.push(`/concept/${response.data?.slug}`);
-        },
-        onError: () => {
-          toast.error(t('ToastError'), { position: 'bottom-right' });
-        },
-      },
-    );
+  const handleSubmit = (
+    formData: ConceptFormValues,
+    form: UseFormReturn<ConceptFormValues>,
+  ) => {
+    submitForm({
+      mutate: createConcept,
+      variables: { slug: ontology, data: normalizeFormData(formData) },
+      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      draftKey: storageKey,
+      reset: () => form.reset(),
+      offlineMessage: t('SavedOffline'),
+    });
   };
 
   return (
     <div className="w-full max-w-250 mx-auto flex flex-col gap-5 py-5 px-5">
-      <div className="relative">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => router.back()}
-          className="lg:absolute top-0 -left-5 lg:pt-1 lg:-translate-x-full pb-4 flex gap-1 text-blue-primary font-bold items-center text-sm"
+          className="flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
         </button>
 
-        <span className="font-medium text-md">{t('NewConceptFor')} </span>
+        <span className="font-medium text-md">{t('NewConceptFor')}</span>
 
         <GovTag
           color="success"
@@ -138,7 +154,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
         <ConceptForm
           ontologyGraphName={graphName}
           onSubmit={handleSubmit}
-          isPending={isPending}
+          isPending={isPending && !isPaused}
           storageKey={storageKey}
         />
       )}

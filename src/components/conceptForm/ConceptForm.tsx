@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
-import { useFormDraft } from '@/hooks/useFormDraft';
+import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
+import { useIsOnline } from '@/hooks/useIsOnline';
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 
 import { FormToolbar } from './components/FormToolbar';
 import { useConceptFormHints } from './components/hint/conceptFormHints';
@@ -13,7 +16,7 @@ import { HintSidebar } from './components/hint/HintSidebar';
 import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
-  ConceptFormSchema,
+  createConceptFormSchema,
 } from './schema/conceptFormSchema';
 import { ConceptMeaningSection } from './sections/ConceptMeaningSection';
 import { LegalSourceAutofillSection } from './sections/LegalSourceAutofillSection';
@@ -63,20 +66,25 @@ export const BASE_DEFAULTS: Omit<
   acquisitionMethod: '',
   sharingMethod: [],
   isInPPDF: false,
-  isPublic: false,
+  isPublic: undefined,
   privacyProvisions: [],
   domain: undefined,
   codeListDataset: undefined,
+  codeListIri: undefined,
 };
 
 interface ConceptFormProps {
   ontologyGraphName: string;
-  onSubmit: (_data: ConceptFormValues) => void;
+  onSubmit: (
+    _data: ConceptFormValues,
+    _form: UseFormReturn<ConceptFormValues>,
+  ) => void;
   isPending: boolean;
   defaultValues?: Partial<ConceptFormValues>;
   editing?: boolean;
   storageKey?: string;
   conceptIri?: string;
+  slug?: string;
 }
 
 export const ConceptForm = ({
@@ -87,11 +95,13 @@ export const ConceptForm = ({
   editing,
   storageKey,
   conceptIri,
+  slug,
 }: ConceptFormProps) => {
   const tConcept = useTranslations('CreateConcept');
-
+  const t = useTranslations('DictionaryDetail.EditOntology');
+  const tError = useTranslations('Errors');
   const form = useForm<ConceptFormValues>({
-    resolver: zodResolver(ConceptFormSchema),
+    resolver: zodResolver(createConceptFormSchema(tError)),
     defaultValues: {
       ...BASE_DEFAULTS,
       ontologyGraphName,
@@ -100,9 +110,17 @@ export const ConceptForm = ({
     },
   });
 
+  const router = useRouter();
+  const isOnline = useIsOnline();
+
   useFormDraft(form, storageKey);
 
-  const { errors } = form.formState;
+  const { errors, isDirty } = form.formState;
+  useUnsavedChangesGuard({
+    enabled: Boolean(editing && isDirty && isOnline),
+    message: t('UnsavedChangesConfirmation'),
+    draftKey: storageKey,
+  });
 
   const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
 
@@ -131,6 +149,25 @@ export const ConceptForm = ({
     });
   }, [externalDefaults]);
 
+  const type = form.watch('conceptType');
+
+  const handleCancel = () => {
+    if (
+      form.formState.isDirty &&
+      !window.confirm(t('DiscardChangesConfirmation'))
+    ) {
+      return;
+    }
+
+    form.reset();
+    clearFormDraft(storageKey);
+    if (slug) {
+      router.push(`/concept/${slug}`);
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
@@ -140,7 +177,7 @@ export const ConceptForm = ({
           <span className="flex-1 h-px bg-(--button-outlined-primary-hover)" />
         </div>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit((data) => onSubmit(data, form))}
           onFocus={handleFocus}
           className="w-full space-y-2.5"
         >
@@ -149,9 +186,12 @@ export const ConceptForm = ({
           <ConceptMeaningSection blockedIri={conceptIri} />
           <SourcesSection />
           <RightsAndObligationsSection />
-          <ProclamationSection />
+          {type !== 'TRIDA' && <ProclamationSection />}
           <OntologySection />
-          <FormToolbar<ConceptFormType> isPending={isPending} />
+          <FormToolbar<ConceptFormType>
+            isPending={isPending}
+            onCancel={handleCancel}
+          />
         </form>
 
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">

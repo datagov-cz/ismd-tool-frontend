@@ -32,8 +32,16 @@ export const ProclamationSection = () => {
       ),
     },
     {
+      value: 'základních registrů',
+      label: t('CommonConceptFields.Options.AcquisitionMethod.BasicRegister'),
+    },
+    {
       value: 'provozní',
       label: t('CommonConceptFields.Options.AcquisitionMethod.Operational'),
+    },
+    {
+      value: 'vlastní',
+      label: t('CommonConceptFields.Options.AcquisitionMethod.Own'),
     },
   ];
 
@@ -41,6 +49,10 @@ export const ProclamationSection = () => {
     {
       value: 'veřejně přístupné',
       label: t('CommonConceptFields.Options.SharingMethod.PubliclyAccessible'),
+    },
+    {
+      value: 'nesdílené',
+      label: t('CommonConceptFields.Options.SharingMethod.NotShared'),
     },
     {
       value: 'poskytované na žádost',
