@@ -37,7 +37,11 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
               <span
                 className="block h-5 w-full text-xs font-semibold truncate leading-5"
                 dangerouslySetInnerHTML={{
-                  __html: data?.data?.fragmentBody ?? '',
+                  __html:
+                    data?.data?.fragmentBody ??
+                    data?.data?.fragmentIri ??
+                    data?.data?.originalUrl ??
+                    '',
                 }}
               />
             </>

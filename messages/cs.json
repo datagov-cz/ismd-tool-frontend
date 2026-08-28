@@ -561,7 +561,7 @@
         "ClassType": "Typ třídy",
         "BroaderConcept": "Nadřazená třída",
         "ConceptType": "Typ pojmu",
-        "CodeListIri": "Iri číselníku",
+        "CodeListIri": "IRI číselníku",
         "CodeListDataset": "Dataset číselníku"
       },
       "Options": {

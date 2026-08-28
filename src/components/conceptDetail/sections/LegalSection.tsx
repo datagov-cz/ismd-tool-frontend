@@ -121,7 +121,9 @@ export const LegislativeSource = ({
   const [open, setOpen] = useState(false);
   const t = useTranslations('ConceptDetail');
 
-  const { data } = useResolveLegalSource({ iri: item.fragmentIri ?? '' });
+  const { data } = useResolveLegalSource({
+    iri: item.fragmentIri ?? item.originalUrl ?? '',
+  });
 
   return (
     <div
@@ -139,7 +141,7 @@ export const LegislativeSource = ({
         <div className="flex items-center gap-2">
           <GovIcon type="components" name="book" color="neutral" />
           <span className="font-medium text-start">
-            {data?.data?.displayLabel}
+            {data?.data?.displayLabel ?? item.displayLabel}
           </span>
         </div>
         <GovIcon
@@ -157,7 +159,7 @@ export const LegislativeSource = ({
             <div
               className="border-y p-4 border-gray-border"
               dangerouslySetInnerHTML={{
-                __html: data.data.fragmentBodyHtml,
+                __html: data.data.fragmentBodyHtml ?? item.fragmentBodyHtml,
               }}
             />
           )}
