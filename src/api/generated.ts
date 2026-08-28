@@ -125,8 +125,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -149,9 +149,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -699,23 +699,6 @@ export interface AiFeedbackRequestDto {
   suggestionIds: string[];
 }
 
-export type JwtHeaders = { [key: string]: unknown };
-
-export type JwtClaims = { [key: string]: unknown };
-
-export interface Jwt {
-  tokenValue?: string;
-  issuedAt?: string;
-  expiresAt?: string;
-  headers?: JwtHeaders;
-  claims?: JwtClaims;
-  audience?: string[];
-  notBefore?: string;
-  issuer?: string;
-  subject?: string;
-  id?: string;
-}
-
 /**
  * Input for generating suggestions for a selected class. The backend adds only the configured suggestion count.
  */
@@ -1244,6 +1227,7 @@ export interface FragmentDto {
   citation?: string;
   order?: string;
   bodyHtml?: string;
+  navigable?: boolean;
   children?: FragmentDto[];
 }
 
@@ -1449,30 +1433,6 @@ export type CreateConceptBody =
   | PropertyConceptModel
   | RelationshipConceptModel;
 
-export type LikeSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type StartRelationshipSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type StartPropertySuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type StartClassSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type DislikeSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type AcceptSuggestionsParams = {
-  jwt: Jwt;
-};
-
 export type EditConceptBody =
   | ClassConceptEditModel
   | PropertyConceptEditModel
@@ -1668,17 +1628,14 @@ export type GetConceptListParams = {
 
 export type GetRelationshipSuggestionsParams = {
   jobIds: string[];
-  jwt: Jwt;
 };
 
 export type GetPropertySuggestionsParams = {
   jobIds: string[];
-  jwt: Jwt;
 };
 
 export type GetClassSuggestionsParams = {
   jobIds: string[];
-  jwt: Jwt;
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -2330,7 +2287,6 @@ aniž by tím vyjadřoval jejich přijetí do modelu. Vyžaduje autentizaci.
  */
 export const likeSuggestions = (
   aiFeedbackRequestDto: AiFeedbackRequestDto[],
-  params: LikeSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2340,7 +2296,6 @@ export const likeSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiFeedbackRequestDto,
-      params,
       signal,
     },
     options,
@@ -2354,14 +2309,14 @@ export const getLikeSuggestionsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof likeSuggestions>>,
     TError,
-    { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+    { data: AiFeedbackRequestDto[] },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof likeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationKey = ['likeSuggestions'];
@@ -2375,11 +2330,11 @@ export const getLikeSuggestionsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof likeSuggestions>>,
-    { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams }
+    { data: AiFeedbackRequestDto[] }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return likeSuggestions(data, params, requestOptions);
+    return likeSuggestions(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -2399,7 +2354,7 @@ export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof likeSuggestions>>,
       TError,
-      { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+      { data: AiFeedbackRequestDto[] },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -2408,7 +2363,7 @@ export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof likeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationOptions = getLikeSuggestionsMutationOptions(options);
@@ -2430,7 +2385,6 @@ export const startRelationshipSuggestions = (
   number: number,
   date: string,
   aiSelectedClassSuggestionRequestDto: AiSelectedClassSuggestionRequestDto,
-  params: StartRelationshipSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2440,7 +2394,6 @@ export const startRelationshipSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiSelectedClassSuggestionRequestDto,
-      params,
       signal,
     },
     options,
@@ -2459,7 +2412,6 @@ export const getStartRelationshipSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartRelationshipSuggestionsParams;
     },
     TContext
   >;
@@ -2472,7 +2424,6 @@ export const getStartRelationshipSuggestionsMutationOptions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartRelationshipSuggestionsParams;
   },
   TContext
 > => {
@@ -2492,17 +2443,15 @@ export const getStartRelationshipSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartRelationshipSuggestionsParams;
     }
   > = (props) => {
-    const { year, number, date, data, params } = props ?? {};
+    const { year, number, date, data } = props ?? {};
 
     return startRelationshipSuggestions(
       year,
       number,
       date,
       data,
-      params,
       requestOptions,
     );
   };
@@ -2533,7 +2482,6 @@ export const useStartRelationshipSuggestions = <
         number: number;
         date: string;
         data: AiSelectedClassSuggestionRequestDto;
-        params: StartRelationshipSuggestionsParams;
       },
       TContext
     >;
@@ -2548,7 +2496,6 @@ export const useStartRelationshipSuggestions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartRelationshipSuggestionsParams;
   },
   TContext
 > => {
@@ -2572,7 +2519,6 @@ export const startPropertySuggestions = (
   number: number,
   date: string,
   aiSelectedClassSuggestionRequestDto: AiSelectedClassSuggestionRequestDto,
-  params: StartPropertySuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2582,7 +2528,6 @@ export const startPropertySuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiSelectedClassSuggestionRequestDto,
-      params,
       signal,
     },
     options,
@@ -2601,7 +2546,6 @@ export const getStartPropertySuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartPropertySuggestionsParams;
     },
     TContext
   >;
@@ -2614,7 +2558,6 @@ export const getStartPropertySuggestionsMutationOptions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartPropertySuggestionsParams;
   },
   TContext
 > => {
@@ -2634,19 +2577,11 @@ export const getStartPropertySuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartPropertySuggestionsParams;
     }
   > = (props) => {
-    const { year, number, date, data, params } = props ?? {};
+    const { year, number, date, data } = props ?? {};
 
-    return startPropertySuggestions(
-      year,
-      number,
-      date,
-      data,
-      params,
-      requestOptions,
-    );
+    return startPropertySuggestions(year, number, date, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -2675,7 +2610,6 @@ export const useStartPropertySuggestions = <
         number: number;
         date: string;
         data: AiSelectedClassSuggestionRequestDto;
-        params: StartPropertySuggestionsParams;
       },
       TContext
     >;
@@ -2690,7 +2624,6 @@ export const useStartPropertySuggestions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartPropertySuggestionsParams;
   },
   TContext
 > => {
@@ -2713,7 +2646,6 @@ export const startClassSuggestions = (
   number: number,
   date: string,
   aiClassSuggestionRequestDto: AiClassSuggestionRequestDto,
-  params: StartClassSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2723,7 +2655,6 @@ export const startClassSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiClassSuggestionRequestDto,
-      params,
       signal,
     },
     options,
@@ -2742,7 +2673,6 @@ export const getStartClassSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiClassSuggestionRequestDto;
-      params: StartClassSuggestionsParams;
     },
     TContext
   >;
@@ -2755,7 +2685,6 @@ export const getStartClassSuggestionsMutationOptions = <
     number: number;
     date: string;
     data: AiClassSuggestionRequestDto;
-    params: StartClassSuggestionsParams;
   },
   TContext
 > => {
@@ -2775,19 +2704,11 @@ export const getStartClassSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiClassSuggestionRequestDto;
-      params: StartClassSuggestionsParams;
     }
   > = (props) => {
-    const { year, number, date, data, params } = props ?? {};
+    const { year, number, date, data } = props ?? {};
 
-    return startClassSuggestions(
-      year,
-      number,
-      date,
-      data,
-      params,
-      requestOptions,
-    );
+    return startClassSuggestions(year, number, date, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -2812,7 +2733,6 @@ export const useStartClassSuggestions = <TError = unknown, TContext = unknown>(
         number: number;
         date: string;
         data: AiClassSuggestionRequestDto;
-        params: StartClassSuggestionsParams;
       },
       TContext
     >;
@@ -2827,7 +2747,6 @@ export const useStartClassSuggestions = <TError = unknown, TContext = unknown>(
     number: number;
     date: string;
     data: AiClassSuggestionRequestDto;
-    params: StartClassSuggestionsParams;
   },
   TContext
 > => {
@@ -2844,7 +2763,6 @@ Vyžaduje autentizaci.
  */
 export const dislikeSuggestions = (
   aiFeedbackRequestDto: AiFeedbackRequestDto[],
-  params: DislikeSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2854,7 +2772,6 @@ export const dislikeSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiFeedbackRequestDto,
-      params,
       signal,
     },
     options,
@@ -2868,14 +2785,14 @@ export const getDislikeSuggestionsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof dislikeSuggestions>>,
     TError,
-    { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+    { data: AiFeedbackRequestDto[] },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof dislikeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationKey = ['dislikeSuggestions'];
@@ -2889,11 +2806,11 @@ export const getDislikeSuggestionsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof dislikeSuggestions>>,
-    { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams }
+    { data: AiFeedbackRequestDto[] }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return dislikeSuggestions(data, params, requestOptions);
+    return dislikeSuggestions(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -2913,7 +2830,7 @@ export const useDislikeSuggestions = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof dislikeSuggestions>>,
       TError,
-      { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+      { data: AiFeedbackRequestDto[] },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -2922,7 +2839,7 @@ export const useDislikeSuggestions = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof dislikeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationOptions = getDislikeSuggestionsMutationOptions(options);
@@ -2938,7 +2855,6 @@ konceptuálního modelu. Vyžaduje autentizaci.
  */
 export const acceptSuggestions = (
   aiFeedbackRequestDto: AiFeedbackRequestDto[],
-  params: AcceptSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2948,7 +2864,6 @@ export const acceptSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiFeedbackRequestDto,
-      params,
       signal,
     },
     options,
@@ -2962,14 +2877,14 @@ export const getAcceptSuggestionsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof acceptSuggestions>>,
     TError,
-    { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+    { data: AiFeedbackRequestDto[] },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof acceptSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationKey = ['acceptSuggestions'];
@@ -2983,11 +2898,11 @@ export const getAcceptSuggestionsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof acceptSuggestions>>,
-    { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams }
+    { data: AiFeedbackRequestDto[] }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return acceptSuggestions(data, params, requestOptions);
+    return acceptSuggestions(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -3007,7 +2922,7 @@ export const useAcceptSuggestions = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof acceptSuggestions>>,
       TError,
-      { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+      { data: AiFeedbackRequestDto[] },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -3016,7 +2931,7 @@ export const useAcceptSuggestions = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof acceptSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationOptions = getAcceptSuggestionsMutationOptions(options);
