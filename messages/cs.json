@@ -171,8 +171,8 @@
       "AgendaInfoSystem": "Agendový informační systém",
       "ProvingNonPublicData": "Ustanovení dokládající neveřejnost údaje",
       "ConceptSource": "Zdroje pojmu",
-      "DefiningNonLegislative": "Definujice nelegislativni zdroj",
-      "RelatedNonLeagislative": "Souvisejici nelegislativni zdroj",
+      "DefiningNonLegislative": "Definující nelegislativní zdroj",
+      "RelatedNonLeagislative": "Související nelegislativní zdroj",
       "InstantiatedByCodeList": "Instance definovány číselníkem"
     },
     "Groups": {
@@ -258,6 +258,7 @@
       "Title": "Upravit slovník",
       "EditedOntology": "Upravovaný slovník",
       "DiscardChangesConfirmation": "Opravdu chcete zrušit změny?",
+      "UnsavedChangesConfirmation": "Máte neuložené změny. Opravdu chcete odejít? Pokud odejdete, změny budou zahozeny.",
       "Save": "Uložit",
       "Back": "Zpět",
       "Ontology": "Slovníky",
@@ -542,11 +543,13 @@
         },
         "AcquisitionMethod": {
           "FromOtherAgendas": "Jiných agend",
+          "BasicRegister": "Základních registrů",
           "Own": "Vlastní",
           "Operational": "Provozní"
         },
         "SharingMethod": {
           "PubliclyAccessible": "Veřejně přístupné",
+          "NotShared": "Nesdílené",
           "ProvidedOnRequest": "Poskytované na žádost",
           "AccessibleForAgendaExecution": "Zpřístupňované pro výkon agendy"
         }
