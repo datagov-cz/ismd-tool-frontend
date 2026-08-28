@@ -93,7 +93,7 @@ export const LegislativeSourceDetail = ({
         align="start"
         sideOffset={0}
         style={{ width: 'var(--radix-popover-trigger-width)' }}
-        className="bg-white p-4 border border-(--border-subtle) max-h-96 overflow-hidden flex flex-col"
+        className="bg-white p-4 border border-border-subtle max-h-96 overflow-hidden flex flex-col"
         onInteractOutside={(e) => {
           const target = e.detail.originalEvent.target as HTMLElement | null;
           if (target?.closest('[data-action="clear"]')) {

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -50,8 +51,8 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   slot="icon-start"
                   type="components"
                 />
-                <span className="font-bold text-blue-primary cursor-pointer">
-                  {capitalizeFirst(
+                <SectionTitle
+                  label={capitalizeFirst(
                     ontology
                       ?.split('/')
                       .pop()
@@ -62,7 +63,8 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                       .replace(/[\u0300-\u036f]/g, '')
                       .normalize('NFC') || '',
                   )}
-                </span>
+                  className="cursor-pointer"
+                />
               </GovTag>
             </Link>
           </div>

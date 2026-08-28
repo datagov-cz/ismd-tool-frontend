@@ -5,6 +5,7 @@ import {
   ConceptDetailModelReferencovanéPojmyResolved,
   PublishedConceptDeviationModel,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 
 import {
   DeviationKey,
@@ -49,9 +50,7 @@ export const DeviationItem = ({
       </div>
       <div className="ml-8 grid grid-cols-2">
         <div className="pr-4 border-r border-border-light">
-          <span className="font-bold text-blue-primary text-sm">
-            {t('LocalVersion')}
-          </span>
+          <SectionTitle label={t('LocalVersion')} size="sm" />
           <div>
             <DeviationValue
               propertyKey={propertyKey}
@@ -63,9 +62,7 @@ export const DeviationItem = ({
           </div>
         </div>
         <div className="pl-4">
-          <span className="font-bold text-blue-primary text-sm">
-            {t('PublishedVersion')}
-          </span>
+          <SectionTitle label={t('PublishedVersion')} size="sm" />
           <div>
             <DeviationValue
               propertyKey={propertyKey}

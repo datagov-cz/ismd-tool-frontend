@@ -67,6 +67,17 @@
   --shadow-subtle: 0px 2px 4px 0px rgba(0, 0, 0, 0.08);
 }
 
+/* Gov design system tokens exposed as Tailwind utilities. */
+@theme inline {
+  --color-muted: var(--text-secondary);
+  --color-subtle: var(--text-subtle);
+  --color-border-subtle: var(--border-subtle);
+  --color-success: var(--background-status-success);
+  --color-success-subtlest: var(--background-status-success-subtlest);
+  --color-neutral-subtlest: var(--background-neutral-subtlest);
+  --color-primary-outlined-hover: var(--button-outlined-primary-hover);
+}
+
 html {
   height: 100%;
   overflow-x: hidden;

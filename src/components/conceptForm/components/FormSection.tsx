@@ -1,43 +1,37 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
-import clsx from 'clsx';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-type Props = {
+import { SectionTitle } from '@/components/shared/SectionTitle';
+
+const formSection = cva(
+  'py-5 px-3 rounded-lg shadow-subtle transition-colors duration-300 ease-in',
+  {
+    variants: {
+      variant: {
+        default: 'bg-white',
+        neutral: 'bg-neutral-subtlest border border-border-subtle',
+        primary: 'bg-primary-subtlest',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+);
+
+type Props = VariantProps<typeof formSection> & {
   label: ReactNode;
   icon: string | null;
   children: ReactNode;
-  variant?: 'default' | 'neutral';
 };
 
-export const FormSection = ({
-  label,
-  icon,
-  children,
-  variant = 'default',
-}: Props) => {
+export const FormSection = ({ label, icon, children, variant }: Props) => {
   return (
-    <div
-      className={clsx(
-        'py-5 px-3 rounded-lg shadow-subtle transition-colors duration-300 ease-in',
-        variant === 'neutral'
-          ? 'bg-(--background-neutral-subtlest) border border-(--border-subtle)'
-          : 'bg-white',
-      )}
-    >
-      <div className="flex gap-2 items-center pb-2 pl-2.5">
-        {icon && (
-          <GovIcon type="components" color={'primary'} size="m" name={icon} />
-        )}
-        <span
-          className={clsx(
-            ' text-md font-bold transition-all duration-300 ease-in',
-            'text-blue-primary',
-          )}
-        >
-          {label}
-        </span>
+    <div className={formSection({ variant })}>
+      <div className="pb-2 pl-2.5">
+        <SectionTitle icon={icon} label={label} size="md" />
       </div>
       <div className="space-y-2">{children}</div>
     </div>
