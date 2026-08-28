@@ -13,6 +13,7 @@ import {
   CodeListDatasetSchema,
   CodeListIriSchema,
   ConceptRef,
+  createRequiredNameModelSchema,
 } from './sharedConceptSchemas';
 
 // Flat schema for form state (all type-specific fields optional)
@@ -46,6 +47,11 @@ const ConceptFormSchema = z.object({
   codeListIri: CodeListIriSchema.optional(),
   codeListDataset: CodeListDatasetSchema.optional(),
 });
+
+export const createConceptFormSchema = (t: (_key: 'NameRequired') => string) =>
+  ConceptFormSchema.extend({
+    nameModel: z.object({ name: createRequiredNameModelSchema(t) }),
+  });
 
 export type ConceptCreateModel = z.infer<typeof ConceptCreateModelSchema>;
 export type ClassConceptModel = z.infer<typeof ClassConceptModelSchema>;

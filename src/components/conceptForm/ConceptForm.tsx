@@ -16,7 +16,7 @@ import { HintSidebar } from './components/hint/HintSidebar';
 import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
-  ConceptFormSchema,
+  createConceptFormSchema,
 } from './schema/conceptFormSchema';
 import { ConceptMeaningSection } from './sections/ConceptMeaningSection';
 import { LegalSourceAutofillSection } from './sections/LegalSourceAutofillSection';
@@ -99,8 +99,9 @@ export const ConceptForm = ({
 }: ConceptFormProps) => {
   const tConcept = useTranslations('CreateConcept');
   const t = useTranslations('DictionaryDetail.EditOntology');
+  const tError = useTranslations('Errors');
   const form = useForm<ConceptFormValues>({
-    resolver: zodResolver(ConceptFormSchema),
+    resolver: zodResolver(createConceptFormSchema(tError)),
     defaultValues: {
       ...BASE_DEFAULTS,
       ontologyGraphName,

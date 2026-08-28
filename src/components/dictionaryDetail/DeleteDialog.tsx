@@ -9,6 +9,7 @@ import {
   useDeleteOntology,
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 interface DeleteDialogProps {
   open: boolean;
@@ -30,6 +31,7 @@ export const DeleteDialog = ({
   conceptType,
 }: DeleteDialogProps) => {
   const t = useTranslations('DeleteDialog');
+  const tError = useTranslations('Errors');
   const router = useRouter();
   const queryInvalidate = useQueryInvalidator();
   const titleKey =
@@ -47,7 +49,7 @@ export const DeleteDialog = ({
       onError: (error) => {
         // eslint-disable-next-line no-console
         console.error(error);
-        toast(String(error), { type: 'error' });
+        toast(getErrorMessage(error, tError), { type: 'error' });
       },
     },
   });
@@ -62,7 +64,7 @@ export const DeleteDialog = ({
       onError: (error) => {
         // eslint-disable-next-line no-console
         console.error(error);
-        toast(String(error), { type: 'error' });
+        toast(getErrorMessage(error, tError), { type: 'error' });
       },
     },
   });

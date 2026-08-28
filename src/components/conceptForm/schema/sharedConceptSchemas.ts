@@ -28,23 +28,31 @@ export const DigitalObject = z.object({
   url: z.url().optional(),
 });
 
-export const RequiredNameModelSchema = z
-  .array(
-    z.object({
-      languageTag: z.string(),
-      name: z.string(),
-    }),
-  )
-  .min(1, 'NameRequired')
-  .superRefine((entries, ctx) => {
-    if (!entries.some((entry) => entry.name.trim() !== '')) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'NameRequired',
-        path: [0, 'name'],
-      });
-    }
-  });
+export const createRequiredNameModelSchema = (
+  t: (_key: 'NameRequired') => string,
+) =>
+  z
+    .array(
+      z.object({
+        languageTag: z.string(),
+        name: z.string(),
+      }),
+    )
+    .min(1, t('NameRequired'))
+    .superRefine((entries, ctx) => {
+      if (!entries.some((entry) => entry.name.trim() !== '')) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('NameRequired'),
+          path: [0, 'name'],
+        });
+      }
+    });
+
+// The translated version is created by the form using its active locale.
+export const RequiredNameModelSchema = createRequiredNameModelSchema(
+  (key) => key,
+);
 
 const NKOD_DATASET_PATTERN =
   /^https:\/\/data\.gov\.cz\/zdroj\/datové-sady\/.*$/;
