@@ -118,6 +118,7 @@ export const LegalSourceAutofillSection = () => {
           id={id}
           onChange={handleChange}
           value={autofillValue}
+          allowManualEntry={false}
         />
       </div>
       {prefilled ? (

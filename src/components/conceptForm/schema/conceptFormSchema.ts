@@ -1,174 +1,19 @@
 import { z } from 'zod';
 
-const ConceptRef = z.object({
-  iri: z.string(),
-  label: z.string(),
-  ontologyLabel: z.string().optional(),
-  id: z.number().optional(),
-});
-const AgendaRef = z.object({
-  iri: z.string().optional(),
-  nazev: z.string().optional(),
-  code: z.string().optional(),
-});
-
-const MultiLangueModelSchema = z
-  .array(
-    z.object({
-      languageTag: z.string(),
-      name: z.string(),
-    }),
-  )
-  .optional();
-
-const DigitalObject = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  url: z.url().optional(),
-});
-
-const RequiredNameModelSchema = z
-  .array(
-    z.object({
-      languageTag: z.string(),
-      name: z.string(),
-    }),
-  )
-  .min(1, 'NameRequired')
-  .superRefine((entries, ctx) => {
-    const hasValue = entries.some((e) => e.name.trim() !== '');
-    if (!hasValue) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'NameRequired',
-        path: [0, 'name'],
-      });
-    }
-  });
-
-const NKOD_DATASET_PATTERN =
-  /^https:\/\/data\.gov\.cz\/zdroj\/datové-sady\/.*$/;
-
-const ABSOLUTE_IRI_PATTERN = /^https?:\/\/\S+$/;
-
-const CodeListDatasetSchema = z
-  .string()
-  .optional()
-  .refine(
-    (value) =>
-      value == null || value.trim() === '' || NKOD_DATASET_PATTERN.test(value),
-    {
-      message: 'Neplatná URL datové sady v NKOD',
-    },
-  );
-
-const CodeListIriSchema = z
-  .string()
-  .optional()
-  .refine(
-    (value) =>
-      value == null ||
-      value.trim() === '' ||
-      ABSOLUTE_IRI_PATTERN.test(value.trim()),
-    {
-      message: 'Neplatné IRI číselníku',
-    },
-  );
-
-// Shared base fields
-const ConceptCreateModelSchema = z.object({
-  ontologyGraphName: z.string().min(1),
-  conceptType: z.string().min(1),
-  namespace: z.string().optional(),
-  nameModel: z.object({
-    name: RequiredNameModelSchema,
-  }),
-  identifier: z.string().optional(),
-  altNameModel: z
-    .object({
-      altName: MultiLangueModelSchema,
-    })
-    .optional(),
-  definitionModel: z
-    .object({
-      definition: MultiLangueModelSchema,
-    })
-    .optional(),
-  descriptionModel: z
-    .object({
-      description: MultiLangueModelSchema,
-    })
-    .optional(),
-  definingNonLegalSource: z.array(DigitalObject).optional(),
-  definingLegalSource: z.array(z.string()).optional(),
-  relatedNonLegalSource: z.array(DigitalObject).optional(),
-  relatedLegalSource: z.array(z.string()).optional(),
-  exactMatch: z.array(ConceptRef).optional(),
-  inTezaurus: z.boolean().optional(),
-});
-
-// Class concept (TRIDA)
-const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
-  conceptTypeEnum: z.literal('TRIDA'),
-  type: z.string().optional(),
-  agendaCode: AgendaRef.optional(),
-  agendaSystemCode: AgendaRef.optional(),
-  contentType: z.string().optional(),
-  acquisitionMethod: z.string().optional(),
-  sharingMethod: z.array(z.string()).optional(),
-  isInPPDF: z.boolean().optional(),
-  isPublic: z.boolean().optional(),
-  privacyProvisions: z.array(z.string()).optional(),
-  broaderConcept: z.array(ConceptRef).optional(),
-  codeListDataset: CodeListDatasetSchema,
-  codeListIri: CodeListIriSchema,
-});
-
-// Property concept (VLASTNOST)
-const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
-  conceptTypeEnum: z.literal('VLASTNOST'),
-  dataType: z
-    .object({
-      code: z.string().optional(),
-      label: z.string().optional(),
-    })
-    .optional(),
-  domain: ConceptRef.optional(),
-  superProperty: z.array(ConceptRef).optional(),
-  isInPPDF: z.boolean().optional(),
-  agendaCode: AgendaRef.optional(),
-  agendaSystemCode: AgendaRef.optional(),
-  isPublic: z.boolean().optional(),
-  privacyProvisions: z.array(z.string()).optional(),
-  sharingMethod: z.array(z.string()).optional(),
-  acquisitionMethod: z.string().optional(),
-  contentType: z.string().optional(),
-  codeListDataset: z.string().optional(),
-});
-
-// Relationship concept (VZTAH)
-const RelationshipConceptModelSchema = ConceptCreateModelSchema.extend({
-  conceptTypeEnum: z.literal('VZTAH'),
-  domain: z.string().optional(),
-  range: ConceptRef.optional(),
-  superRelation: z.array(ConceptRef).optional(),
-  agendaCode: AgendaRef.optional(),
-  agendaSystemCode: AgendaRef.optional(),
-  contentType: z.string().optional(),
-  acquisitionMethod: z.string().optional(),
-  sharingMethod: z.array(z.string()).optional(),
-  isInPPDF: z.boolean().optional(),
-  isPublic: z.boolean().optional(),
-  privacyProvisions: z.array(z.string()).optional(),
-  codeListDataset: z.string().optional(),
-});
-
-// Discriminated union for submit payload
-const CreateConceptBodySchema = z.discriminatedUnion('conceptTypeEnum', [
+import {
   ClassConceptModelSchema,
+  ConceptCreateModelSchema,
+  CreateConceptBodySchema,
   PropertyConceptModelSchema,
   RelationshipConceptModelSchema,
-]);
+} from './conceptCreateSchemas';
+import { LegalSourceListSchema } from './legalSourceSchema';
+import {
+  AgendaRef,
+  CodeListDatasetSchema,
+  CodeListIriSchema,
+  ConceptRef,
+} from './sharedConceptSchemas';
 
 // Flat schema for form state (all type-specific fields optional)
 const ConceptFormSchema = z.object({
@@ -196,13 +41,12 @@ const ConceptFormSchema = z.object({
   sharingMethod: z.array(z.string()).optional(),
   isInPPDF: z.boolean().optional(),
   isPublic: z.boolean().optional(),
-  privacyProvisions: z.array(z.string()).optional(),
+  privacyProvisions: LegalSourceListSchema,
   domain: ConceptRef.optional(),
   codeListIri: CodeListIriSchema.optional(),
   codeListDataset: CodeListDatasetSchema.optional(),
 });
 
-// Inferred types
 export type ConceptCreateModel = z.infer<typeof ConceptCreateModelSchema>;
 export type ClassConceptModel = z.infer<typeof ClassConceptModelSchema>;
 export type PropertyConceptModel = z.infer<typeof PropertyConceptModelSchema>;
@@ -213,12 +57,12 @@ export type CreateConceptBody = z.infer<typeof CreateConceptBodySchema>;
 export type ConceptForm = z.infer<typeof ConceptFormSchema>;
 
 export {
-  ConceptCreateModelSchema,
   ClassConceptModelSchema,
+  ConceptCreateModelSchema,
+  ConceptFormSchema,
+  CreateConceptBodySchema,
   PropertyConceptModelSchema,
   RelationshipConceptModelSchema,
-  CreateConceptBodySchema,
-  ConceptFormSchema,
 };
 
 export {

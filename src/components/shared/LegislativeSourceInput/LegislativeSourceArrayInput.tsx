@@ -33,6 +33,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
   const values = (watch(name) as string[] | undefined) ?? [];
   const lastRowEmpty = fields.length > 0 && !values[fields.length - 1];
   const [autoFocusIndex, setAutoFocusIndex] = useState<number | null>(null);
+  const [firstEntryIsManual, setFirstEntryIsManual] = useState(false);
 
   const handleAdd = () => {
     setAutoFocusIndex(fields.length);
@@ -56,6 +57,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
             onRemove={() => remove(index)}
             autoFocus={index === autoFocusIndex}
             id={`${name}.${index}` as Path<T>}
+            initialManualEntry={index === 0 && firstEntryIsManual}
           />
         ))}
 
@@ -65,8 +67,13 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
             id={name}
             onChange={(iri) => {
               if (iri) {
+                setFirstEntryIsManual(false);
                 append(iri as never);
               }
+            }}
+            onManualEntry={() => {
+              setFirstEntryIsManual(true);
+              append('' as never);
             }}
           />
         ) : !lastRowEmpty ? (

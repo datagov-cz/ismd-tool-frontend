@@ -393,7 +393,11 @@
     "Collapse": "Sbalit",
     "Expand": "Rozbalit",
     "SelectFragment": "Vybrat ustanovení",
-    "AddAnother": "Přidat další ustanovení"
+    "AddAnother": "Přidat další ustanovení",
+    "EnterManually": "Zadat IRI zákona ručně",
+    "ManualPlaceholder": "Zadejte IRI zákona",
+    "SelectFromList": "Vyhledat IRI zákona",
+    "RemoveManualEntry": "Odebrat IRI zákona"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
