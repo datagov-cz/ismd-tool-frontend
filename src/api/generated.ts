@@ -4260,7 +4260,7 @@ export function useGetOntologyDetail<
 }
 
 /**
- * Umožňuje stáhnout slovník v požadovaném formátu (TTL, JSON-LD). Pokud je povoleno omezení stahování slovníků s chybami, slovníky s validačními chybami nelze stáhnout. Veřejný endpoint.
+ * Umožňuje stáhnout slovník v požadovaném formátu (TTL, JSON-LD). Pokud je povoleno omezení stahování slovníků s chybami, slovníky s validačními chybami nelze stáhnout a endpoint vrací 400 s kódem ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION a seznamem blokujících chyb. Veřejný endpoint.
  * @summary Stažení slovníku
  */
 export const downloadFile = (

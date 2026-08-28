@@ -15,16 +15,23 @@ import {
   offlineMutations,
   OfflineMutationVariables,
 } from '@/lib/offlineMutations';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import messages from '../../messages/cs.json';
 
 const t = createTranslator({ locale: 'cs', messages });
+const tError = createTranslator({
+  locale: 'cs',
+  messages,
+  namespace: 'Errors',
+});
+const translateError: (_key: string) => string = () => tError('UnknownError');
 
 type SideEffects<K extends OfflineMutationKey> = {
   onSuccess: (
     _response: OfflineMutationResponse<K>,
     _variables: OfflineMutationVariables<K>,
   ) => unknown;
-  onError: () => void;
+  onError: (_error: unknown) => void;
 };
 
 /**
@@ -40,7 +47,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
           queryKey: getGetOntologyListQueryKey(),
         });
       },
-      onError: () => toast(t('CreateOntology.Form.CreateNewDictError')),
+      onError: (error) => toast.error(getErrorMessage(error, translateError)),
     },
     editOntology: {
       onSuccess: (response) => {
@@ -57,8 +64,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
           }),
         ]);
       },
-      onError: () =>
-        toast.error(t('DictionaryDetail.EditOntology.ErrorMessage')),
+      onError: (error) => toast.error(getErrorMessage(error, translateError)),
     },
     createConcept: {
       onSuccess: (response, variables) => {
@@ -76,7 +82,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
           }),
         ]);
       },
-      onError: () => toast.error(t('ConceptCreateWrapper.ToastError')),
+      onError: (error) => toast.error(getErrorMessage(error, translateError)),
     },
     editConcept: {
       onSuccess: (response) => {
@@ -95,7 +101,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
           }),
         ]);
       },
-      onError: () => toast.error(t('ConceptEditWrapper.ToastError')),
+      onError: (error) => toast.error(getErrorMessage(error, translateError)),
     },
   };
 
@@ -107,7 +113,7 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
     >;
     const effects = sideEffects[key] as {
       onSuccess: (_response: unknown, _variables: unknown) => unknown;
-      onError: () => void;
+      onError: (_error: unknown) => void;
     };
     const options = getOptions();
     queryClient.setMutationDefaults(options.mutationKey ?? [key], {

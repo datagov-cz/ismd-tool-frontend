@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { CommentModel, useDeleteComment } from '@/api/generated';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { ConfirmationModal } from '../shared/ConfirmationModal';
 
 interface Props extends CommentModel {
@@ -20,6 +21,7 @@ export const CommentItem = ({
   refetch,
 }: Props) => {
   const t = useTranslations('DictionaryDetail.CommentSidebox');
+  const tError = useTranslations('Errors');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const isOwner = userId === loggedUser;
@@ -32,7 +34,7 @@ export const CommentItem = ({
         refetch();
       },
       onError: (error) => {
-        toast(String(error), { type: 'error' });
+        toast(getErrorMessage(error, tError), { type: 'error' });
       },
     },
   });

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 import {
   OntologyMetadataModel,
@@ -13,6 +14,7 @@ import {
 } from '@/api/generated';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { useValidationSideboxStore } from '@/store/validationBoxStore';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export type ValidationRule = {
   ruleName: string;
@@ -62,6 +64,7 @@ export const ValidationSummary = ({
   metaData: OntologyMetadataModel;
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
+  const tError = useTranslations('Errors');
 
   const [validationReport, setValidationReport] = useState<ValidationReport>();
   const [grouped, setGrouped] = useState<GroupedValidation>();
@@ -97,6 +100,9 @@ export const ValidationSummary = ({
       { slug: slug, data: metaData },
       {
         onSuccess: (data) => setReport(data.data),
+        onError: (error) => {
+          toast.error(getErrorMessage(error, tError));
+        },
       },
     );
   };

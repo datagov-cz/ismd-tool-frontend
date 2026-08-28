@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { downloadFile, downloadNkdOntology } from '@/api/generated';
+import { getBlobErrorMessage } from '@/utils/getErrorMessage';
 
 type DownloadDialogProps = {
   open: boolean;
@@ -22,6 +23,7 @@ export const DownloadDialog = ({
   ontologyName,
 }: DownloadDialogProps) => {
   const t = useTranslations('DownloadDialog');
+  const tError = useTranslations('Errors');
 
   const handleDownload = async (format: 'json-ld' | 'ttl') => {
     try {
@@ -45,7 +47,7 @@ export const DownloadDialog = ({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Download failed:', error);
-      toast.error(t('Error'));
+      toast.error(await getBlobErrorMessage(error, tError));
     } finally {
       onClose();
     }

@@ -13,6 +13,7 @@ import { BASE_DEFAULTS } from '@/components/conceptForm/ConceptForm';
 import {
   ConceptForm,
   ConceptFormSchema,
+  createConceptFormSchema,
 } from '@/components/conceptForm/schema/conceptFormSchema';
 import { ConceptInput } from '@/components/shared/ConceptInput';
 import { DataTypeInput } from '@/components/shared/DataTypeInput';
@@ -51,6 +52,7 @@ export const AddPropertyModal = ({
 
   const t = useTranslations('ConceptDetail.Main');
   const tLabels = useTranslations('CreateConcept');
+  const tError = useTranslations('Errors');
 
   const formAdd = useForm({
     mode: 'onChange',
@@ -60,7 +62,7 @@ export const AddPropertyModal = ({
 
   const formCreate = useForm({
     mode: 'onChange',
-    resolver: zodResolver(ConceptFormSchema),
+    resolver: zodResolver(createConceptFormSchema(tError)),
     defaultValues: {
       ...BASE_DEFAULTS,
       ontologyGraphName: ontologyGraphName,
