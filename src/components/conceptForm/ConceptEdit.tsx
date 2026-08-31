@@ -288,7 +288,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
       <div className="flex flex-wrap items-center gap-2">
         <Link
           href={`/concept/${slug}`}
-          className="flex gap-1 text-blue-primary font-bold items-center text-sm"
+          className="flex gap-1 text-accent font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
@@ -300,16 +300,18 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           color="success"
           type="subtle"
           size="xs"
-          className="w-fit border bg-white!"
+          className="w-fit border bg-surface!"
         >
           <GovIcon name="journal-text" slot="icon-start" type="components" />
-          <span className="font-bold text-blue-primary">
+          <span className="font-bold text-accent">
             {conceptDetail?.['název']?.cs ?? slug}
           </span>
         </GovTag>
       </div>
 
-      {isLoading && <p className="text-sm text-gray-500">{t('Loading')}</p>}
+      {isLoading && (
+        <p className="text-sm text-foreground-muted">{t('Loading')}</p>
+      )}
 
       {!isLoading && defaultValues && (
         <ConceptForm

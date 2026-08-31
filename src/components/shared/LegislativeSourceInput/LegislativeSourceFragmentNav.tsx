@@ -77,7 +77,7 @@ const FragmentItem = ({
               type="components"
               size="xs"
               color="primary"
-              className="text-[0.625rem]"
+              className="text-2xs"
             />
           </button>
         ) : (

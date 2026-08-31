@@ -31,7 +31,7 @@ export const AgendaSection = ({
   };
 
   return (
-    <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+    <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
       {agenda && (
         <Section title={t('Sections.Agenda')}>{renderAgenda(agenda)}</Section>
       )}

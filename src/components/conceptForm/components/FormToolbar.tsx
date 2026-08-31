@@ -66,10 +66,8 @@ export const FormToolbar = <T extends FieldValues>({
     <>
       <div
         className={clsx(
-          'sticky bottom-0 z-10 py-5 px-6 bg-white flex justify-between items-center transition-shadow duration-200',
-          isFloating
-            ? 'shadow-[0px_16px_40px_0px_rgba(0,0,0,0.3)]'
-            : 'rounded-lg shadow-subtle',
+          'sticky bottom-0 z-10 py-5 px-6 bg-surface flex justify-between items-center transition-shadow duration-200',
+          isFloating ? 'shadow-floating' : 'rounded-lg shadow-subtle',
         )}
       >
         <div className="flex items-center gap-6">

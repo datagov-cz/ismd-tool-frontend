@@ -4,7 +4,7 @@ import '../styles/globals.css';
 
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import Script from 'next/script';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
@@ -15,6 +15,7 @@ import { Footer } from '@/components/footer/Footer';
 import { Header } from '@/components/header/Header';
 import { authOptions } from '@/lib/auth';
 import { GATED_REQUEST_HEADER } from '@/lib/site-status';
+import { parseTheme, THEME_COOKIE } from '@/lib/theme';
 
 import Providers from './providers';
 
@@ -40,6 +41,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   const requestHeaders = await headers();
   const isGated = requestHeaders.get(GATED_REQUEST_HEADER) === '1';
+  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   const variables: EnvironmentVariables = {
     ...loadEnvVariables(),
@@ -48,13 +50,17 @@ export default async function RootLayout({
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/popisujeme';
 
   return (
-    <html lang={locale}>
+    <html lang={locale} data-theme={theme}>
       <body>
         <Script id="gov-ds-config" strategy="beforeInteractive">
           {`window.GOV_DS_CONFIG = { iconsPath: '${basePath}/assets/icons' };`}
         </Script>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Providers environmentVariables={variables} session={session}>
+          <Providers
+            environmentVariables={variables}
+            session={session}
+            initialTheme={theme}
+          >
             <Header session={session} isGated={isGated} />
             {children}
           </Providers>

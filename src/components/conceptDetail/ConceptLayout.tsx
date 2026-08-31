@@ -88,7 +88,7 @@ export const ConceptLayout = ({
 
         {conceptType !== 'TRIDA' &&
           (conceptDetail['definiční-obor'] || conceptDetail['obor-hodnot']) && (
-            <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+            <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
               {conceptDetail['definiční-obor'] && (
                 <ConceptRelation
                   title={t('Sections.DefinicniObor')}
@@ -113,7 +113,7 @@ export const ConceptLayout = ({
 
         {conceptType === 'VLASTNOST' &&
           conceptDetail['nadřazená-vlastnost'] && (
-            <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+            <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
               <Section title={t('Sections.SupersededProperty')}>
                 <SuperClassList
                   items={conceptDetail['nadřazená-vlastnost']}
@@ -125,7 +125,7 @@ export const ConceptLayout = ({
           )}
 
         {conceptType === 'VZTAH' && conceptDetail['nadřazený-vztah'] && (
-          <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+          <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
             <Section title={t('Sections.SupersededRelation')}>
               <SuperClassList
                 items={conceptDetail['nadřazený-vztah']}

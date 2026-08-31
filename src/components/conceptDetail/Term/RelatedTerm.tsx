@@ -27,7 +27,7 @@ export const RelatedTerm = ({
   warning?: boolean;
 }) => {
   const className = clsx(
-    'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active',
+    'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-blue-button-active',
     noIcon ? 'grayscale' : 'font-bold',
     ontologyLabel || warning ? 'px-2 py-1' : 'p-2',
   );
@@ -70,7 +70,7 @@ export const RelatedTerm = ({
         )}
       </span>
       {ontologyLabel && (
-        <span className="flex gap-1.5 pl-6 font-normal text-dark-primary">
+        <span className="flex gap-1.5 pl-6 font-normal text-foreground">
           <GovIcon
             slot="icon-start"
             name="journal-text"

@@ -66,7 +66,9 @@ export const FileController = ({
           <p className="opacity-60 text-sm pt-2">{t('FileUpload.Supported')}</p>
         </div>
       </GovFormFile>
-      {error && <p className="text-red-600 text-sm mt-1">{error.message}</p>}
+      {error && (
+        <p className="text-status-error-600 text-sm mt-1">{error.message}</p>
+      )}
     </div>
   );
 };

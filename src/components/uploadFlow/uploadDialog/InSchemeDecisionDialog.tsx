@@ -119,7 +119,7 @@ export const InSchemeDecisionDialog = ({
         </fieldset>
 
         {mode === UploadFromFileNormalizeMode.PER_CONCEPT && (
-          <ul className="flex flex-col gap-1 max-h-64 overflow-auto bg-primary-subtlest p-2 rounded-lg shadow-subtle">
+          <ul className="flex flex-col gap-1 max-h-64 overflow-auto bg-surface-page p-2 rounded-lg shadow-subtle">
             {data.conceptsMissingInScheme.map((concept) => (
               <li key={concept.conceptIri}>
                 <span className="flex items-center gap-2">

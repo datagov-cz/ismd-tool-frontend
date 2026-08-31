@@ -80,7 +80,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
           <button
             type="button"
             onClick={handleAdd}
-            className="self-start text-sm py-1 font-bold text-blue-primary cursor-pointer"
+            className="self-start text-sm py-1 font-bold text-accent cursor-pointer"
           >
             {`+ ${t('AddAnother')}`}
           </button>

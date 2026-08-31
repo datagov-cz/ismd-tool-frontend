@@ -41,7 +41,7 @@ export const Sidebox = ({
 
       <aside
         className={clsx(
-          'fixed top-18 right-0 h-[calc(100vh-4.5rem)] w-full bg-white shadow-lg z-50 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-blue border-b border-t border-l border-solid flex flex-col',
+          'fixed top-18 right-0 h-[calc(100vh-4.5rem)] w-full bg-surface shadow-lg z-50 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-blue border-b border-t border-l border-solid flex flex-col',
           isOpen ? 'translate-x-0' : 'translate-x-full',
           size === 's' && 'md:w-1/4',
           size === 'm' && 'md:w-1/3',
@@ -59,7 +59,7 @@ export const Sidebox = ({
               name="x-lg"
               color="black"
               size="m"
-              className="[&>svg>path]:fill-black dark:[&>svg>path]:fill-white"
+              className="[&>svg>path]:fill-foreground"
             />
           </GovButton>
         </div>

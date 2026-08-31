@@ -153,7 +153,7 @@ const SourceCard = ({
   <div className="flex flex-col gap-1">
     <div
       className={`w-full border rounded-lg py-2 pl-4 pr-2 flex gap-2 text-sm items-start justify-between ${
-        error ? 'border-status-errtext-status-error-600' : 'border-gray-border'
+        error ? 'border-status-error-600' : 'border-gray-border'
       }`}
     >
       <div className="flex flex-col">

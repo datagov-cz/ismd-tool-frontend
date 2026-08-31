@@ -180,7 +180,7 @@ export const OntologyLayout = ({
           </Link>
 
           {updatedAt && (
-            <span className="ml-auto text-sm font-semibold text-dark-primary whitespace-nowrap">
+            <span className="ml-auto text-sm font-semibold text-foreground whitespace-nowrap">
               {t('Main.ControlPanel.Updated')}:{' '}
               {new Date(updatedAt).toLocaleDateString('CS')}
             </span>
@@ -189,7 +189,7 @@ export const OntologyLayout = ({
 
         <div className="grid grid-cols-12 gap-5">
           <div className="col-span-12 tablet:col-span-9 desktop:col-span-8 flex flex-col gap-2">
-            <h1 className="text-[32px] font-medium">
+            <h1 className="text-h1 font-medium">
               {title?.cs || title?.en || title?.sk}
             </h1>
 
@@ -213,7 +213,7 @@ export const OntologyLayout = ({
           </div>
         </div>
       </div>
-      <div className="w-full bg-primary-subtlest flex-1 h-full px-5">
+      <div className="w-full bg-surface-page flex-1 h-full px-5">
         <div className="w-full max-w-250 mx-auto py-3 grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
           <div className={hasSidebar ? 'lg:col-span-2' : 'lg:col-span-3'}>
             <p className="font-medium text-lg mb-3">
@@ -255,7 +255,7 @@ export const OntologyLayout = ({
                     >
                       <span
                         className={clsx(
-                          'absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200',
+                          'absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-surface shadow transition-transform duration-200',
                           showDeviations && 'translate-x-4',
                         )}
                       />
@@ -288,7 +288,7 @@ export const OntologyLayout = ({
             </div>
             <div className="space-y-2">
               {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
-                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-subtle flex flex-col">
+                <div className="bg-surface rounded-xl py-10 items-center justify-center border border-border-default overflow-hidden shadow-subtle flex flex-col">
                   <span className="text-xl font-bold text-status-error-600 pb-2">
                     {t('Main.NoResults.Title')}
                   </span>
