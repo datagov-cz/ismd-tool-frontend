@@ -141,30 +141,52 @@ export const AddRelationModal = ({
     return (
       <FormProvider {...formCreate}>
         <GovDialog
-          labelTag="h2"
-          onGovClose={() => {
+          onClose={() => {
             setOpen(false);
             setCreateView(false);
           }}
           open={open}
           className="fixed z-100"
+          title={
+            <h3 className="font-normal!">
+              {t('AddRelation')} <strong>{conceptClassName}</strong>
+            </h3>
+          }
+          footer={
+            <div className="w-full flex gap-2 justify-end">
+              <GovButton
+                type="base"
+                color="primary"
+                size="s"
+                onClick={() => setCreateView(false)}
+              >
+                {t('Cancel')}
+              </GovButton>
+              <GovButton
+                type="solid"
+                color="primary"
+                size="s"
+                onClick={() => formCreate.handleSubmit(onSubmitCreate)()}
+              >
+                <GovIcon name="floppy" slot="icon-start" />
+                {t('CreateAndAddRelationship')}
+              </GovButton>
+            </div>
+          }
         >
-          <h3 slot="title" className="font-normal!">
-            {t('AddRelation')} <strong>{conceptClassName}</strong>
-          </h3>
           <form onSubmit={formCreate.handleSubmit(onSubmitCreate)}>
             <div className="flex justify-center gap-2">
               <GovButton
                 color="primary"
                 type={direction === 'currentToOther' ? 'solid' : 'outlined'}
-                onGovClick={() => changeDirection('currentToOther')}
+                onClick={() => changeDirection('currentToOther')}
               >
                 {conceptClassName} → {t('OtherConcept')}
               </GovButton>
               <GovButton
                 color="primary"
                 type={direction === 'otherToCurrent' ? 'solid' : 'outlined'}
-                onGovClick={() => changeDirection('otherToCurrent')}
+                onClick={() => changeDirection('otherToCurrent')}
               >
                 {t('OtherConcept')} → {conceptClassName}
               </GovButton>
@@ -201,25 +223,6 @@ export const AddRelationModal = ({
               layout="flex"
             />
           </form>
-          <div className="w-full flex gap-2 justify-end" slot="footer">
-            <GovButton
-              type="base"
-              color="primary"
-              size="s"
-              onGovClick={() => setCreateView(false)}
-            >
-              {t('Cancel')}
-            </GovButton>
-            <GovButton
-              type="solid"
-              color="primary"
-              size="s"
-              onGovClick={() => formCreate.handleSubmit(onSubmitCreate)()}
-            >
-              <GovIcon name="floppy" slot="icon-start" />
-              {t('CreateAndAddRelationship')}
-            </GovButton>
-          </div>
         </GovDialog>
       </FormProvider>
     );
@@ -228,30 +231,59 @@ export const AddRelationModal = ({
   return (
     <FormProvider {...formAdd}>
       <GovDialog
-        labelTag="h2"
-        onGovClose={() => {
+        onClose={() => {
           setOpen(false);
           setCreateView(false);
         }}
         open={open}
         className="fixed z-100"
+        title={
+          <h3 className="font-normal!">
+            {t('AddRelation')} <strong>{conceptClassName}</strong>
+          </h3>
+        }
+        footer={
+          formAdd.formState.dirtyFields.relation ||
+          formAdd.formState.dirtyFields.otherConcept ? (
+            <div className="w-full flex gap-2 justify-end">
+              <GovButton
+                type="solid"
+                color="primary"
+                size="s"
+                onClick={() => formAdd.handleSubmit(onSubmit)()}
+              >
+                <GovIcon name="tag" slot="icon-start" />
+                {t('AddPropertyButton')}
+              </GovButton>
+            </div>
+          ) : (
+            <div className="w-full flex gap-8 justify-center items-center">
+              <span className="font-medium">{t('NoSuitableRelationship')}</span>
+              <GovButton
+                type="outlined"
+                color="primary"
+                size="s"
+                onClick={() => setCreateView(true)}
+              >
+                {t('CreateRelationship')}
+              </GovButton>
+            </div>
+          )
+        }
       >
-        <h3 slot="title" className="font-normal!">
-          {t('AddRelation')} <strong>{conceptClassName}</strong>
-        </h3>
         <form onSubmit={formAdd.handleSubmit(onSubmit)}>
           <div className="flex justify-center gap-2">
             <GovButton
               color="primary"
               type={direction === 'currentToOther' ? 'solid' : 'outlined'}
-              onGovClick={() => changeDirection('currentToOther')}
+              onClick={() => changeDirection('currentToOther')}
             >
               {conceptClassName} → {t('OtherConcept')}
             </GovButton>
             <GovButton
               color="primary"
               type={direction === 'otherToCurrent' ? 'solid' : 'outlined'}
-              onGovClick={() => changeDirection('otherToCurrent')}
+              onClick={() => changeDirection('otherToCurrent')}
             >
               {t('OtherConcept')} → {conceptClassName}
             </GovButton>
@@ -283,35 +315,6 @@ export const AddRelationModal = ({
             layout="flex"
           />
         </form>
-        {formAdd.formState.dirtyFields.relation ||
-        formAdd.formState.dirtyFields.otherConcept ? (
-          <div className="w-full flex gap-2 justify-end" slot="footer">
-            <GovButton
-              type="solid"
-              color="primary"
-              size="s"
-              onGovClick={() => formAdd.handleSubmit(onSubmit)()}
-            >
-              <GovIcon name="tag" slot="icon-start" />
-              {t('AddPropertyButton')}
-            </GovButton>
-          </div>
-        ) : (
-          <div
-            className="w-full flex gap-8 justify-center items-center"
-            slot="footer"
-          >
-            <span className="font-medium">{t('NoSuitableRelationship')}</span>
-            <GovButton
-              type="outlined"
-              color="primary"
-              size="s"
-              onGovClick={() => setCreateView(true)}
-            >
-              {t('CreateRelationship')}
-            </GovButton>
-          </div>
-        )}
       </GovDialog>
     </FormProvider>
   );

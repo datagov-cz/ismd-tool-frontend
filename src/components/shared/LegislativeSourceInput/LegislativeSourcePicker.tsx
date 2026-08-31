@@ -103,30 +103,33 @@ export const LegislativeSourcePicker = ({
         <div className="flex flex-col">
           <GovFormInput
             value={selectedIri}
-            onGovInput={(event) => handleManualChange(event.detail.value ?? '')}
-            onGovBlur={onBlur}
+            onChange={(event) =>
+              handleManualChange(event.currentTarget.value ?? '')
+            }
+            onBlur={onBlur}
             placeholder={t('ManualPlaceholder')}
-            inputType="text"
+            type="text"
             id={id}
             invalid={!!error}
             className="border-0!"
-          >
-            <button
-              slot="icon-end"
-              type="button"
-              data-action="clear"
-              aria-label={t('RemoveManualEntry')}
-              className="cursor-pointer flex items-center"
-              onClick={handleClear}
-            >
-              <GovIcon type="components" name="x" size="2xl" color="primary" />
-            </button>
-          </GovFormInput>
-          {error && (
-            <GovFormMessage color="error" slot="bottom">
-              {error}
-            </GovFormMessage>
-          )}
+            sufix={
+              <button
+                type="button"
+                data-action="clear"
+                aria-label={t('RemoveManualEntry')}
+                className="cursor-pointer flex items-center"
+                onClick={handleClear}
+              >
+                <GovIcon
+                  type="components"
+                  name="x"
+                  size="2xl"
+                  color="primary"
+                />
+              </button>
+            }
+          />
+          {error && <GovFormMessage color="error">{error}</GovFormMessage>}
           <button
             type="button"
             onClick={handlePickerEntry}
@@ -166,9 +169,7 @@ export const LegislativeSourcePicker = ({
         </div>
       )}
       {error && !isManualEntry && (
-        <GovFormMessage color="error" slot="bottom">
-          {error}
-        </GovFormMessage>
+        <GovFormMessage color="error">{error}</GovFormMessage>
       )}
     </div>
   );

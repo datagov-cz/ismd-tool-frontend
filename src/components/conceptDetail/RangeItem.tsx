@@ -12,8 +12,10 @@ type Props = {
 export const RangeItem = ({ title, item }: Props) => {
   return (
     <Section title={title}>
-      <GovChip title={item.label} color="primary" type="outlined">
-        {item.label} - {item.code}
+      <GovChip color="primary" type="outlined">
+        <span title={item.label}>
+          {item.label} - {item.code}
+        </span>
       </GovChip>
     </Section>
   );

@@ -35,7 +35,7 @@ export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
           type="outlined"
           color="primary"
           nativeType="button"
-          onGovClick={onClose}
+          onClick={onClose}
         >
           {t('SuccessDialog.CloseDialog')}
         </GovButton>

@@ -14,7 +14,7 @@ export const NotFoundState = ({ title, backLabel }: Props) => {
   return (
     <div className="w-full h-full flex items-center justify-center flex-1 flex-col gap-2">
       <h1 className="text-2xl">{title}</h1>
-      <GovButton type="solid" color="primary" onGovClick={() => router.back()}>
+      <GovButton type="solid" color="primary" onClick={() => router.back()}>
         {backLabel}
       </GovButton>
     </div>

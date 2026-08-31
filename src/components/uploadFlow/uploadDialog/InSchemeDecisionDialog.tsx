@@ -3,7 +3,6 @@ import {
   GovButton,
   GovFormCheckbox,
   GovTooltip,
-  GovTooltipContent,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
@@ -98,22 +97,19 @@ export const InSchemeDecisionDialog = ({
 
         <fieldset className="flex justify-center gap-2">
           {options.map((option) => (
-            <GovTooltip
-              position="top"
-              className="border-0! mt-1"
-              message={t(`Decision.Mode.${option}.Hint`)}
-              key={option}
-            >
-              <GovTooltipContent>
+            <GovTooltip placement="top" key={option}>
+              <GovTooltip.Trigger asChild>
+                <GovButton
+                  type={mode === option ? 'solid' : 'outlined'}
+                  color="secondary"
+                  onClick={() => setMode(option)}
+                >
+                  {t(`Decision.Mode.${option}.Label`)}
+                </GovButton>
+              </GovTooltip.Trigger>
+              <GovTooltip.Content>
                 {t(`Decision.Mode.${option}.Hint`)}
-              </GovTooltipContent>
-              <GovButton
-                type={mode === option ? 'solid' : 'outlined'}
-                color="secondary"
-                onGovClick={() => setMode(option)}
-              >
-                {t(`Decision.Mode.${option}.Label`)}
-              </GovButton>
+              </GovTooltip.Content>
             </GovTooltip>
           ))}
         </fieldset>
@@ -125,7 +121,7 @@ export const InSchemeDecisionDialog = ({
                 <span className="flex items-center gap-2">
                   <GovFormCheckbox
                     checked={conceptsToNormalize.includes(concept.conceptIri)}
-                    onGovChange={() => toggleConcept(concept.conceptIri)}
+                    onChange={() => toggleConcept(concept.conceptIri)}
                   />
                   <span title={concept.conceptIri}>
                     {concept.conceptName.replace(/-/g, ' ')}
@@ -143,7 +139,7 @@ export const InSchemeDecisionDialog = ({
             type="outlined"
             color="primary"
             nativeType="button"
-            onGovClick={onCancel}
+            onClick={onCancel}
           >
             {t('Decision.Cancel')}
           </GovButton>

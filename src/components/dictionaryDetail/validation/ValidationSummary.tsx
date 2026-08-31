@@ -122,7 +122,7 @@ export const ValidationSummary = ({
           type="solid"
           color="primary"
           size="s"
-          onGovClick={handleValidate}
+          onClick={handleValidate}
         >
           <GovIcon
             slot="icon-start"
@@ -200,7 +200,7 @@ export const ValidationSummary = ({
             type="outlined"
             color="primary"
             size="xs"
-            onGovClick={handleValidate}
+            onClick={handleValidate}
           >
             <GovIcon
               type="components"
@@ -332,7 +332,7 @@ const ValidationCard = ({
           className="justify-self-end"
           color="primary"
           size="xs"
-          onGovClick={onClick}
+          onClick={onClick}
         >
           {showConceptsLabel}
         </GovButton>

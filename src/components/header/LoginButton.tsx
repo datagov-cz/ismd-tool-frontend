@@ -27,7 +27,7 @@ export const LoginButton = ({
       color="secondary"
       size={size}
       className={className}
-      onGovClick={() => onLogin(idp)}
+      onClick={() => onLogin(idp)}
     >
       <GovIcon
         type="components"

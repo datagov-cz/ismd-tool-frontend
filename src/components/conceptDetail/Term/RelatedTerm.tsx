@@ -1,8 +1,4 @@
-import {
-  GovIcon,
-  GovTooltip,
-  GovTooltipContent,
-} from '@gov-design-system-ce/react';
+import { GovIcon, GovTooltip } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -83,21 +79,23 @@ export const RelatedTerm = ({
         </span>
       )}
       {warning && (
-        <GovTooltip position="bottom" className="border-0!">
-          <GovTooltipContent className="z-1000!">
+        <GovTooltip placement="bottom">
+          <GovTooltip.Content className="z-1000!">
             {t('WarningTooltip')}
-          </GovTooltipContent>
-          <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
-            <GovIcon
-              slot="icon-start"
-              name="exclamation-triangle"
-              type="components"
-              size="s"
-              color="warning"
-              className="shrink-0 mt-1!"
-            />
-            {t('Warning')}
-          </span>
+          </GovTooltip.Content>
+          <GovTooltip.Trigger asChild>
+            <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
+              <GovIcon
+                slot="icon-start"
+                name="exclamation-triangle"
+                type="components"
+                size="s"
+                color="warning"
+                className="shrink-0 mt-1!"
+              />
+              {t('Warning')}
+            </span>
+          </GovTooltip.Trigger>
         </GovTooltip>
       )}
     </>

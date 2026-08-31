@@ -42,7 +42,7 @@ export const HeaderNav = ({ session, isSearchOpen, onToggleMenu }: Props) => {
         aria-label={t('MenuButtonAria')}
         color="primary"
         className="tablet:hidden!"
-        onGovClick={onToggleMenu}
+        onClick={onToggleMenu}
       >
         <GovIcon slot="icon-start" type="components" name="list" />
       </GovButton>

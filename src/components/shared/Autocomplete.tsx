@@ -33,7 +33,7 @@ export const Autocomplete = <T,>({
   id,
 }: Props<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLGovFormInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const showDropdown = query.length > 0;
 
@@ -70,18 +70,17 @@ export const Autocomplete = <T,>({
         ref={inputRef}
         placeholder={placeholder}
         value={query}
-        onGovInput={(e) => onQueryChange(e.detail.value)}
+        onChange={(e) => onQueryChange(e.currentTarget.value)}
         className="border-0! flex-1"
-        inputType="text"
+        type="text"
         id={id}
-      >
-        {startAdornment ? (
-          <span slot="icon-start" className="flex items-center">
-            {startAdornment}
-          </span>
-        ) : null}
-        <GovIcon name="search" slot="icon-end" type="components" size="s" />
-      </GovFormInput>
+        iconStart={
+          startAdornment ? (
+            <span className="flex items-center">{startAdornment}</span>
+          ) : undefined
+        }
+        sufix={<GovIcon name="search" type="components" size="s" />}
+      />
 
       {showDropdown && (
         <div className="absolute z-10 w-full mt-1 bg-surface border border-border-default rounded-md shadow-lg max-h-60 overflow-y-auto">

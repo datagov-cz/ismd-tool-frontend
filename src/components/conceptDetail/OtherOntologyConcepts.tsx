@@ -36,13 +36,13 @@ export const OtherOntologyConcepts = ({
         </span>
         <GovFormControl>
           <GovFormInput
+            identifier="other-ontology-concepts-filter"
             placeholder={t('Groups.Search')}
             size="s"
             value={search}
-            onGovInput={(e) => setSearch(e.target.value ?? '')}
-          >
-            <GovIcon slot="icon-start" name="funnel" />
-          </GovFormInput>
+            onChange={(e) => setSearch(e.currentTarget.value ?? '')}
+            iconStart={<GovIcon name="funnel" />}
+          />
         </GovFormControl>
       </div>
       {isLoading ? (

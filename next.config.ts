@@ -1,6 +1,7 @@
 import createMDX from '@next/mdx';
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import path from 'node:path';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/popisujeme';
 
@@ -13,6 +14,22 @@ const nextConfig: NextConfig = {
   // which only works when the package is required from node_modules at runtime
   // rather than bundled. See src/instrumentation.node.ts.
   serverExternalPackages: ['@azure/monitor-opentelemetry'],
+  // @gov-design-system-ce/react v4 fetches icons from a hard-coded
+  // '/assets/icons' with no configuration hook, which ignores basePath. Swap
+  // its fetch helper for one that prefixes the basePath.
+  webpack: (config, { webpack }) => {
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /^\.\.\/utils\/icon$/,
+        (resource: { context: string; request: string }) => {
+          if (resource.context.includes('@gov-design-system-ce')) {
+            resource.request = path.resolve('src/lib/govIconFetch.ts');
+          }
+        },
+      ),
+    );
+    return config;
+  },
   async rewrites() {
     return [
       // NOTE: the root /favicon.ico 404 (browsers probe the origin root,

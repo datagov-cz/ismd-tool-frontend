@@ -46,7 +46,7 @@ export const AddPropertyRelation = ({
             className="block! py-2"
             color="primary"
             type="base"
-            onGovClick={() => {
+            onClick={() => {
               openModal();
             }}
           >

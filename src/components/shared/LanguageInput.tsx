@@ -4,6 +4,7 @@ import {
   GovChip,
   GovFormInput,
   GovFormLabel,
+  GovFormTextarea,
   GovIcon,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
@@ -116,13 +117,20 @@ export const LanguageInput = <T extends FieldValues>({
                 {lang}
               </GovChip>
               <div className="w-full">
-                <GovFormInput
-                  {...register(fieldPath)}
-                  placeholder={placeholder}
-                  className="[&input]:border-0! flex-1 [&_span]:pr-14!"
-                  multiline={multiline}
-                  rows={multiline ? 4 : undefined}
-                />
+                {multiline ? (
+                  <GovFormTextarea
+                    {...register(fieldPath)}
+                    placeholder={placeholder}
+                    className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                    rows={4}
+                  />
+                ) : (
+                  <GovFormInput
+                    {...register(fieldPath)}
+                    placeholder={placeholder}
+                    className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                  />
+                )}
               </div>
 
               {index === 0 && (
@@ -194,7 +202,7 @@ export const LanguageDropDownSelect = ({
           color="primary"
           type="base"
           size="s"
-          onGovClick={() => setOpen(true)}
+          onClick={() => setOpen(true)}
         >
           <GovIcon type="components" name="translate" slot="icon-start" />
           <GovIcon type="components" name="plus" slot="icon-end" />
@@ -208,7 +216,7 @@ export const LanguageDropDownSelect = ({
                 expanded={true}
                 type="base"
                 color="neutral"
-                onGovClick={() => {
+                onClick={() => {
                   onClick(item);
                   setOpen(false);
                 }}

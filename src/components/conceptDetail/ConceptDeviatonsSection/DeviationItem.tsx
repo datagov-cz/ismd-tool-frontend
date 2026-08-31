@@ -41,7 +41,7 @@ export const DeviationItem = ({
           <GovFormCheckbox
             id={propertyKey}
             checked={checked}
-            onGovChange={() => onToggle(propertyKey)}
+            onChange={() => onToggle(propertyKey)}
             size="s"
           />
         )}

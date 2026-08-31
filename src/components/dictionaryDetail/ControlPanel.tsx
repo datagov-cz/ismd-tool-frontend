@@ -83,7 +83,7 @@ export const ControlPanel = ({
               type="outlined"
               size="s"
               aria-label={tEdit('Comments')}
-              onGovClick={() => setIsCommentBoxOpen(true)}
+              onClick={() => setIsCommentBoxOpen(true)}
             >
               <GovIcon
                 name="chat-square-text"
@@ -125,42 +125,44 @@ export const ControlPanel = ({
           ariaLabel={t('Download')}
           onClick={() => setOpenDownload(true)}
         />
-        <GovDropdown id="copy-link-ismd" position="left">
-          <GovButton
-            color={'primary'}
-            type="base"
-            size="m"
-            className="h-8! [&_button]:h-8!"
-          >
-            <GovIcon
-              name="link"
-              size="m"
-              aria-label={t('GetLink')}
-              className="text-white"
-            />
-          </GovButton>
-          <ul slot="list">
-            {iri && (
-              <GovButton
-                color="primary"
-                type="base"
-                size="s"
-                onGovClick={() => copyToClipboard(iri)}
-                className="w-full! [&_button]:w-full! max-w-none!"
-              >
-                {t('CopyIRI')}
-              </GovButton>
-            )}
+        <GovDropdown
+          id="copy-link-ismd"
+          position="left"
+          color="primary"
+          type="base"
+          size="m"
+          className="h-8! [&_button]:h-8!"
+          label={
+            <>
+              <GovIcon
+                name="link"
+                size="m"
+                aria-label={t('GetLink')}
+                className="text-white"
+              />
+            </>
+          }
+        >
+          {iri && (
             <GovButton
               color="primary"
               type="base"
               size="s"
-              onGovClick={() => copyToClipboard(window.location.href)}
+              onClick={() => copyToClipboard(iri)}
               className="w-full! [&_button]:w-full! max-w-none!"
             >
-              {t('CopyURL')}
+              {t('CopyIRI')}
             </GovButton>
-          </ul>
+          )}
+          <GovButton
+            color="primary"
+            type="base"
+            size="s"
+            onClick={() => copyToClipboard(window.location.href)}
+            className="w-full! [&_button]:w-full! max-w-none!"
+          >
+            {t('CopyURL')}
+          </GovButton>
         </GovDropdown>
 
         {isEditAllowed && (
