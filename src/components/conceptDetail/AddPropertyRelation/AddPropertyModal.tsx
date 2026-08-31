@@ -7,7 +7,12 @@ import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import z from 'zod';
 
-import { useCreateConcept, useEditConcept } from '@/api/generated';
+import {
+  type ResolvedLegalSourceDto,
+  useCreateConcept,
+  useEditConcept,
+} from '@/api/generated';
+import { AiSuggestionsBlock } from '@/components/conceptDetail/AiSuggestions/AiSuggestionsBlock';
 import { normalizeFormData } from '@/components/conceptForm/ConceptCreate';
 import { BASE_DEFAULTS } from '@/components/conceptForm/ConceptForm';
 import {
@@ -29,6 +34,7 @@ type Props = {
   open: boolean;
   setOpen: (_open: boolean) => void;
   classSlug: string;
+  definingLegalSources?: ResolvedLegalSourceDto[];
 };
 
 export const AddPropertyModal = ({
@@ -39,6 +45,7 @@ export const AddPropertyModal = ({
   open,
   setOpen,
   classSlug,
+  definingLegalSources,
 }: Props) => {
   const queryInvalidate = useQueryInvalidator();
   const { mutate: editConcept } = useEditConcept({
@@ -204,6 +211,16 @@ export const AddPropertyModal = ({
             searchSource="ISMD"
           />
         </form>
+        <AiSuggestionsBlock
+          kind="property"
+          classIri={classIri}
+          classSlug={classSlug}
+          ontologyGraphName={ontologyGraphName}
+          ontologySlug={ontologySlug}
+          definingLegalSources={definingLegalSources}
+          enabled={open}
+          onCreated={() => setOpen(false)}
+        />
         {formAdd.formState.dirtyFields.concept ? (
           <div className="w-full flex gap-2 justify-end" slot="footer">
             <GovButton

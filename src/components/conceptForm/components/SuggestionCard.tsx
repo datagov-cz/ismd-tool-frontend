@@ -22,10 +22,17 @@ export const SuggestionCard = ({
     variant="primary"
     label={
       <button
+        type="button"
         className="select-none flex items-center gap-2"
         onClick={onToggle}
       >
-        <GovFormCheckbox id={id} checked={checked} size="s" />
+        <GovFormCheckbox
+          id={id}
+          checked={checked}
+          size="s"
+          aria-hidden="true"
+          className="pointer-events-none"
+        />
         {label}
       </button>
     }

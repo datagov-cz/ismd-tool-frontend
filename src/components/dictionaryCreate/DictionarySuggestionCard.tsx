@@ -8,6 +8,7 @@ export type SuggestionItem = {
   key: string;
   label: string;
   description: string;
+  disabled?: boolean;
 };
 
 type Props = {
@@ -57,19 +58,30 @@ export const DictionarySuggestionCard = ({
           >
             <button
               type="button"
-              className="select-none flex items-center gap-2 text-sm font-bold text-blue-primary"
+              disabled={item.disabled}
+              className={clsx(
+                'select-none flex items-center gap-2 text-sm font-bold',
+                item.disabled
+                  ? 'cursor-not-allowed text-muted'
+                  : 'text-blue-primary',
+              )}
               onClick={() => onToggleItem(item.key)}
             >
               <GovFormCheckbox
                 id={`${id}-${item.key}`}
                 checked={selectedItems.includes(item.key)}
+                disabled={item.disabled}
                 size="s"
                 aria-hidden="true"
                 className="pointer-events-none"
               />
               {item.label}
             </button>
-            <div className="pl-7 text-sm">{item.description}</div>
+            <div
+              className={clsx('pl-7 text-sm', item.disabled && 'text-muted')}
+            >
+              {item.description}
+            </div>
           </li>
         ))}
       </ul>
