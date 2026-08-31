@@ -27,7 +27,7 @@ export const LanguageSwitcher = ({
           .map((lang) => (
             <div
               key={lang}
-              className="flex gap-2 border-b last:border-0 w-full pb-2 pt-2 last:pb-0 first:pt-0 border-border-subtlest relative"
+              className="flex gap-2 border-b last:border-0 w-full pb-2 pt-2 last:pb-0 first:pt-0 border-border-default relative"
             >
               {(showCsTag ?? lang !== 'cs') && (
                 <GovChip

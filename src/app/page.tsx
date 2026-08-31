@@ -23,7 +23,7 @@ export default async function Home() {
         {session && <DraftDictionariesSection />}
         {!session && <WelcomeSection />}
         {session && <VisitedOntologies />}
-        <hr className="text-dark-primary/20" />
+        <hr className="text-foreground/20" />
         <NewsSlider />
       </div>
     </div>

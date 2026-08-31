@@ -167,7 +167,7 @@ export const LanguageInput = <T extends FieldValues>({
           )}
         >
           <span
-            className="block text-red-600 text-sm col-start-2 pl-10 col-span-4"
+            className="block text-status-error-600 text-sm col-start-2 pl-10 col-span-4"
             role="alert"
           >
             {errorMessage}
@@ -200,7 +200,7 @@ export const LanguageDropDownSelect = ({
           <GovIcon type="components" name="plus" slot="icon-end" />
         </GovButton>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0 bg-white" align="end">
+      <PopoverContent className="w-fit p-0 bg-surface" align="end">
         <ul className="p-0 m-0 list-none">
           {availableLanguages.map((item) => (
             <li key={item}>

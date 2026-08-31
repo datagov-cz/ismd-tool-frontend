@@ -130,7 +130,7 @@ export const LegislativeSourcePicker = ({
           <button
             type="button"
             onClick={handlePickerEntry}
-            className="self-end cursor-pointer py-1 text-sm font-bold text-blue-primary"
+            className="self-end cursor-pointer py-1 text-sm font-bold text-accent"
           >
             {t('SelectFromList')}
           </button>
@@ -158,7 +158,7 @@ export const LegislativeSourcePicker = ({
             <button
               type="button"
               onClick={handleManualEntry}
-              className="self-end cursor-pointer py-1 text-sm font-bold text-blue-primary"
+              className="self-end cursor-pointer py-1 text-sm font-bold text-accent"
             >
               {t('EnterManually')}
             </button>

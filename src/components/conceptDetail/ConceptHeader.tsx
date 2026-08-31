@@ -58,12 +58,12 @@ export const ConceptHeader = ({
   const router = useRouter();
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-surface">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
         <div className="flex items-center lg:justify-between relative gap-5">
           <button
             onClick={() => router.back()}
-            className="lg:absolute top-0 lg:-left-5 lg:pt-1 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+            className="lg:absolute top-0 lg:-left-5 lg:pt-1 lg:-translate-x-full flex gap-1 text-accent font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
             {t('Main.ControlPanel.Back')}
@@ -80,14 +80,14 @@ export const ConceptHeader = ({
                 color="success"
                 type="subtle"
                 size="xs"
-                className="w-fit border bg-white! cursor-pointer"
+                className="w-fit border bg-surface! cursor-pointer"
               >
                 <GovIcon
                   name="journal-text"
                   slot="icon-start"
                   type="components"
                 />
-                <span className="font-bold text-blue-primary cursor-pointer">
+                <span className="font-bold text-accent cursor-pointer">
                   {capitalizeFirst(ontology)}
                 </span>
               </GovTag>
@@ -248,8 +248,8 @@ export const InnerTerm = ({
       className={clsx(
         'inline-flex gap-1 px-1.5 py  rounded-md border hover:underline',
         isRelation
-          ? 'border-blue-primary bg-blue-subtle font-bold text-blue-hover'
-          : 'border-border-grey bg-white',
+          ? 'border-accent bg-blue-subtle font-bold text-blue-hover'
+          : 'border-border-default bg-surface',
       )}
     >
       {!isRelation && (

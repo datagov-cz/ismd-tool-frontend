@@ -105,7 +105,7 @@ export const DeviationGroup = ({
   };
 
   return (
-    <div className="p-2 border border-border-primary-subtle rounded-sm space-y-2 bg-white">
+    <div className="p-2 border border-border-primary-subtle rounded-sm space-y-2 bg-surface">
       <span className="text-sm font-bold mb-3 block">
         {t(snapshotId ? 'DifferencesLabelConcept' : 'DifferencesLabel')}{' '}
         {conceptLabel && (

@@ -41,7 +41,7 @@ export const MultiSelect = ({ label, name, options, anchor }: Props) => {
                 options={options}
               />
               {form.formState.errors[name] && (
-                <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">
+                <span className="text-status-error-600 text-sm absolute bottom-0 left-2 translate-y-full">
                   {String(form.formState.errors[name]?.message)}
                 </span>
               )}

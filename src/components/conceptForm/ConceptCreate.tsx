@@ -129,7 +129,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => router.back()}
-          className="flex gap-1 text-blue-primary font-bold items-center text-sm"
+          className="flex gap-1 text-accent font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
@@ -141,10 +141,10 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           color="success"
           type="subtle"
           size="xs"
-          className="w-fit border bg-white!"
+          className="w-fit border bg-surface!"
         >
           <GovIcon name="journal-text" slot="icon-start" type="components" />
-          <span className="font-bold text-blue-primary">
+          <span className="font-bold text-accent">
             {data?.data?.ontologyDetail?.název?.cs}
           </span>
         </GovTag>

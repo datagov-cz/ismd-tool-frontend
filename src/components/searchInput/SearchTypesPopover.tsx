@@ -124,7 +124,7 @@ export const SearchTypesPopover = ({
             {t('AllTypes')}
           </span>
         ) : (
-          <span className="flex items-center gap-2 font-normal bg-white">
+          <span className="flex items-center gap-2 font-normal bg-surface">
             <span className="text-xs lg:text-sm"> {t('Selected')}</span>
             {visibleFilters
               .filter((f) => value.includes(f.key))
@@ -159,7 +159,7 @@ export const SearchTypesPopover = ({
               expanded
               onGovClick={() => toggle(key)}
               className={clsx(
-                '[&_button]:justify-start! [&_button]:text-black! rounded-none!',
+                '[&_button]:justify-start! [&_button]:text-foreground! rounded-none!',
                 value.includes(key) && 'bg-blue-outlined-hover!',
               )}
             >

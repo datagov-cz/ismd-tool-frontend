@@ -30,7 +30,7 @@ export const MainControls = () => {
 
         <Link
           href="/dictionary/list-all"
-          className="underline text-sm text-dark-primary"
+          className="underline text-sm text-foreground"
         >
           {t('WelcomeSection.BrowseDictionaries')}
         </Link>

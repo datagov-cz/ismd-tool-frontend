@@ -97,9 +97,9 @@ export const CommentSidebox = ({
         </div>
         <form
           className={clsx(
-            'relative w-full border rounded-md bg-primary-subtlest',
+            'relative w-full border rounded-md bg-surface-page',
             errors.comment
-              ? 'border-red-500'
+              ? 'border-status-error-600'
               : 'border-blue/20 dark:border-white/60',
           )}
           onSubmit={handleSubmit(onSubmit)}
@@ -115,7 +115,7 @@ export const CommentSidebox = ({
             {...register('comment')}
           />
           {errors.comment && (
-            <p className="text-red-500 text-sm absolute bottom-1 left-3">
+            <p className="text-status-error-600 text-sm absolute bottom-1 left-3">
               {errors.comment.message}
             </p>
           )}

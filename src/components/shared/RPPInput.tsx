@@ -104,13 +104,13 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
             </GovFormInput>
 
             {showDropdown && (
-              <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
+              <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md border border-border-default bg-surface shadow-lg">
                 {query.length < MIN_QUERY_LENGTH ? (
                   <div className="p-4 text-status-error-600 text-sm text-center">
                     {t('ShortQueryRPP')}
                   </div>
                 ) : isLoading ? (
-                  <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
+                  <div className="flex items-center justify-center p-4 text-foreground-muted text-sm gap-2">
                     <GovIcon
                       name="loader"
                       type="components"
@@ -120,7 +120,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
                     {t('Loading')}
                   </div>
                 ) : !results?.length ? (
-                  <div className="p-4 text-gray-500 text-sm text-center">
+                  <div className="p-4 text-foreground-muted text-sm text-center">
                     {t('NoResults')}
                   </div>
                 ) : (
@@ -129,7 +129,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
                       key={item.iri}
                       type="button"
                       onClick={() => handleSelect(item)}
-                      className="flex w-full gap-1.5 border-b border-border-subtlest p-2 font-bold text-blue-primary hover:bg-primary-subtlest"
+                      className="flex w-full gap-1.5 border-b border-border-default p-2 font-bold text-accent hover:bg-surface-page"
                     >
                       {item.code} - {item.nazev}
                     </button>

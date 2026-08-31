@@ -66,7 +66,7 @@ export const SearchResultColumn = ({
 
   return (
     <div className="p-4">
-      <p className="text-sm font-semibold text-gray-700 mb-3">
+      <p className="text-sm font-semibold text-foreground-muted mb-3">
         {t(config.titleKey)}
       </p>
 
@@ -103,7 +103,9 @@ export const SearchResultColumn = ({
           )}
         </>
       ) : (
-        <p className="text-xs text-gray-400 italic">{t(config.emptyKey)}</p>
+        <p className="text-xs text-foreground-subtle italic">
+          {t(config.emptyKey)}
+        </p>
       )}
     </div>
   );

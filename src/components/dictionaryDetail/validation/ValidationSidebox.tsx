@@ -52,7 +52,7 @@ const severityConfig: Record<ValidationResultSeverity, SeverityConfig> = {
     textColor: 'text-footer-separator',
     tagColor: 'primary',
     labelKey: 'PriorityLow',
-    bgColor: '[&_summary]:bg-primary-subtlest',
+    bgColor: '[&_summary]:bg-surface-page',
   },
 };
 
@@ -104,7 +104,7 @@ const ValidationAccordionSection = ({
                 key={result.focusNodeUri}
                 className={clsx(
                   'flex justify-between w-full p-2',
-                  index !== 0 && 'border-t border-gray-200',
+                  index !== 0 && 'border-t border-border-default',
                 )}
               >
                 <div className="flex gap-2 items-center">
@@ -189,8 +189,12 @@ export const ValidationSidebox = ({
         <span className="flex items-center gap-4">
           <span className="font-bold">{t('Title')}</span>
           {timestamp && (
-            <span className="text-sm flex gap-2 items-center text-black/70">
-              <GovIcon name="clock-history" size="s" className="text-black" />
+            <span className="text-sm flex gap-2 items-center text-foreground/70">
+              <GovIcon
+                name="clock-history"
+                size="s"
+                className="text-foreground"
+              />
               {(() => {
                 const d = new Date(timestamp);
                 const time = d.toLocaleTimeString('cs-CZ', {

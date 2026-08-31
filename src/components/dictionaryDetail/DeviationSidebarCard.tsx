@@ -38,11 +38,11 @@ export const DeviationSidebarCard = ({
           <Link
             key={item.iri}
             href={`#${item.iri}`}
-            className="bg-white border border-blue-hover flex w-full group justify-between rounded-md py-1 px-1.5 font-bold text-blue-hover leading-none"
+            className="bg-surface border border-blue-hover flex w-full group justify-between rounded-md py-1 px-1.5 font-bold text-blue-hover leading-none"
           >
             <span className="group-hover:underline">{item.název?.cs}</span>
             {filteredDeviations.includes(item.iri!) && (
-              <span className="text-xs text-black font-normal whitespace-nowrap flex items-center">
+              <span className="text-xs text-foreground font-normal whitespace-nowrap flex items-center">
                 {t('Differences')}
                 <span className="font-bold pl-1">
                   [{Object.keys(deviations[item.iri!]).length}]

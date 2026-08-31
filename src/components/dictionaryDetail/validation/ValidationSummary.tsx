@@ -145,7 +145,7 @@ export const ValidationSummary = ({
           </span>
         </span>
         <span className="text-sm flex gap-2 items-center">
-          <GovIcon name="clock-history" size="s" className="text-black" />
+          <GovIcon name="clock-history" size="s" className="text-foreground" />
           {(() => {
             const d = new Date(validationReport.timestamp || '');
             const time = d.toLocaleTimeString('cs-CZ', {
@@ -268,7 +268,7 @@ const ValidationSection = ({
         />
         <span>
           {label}{' '}
-          <span className="text-black/70 font-normal">[{totalCount}]</span>
+          <span className="text-foreground/70 font-normal">[{totalCount}]</span>
         </span>
         <span className="ml-auto flex items-center justify-center text-current">
           <GovIcon
@@ -316,7 +316,7 @@ const ValidationCard = ({
   return (
     <div
       className={clsx(
-        'flex gap-3 bg-white rounded-lg py-2 px-3 border-l-4 items-center justify-between',
+        'flex gap-3 bg-surface rounded-lg py-2 px-3 border-l-4 items-center justify-between',
         {
           'border-status-error-600': severity === 'ERROR',
           'border-status-warning-600': severity === 'WARNING',
