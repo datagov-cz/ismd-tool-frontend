@@ -126,7 +126,7 @@ export const LegislativeSourceDetail = ({
                     type="solid"
                     color="primary"
                     size="s"
-                    onGovClick={handleConfirmSelection}
+                    onClick={handleConfirmSelection}
                   >
                     <GovIcon
                       name="check-square"

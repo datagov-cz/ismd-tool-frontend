@@ -67,21 +67,22 @@ export const OntologyList = ({
         {!isISMD && (
           <GovFormGroup className="relative w-full max-w-60">
             <GovFormInput
+              identifier="ontology-list-filter"
               className="max-w-60 w-full border-0!"
               size="s"
               placeholder={t('SearchOntologies')}
               value={filterQuery}
-              onGovInput={(e) => onFilterChange(e.detail.value ?? '')}
-            >
-              <GovIcon
-                type="components"
-                color="neutral"
-                name="funnel"
-                slot="icon-start"
-                size="s"
-                className="transition-transform duration-200"
-              />
-            </GovFormInput>
+              onChange={(e) => onFilterChange(e.currentTarget.value ?? '')}
+              iconStart={
+                <GovIcon
+                  type="components"
+                  color="neutral"
+                  name="funnel"
+                  size="s"
+                  className="transition-transform duration-200"
+                />
+              }
+            />
           </GovFormGroup>
         )}
       </div>

@@ -190,7 +190,7 @@ function CarouselPrevious({
         !canScrollPrev && 'hidden!',
       )}
       disabled={!canScrollPrev}
-      onGovClick={scrollPrev}
+      onClick={scrollPrev}
       {...props}
     >
       <GovIcon
@@ -227,7 +227,7 @@ function CarouselNext({
         !canScrollNext && 'hidden!',
       )}
       disabled={!canScrollNext}
-      onGovClick={scrollNext}
+      onClick={scrollNext}
       {...props}
     >
       <GovIcon

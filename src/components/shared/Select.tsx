@@ -40,8 +40,8 @@ export const Select = ({
             <div className="col-span-6 relative ml-10">
               <GovFormSelect
                 value={field.value}
-                onGovChange={(e) => {
-                  const val = e.target.value;
+                onChange={(e) => {
+                  const val = e.currentTarget.value;
                   field.onChange(val);
                   field.onBlur();
                   if (changeMultiple) {

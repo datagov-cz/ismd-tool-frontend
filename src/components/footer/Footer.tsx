@@ -91,16 +91,13 @@ export const Footer = ({ isGated = false }: Props) => {
             </FooterColumn>
           </ul>
           <GovButton
-            slot="icon-start"
-            name="arrow-up"
             aria-label={t('BackToTopAria')}
             type="solid"
             size="m"
-            className="bg-white cursor-pointer"
-            onGovClick={scrollTop}
-          >
-            <GovIcon name="arrow-up" />
-          </GovButton>
+            className="bg-white cursor-pointer [&_button]:text-blue"
+            onClick={scrollTop}
+            iconStart={<GovIcon name="arrow-up" />}
+          />
         </div>
         <div className="space-y-4">
           <h6 className="text-lg font-medium">{t('ThanksSection.Title')}</h6>

@@ -138,7 +138,7 @@ export const OntologyLayout = ({
             type="base"
             color="primary"
             size="s"
-            onGovClick={() => router.back()}
+            onClick={() => router.back()}
             className="desktop:absolute desktop:top-1/2 desktop:left-0 desktop:-ml-2 desktop:-translate-x-full desktop:-translate-y-1/2 px-0! desktop:px-4!"
           >
             <GovIcon slot="icon-start" name="chevron-left" size="m" />
@@ -268,21 +268,24 @@ export const OntologyLayout = ({
 
                 <GovFormGroup className="relative w-full max-w-60">
                   <GovFormInput
+                    identifier="ontology-concept-filter"
                     className="max-w-60 w-full border-0!"
                     size="s"
                     placeholder={t('Main.SearchConcepts')}
                     value={filterQuery}
-                    onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
-                  >
-                    <GovIcon
-                      type="components"
-                      color="neutral"
-                      name="funnel"
-                      slot="icon-start"
-                      size="s"
-                      className="transition-transform duration-200"
-                    />
-                  </GovFormInput>
+                    onChange={(e) =>
+                      setFilterQuery(e.currentTarget.value ?? '')
+                    }
+                    iconStart={
+                      <GovIcon
+                        type="components"
+                        color="neutral"
+                        name="funnel"
+                        size="s"
+                        className="transition-transform duration-200"
+                      />
+                    }
+                  />
                 </GovFormGroup>
               </div>
             </div>

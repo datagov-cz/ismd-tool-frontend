@@ -33,9 +33,8 @@ export const MultiSelect = ({ label, name, options, anchor }: Props) => {
             <div className="col-span-6 relative ml-10">
               <GovFormMultiSelect
                 value={field.value}
-                onGovChange={(e) => {
-                  const val = e.target.value;
-                  field.onChange(val);
+                onSelect={(items) => {
+                  field.onChange(items);
                   field.onBlur();
                 }}
                 options={options}

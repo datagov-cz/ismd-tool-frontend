@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { federatedSignOut } from '@/utils/federatedSignOut';
 import { ConditionalTooltip } from '../shared/ConditionalTooltip';
 
-import { NavDropdownList } from './NavDropdownList';
+import { navDropdownItems } from './NavDropdownList';
 import { useNavigation } from './useNavigation';
 
 interface Props {
@@ -21,30 +21,31 @@ export const NavItems = ({ session }: Props) => {
   return (
     <>
       {session && (
-        <GovDropdown id="nav-dropdown-user" position="left">
-          <GovButton
-            color="primary"
-            size="m"
-            type="solid"
-            className="no-underline"
-          >
-            <GovIcon
-              type="components"
-              name="person"
-              size="xl"
-              slot="icon-start"
-            />
-            {session.user?.name}
-          </GovButton>
-          <NavDropdownList
-            items={[
-              {
-                icon: 'upload',
-                label: t('NavLogged.Logout'),
-                onClick: () => void federatedSignOut(),
-              },
-            ]}
-          />
+        <GovDropdown
+          id="nav-dropdown-user"
+          position="left"
+          color="primary"
+          size="m"
+          type="solid"
+          label={
+            <>
+              <GovIcon
+                type="components"
+                name="person"
+                size="xl"
+                slot="icon-start"
+              />
+              {session.user?.name}
+            </>
+          }
+        >
+          {navDropdownItems([
+            {
+              icon: 'upload',
+              label: t('NavLogged.Logout'),
+              onClick: () => void federatedSignOut(),
+            },
+          ])}
         </GovDropdown>
       )}
       <ConditionalTooltip active message={apiDocs.label}>
@@ -72,7 +73,7 @@ export const NavItems = ({ session }: Props) => {
           size="m"
           type="solid"
           aria-label={help.label}
-          onGovClick={help.onClick}
+          onClick={help.onClick}
         >
           <GovIcon
             type="components"
@@ -83,25 +84,28 @@ export const NavItems = ({ session }: Props) => {
         </GovButton>
       </ConditionalTooltip>
 
-      <GovDropdown id="nav-dropdown-feedback-user" position="right">
-        <ConditionalTooltip active message={feedback.label}>
-          <GovButton
+      <ConditionalTooltip active message={feedback.label}>
+        <span className="inline-flex">
+          <GovDropdown
+            id="nav-dropdown-feedback-user"
+            position="right"
             color="primary"
             size="m"
             type="solid"
-            className="no-underline"
             aria-label={feedback.label}
+            label={
+              <GovIcon
+                type="components"
+                name={feedback.icon}
+                size="m"
+                slot="icon-start"
+              />
+            }
           >
-            <GovIcon
-              type="components"
-              name={feedback.icon}
-              size="m"
-              slot="icon-start"
-            />
-          </GovButton>
-        </ConditionalTooltip>
-        <NavDropdownList items={feedbackItems} />
-      </GovDropdown>
+            {navDropdownItems(feedbackItems)}
+          </GovDropdown>
+        </span>
+      </ConditionalTooltip>
     </>
   );
 };

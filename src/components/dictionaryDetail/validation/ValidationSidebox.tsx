@@ -85,19 +85,21 @@ const ValidationAccordionSection = ({
             `[&_summary]:p-2! before:content-none! [&_details>div]:p-0!`,
             config.bgColor,
           )}
+          label={
+            <span className="flex! items-start gap-2">
+              <GovIcon
+                type="components"
+                size="s"
+                color={config.iconColor}
+                name={config.iconName}
+                className="mt-1!"
+              />
+              <p className={clsx('font-bold', config.textColor)}>
+                {item.message} [{item.items.length}]
+              </p>
+            </span>
+          }
         >
-          <span slot="label" className="flex! items-start gap-2">
-            <GovIcon
-              type="components"
-              size="s"
-              color={config.iconColor}
-              name={config.iconName}
-              className="mt-1!"
-            />
-            <p className={clsx('font-bold', config.textColor)}>
-              {item.message} [{item.items.length}]
-            </p>
-          </span>
           <div>
             {item.items.map((result: ValidationResult, index: number) => (
               <div
@@ -227,27 +229,27 @@ export const ValidationSidebox = ({
               type={activeFilters.ERROR ? 'solid' : 'outlined'}
               color="error"
               size="xs"
-              onGovClick={() => toggleFilter('ERROR')}
+              onClick={() => toggleFilter('ERROR')}
+              iconStart={<GovIcon name="shield-x" size="s" />}
             >
-              <GovIcon slot="left-icon" name="shield-x" size="s" />
               {t('PriorityHigh')} [{totalErrors}]
             </GovButton>
             <GovButton
               type={activeFilters.WARNING ? 'solid' : 'outlined'}
               color="warning"
               size="xs"
-              onGovClick={() => toggleFilter('WARNING')}
+              onClick={() => toggleFilter('WARNING')}
+              iconStart={<GovIcon name="shield-exclamation" size="s" />}
             >
-              <GovIcon slot="left-icon" name="shield-exclamation" size="s" />
               {t('PriorityMedium')} [{totalWarnings}]
             </GovButton>
             <GovButton
               type={activeFilters.INFO ? 'solid' : 'outlined'}
               color="primary"
               size="xs"
-              onGovClick={() => toggleFilter('INFO')}
+              onClick={() => toggleFilter('INFO')}
+              iconStart={<GovIcon name="shield-check" size="s" />}
             >
-              <GovIcon slot="left-icon" name="shield-check" size="s" />
               {t('PriorityLow')} [{totalInfos}]
             </GovButton>
           </div>

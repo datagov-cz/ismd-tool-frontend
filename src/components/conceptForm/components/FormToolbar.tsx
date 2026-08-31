@@ -87,7 +87,7 @@ export const FormToolbar = <T extends FieldValues>({
                 color="primary"
                 size="s"
                 disabled={!canUndo || isPending}
-                onGovClick={undo}
+                onClick={undo}
                 title={t('UndoTitle')}
               >
                 <GovIcon
@@ -103,7 +103,7 @@ export const FormToolbar = <T extends FieldValues>({
                 color="primary"
                 size="s"
                 disabled={!canRedo || isPending}
-                onGovClick={redo}
+                onClick={redo}
                 title={t('RedoTitle')}
               >
                 <GovIcon
@@ -122,7 +122,7 @@ export const FormToolbar = <T extends FieldValues>({
             type="outlined"
             color="neutral"
             size="s"
-            onGovClick={onCancel}
+            onClick={onCancel}
           >
             {t('Cancel')}
           </GovButton>

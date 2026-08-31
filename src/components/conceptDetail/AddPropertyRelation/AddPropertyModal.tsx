@@ -124,17 +124,39 @@ export const AddPropertyModal = ({
     return (
       <FormProvider {...formCreate}>
         <GovDialog
-          labelTag="h2"
-          onGovClose={() => {
+          onClose={() => {
             setCreateView(false);
             setOpen(false);
           }}
           open={open}
           className="fixed z-100 [&_dialog]:max-w-150!"
+          title={
+            <h3 className="font-normal!">
+              {t('AddProperty')} <strong>{conceptClassName}</strong>
+            </h3>
+          }
+          footer={
+            <div className="w-full flex gap-2 justify-end">
+              <GovButton
+                type="base"
+                color="primary"
+                size="s"
+                onClick={() => setCreateView(false)}
+              >
+                {t('Cancel')}
+              </GovButton>
+              <GovButton
+                type="solid"
+                color="primary"
+                size="s"
+                onClick={() => formCreate.handleSubmit(onSubmitCreate)()}
+              >
+                <GovIcon name="floppy" slot="icon-start" />
+                {t('CreateAndAddProperty')}
+              </GovButton>
+            </div>
+          }
         >
-          <h3 slot="title" className="font-normal!">
-            {t('AddProperty')} <strong>{conceptClassName}</strong>
-          </h3>
           <form onSubmit={formCreate.handleSubmit(onSubmitCreate)}>
             <LanguageInput<ConceptForm>
               name="nameModel.name"
@@ -159,25 +181,6 @@ export const AddPropertyModal = ({
               layout="flex"
             />
           </form>
-          <div className="w-full flex gap-2 justify-end" slot="footer">
-            <GovButton
-              type="base"
-              color="primary"
-              size="s"
-              onGovClick={() => setCreateView(false)}
-            >
-              {t('Cancel')}
-            </GovButton>
-            <GovButton
-              type="solid"
-              color="primary"
-              size="s"
-              onGovClick={() => formCreate.handleSubmit(onSubmitCreate)()}
-            >
-              <GovIcon name="floppy" slot="icon-start" />
-              {t('CreateAndAddProperty')}
-            </GovButton>
-          </div>
         </GovDialog>
       </FormProvider>
     );
@@ -185,17 +188,45 @@ export const AddPropertyModal = ({
   return (
     <FormProvider {...formAdd}>
       <GovDialog
-        labelTag="h2"
-        onGovClose={() => {
+        onClose={() => {
           setCreateView(false);
           setOpen(false);
         }}
         open={open}
         className="fixed z-100 [&_dialog]:max-w-150!"
+        title={
+          <h3 className="font-normal!">
+            {t('AddProperty')} <strong>{conceptClassName}</strong>
+          </h3>
+        }
+        footer={
+          formAdd.formState.dirtyFields.concept ? (
+            <div className="w-full flex gap-2 justify-end">
+              <GovButton
+                type="solid"
+                color="primary"
+                size="s"
+                onClick={() => formAdd.handleSubmit(onSubmit)()}
+              >
+                <GovIcon name="tag" slot="icon-start" />
+                {t('AddPropertyButton')}
+              </GovButton>
+            </div>
+          ) : (
+            <div className="w-full flex gap-8 justify-center items-center">
+              <span className="font-medium">{t('NoSuitableProperty')}</span>
+              <GovButton
+                type="outlined"
+                color="primary"
+                size="s"
+                onClick={() => setCreateView(true)}
+              >
+                {t('CreateProperty')}
+              </GovButton>
+            </div>
+          )
+        }
       >
-        <h3 slot="title" className="font-normal!">
-          {t('AddProperty')} <strong>{conceptClassName}</strong>
-        </h3>
         <form onSubmit={formAdd.handleSubmit(onSubmit)} className="space-y-4">
           <ConceptInput
             placeholder={'Vyberte pojem'}
@@ -206,34 +237,6 @@ export const AddPropertyModal = ({
             searchSource="ISMD"
           />
         </form>
-        {formAdd.formState.dirtyFields.concept ? (
-          <div className="w-full flex gap-2 justify-end" slot="footer">
-            <GovButton
-              type="solid"
-              color="primary"
-              size="s"
-              onGovClick={() => formAdd.handleSubmit(onSubmit)()}
-            >
-              <GovIcon name="tag" slot="icon-start" />
-              {t('AddPropertyButton')}
-            </GovButton>
-          </div>
-        ) : (
-          <div
-            className="w-full flex gap-8 justify-center items-center"
-            slot="footer"
-          >
-            <span className="font-medium">{t('NoSuitableProperty')}</span>
-            <GovButton
-              type="outlined"
-              color="primary"
-              size="s"
-              onGovClick={() => setCreateView(true)}
-            >
-              {t('CreateProperty')}
-            </GovButton>
-          </div>
-        )}
       </GovDialog>
     </FormProvider>
   );

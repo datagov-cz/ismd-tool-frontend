@@ -77,12 +77,7 @@ export const CommentItem = ({
           {comment}
         </p>
         {isOwner && (
-          <GovButton
-            onGovClick={handleDelete}
-            color="error"
-            type="base"
-            size="s"
-          >
+          <GovButton onClick={handleDelete} color="error" type="base" size="s">
             <GovIcon name="trash" size="m" />
           </GovButton>
         )}

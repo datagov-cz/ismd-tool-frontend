@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
   GovButton,
   GovFormGroup,
@@ -37,7 +37,7 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
   const [filters, setFilters] = useState<SearchFilter[]>([]);
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inputRef = useRef<HTMLGovFormInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const size = useScreenSize();
 
@@ -89,8 +89,8 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
     return () => document.removeEventListener('keydown', handleShortcut);
   }, [focusInput]);
 
-  const handleInput = useCallback((e: Event) => {
-    const value = (e.target as HTMLInputElement).value;
+  const handleInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value;
     setQuery(value);
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => setDebouncedQuery(value), 300);
@@ -120,24 +120,17 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
     <div className={clsx('w-full relative', className)} ref={ref}>
       <GovFormGroup className={clsx('relative', onClose && '[&_input]:pr-36!')}>
         <GovFormInput
+          identifier="search-input"
           ref={inputRef}
           placeholder={t('SearchPlaceholder')}
           size={size}
           value={query}
-          onGovInput={handleInput}
-          onGovKeydown={(e) =>
-            e.detail.originalEvent &&
-            handleKeyDown(e.detail.originalEvent as KeyboardEvent)
+          onChange={handleInput}
+          onKeyDown={(e) => handleKeyDown(e.nativeEvent)}
+          iconStart={
+            <GovIcon type="components" color="neutral" name="search" size="s" />
           }
-        >
-          <GovIcon
-            type="components"
-            color="neutral"
-            name="search"
-            slot="icon-start"
-            size="s"
-          />
-        </GovFormInput>
+        />
         <SearchTypesPopover
           value={filters}
           onChange={setFilters}
@@ -150,7 +143,7 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
             size="s"
             aria-label={t('CloseSearch')}
             className="absolute! top-1/2! right-1! -translate-y-1/2! z-100 hover:bg-transparent!"
-            onGovClick={onClose}
+            onClick={onClose}
           >
             <GovIcon type="components" name="x-lg" size="s" slot="icon-start" />
           </GovButton>

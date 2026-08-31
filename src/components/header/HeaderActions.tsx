@@ -11,7 +11,7 @@ import { LoginButton } from './LoginButton';
 interface Props {
   isAuthenticated: boolean;
   isHomepage: boolean;
-  searchToggleRef: RefObject<HTMLGovButtonElement | null>;
+  searchToggleRef: RefObject<HTMLButtonElement | null>;
   onOpenSearch: () => void;
   onLogin: () => void;
 }
@@ -46,7 +46,7 @@ export const HeaderActions = ({
         type="solid"
         color="primary"
         className="desktop:hidden!"
-        onGovClick={onOpenSearch}
+        onClick={onOpenSearch}
       >
         <GovIcon slot="icon-start" type="components" name="search" size="s" />
         <span className="hidden tablet:inline">{t('Search')}</span>

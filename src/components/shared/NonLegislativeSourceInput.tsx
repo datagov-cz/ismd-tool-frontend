@@ -119,12 +119,7 @@ const SourceInputForm = ({
             <GovIcon color="error" name="trash" />
           </button>
         )}
-        <GovButton
-          type="outlined"
-          color="neutral"
-          size="s"
-          onGovClick={onCancel}
-        >
+        <GovButton type="outlined" color="neutral" size="s" onClick={onCancel}>
           <GovIcon
             slot="icon-start"
             name={isExisting ? 'arrow-counterclockwise' : 'x'}
@@ -132,7 +127,7 @@ const SourceInputForm = ({
           />
           {isExisting ? 'Zpět' : 'Zrušit'}
         </GovButton>
-        <GovButton type="solid" color="primary" size="s" onGovClick={onSave}>
+        <GovButton type="solid" color="primary" size="s" onClick={onSave}>
           <GovIcon slot="icon-start" name="floppy" type="components" />
           {isExisting ? 'Upravit' : 'Přidat'}
         </GovButton>

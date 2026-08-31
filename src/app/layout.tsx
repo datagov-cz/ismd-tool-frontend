@@ -5,7 +5,6 @@ import '../styles/globals.css';
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
-import Script from 'next/script';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
@@ -47,14 +46,9 @@ export default async function RootLayout({
     ...loadEnvVariables(),
   };
 
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/popisujeme';
-
   return (
     <html lang={locale} data-theme={theme}>
       <body>
-        <Script id="gov-ds-config" strategy="beforeInteractive">
-          {`window.GOV_DS_CONFIG = { iconsPath: '${basePath}/assets/icons' };`}
-        </Script>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers
             environmentVariables={variables}

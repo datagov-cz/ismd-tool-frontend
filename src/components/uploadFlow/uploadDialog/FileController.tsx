@@ -37,21 +37,19 @@ export const FileController = ({
       <GovFormFile
         expanded
         accept={accept || DEFAULT_ACCEPTED_FILE_TYPES}
-        onGovAddFile={(e) => {
-          const firstAttachment = e.target.querySelector(
-            '.gov-attachments-item__file',
-          );
-          firstAttachment?.remove();
+        onFilesUpdated={(files) => {
+          const addedFile = files[0]?.file;
 
-          const addedFile = e.detail?.file?.file;
           if (addedFile) {
             onChange(addedFile);
+            return;
           }
+
+          form.reset();
         }}
         id={name}
         multiple={false}
         required={true}
-        onGovRemoveFile={() => form.reset()}
       >
         <div>
           <GovButton type="outlined" color="primary">

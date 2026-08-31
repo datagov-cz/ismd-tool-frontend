@@ -91,17 +91,11 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
             <GovFormInput
               placeholder={placeholder}
               value={query}
-              onGovInput={(e) => setQuery(e.detail.value)}
+              onChange={(e) => setQuery(e.currentTarget.value)}
               className="border-0! flex-1"
-              inputType="text"
-            >
-              <GovIcon
-                name="search"
-                slot="icon-end"
-                type="components"
-                size="s"
-              />
-            </GovFormInput>
+              type="text"
+              sufix={<GovIcon name="search" type="components" size="s" />}
+            />
 
             {showDropdown && (
               <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md border border-border-default bg-surface shadow-lg">

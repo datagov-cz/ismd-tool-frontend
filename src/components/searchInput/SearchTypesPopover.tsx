@@ -6,7 +6,6 @@ import {
   GovDropdown,
   GovIcon,
   GovTooltip,
-  GovTooltipContent,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -101,80 +100,70 @@ export const SearchTypesPopover = ({
       id="search-type-dropdown"
       position="right"
       onChange={() => setOpen((prev) => !prev)}
+      type="base"
+      color="neutral"
+      size="s"
       className={clsx(
         'absolute! top-1/2! -translate-y-1/2! z-100',
+        '[&>.gov-button]:no-underline [&>.gov-button]:font-normal [&>.gov-button_button:hover]:bg-transparent!',
         offsetClassName,
       )}
+      label={
+        <>
+          <GovIcon
+            type="components"
+            name="chevron-down"
+            slot="icon-start"
+            size="xs"
+            className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+          />
+          {allOrNone ? (
+            <span className="font-normal text-xs lg:text-sm">
+              {t('AllTypes')}
+            </span>
+          ) : (
+            <span className="flex items-center gap-2 font-normal bg-surface">
+              <span className="text-xs lg:text-sm"> {t('Selected')}</span>
+              {visibleFilters
+                .filter((f) => value.includes(f.key))
+                .map((f) => (
+                  <GovTooltip key={f.key} placement="right">
+                    <GovTooltip.Trigger asChild>
+                      <GovIcon
+                        type={f.iconType}
+                        name={f.icon}
+                        color={f.color}
+                        size="s"
+                      />
+                    </GovTooltip.Trigger>
+                    <GovTooltip.Content className="z-1000!">
+                      {t(`Types.${f.key}`)}
+                    </GovTooltip.Content>
+                  </GovTooltip>
+                ))}
+            </span>
+          )}
+        </>
+      }
     >
-      <GovButton
-        type="base"
-        color="neutral"
-        size="s"
-        className="no-underline hover:bg-transparent! font-normal"
-      >
-        <GovIcon
-          type="components"
-          name="chevron-down"
-          slot="icon-start"
-          size="xs"
-          className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
-        />
-        {allOrNone ? (
-          <span className="font-normal text-xs lg:text-sm">
-            {t('AllTypes')}
-          </span>
-        ) : (
-          <span className="flex items-center gap-2 font-normal bg-surface">
-            <span className="text-xs lg:text-sm"> {t('Selected')}</span>
-            {visibleFilters
-              .filter((f) => value.includes(f.key))
-              .map((f) => (
-                <GovTooltip
-                  key={f.key}
-                  position="right"
-                  className="border-0! mt-1"
-                  message={t(`Types.${f.key}`)}
-                >
-                  <GovTooltipContent className="z-1000!">
-                    {t(`Types.${f.key}`)}
-                  </GovTooltipContent>
-                  <GovIcon
-                    type={f.iconType}
-                    name={f.icon}
-                    color={f.color}
-                    size="s"
-                  />
-                </GovTooltip>
-              ))}
-          </span>
-        )}
-      </GovButton>
-
-      <ul className="p-0!" slot="list">
-        {visibleFilters.map(({ key, icon, iconType, color }) => (
-          <li key={key}>
-            <GovButton
-              type="base"
-              color="neutral"
-              expanded
-              onGovClick={() => toggle(key)}
-              className={clsx(
-                '[&_button]:justify-start! [&_button]:text-foreground! rounded-none!',
-                value.includes(key) && 'bg-blue-outlined-hover!',
-              )}
-            >
-              <GovIcon
-                type={iconType}
-                color={color}
-                name={icon}
-                size="s"
-                slot="icon-start"
-              />
-              <span className="font-normal">{t(`Types.${key}`)}</span>
-            </GovButton>
-          </li>
-        ))}
-      </ul>
+      {visibleFilters.map(({ key, icon, iconType, color }) => (
+        <GovButton
+          key={key}
+          type="base"
+          color="neutral"
+          expanded
+          onClick={() => toggle(key)}
+          className={clsx(
+            '[&_button]:justify-start! [&_button]:text-foreground! rounded-none!',
+            value.includes(key) && 'bg-blue-outlined-hover!',
+          )}
+          iconStart={
+            <GovIcon type={iconType} color={color} name={icon} size="s" />
+          }
+        >
+          <span className="font-normal">{t(`Types.${key}`)}</span>
+        </GovButton>
+      ))}
     </GovDropdown>
   );
 };

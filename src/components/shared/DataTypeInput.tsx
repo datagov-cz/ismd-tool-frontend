@@ -51,9 +51,9 @@ export const DataTypeInput = ({
             >
               <GovFormSelect
                 value={field.value?.code ?? ''}
-                onGovChange={(e) => {
+                onChange={(e) => {
                   const selected = data?.data?.find(
-                    (d) => d.code === e.target.value,
+                    (d) => d.code === e.currentTarget.value,
                   );
                   field.onChange(
                     selected

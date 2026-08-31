@@ -148,7 +148,7 @@ export const DeviationGroup = ({
               type="outlined"
               color="primary"
               size="s"
-              onGovClick={toggleAll}
+              onClick={toggleAll}
             >
               <GovIcon
                 slot="icon-start"
@@ -170,7 +170,7 @@ export const DeviationGroup = ({
             type="outlined"
             color="primary"
             size="s"
-            onGovClick={() => setExpanded((prev) => !prev)}
+            onClick={() => setExpanded((prev) => !prev)}
           >
             <GovIcon
               slot="icon-start"
@@ -189,7 +189,7 @@ export const DeviationGroup = ({
               color="primary"
               size="s"
               disabled={!selectedKeys.length || mutation.isPending}
-              onGovClick={handleSubmitSelected}
+              onClick={handleSubmitSelected}
             >
               <GovIcon slot="icon-start" name="check-circle" />
               {t('AcceptSelected')}
@@ -200,7 +200,7 @@ export const DeviationGroup = ({
               color="primary"
               size="s"
               disabled={mutation.isPending}
-              onGovClick={handleUpdateLocalCopy}
+              onClick={handleUpdateLocalCopy}
             >
               <GovIcon slot="icon-start" name="cloud-download" />
               {mutation.isPending ? t('Updating') : t('UpdateAndKeepLink')}

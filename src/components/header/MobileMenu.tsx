@@ -50,7 +50,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
         href={href}
         target={external ? '_blank' : undefined}
         className="no-underline [&_.element]:justify-start! [&_.element]:text-left!"
-        onGovClick={() => {
+        onClick={() => {
           onClick?.();
           onClose();
         }}
@@ -82,7 +82,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
           size="s"
           className="ml-auto"
           aria-label={t('MenuCloseAria')}
-          onGovClick={onClose}
+          onClick={onClose}
         >
           <GovIcon type="components" name="x-lg" size="s" slot="icon-start" />
         </GovButton>
