@@ -83,6 +83,9 @@ export const ConceptLayout = ({
             ontologyIri={ontologyIri}
             ontologySlug={ontologySlug}
             instantions={conceptDetail['instance-definovány-číselníkem']}
+            definingLegalSources={
+              conceptDetail['definující-ustanovení-právního-předpisu-resolved']
+            }
           />
         )}
 

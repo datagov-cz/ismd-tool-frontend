@@ -7,7 +7,12 @@ import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
 import z from 'zod';
 
-import { useCreateConcept, useEditConcept } from '@/api/generated';
+import {
+  type ResolvedLegalSourceDto,
+  useCreateConcept,
+  useEditConcept,
+} from '@/api/generated';
+import { AiSuggestionsBlock } from '@/components/conceptDetail/AiSuggestions/AiSuggestionsBlock';
 import { normalizeFormData } from '@/components/conceptForm/ConceptCreate';
 import { BASE_DEFAULTS } from '@/components/conceptForm/ConceptForm';
 import {
@@ -28,6 +33,7 @@ type Props = {
   classSlug: string;
   ontologyGraphName?: string;
   ontologySlug?: string;
+  definingLegalSources?: ResolvedLegalSourceDto[];
 };
 
 export const AddRelationModal = ({
@@ -38,6 +44,7 @@ export const AddRelationModal = ({
   classSlug,
   ontologySlug,
   ontologyGraphName,
+  definingLegalSources,
 }: Props) => {
   const [direction, setDirection] = useState<
     'currentToOther' | 'otherToCurrent'
@@ -281,6 +288,16 @@ export const AddRelationModal = ({
             layout="flex"
           />
         </form>
+        <AiSuggestionsBlock
+          kind="relationship"
+          classIri={classIri}
+          classSlug={classSlug}
+          ontologyGraphName={ontologyGraphName}
+          ontologySlug={ontologySlug}
+          definingLegalSources={definingLegalSources}
+          enabled={open}
+          onCreated={() => setOpen(false)}
+        />
         {formAdd.formState.dirtyFields.relation ||
         formAdd.formState.dirtyFields.otherConcept ? (
           <div className="w-full flex gap-2 justify-end" slot="footer">

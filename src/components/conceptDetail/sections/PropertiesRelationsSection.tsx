@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import {
   ConceptDetailModel,
   ConceptDetailModelReferencovanéPojmyResolved,
+  ResolvedLegalSourceDto,
 } from '@/api/generated';
 import { AddPropertyModal } from '../AddPropertyRelation/AddPropertyModal';
 import { AddPropertyRelation } from '../AddPropertyRelation/AddPropertyRelation';
@@ -21,6 +22,7 @@ interface Props {
   ontologyIri?: string;
   ontologySlug?: string;
   instantions?: ConceptDetailModel['instance-definovány-číselníkem'];
+  definingLegalSources?: ResolvedLegalSourceDto[];
 }
 
 export const PropertiesRelationsSection = ({
@@ -34,6 +36,7 @@ export const PropertiesRelationsSection = ({
   ontologySlug,
   resolvedRelations,
   instantions,
+  definingLegalSources,
 }: Props) => {
   const t = useTranslations('ConceptDetail');
   const [propertyOpen, setPropertyOpen] = useState(false);
@@ -88,6 +91,7 @@ export const PropertiesRelationsSection = ({
             classSlug={classSlug}
             ontologyGraphName={ontologyIri}
             ontologySlug={ontologySlug}
+            definingLegalSources={definingLegalSources}
           />
           <AddRelationModal
             classIri={classIri}
@@ -97,6 +101,7 @@ export const PropertiesRelationsSection = ({
             classSlug={classSlug}
             ontologyGraphName={ontologyIri}
             ontologySlug={ontologySlug}
+            definingLegalSources={definingLegalSources}
           />
         </>
       )}
