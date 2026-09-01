@@ -8,15 +8,34 @@
 
 @custom-variant dark (&:where(.dark, .dark *, [data-theme='dark'], [data-theme='dark'] *));
 
+/* Keep the pre-4.7.0 primary ramp. The DS palette refresh moved every stop
+   (600: #2362a2 -> #00469b), which repainted buttons, borders and accents.
+   Drop this block to adopt the current DS blues. */
+:root {
+  --color-primary-50: rgb(243, 247, 252);
+  --color-primary-100: rgb(229, 238, 249);
+  --color-primary-200: rgb(197, 219, 242);
+  --color-primary-300: rgb(147, 189, 230);
+  --color-primary-400: rgb(89, 155, 215);
+  --color-primary-500: rgb(51, 127, 196);
+  --color-primary-600: rgb(35, 98, 162);
+  --color-primary-700: rgb(30, 80, 134);
+  --color-primary-800: rgb(29, 69, 111);
+  --color-primary-900: rgb(29, 60, 93);
+  --color-primary-950: rgb(19, 38, 62);
+  --color-primary-1000: rgb(15, 31, 51);
+  --color-primary-1050: rgb(1, 4, 9);
+}
+
 @theme {
   --color-blue: #1d3c5d;
   --color-warning: #feed8a;
-  --color-blue-subtle: #e5eef9;
-  --color-blue-button-active: #1d456f;
+  --color-blue-subtle: var(--background-primary-subtle);
+  --color-blue-button-active: var(--button-solid-primary-active);
   --color-secondary: #d1d1d1;
-  --color-link: #c5dbf2;
-  --color-blue-primary: #1e62a2;
-  --color-footer-separator: #2362a2;
+  --color-link: var(--color-primary-200);
+  --color-blue-primary: var(--button-solid-primary);
+  --color-footer-separator: var(--color-primary-600);
   --color-page-background: #f6f6f6;
   --color-border-grey: #e7e7e7;
   --breakpoint-desktop: 1200px;
@@ -24,9 +43,9 @@
   --breakpoint-full-hd: 1920px;
   --spacing-desktop: 1200px;
   --spacing-full-hd: 1920px;
-  --color-blue-hover: #1e5086;
-  --color-blue-border: #d4e7ff;
-  --color-blue-outlined-hover: #c5dbf2;
+  --color-blue-hover: var(--button-solid-primary-hover);
+  --color-blue-border: var(--color-primary-200);
+  --color-blue-outlined-hover: var(--button-outlined-primary-hover);
   --color-button-solid-disabled: #d1d1d1;
   --color-green: #198754;
   --color-gray: #6c757d;
@@ -40,13 +59,12 @@
   --color-status-error-200: #f37676;
   --color-status-error-600: #c62828;
   --color-status-error-700: #b32222;
-  --color-status-focus: #007bff;
+  --color-status-focus: var(--status-focus);
   --color-gray-border: #b0b0b0;
-  --color-field-hover: #c5dbf2;
-  --color-primary-subtlest: #f3f7fc;
+  --color-field-hover: var(--background-primary-subtle);
   --color-card-description: #6d6d6d;
-  --color-border-primary-subtle: #599bd7;
-  --color-border-primary: #2362a2;
+  --color-border-primary-subtle: var(--color-primary-400);
+  --color-border-primary: var(--border-primary);
   --color-border-subtlest: #e7e7e7;
   --color-border-light: #d9d9d9;
 
@@ -62,7 +80,7 @@
   --color-foreground-muted: #4f4f4f;
   --color-foreground-subtle: #8a8a8a;
 
-  --color-accent: #1e62a2;
+  --color-accent: var(--text-primary-color);
   --color-border-default: #e7e7e7;
 
   --text-2xs: 0.625rem;
@@ -109,16 +127,9 @@ body {
   --color-foreground: #ffffff;
   --color-foreground-muted: #b3b3b3;
   --color-foreground-subtle: #8a8a8a;
-
-  --color-accent: #4a9eff;
   --color-border-default: #404040;
 
   --color-page-background: #232323;
-  --color-primary-subtlest: #1a1a1a;
-  --color-blue-subtle: #1e3a5f;
-  --color-blue-border: #2f4f75;
-  --color-blue-outlined-hover: #1e3a5f;
-  --color-field-hover: #13263e;
   --color-secondary: #4f4f4f;
   --color-card-description: #b3b3b3;
   --color-gray: #9aa0a6;
@@ -128,8 +139,8 @@ body {
   --color-border-subtlest: #404040;
   --color-border-light: #4a4a4a;
   --color-gray-border: #5d5d5d;
-  --color-border-primary: #4a9eff;
-  --color-border-primary-subtle: #37699b;
+  --color-border-primary: var(--color-primary-400);
+  --color-border-primary-subtle: var(--color-primary-500);
 
   --color-status-success: #4caf50;
   --color-status-error-600: #f37676;

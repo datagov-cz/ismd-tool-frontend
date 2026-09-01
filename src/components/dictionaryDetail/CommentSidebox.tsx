@@ -127,9 +127,9 @@ export const CommentSidebox = ({
             disabled={isSubmitting || !!errors.comment}
             size="xs"
             className="absolute z-1000 bottom-2 right-3"
+            iconEnd={<GovIcon name="send" size="l" />}
           >
             {t('Send')}
-            <GovIcon name="send" size="l" slot="icon-end" />
           </GovButton>
         </form>
       </div>

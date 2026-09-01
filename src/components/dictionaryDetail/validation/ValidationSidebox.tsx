@@ -126,14 +126,11 @@ const ValidationAccordionSection = ({
                   color="primary"
                   size="xs"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${getConceptSlug(result)}`}
+                  iconEnd={
+                    <GovIcon name="arrow-right" size="l" color="primary" />
+                  }
                 >
                   {t('OpenConcept')}
-                  <GovIcon
-                    slot="icon-end"
-                    name="arrow-right"
-                    size="l"
-                    color="primary"
-                  />
                 </GovButton>
               </div>
             ))}
