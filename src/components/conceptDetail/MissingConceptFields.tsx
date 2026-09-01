@@ -45,6 +45,7 @@ export const MissingConceptFields = ({
             <div className="col-span-5">
               {group.fields.map((config) => (
                 <GovButton
+                  size="m"
                   key={config.key}
                   className="block! py-2"
                   color="primary"

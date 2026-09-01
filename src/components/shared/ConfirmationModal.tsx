@@ -29,6 +29,7 @@ export const ConfirmationModal = ({
     >
       <div className="w-full flex gap-3 justify-end">
         <GovButton
+          size="m"
           color="primary"
           type="outlined"
           nativeType="button"
@@ -37,6 +38,7 @@ export const ConfirmationModal = ({
           {cancelBtnText}
         </GovButton>
         <GovButton
+          size="m"
           color="error"
           type="solid"
           nativeType="button"

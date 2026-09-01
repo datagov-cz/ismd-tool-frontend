@@ -75,6 +75,7 @@ export const DraftDictionariesSection = () => {
           ontologies?.data?.data &&
           ontologies.data.data.length > 1 && (
             <GovButton
+              size="m"
               type="outlined"
               color="primary"
               className="flex items-center gap-3 mx-auto cursor-pointer text-accent hover:underline"

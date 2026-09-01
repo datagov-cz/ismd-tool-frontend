@@ -52,7 +52,7 @@ export const FileController = ({
         required={true}
       >
         <div>
-          <GovButton type="outlined" color="primary">
+          <GovButton size="m" type="outlined" color="primary">
             <GovIcon
               type="components"
               name="upload"

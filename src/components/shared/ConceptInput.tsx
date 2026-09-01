@@ -185,7 +185,7 @@ export const ConceptInput = ({
         )}
       >
         {label && (
-          <GovFormLabel className="w-fit! pt-2.5">
+          <GovFormLabel size="m" className="w-fit! pt-2.5">
             <span className="font-bold">{label}</span>
           </GovFormLabel>
         )}

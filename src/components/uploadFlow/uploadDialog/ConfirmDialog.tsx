@@ -28,6 +28,7 @@ export const ConfirmDialog = ({
     >
       <div className="flex gap-2 justify-end">
         <GovButton
+          size="m"
           type="outlined"
           color="primary"
           nativeType="button"
@@ -36,6 +37,7 @@ export const ConfirmDialog = ({
           {t('ConfirmCancelDialog.NoButton')}
         </GovButton>
         <GovButton
+          size="m"
           type="solid"
           color="primary"
           nativeType="button"

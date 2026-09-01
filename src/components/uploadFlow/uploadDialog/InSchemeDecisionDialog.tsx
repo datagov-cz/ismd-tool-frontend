@@ -100,6 +100,7 @@ export const InSchemeDecisionDialog = ({
             <GovTooltip placement="top" key={option}>
               <GovTooltip.Trigger asChild>
                 <GovButton
+                  size="m"
                   type={mode === option ? 'solid' : 'outlined'}
                   color="secondary"
                   onClick={() => setMode(option)}
@@ -120,6 +121,7 @@ export const InSchemeDecisionDialog = ({
               <li key={concept.conceptIri}>
                 <span className="flex items-center gap-2">
                   <GovFormCheckbox
+                    size="m"
                     checked={conceptsToNormalize.includes(concept.conceptIri)}
                     onChange={() => toggleConcept(concept.conceptIri)}
                   />
@@ -136,6 +138,7 @@ export const InSchemeDecisionDialog = ({
 
         <div className="flex gap-2 justify-center">
           <GovButton
+            size="m"
             type="outlined"
             color="primary"
             nativeType="button"
@@ -143,7 +146,7 @@ export const InSchemeDecisionDialog = ({
           >
             {t('Decision.Cancel')}
           </GovButton>
-          <GovButton type="solid" color="primary" nativeType="submit">
+          <GovButton size="m" type="solid" color="primary" nativeType="submit">
             {t('Decision.Confirm')}
           </GovButton>
         </div>

@@ -32,6 +32,7 @@ export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
 
       <div className="gap-2 flex justify-end w-full">
         <GovButton
+          size="m"
           type="outlined"
           color="primary"
           nativeType="button"
@@ -40,6 +41,7 @@ export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
           {t('SuccessDialog.CloseDialog')}
         </GovButton>
         <GovButton
+          size="m"
           type="solid"
           color="primary"
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}`}

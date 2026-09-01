@@ -76,7 +76,7 @@ const ValidationAccordionSection = ({
     concepts?.find((m) => m.conceptIri === concept.value)?.slug || '';
 
   return (
-    <GovAccordion className="space-y-2!">
+    <GovAccordion size="m" className="space-y-2!">
       {rules.map((item) => (
         <GovAccordionItem
           key={item.ruleName}

@@ -34,7 +34,7 @@ export const Select = ({
         disabled={disabled}
         render={({ field }) => (
           <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
-            <GovFormLabel className="w-fit! pt-2.5">
+            <GovFormLabel size="m" className="w-fit! pt-2.5">
               <span className="font-bold">{label}</span>
             </GovFormLabel>
             <div className="col-span-6 relative ml-10">
