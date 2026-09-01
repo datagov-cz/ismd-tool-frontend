@@ -121,7 +121,7 @@ export const LegislativeSourceDetail = ({
                 dangerouslySetInnerHTML={{ __html: bodyHtml ?? '' }}
               />
               {draftIri && (
-                <div className="sticky text-center bottom-0 bg-surface pt-2 border-t border-primary-subtlest">
+                <div className="sticky text-center bottom-0 bg-surface pt-2 border-t border-border-default">
                   <GovButton
                     type="solid"
                     color="primary"

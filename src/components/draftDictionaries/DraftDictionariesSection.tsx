@@ -79,10 +79,10 @@ export const DraftDictionariesSection = () => {
               color="primary"
               className="flex items-center gap-3 mx-auto cursor-pointer text-accent hover:underline"
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/list`}
+              iconEnd={<GovIcon name="arrow-right" />}
             >
               {t('DraftDictionariesSection.ShowAll')} (
               {ontologies.data.data.length})
-              <GovIcon name="arrow-right" slot="icon-end" />
             </GovButton>
           )}
       </div>

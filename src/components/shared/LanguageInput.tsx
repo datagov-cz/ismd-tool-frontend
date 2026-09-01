@@ -203,10 +203,9 @@ export const LanguageDropDownSelect = ({
           type="base"
           size="s"
           onClick={() => setOpen(true)}
-        >
-          <GovIcon type="components" name="translate" slot="icon-start" />
-          <GovIcon type="components" name="plus" slot="icon-end" />
-        </GovButton>
+          iconStart={<GovIcon type="components" name="translate" />}
+          iconEnd={<GovIcon type="components" name="plus" />}
+        ></GovButton>
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0 bg-surface" align="end">
         <ul className="p-0 m-0 list-none">
