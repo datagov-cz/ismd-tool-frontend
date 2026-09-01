@@ -38,10 +38,10 @@ export const HeaderNav = ({ session, isSearchOpen, onToggleMenu }: Props) => {
 
       <GovButton
         size="m"
-        type="base"
+        type="solid"
         aria-label={t('MenuButtonAria')}
         color="primary"
-        className="tablet:hidden! [--color:#fff]"
+        className="tablet:hidden!"
         onClick={onToggleMenu}
       >
         <GovIcon slot="icon-start" type="components" name="list" />

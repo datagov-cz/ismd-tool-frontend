@@ -31,9 +31,9 @@ export const HeaderActions = ({
       {!isHomepage && (
         <GovButton
           size="m"
-          type="base"
+          type="solid"
           color="primary"
-          className="max-desktop:hidden! [--color:#fff]"
+          className="max-desktop:hidden!"
           href={`${basePath}/`}
         >
           <GovIcon slot="icon-start" name="home" />
@@ -43,9 +43,9 @@ export const HeaderActions = ({
       <GovButton
         ref={searchToggleRef}
         size="m"
-        type="base"
+        type="solid"
         color="primary"
-        className="desktop:hidden! [--color:#fff]"
+        className="desktop:hidden!"
         onClick={onOpenSearch}
       >
         <GovIcon slot="icon-start" type="components" name="search" size="s" />
@@ -65,9 +65,9 @@ export const HeaderActions = ({
       {isAuthenticated && (
         <GovButton
           size="m"
-          type="base"
+          type="solid"
           color="primary"
-          className="max-desktop:hidden! [--color:#fff]"
+          className="max-desktop:hidden!"
           href={`${basePath}/dictionary/create`}
         >
           <GovIcon slot="icon-start" name="plus" />
