@@ -26,8 +26,7 @@ export const NavItems = ({ session }: Props) => {
           position="left"
           color="primary"
           size="m"
-          type="base"
-          className="[--color:#fff]"
+          type="solid"
           label={
             <>
               <GovIcon
@@ -53,8 +52,8 @@ export const NavItems = ({ session }: Props) => {
         <GovButton
           color="primary"
           size="m"
-          type="base"
-          className="no-underline [--color:#fff]"
+          type="solid"
+          className="no-underline"
           aria-label={apiDocs.label}
           href={apiDocs.href}
           target="_blank"
@@ -72,8 +71,7 @@ export const NavItems = ({ session }: Props) => {
         <GovButton
           color="primary"
           size="m"
-          type="base"
-          className="[--color:#fff]"
+          type="solid"
           aria-label={help.label}
           onClick={help.onClick}
         >
@@ -93,8 +91,7 @@ export const NavItems = ({ session }: Props) => {
             position="right"
             color="primary"
             size="m"
-            type="base"
-            className="[--color:#fff]"
+            type="solid"
             aria-label={feedback.label}
             label={
               <GovIcon
