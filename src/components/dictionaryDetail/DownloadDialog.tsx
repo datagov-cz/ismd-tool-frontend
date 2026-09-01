@@ -62,6 +62,7 @@ export const DownloadDialog = ({
     >
       <div className="flex items-end justify-end gap-2 w-full">
         <GovButton
+          size="m"
           onClick={() => handleDownload('json-ld')}
           type="solid"
           color="primary"
@@ -69,6 +70,7 @@ export const DownloadDialog = ({
           JSON
         </GovButton>
         <GovButton
+          size="m"
           onClick={() => handleDownload('ttl')}
           type="solid"
           color="primary"

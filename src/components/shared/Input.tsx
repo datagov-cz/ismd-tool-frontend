@@ -62,7 +62,7 @@ export const Input = <T extends FieldValues>({
           )}
           id={anchor}
         >
-          <GovFormLabel className="w-fit! pt-2.5">
+          <GovFormLabel size="m" className="w-fit! pt-2.5">
             <span className="font-bold">
               {label}
               {required && <span className="text-status-error-700"> *</span>}
@@ -95,7 +95,7 @@ export const Input = <T extends FieldValues>({
               />
             )}
             {error?.message && (
-              <GovFormMessage color="error">
+              <GovFormMessage size="m" color="error">
                 {String(error.message)}
               </GovFormMessage>
             )}

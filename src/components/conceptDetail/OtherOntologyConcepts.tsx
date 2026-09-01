@@ -34,7 +34,7 @@ export const OtherOntologyConcepts = ({
         <span className="font-bold mb-4 block">
           {t('Groups.AnotherConcepts')}
         </span>
-        <GovFormControl>
+        <GovFormControl size="m">
           <GovFormInput
             identifier="other-ontology-concepts-filter"
             placeholder={t('Groups.Search')}

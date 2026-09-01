@@ -177,6 +177,7 @@ export const AddRelationModal = ({
           <form onSubmit={formCreate.handleSubmit(onSubmitCreate)}>
             <div className="flex justify-center gap-2">
               <GovButton
+                size="m"
                 color="primary"
                 type={direction === 'currentToOther' ? 'solid' : 'outlined'}
                 onClick={() => changeDirection('currentToOther')}
@@ -184,6 +185,7 @@ export const AddRelationModal = ({
                 {conceptClassName} → {t('OtherConcept')}
               </GovButton>
               <GovButton
+                size="m"
                 color="primary"
                 type={direction === 'otherToCurrent' ? 'solid' : 'outlined'}
                 onClick={() => changeDirection('otherToCurrent')}
@@ -274,6 +276,7 @@ export const AddRelationModal = ({
         <form onSubmit={formAdd.handleSubmit(onSubmit)}>
           <div className="flex justify-center gap-2">
             <GovButton
+              size="m"
               color="primary"
               type={direction === 'currentToOther' ? 'solid' : 'outlined'}
               onClick={() => changeDirection('currentToOther')}
@@ -281,6 +284,7 @@ export const AddRelationModal = ({
               {conceptClassName} → {t('OtherConcept')}
             </GovButton>
             <GovButton
+              size="m"
               color="primary"
               type={direction === 'otherToCurrent' ? 'solid' : 'outlined'}
               onClick={() => changeDirection('otherToCurrent')}

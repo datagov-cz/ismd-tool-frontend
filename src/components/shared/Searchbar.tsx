@@ -16,7 +16,7 @@ interface Props {
 
 export const Searchbar = ({ placeholder, size = 'm', onChange }: Props) => {
   return (
-    <GovFormControl>
+    <GovFormControl size="m">
       <GovFormGroup>
         <GovFormSearch
           size={size}

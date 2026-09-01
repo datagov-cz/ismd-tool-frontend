@@ -129,7 +129,11 @@ export const LegislativeSourcePicker = ({
               </button>
             }
           />
-          {error && <GovFormMessage color="error">{error}</GovFormMessage>}
+          {error && (
+            <GovFormMessage size="m" color="error">
+              {error}
+            </GovFormMessage>
+          )}
           <button
             type="button"
             onClick={handlePickerEntry}
@@ -169,7 +173,9 @@ export const LegislativeSourcePicker = ({
         </div>
       )}
       {error && !isManualEntry && (
-        <GovFormMessage color="error">{error}</GovFormMessage>
+        <GovFormMessage size="m" color="error">
+          {error}
+        </GovFormMessage>
       )}
     </div>
   );

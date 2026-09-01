@@ -43,6 +43,7 @@ export const AddPropertyRelation = ({
 
         {isOwnerLoggedIn && (
           <GovButton
+            size="m"
             className="block! py-2"
             color="primary"
             type="base"

@@ -104,7 +104,7 @@ export const LanguageInput = <T extends FieldValues>({
                 : 'flex flex-col',
             )}
           >
-            <GovFormLabel className="w-fit! pt-2.5">
+            <GovFormLabel size="m" className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>
             </GovFormLabel>
             <div className="col-span-6 relative flex items-center gap-2 ml-10">
@@ -212,6 +212,7 @@ export const LanguageDropDownSelect = ({
           {availableLanguages.map((item) => (
             <li key={item}>
               <GovButton
+                size="m"
                 expanded={true}
                 type="base"
                 color="neutral"
