@@ -39,6 +39,7 @@ export const Select = ({
             </GovFormLabel>
             <div className="col-span-6 relative ml-10">
               <GovFormSelect
+                size="m"
                 value={field.value}
                 onChange={(e) => {
                   const val = e.currentTarget.value;

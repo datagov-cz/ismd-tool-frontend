@@ -50,6 +50,7 @@ export const DataTypeInput = ({
               )}
             >
               <GovFormSelect
+                size="m"
                 value={field.value?.code ?? ''}
                 onChange={(e) => {
                   const selected = data?.data?.find(
@@ -63,7 +64,6 @@ export const DataTypeInput = ({
                   field.onBlur();
                 }}
               >
-                {isLoading && <CircularLoader />}
                 <option value="" label="" />
                 {data?.data?.map((input) => (
                   <option
@@ -73,6 +73,11 @@ export const DataTypeInput = ({
                   />
                 ))}
               </GovFormSelect>
+              {isLoading && (
+                <span className="absolute right-9 top-1/2 -translate-y-1/2">
+                  <CircularLoader />
+                </span>
+              )}
 
               {form.formState.errors[name] && (
                 <span className="text-status-error-600 text-sm absolute bottom-0 left-2 translate-y-full">
