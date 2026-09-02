@@ -1,5 +1,4 @@
 import {
-  GovButton,
   GovFormControl,
   GovFormGroup,
   GovFormInput,
@@ -18,14 +17,7 @@ export const Searchbar = ({ placeholder, size = 'm', onChange }: Props) => {
   return (
     <GovFormControl size="m">
       <GovFormGroup>
-        <GovFormSearch
-          size={size}
-          button={
-            <GovButton type="solid" color="primary" size={size}>
-              <GovIcon name="search" type="components" />
-            </GovButton>
-          }
-        >
+        <GovFormSearch size={size} button={null}>
           <GovFormInput
             identifier="searchbar-input"
             size="s"

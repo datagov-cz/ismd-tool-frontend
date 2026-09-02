@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { GovButton, GovFormFile, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import {
@@ -31,12 +32,22 @@ export const FileController = ({
   } = useController({ control: form.control, name });
 
   const t = useTranslations(translationNamespace);
+  const acceptedTypes = accept || DEFAULT_ACCEPTED_FILE_TYPES;
+
+  const applyNativeAttributes = useCallback(
+    (input: HTMLInputElement | null) => {
+      input?.setAttribute('accept', acceptedTypes);
+      input?.setAttribute('required', '');
+    },
+    [acceptedTypes],
+  );
 
   return (
     <div className="w-fit mx-auto">
       <GovFormFile
+        ref={applyNativeAttributes}
         expanded
-        accept={accept || DEFAULT_ACCEPTED_FILE_TYPES}
+        accept={acceptedTypes}
         onFilesUpdated={(files) => {
           const addedFile = files[0]?.file;
 

@@ -36,7 +36,7 @@ const CreateDictionary = () => {
           <span className="font-medium text-md">{t('Form.Title')}</span>
         </div>
         <CreateForm />
-        <h2 className="text-foreground font-medium text-center">
+        <h2 className="w-full lg:max-w-160 xl:max-w-200 text-foreground font-medium text-center">
           {t('Form.Or')}
         </h2>
         <div className="relative w-full lg:max-w-160 xl:max-w-200">

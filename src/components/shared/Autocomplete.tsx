@@ -77,9 +77,10 @@ export const Autocomplete = <T,>({
         iconStart={
           startAdornment ? (
             <span className="flex items-center">{startAdornment}</span>
-          ) : undefined
+          ) : (
+            <GovIcon name="search" type="components" size="s" />
+          )
         }
-        sufix={<GovIcon name="search" type="components" size="s" />}
       />
 
       {showDropdown && (
