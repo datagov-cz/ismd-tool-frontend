@@ -11,11 +11,9 @@ import {
   useGetOntologyDetail,
 } from '@/api/generated';
 import { normalizeFormData } from '@/components/conceptForm/ConceptCreate';
-import {
-  ConceptForm,
-  MultiLangueModelSchema,
-} from '@/components/conceptForm/schema/conceptFormSchema';
+import { ConceptForm } from '@/components/conceptForm/schema/conceptFormSchema';
 import { type ConceptForm as ConceptFormValues } from '@/components/conceptForm/schema/conceptFormSchema';
+import { RequiredNameModelSchema } from '@/components/conceptForm/schema/sharedConceptSchemas';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { Select } from '@/components/shared/Select';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
@@ -32,7 +30,7 @@ function getDomain(url: string): string | null {
 
 const AddNewConceptSchema = z.object({
   nameModel: z.object({
-    name: MultiLangueModelSchema,
+    name: RequiredNameModelSchema,
   }),
   conceptTypeEnum: z.enum(['TRIDA', 'VLASTNOST', 'VZTAH']),
   type: z.string(),
