@@ -198,7 +198,8 @@ export const ConceptForm = ({
           {open && (
             <HintSidebar
               hint={hint}
-              onClose={() => setOpen(false)}
+              open={open}
+              onToggle={() => setOpen(false)}
               className="sticky top-22 w-full max-w-80"
             />
           )}
