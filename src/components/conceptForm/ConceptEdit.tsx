@@ -227,12 +227,9 @@ export function mapDetailToFormValues(
         ? false
         : undefined,
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
-    codeListIri:
-      detail['instance-definovány-číselníkem'] &&
-      detail['instance-definovány-číselníkem'].iri,
+    codeListIri: detail['instance-definovány-číselníkem']?.iri ?? '',
     codeListDataset:
-      detail['instance-definovány-číselníkem'] &&
-      detail['instance-definovány-číselníkem']['datová-sada-v-nkod'],
+      detail['instance-definovány-číselníkem']?.['datová-sada-v-nkod'] ?? '',
   };
 }
 

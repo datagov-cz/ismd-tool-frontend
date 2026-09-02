@@ -94,7 +94,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
               onChange={(e) => setQuery(e.currentTarget.value)}
               className="border-0! flex-1"
               type="text"
-              sufix={<GovIcon name="search" type="components" size="s" />}
+              iconStart={<GovIcon name="search" type="components" size="s" />}
             />
 
             {showDropdown && (

@@ -97,8 +97,7 @@ export const ControlPanelConcept = ({
           position="left"
           color="primary"
           type="base"
-          size="m"
-          className="h-8! [&_button]:h-8!"
+          size="s"
           label={
             <>
               <GovIcon

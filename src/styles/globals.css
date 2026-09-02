@@ -159,6 +159,35 @@ html[data-theme='light'] {
   color-scheme: light;
 }
 
+/* @gov-design-system-ce/react 4.7.0 emits data-expanded / data-position where
+   the shipped stylesheet still keys on the bare attribute, so those states lose
+   their styling. Mirror the DS declarations until the two packages agree. */
+.gov-dropdown[data-position='right'] .gov-dropdown__list {
+  right: 0;
+  left: initial;
+}
+
+.gov-form-file[data-expanded='true'] {
+  width: 100%;
+}
+
+.gov-form-file[data-expanded='true'] .gov-form-file__area {
+  position: relative;
+  width: 100%;
+  padding: var(--spacing-xl);
+  border: var(--border-width, 0.0625rem) dashed
+    var(--form-border-color, var(--border-subtle));
+  border-radius: var(--border-radius, var(--corner-radius-s));
+  background-color: var(--background-block-primary);
+  text-align: center;
+  transition: background-color 150ms ease-in-out;
+  will-change: background-color;
+}
+
+.gov-form-file[data-expanded='true'] .gov-form-file__area:hover {
+  background-color: var(--button-outlined-primary-hover);
+}
+
 gov-form-search:focus-within,
 .gov-form-search:focus-within {
   outline: none;
