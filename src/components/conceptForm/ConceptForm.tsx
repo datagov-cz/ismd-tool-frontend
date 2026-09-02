@@ -6,7 +6,9 @@ import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { ConceptForm as ConceptFormType } from '@/components/conceptForm/schema/conceptFormSchema';
-import { useFormDraft } from '@/hooks/useFormDraft';
+import { clearFormDraft, useFormDraft } from '@/hooks/useFormDraft';
+import { useIsOnline } from '@/hooks/useIsOnline';
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 
 import { FormToolbar } from './components/FormToolbar';
 import { useConceptFormHints } from './components/hint/conceptFormHints';
@@ -14,7 +16,7 @@ import { HintSidebar } from './components/hint/HintSidebar';
 import { useFormHints } from './components/hint/useFormHints';
 import {
   type ConceptForm as ConceptFormValues,
-  ConceptFormSchema,
+  createConceptFormSchema,
 } from './schema/conceptFormSchema';
 import { ConceptMeaningSection } from './sections/ConceptMeaningSection';
 import { LegalSourceAutofillSection } from './sections/LegalSourceAutofillSection';
@@ -97,8 +99,9 @@ export const ConceptForm = ({
 }: ConceptFormProps) => {
   const tConcept = useTranslations('CreateConcept');
   const t = useTranslations('DictionaryDetail.EditOntology');
+  const tError = useTranslations('Errors');
   const form = useForm<ConceptFormValues>({
-    resolver: zodResolver(ConceptFormSchema),
+    resolver: zodResolver(createConceptFormSchema(tError)),
     defaultValues: {
       ...BASE_DEFAULTS,
       ontologyGraphName,
@@ -108,10 +111,16 @@ export const ConceptForm = ({
   });
 
   const router = useRouter();
+  const isOnline = useIsOnline();
 
   useFormDraft(form, storageKey);
 
-  const { errors } = form.formState;
+  const { errors, isDirty } = form.formState;
+  useUnsavedChangesGuard({
+    enabled: Boolean(editing && isDirty && isOnline),
+    message: t('UnsavedChangesConfirmation'),
+    draftKey: storageKey,
+  });
 
   const { hints, defaultHint, defaultHintEdit } = useConceptFormHints();
 
@@ -151,6 +160,7 @@ export const ConceptForm = ({
     }
 
     form.reset();
+    clearFormDraft(storageKey);
     if (slug) {
       router.push(`/concept/${slug}`);
     } else {
@@ -188,7 +198,8 @@ export const ConceptForm = ({
           {open && (
             <HintSidebar
               hint={hint}
-              onClose={() => setOpen(false)}
+              open={open}
+              onToggle={() => setOpen(false)}
               className="sticky top-22 w-full max-w-80"
             />
           )}

@@ -15,6 +15,7 @@ import {
 } from '@/api/generated';
 import { createCommentSchema } from '@/lib/formSchemas';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { Sidebox } from '../shared/Sidebox';
 
 import { CommentItem } from './CommentItem';
@@ -35,6 +36,7 @@ export const CommentSidebox = ({
   userId,
 }: CommentSideboxProps) => {
   const t = useTranslations('DictionaryDetail.CommentSidebox');
+  const tError = useTranslations('Errors');
 
   const isOpen = useCommentBoxStore((state) => state.isOpen);
   const setIsOpen = useCommentBoxStore((state) => state.setIsOpen);
@@ -67,8 +69,8 @@ export const CommentSidebox = ({
         reset();
         refetch();
       },
-      onError: () => {
-        toast('Comment Error', { type: 'error' });
+      onError: (error) => {
+        toast(getErrorMessage(error, tError), { type: 'error' });
       },
     },
   });

@@ -1,6 +1,7 @@
 'use client';
 
 import { GovIcon, GovTag } from '@gov-design-system-ce/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -36,6 +37,7 @@ function toMultiLang(
 
 const SHARING_METHOD_IRI_MAP: Record<string, string> = {
   'veřejně-přístupné': 'veřejně přístupné',
+  nesdílené: 'nesdílené',
   'poskytované-na-žádost': 'poskytované na žádost',
   'zpřístupňované-pro-výkon-agendy': 'zpřístupňované pro výkon agendy',
 };
@@ -43,6 +45,8 @@ const SHARING_METHOD_IRI_MAP: Record<string, string> = {
 const ACQUISITION_METHOD_IRI_MAP: Record<string, string> = {
   'jiných-agend': 'jiných agend',
   provozní: 'provozní',
+  vlastní: 'vlastní',
+  'základních-registrů': 'základních registrů',
 };
 
 const CONTENT_TYPE_IRI_MAP: Record<string, string> = {
@@ -282,13 +286,13 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
   return (
     <div className="w-full max-w-250 mx-auto flex flex-col gap-5 p-5">
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          onClick={() => router.back()}
+        <Link
+          href={`/concept/${slug}`}
           className="flex gap-1 text-blue-primary font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
-        </button>
+        </Link>
 
         <span className="font-medium text-md">{t('EditConcept')}</span>
 

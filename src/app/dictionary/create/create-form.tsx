@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -127,13 +128,15 @@ export const CreateForm = () => {
           />
         </form>
         <div className="absolute hidden lg:block left-full top-0 h-full w-full xl:w-[calc(100vw-100%-12rem)] pl-6">
-          {open && (
-            <HintSidebar
-              hint={hint}
-              onClose={() => setOpen(false)}
-              className="sticky top-22 w-full max-w-80"
-            />
-          )}
+          <HintSidebar
+            hint={hint}
+            onToggle={() => setOpen((prev) => !prev)}
+            className={clsx(
+              'sticky top-22 w-full',
+              open ? 'max-w-80' : 'max-w-10',
+            )}
+            open={open}
+          />
         </div>
       </div>
     </FormProvider>

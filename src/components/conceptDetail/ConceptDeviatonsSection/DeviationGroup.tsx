@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { GovButton, GovChip, GovIcon } from '@gov-design-system-ce/react';
-import axios from 'axios';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
@@ -12,6 +11,7 @@ import {
   useUpdateLocalCopy,
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { DeviationKey } from './deviation.types';
 import { formatKey } from './deviation.utils';
@@ -33,6 +33,7 @@ export const DeviationGroup = ({
   conceptLabel?: string;
 }) => {
   const t = useTranslations('ConceptDeviations');
+  const tError = useTranslations('Errors');
   const [expanded, setExpanded] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<DeviationKey[]>([]);
 
@@ -63,11 +64,10 @@ export const DeviationGroup = ({
         },
         onError: (error) => {
           console.error('Failed to update local copy', error);
-          const message = axios.isAxiosError(error)
-            ? (error.response?.data?.message ?? error.message)
-            : 'Something went wrong';
-
-          toast(message, { position: 'bottom-right', type: 'error' });
+          toast(getErrorMessage(error, tError), {
+            position: 'bottom-right',
+            type: 'error',
+          });
         },
       },
     );
@@ -90,11 +90,10 @@ export const DeviationGroup = ({
         },
         onError: (error) => {
           console.error('Failed to update local copy', error);
-          const message = axios.isAxiosError(error)
-            ? (error.response?.data?.message ?? error.message)
-            : 'Something went wrong';
-
-          toast(message, { position: 'bottom-right', type: 'error' });
+          toast(getErrorMessage(error, tError), {
+            position: 'bottom-right',
+            type: 'error',
+          });
         },
       },
     );
