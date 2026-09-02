@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { GovButton, GovIcon, GovTag } from '@gov-design-system-ce/react';
 import { Handle, type NodeProps, Position, useStore } from '@xyflow/react';
 import clsx from 'clsx';
@@ -109,6 +109,7 @@ const ConceptNodeDetail = ({
   onClose: () => void;
 }) => {
   const dispatch = useDiagramDispatch();
+  const detailRef = useRef<HTMLDivElement>(null);
   const [showAllProperties, setShowAllProperties] = useState(false);
   const [showAllRelations, setShowAllRelations] = useState(false);
   const edges = useStore((state) => state.edges) as ConceptFlowEdge[];
@@ -118,9 +119,9 @@ const ConceptNodeDetail = ({
       edges.flatMap((edge) => {
         const isHierarchy = edge.data?.kind === 'hierarchie';
         const isOutgoing = edge.source === nodeId;
-        const isIncomingHierarchy = isHierarchy && edge.target === nodeId;
+        const isIncoming = edge.target === nodeId;
 
-        if (!isOutgoing && !isIncomingHierarchy) return [];
+        if (!isOutgoing && !isIncoming) return [];
 
         const relatedNodeId = isOutgoing ? edge.target : edge.source;
         const relatedNode = nodes.find((node) => node.id === relatedNodeId);
@@ -138,6 +139,7 @@ const ConceptNodeDetail = ({
             id: edge.id,
             label,
             target: relatedConcept?.concept.název?.cs,
+            direction: isOutgoing ? '→' : '←',
           },
         ];
       }),
@@ -150,10 +152,26 @@ const ConceptNodeDetail = ({
   const hiddenPropertiesCount = data.vlastnosti.length - 3;
   const hiddenRelationsCount = vztahy.length - 3;
 
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (detailRef.current?.contains(event.target as Node)) return;
+
+      onClose();
+      data.onBlur?.();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [data, onClose, open]);
+
   return (
     <div
+      ref={detailRef}
+      onClick={(event) => event.stopPropagation()}
       className={clsx(
-        'w-75 bg-white absolute -right-2 translate-x-full bottom-0 p-3 shadow-subtle border rounded-md border-border-grey z-20 divide-y divide-border-grey space-y-2',
+        'nodrag nopan w-75 bg-white absolute -right-2 translate-x-full bottom-0 p-3 shadow-subtle border rounded-md border-border-grey z-50 divide-y divide-border-grey space-y-2',
         !open && 'hidden',
       )}
     >
@@ -237,7 +255,7 @@ const ConceptNodeDetail = ({
               />
               <span className="text-xs text-card-description leading-none">
                 {vztah.label}
-                {vztah.target && ` → ${vztah.target}`}
+                {vztah.target && ` ${vztah.direction} ${vztah.target}`}
               </span>
             </div>
           ))}
@@ -264,7 +282,15 @@ const ConceptNodeDetail = ({
             <GovIcon name="pencil" color="primary" slot="icon-start" /> Upravit
             pojem
           </GovButton>
-          <GovButton color="error" size="xs" type="outlined">
+          <GovButton
+            color="error"
+            size="xs"
+            type="outlined"
+            onGovClick={() => {
+              data.onRemove?.();
+              dispatch({ type: 'removeNode', nodeId });
+            }}
+          >
             <GovIcon name="trash" /> Odebrat z diagramu
           </GovButton>
         </div>

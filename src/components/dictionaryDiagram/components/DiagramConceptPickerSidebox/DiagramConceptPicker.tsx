@@ -26,12 +26,14 @@ export const DiagramConceptPicker = ({
   otherOntologyConceptsInDiagram,
   activeConceptIds,
   selectedConceptIds,
+  diagramParentByConceptId,
   onActiveConceptClick,
 }: {
   concepts: Concept[];
   otherOntologyConceptsInDiagram: Concept[];
   activeConceptIds: Set<string>;
   selectedConceptIds: Set<string>;
+  diagramParentByConceptId: Map<string, string>;
   onActiveConceptClick: (_conceptId: string) => void;
 }) => {
   const [search, setSearch] = useState('');
@@ -44,23 +46,73 @@ export const DiagramConceptPicker = ({
   const toggleKind = (kind: ConceptKind) =>
     setKinds((prev) => ({ ...prev, [kind]: !prev[kind] }));
 
-  const filtered = useMemo(() => {
+  const filteredHierarchy = useMemo(() => {
     const query = search.trim().toLowerCase();
     const noKindFilter = !kinds.trida && !kinds.vlastnost && !kinds.vztah;
+    const matchesDomain = (concept: Concept, parent: Concept) => {
+      const diagramParent = diagramParentByConceptId.get(getConceptId(concept));
+      if (diagramParent) {
+        return diagramParent === getConceptId(parent);
+      }
 
-    return concepts
-      .filter((concept) => {
-        const matchesName =
-          !query || !!concept.název?.cs?.toLowerCase().includes(query);
-        const matchesKind = noKindFilter || kinds[getConceptKind(concept)];
-        return matchesName && matchesKind;
+      if (getConceptKind(concept) === 'vlastnost') {
+        return false;
+      }
+
+      const domain = concept['definiční-obor'];
+      if (!domain || !parent.iri) return false;
+      if (domain === parent.iri) return true;
+
+      return domain.split('/').pop() === parent.iri.split('/').pop();
+    };
+
+    const matchesKind = (concept: Concept) =>
+      noKindFilter || kinds[getConceptKind(concept)];
+    const matchesName = (concept: Concept) =>
+      !query || !!concept.název?.cs?.toLowerCase().includes(query);
+
+    const parents = concepts
+      .filter(
+        (concept) => !concepts.some((parent) => matchesDomain(concept, parent)),
+      )
+      .sort((a, b) =>
+        (a.název?.cs ?? '').localeCompare(b.název?.cs ?? '', 'cs'),
+      );
+
+    return parents
+      .map((concept) => {
+        const children = concepts
+          .filter((candidate) => matchesDomain(candidate, concept))
+          .filter(matchesKind)
+          .sort((a, b) =>
+            (a.název?.cs ?? '').localeCompare(b.název?.cs ?? '', 'cs'),
+          );
+        const parentMatches = matchesKind(concept) && matchesName(concept);
+        const matchingChildren = children.filter(matchesName);
+
+        return {
+          concept,
+          children: parentMatches ? children : matchingChildren,
+          showParent: parentMatches || matchingChildren.length > 0,
+        };
       })
+      .filter(({ showParent }) => showParent)
       .sort(
         (a, b) =>
-          Number(selectedConceptIds.has(getConceptId(b))) -
-          Number(selectedConceptIds.has(getConceptId(a))),
+          Number(
+            selectedConceptIds.has(getConceptId(b.concept)) ||
+              b.children.some((child) =>
+                selectedConceptIds.has(getConceptId(child)),
+              ),
+          ) -
+          Number(
+            selectedConceptIds.has(getConceptId(a.concept)) ||
+              a.children.some((child) =>
+                selectedConceptIds.has(getConceptId(child)),
+              ),
+          ),
       );
-  }, [concepts, search, kinds, selectedConceptIds]);
+  }, [concepts, search, kinds, selectedConceptIds, diagramParentByConceptId]);
 
   return (
     <div className="flex-300 bg-white shadow-subtle rounded-md py-2 px-4">
@@ -95,37 +147,39 @@ export const DiagramConceptPicker = ({
             />
           </div>
 
-          {filtered.some((item) =>
-            selectedConceptIds.has(getConceptId(item)),
-          ) && (
-            <div className="z-10 flex flex-col gap-1.5 border-b border-border-grey bg-white pb-1.5">
-              {filtered
-                .filter((item) => selectedConceptIds.has(getConceptId(item)))
-                .map((item, index) => (
-                  <DiagramPickerConcept
-                    key={`${getConceptId(item)}-selected-${index}`}
-                    concept={item}
-                    active={activeConceptIds.has(getConceptId(item))}
-                    selected
-                    onActiveClick={onActiveConceptClick}
-                  />
-                ))}
-            </div>
-          )}
-
           <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1">
-            {filtered
-              .filter((item) => !selectedConceptIds.has(getConceptId(item)))
-              .map((item, index) => (
+            {filteredHierarchy.map(({ concept, children }, index) => (
+              <div
+                className="flex flex-col gap-1.5"
+                key={`${getConceptId(concept)}-${index}`}
+              >
                 <DiagramPickerConcept
-                  key={`${getConceptId(item)}-${index}`}
-                  concept={item}
-                  active={activeConceptIds.has(getConceptId(item))}
+                  concept={concept}
+                  active={activeConceptIds.has(getConceptId(concept))}
+                  selected={selectedConceptIds.has(getConceptId(concept))}
                   onActiveClick={onActiveConceptClick}
                 />
-              ))}
+                {children.length > 0 && (
+                  <div className="relative ml-3 flex flex-col gap-1.5 pl-3">
+                    {children.map((child, childIndex) => (
+                      <div
+                        className="relative before:absolute before:-left-3 before:top-1/2 before:w-3 before:border-t before:border-blue-primary/30 after:absolute after:-left-3 after:-top-1.5 after:-bottom-1.5 after:border-l after:border-blue-primary/30 last:after:bottom-1/2"
+                        key={`${getConceptId(child)}-${childIndex}`}
+                      >
+                        <DiagramPickerConcept
+                          concept={child}
+                          active={activeConceptIds.has(getConceptId(child))}
+                          selected={selectedConceptIds.has(getConceptId(child))}
+                          onActiveClick={onActiveConceptClick}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
 
-            {filtered.length === 0 && (
+            {filteredHierarchy.length === 0 && (
               <span className="text-xs text-card-description py-2">
                 Žádný pojem neodpovídá filtru.
               </span>

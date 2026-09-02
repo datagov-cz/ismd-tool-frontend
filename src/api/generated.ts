@@ -24,46 +24,47 @@ import { axiosInstance } from '../axios-instance';
 export interface DiagramLayoutDto {
   version: number;
   viewport?: ViewportDto;
-  nodes: Node[];
-  edges: Edge[];
+  nodes: DiagramLayoutNode[];
+  edges?: DiagramLayoutEdge[];
+  overlays?: DiagramLayoutOverlay[];
 }
 
-export type EdgeEdgeKind = (typeof EdgeEdgeKind)[keyof typeof EdgeEdgeKind];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const EdgeEdgeKind = {
-  DOMAIN: 'DOMAIN',
-  RANGE: 'RANGE',
-  SUBCLASS_OF: 'SUBCLASS_OF',
-  SUB_PROPERTY: 'SUB_PROPERTY',
-  SUB_RELATION: 'SUB_RELATION',
-  EXACT_MATCH: 'EXACT_MATCH',
-} as const;
-
-export interface Edge {
+export interface DiagramLayoutEdge {
   /** @minLength 1 */
   id: string;
-  /** @minLength 1 */
-  source: string;
-  /** @minLength 1 */
-  target: string;
-  edgeKind: EdgeEdgeKind;
-  sourceHandle?: string;
-  targetHandle?: string;
   segments?: EdgeWaypoint[];
 }
 
-export interface EdgeWaypoint {
-  x?: number;
-  y?: number;
-}
-
-export interface Node {
+export interface DiagramLayoutNode {
   /** @minLength 1 */
   id: string;
   position: PositionDto;
   parentId?: string;
   collapsed?: boolean;
+  properties?: string[];
+}
+
+export interface DiagramLayoutOverlay {
+  /** @minLength 1 */
+  conceptIri: string;
+  domain?: string;
+  range?: string;
+  broaderConcept?: string[];
+  exactMatch?: string[];
+  convertToHierarchy?: DiagramLayoutOverlayConvertToHierarchy;
+  empty?: boolean;
+}
+
+export interface DiagramLayoutOverlayConvertToHierarchy {
+  /** @minLength 1 */
+  addBroaderOn: string;
+  /** @minLength 1 */
+  broader: string;
+}
+
+export interface EdgeWaypoint {
+  x?: number;
+  y?: number;
 }
 
 export interface PositionDto {
@@ -89,13 +90,138 @@ export interface ConvertToHierarchy {
   broader?: string;
 }
 
+export interface DataTypeDto {
+  code?: string;
+  label?: string;
+}
+
 export interface DiagramDto {
   ontologySlug?: string;
   version?: number;
   viewport?: ViewportDto;
-  nodes?: Node[];
-  edges?: Edge[];
-  pendingChangeCount?: number;
+  nodes?: DiagramNode[];
+  edges?: DiagramEdge[];
+  pendingEdits?: DiagramPendingEditEntry[];
+}
+
+export interface DiagramEdge {
+  id?: string;
+  source?: string;
+  target?: string;
+  type?: string;
+  segments?: EdgeWaypoint[];
+  data?: DiagramEdgeData;
+}
+
+export type DiagramEdgeDataEdgeKind =
+  (typeof DiagramEdgeDataEdgeKind)[keyof typeof DiagramEdgeDataEdgeKind];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DiagramEdgeDataEdgeKind = {
+  VZTAH: 'VZTAH',
+  SUBCLASS_OF: 'SUBCLASS_OF',
+  EXACT_MATCH: 'EXACT_MATCH',
+} as const;
+
+export type DiagramEdgeDataConceptType =
+  (typeof DiagramEdgeDataConceptType)[keyof typeof DiagramEdgeDataConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DiagramEdgeDataConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
+} as const;
+
+export type DiagramEdgeDataLabel = { [key: string]: string };
+
+export interface DiagramEdgeData {
+  edgeKind?: DiagramEdgeDataEdgeKind;
+  pending?: boolean;
+  conceptType?: DiagramEdgeDataConceptType;
+  iri?: string;
+  slug?: string;
+  label?: DiagramEdgeDataLabel;
+  stale?: boolean;
+  hasPendingEdits?: boolean;
+  pendingEdit?: DiagramPendingEdit;
+}
+
+export interface DiagramNode {
+  id?: string;
+  type?: string;
+  position?: PositionDto;
+  parentId?: string;
+  collapsed?: boolean;
+  data?: DiagramNodeData;
+}
+
+export type DiagramNodeDataConceptType =
+  (typeof DiagramNodeDataConceptType)[keyof typeof DiagramNodeDataConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DiagramNodeDataConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
+} as const;
+
+export type DiagramNodeDataLabel = { [key: string]: string };
+
+export interface DiagramNodeData {
+  conceptType?: DiagramNodeDataConceptType;
+  iri?: string;
+  slug?: string;
+  label?: DiagramNodeDataLabel;
+  stale?: boolean;
+  hasPendingEdits?: boolean;
+  pendingEdit?: DiagramPendingEdit;
+  properties?: DiagramPropertyRow[];
+}
+
+export interface DiagramPendingEdit {
+  domain?: string;
+  range?: string;
+  broaderConcept?: string[];
+  exactMatch?: string[];
+  convertToHierarchy?: ConvertToHierarchy;
+  baseUpdatedAt?: string;
+}
+
+export type DiagramPendingEditEntryConceptType =
+  (typeof DiagramPendingEditEntryConceptType)[keyof typeof DiagramPendingEditEntryConceptType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DiagramPendingEditEntryConceptType = {
+  TRIDA: 'TRIDA',
+  VLASTNOST: 'VLASTNOST',
+  VZTAH: 'VZTAH',
+  KONCEPT: 'KONCEPT',
+} as const;
+
+export type DiagramPendingEditEntryLabel = { [key: string]: string };
+
+export interface DiagramPendingEditEntry {
+  iri?: string;
+  conceptType?: DiagramPendingEditEntryConceptType;
+  slug?: string;
+  label?: DiagramPendingEditEntryLabel;
+  stale?: boolean;
+  pendingEdit?: DiagramPendingEdit;
+}
+
+export type DiagramPropertyRowLabel = { [key: string]: string };
+
+export interface DiagramPropertyRow {
+  iri?: string;
+  slug?: string;
+  label?: DiagramPropertyRowLabel;
+  rangeResolved?: DataTypeDto;
+  stale?: boolean;
+  hasPendingEdits?: boolean;
+  pendingEdit?: DiagramPendingEdit;
 }
 
 export interface CommentModel {
@@ -202,8 +328,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -226,9 +352,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -275,7 +401,6 @@ export const FailedOp = {
 } as const;
 
 export interface Failed {
-  nodeId?: number;
   conceptIri?: string;
   op?: FailedOp;
   error?: string;
@@ -301,13 +426,11 @@ export const MaterializedOp = {
 } as const;
 
 export interface Materialized {
-  nodeId?: number;
   conceptIri?: string;
   op?: MaterializedOp;
 }
 
 export interface SkippedStale {
-  nodeId?: number;
   conceptIri?: string;
 }
 
@@ -499,11 +622,6 @@ export interface ConceptRelationshipsModel {
   name?: string;
   iri?: string;
   ref?: string;
-}
-
-export interface DataTypeDto {
-  code?: string;
-  label?: string;
 }
 
 export interface FragmentSegment {
@@ -830,23 +948,6 @@ export interface AiFeedbackRequestDto {
   suggestionIds: string[];
 }
 
-export type JwtHeaders = { [key: string]: unknown };
-
-export type JwtClaims = { [key: string]: unknown };
-
-export interface Jwt {
-  tokenValue?: string;
-  issuedAt?: string;
-  expiresAt?: string;
-  headers?: JwtHeaders;
-  claims?: JwtClaims;
-  audience?: string[];
-  notBefore?: string;
-  issuer?: string;
-  subject?: string;
-  id?: string;
-}
-
 /**
  * Input for generating suggestions for a selected class. The backend adds only the configured suggestion count.
  */
@@ -949,26 +1050,6 @@ export interface ApiResponseDtoInteger {
 export interface OntologyEditModel {
   nameModel?: NameModel;
   descriptionModel?: DescriptionModel;
-}
-
-export interface NodeOverlayDto {
-  /** @minLength 1 */
-  nodeId: string;
-  domain?: string;
-  range?: string;
-  broaderConcept?: string[];
-  superProperty?: string[];
-  superRelation?: string[];
-  exactMatch?: string[];
-  convertToHierarchy?: ConvertToHierarchy;
-  empty?: boolean;
-}
-
-export interface ApiResponseDtoNode {
-  data?: Node;
-  message?: string;
-  success?: boolean;
-  errorCode?: string;
 }
 
 export type ClassConceptEditModelAllOf = {
@@ -1398,6 +1479,7 @@ export interface FragmentDto {
   citation?: string;
   order?: string;
   bodyHtml?: string;
+  navigable?: boolean;
   children?: FragmentDto[];
 }
 
@@ -1414,6 +1496,7 @@ export interface LawContentDto {
   versionIri?: string;
   versionEliPath?: string;
   versionDate?: string;
+  versionLatest?: boolean;
   versions?: LawVersionDto[];
   fragments?: FragmentDto[];
   bodyHtml?: string;
@@ -1618,30 +1701,6 @@ export type CreateConceptBody =
   | PropertyConceptModel
   | RelationshipConceptModel;
 
-export type LikeSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type StartRelationshipSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type StartPropertySuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type StartClassSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type DislikeSuggestionsParams = {
-  jwt: Jwt;
-};
-
-export type AcceptSuggestionsParams = {
-  jwt: Jwt;
-};
-
 export type EditConceptBody =
   | ClassConceptEditModel
   | PropertyConceptEditModel
@@ -1829,6 +1888,7 @@ export type GetFragmentsParams = {
 
 export type GetLawContentParams = {
   law: string;
+  versionIri?: string;
 };
 
 export type GetConceptListParams = {
@@ -1838,23 +1898,20 @@ export type GetConceptListParams = {
 
 export type GetRelationshipSuggestionsParams = {
   jobIds: string[];
-  jwt: Jwt;
 };
 
 export type GetPropertySuggestionsParams = {
   jobIds: string[];
-  jwt: Jwt;
 };
 
 export type GetClassSuggestionsParams = {
   jobIds: string[];
-  jwt: Jwt;
 };
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Uloží rozvržení diagramu a překryvy pouze do databáze (bez zápisu do RDF). Sada uzlů je autoritativní pro členství na plátně — chybějící uzel je z plátna odebrán, nový je načten z živého RDF. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * Uloží rozvržení diagramu a overlaye pouze do databáze (bez zápisu do RDF). Sada uzlů je autoritativní pro členství na plátně — chybějící uzel je z plátna odebrán, nový je načten z živého RDF. Pole `overlays` je naopak přírůstkové: pojem, který v něm chybí, si svůj overlay ponechá; položka pouze s `conceptIri` overlay zahodí. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
  * @summary Uložení rozvržení diagramu
  */
 export const saveLayout = (
@@ -2221,7 +2278,7 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
 };
 
 /**
- * Aplikuje všechny čekající (pending) změny přes existující CRUD pojmů → outbox → RDF a po úspěchu vyčistí jednotlivé překryvy. Vrací výsledek po jednotlivých změnách (materializované, neúspěšné, zastaralé). Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
+ * Aplikuje všechny čekající (pending) změny přes existující CRUD pojmů → outbox → RDF a po úspěchu vyčistí jednotlivé overlaye. Vrací výsledek po jednotlivých změnách (materializované, neúspěšné, zastaralé). Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
  * @summary Převzetí (materializace) změn diagramu
  */
 export const materialize = (
@@ -2673,7 +2730,6 @@ aniž by tím vyjadřoval jejich přijetí do modelu. Vyžaduje autentizaci.
  */
 export const likeSuggestions = (
   aiFeedbackRequestDto: AiFeedbackRequestDto[],
-  params: LikeSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2683,7 +2739,6 @@ export const likeSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiFeedbackRequestDto,
-      params,
       signal,
     },
     options,
@@ -2697,14 +2752,14 @@ export const getLikeSuggestionsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof likeSuggestions>>,
     TError,
-    { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+    { data: AiFeedbackRequestDto[] },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof likeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationKey = ['likeSuggestions'];
@@ -2718,11 +2773,11 @@ export const getLikeSuggestionsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof likeSuggestions>>,
-    { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams }
+    { data: AiFeedbackRequestDto[] }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return likeSuggestions(data, params, requestOptions);
+    return likeSuggestions(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -2742,7 +2797,7 @@ export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof likeSuggestions>>,
       TError,
-      { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+      { data: AiFeedbackRequestDto[] },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -2751,7 +2806,7 @@ export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof likeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: LikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationOptions = getLikeSuggestionsMutationOptions(options);
@@ -2773,7 +2828,6 @@ export const startRelationshipSuggestions = (
   number: number,
   date: string,
   aiSelectedClassSuggestionRequestDto: AiSelectedClassSuggestionRequestDto,
-  params: StartRelationshipSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2783,7 +2837,6 @@ export const startRelationshipSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiSelectedClassSuggestionRequestDto,
-      params,
       signal,
     },
     options,
@@ -2802,7 +2855,6 @@ export const getStartRelationshipSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartRelationshipSuggestionsParams;
     },
     TContext
   >;
@@ -2815,7 +2867,6 @@ export const getStartRelationshipSuggestionsMutationOptions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartRelationshipSuggestionsParams;
   },
   TContext
 > => {
@@ -2835,17 +2886,15 @@ export const getStartRelationshipSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartRelationshipSuggestionsParams;
     }
   > = (props) => {
-    const { year, number, date, data, params } = props ?? {};
+    const { year, number, date, data } = props ?? {};
 
     return startRelationshipSuggestions(
       year,
       number,
       date,
       data,
-      params,
       requestOptions,
     );
   };
@@ -2876,7 +2925,6 @@ export const useStartRelationshipSuggestions = <
         number: number;
         date: string;
         data: AiSelectedClassSuggestionRequestDto;
-        params: StartRelationshipSuggestionsParams;
       },
       TContext
     >;
@@ -2891,7 +2939,6 @@ export const useStartRelationshipSuggestions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartRelationshipSuggestionsParams;
   },
   TContext
 > => {
@@ -2915,7 +2962,6 @@ export const startPropertySuggestions = (
   number: number,
   date: string,
   aiSelectedClassSuggestionRequestDto: AiSelectedClassSuggestionRequestDto,
-  params: StartPropertySuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -2925,7 +2971,6 @@ export const startPropertySuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiSelectedClassSuggestionRequestDto,
-      params,
       signal,
     },
     options,
@@ -2944,7 +2989,6 @@ export const getStartPropertySuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartPropertySuggestionsParams;
     },
     TContext
   >;
@@ -2957,7 +3001,6 @@ export const getStartPropertySuggestionsMutationOptions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartPropertySuggestionsParams;
   },
   TContext
 > => {
@@ -2977,19 +3020,11 @@ export const getStartPropertySuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiSelectedClassSuggestionRequestDto;
-      params: StartPropertySuggestionsParams;
     }
   > = (props) => {
-    const { year, number, date, data, params } = props ?? {};
+    const { year, number, date, data } = props ?? {};
 
-    return startPropertySuggestions(
-      year,
-      number,
-      date,
-      data,
-      params,
-      requestOptions,
-    );
+    return startPropertySuggestions(year, number, date, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -3018,7 +3053,6 @@ export const useStartPropertySuggestions = <
         number: number;
         date: string;
         data: AiSelectedClassSuggestionRequestDto;
-        params: StartPropertySuggestionsParams;
       },
       TContext
     >;
@@ -3033,7 +3067,6 @@ export const useStartPropertySuggestions = <
     number: number;
     date: string;
     data: AiSelectedClassSuggestionRequestDto;
-    params: StartPropertySuggestionsParams;
   },
   TContext
 > => {
@@ -3056,7 +3089,6 @@ export const startClassSuggestions = (
   number: number,
   date: string,
   aiClassSuggestionRequestDto: AiClassSuggestionRequestDto,
-  params: StartClassSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -3066,7 +3098,6 @@ export const startClassSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiClassSuggestionRequestDto,
-      params,
       signal,
     },
     options,
@@ -3085,7 +3116,6 @@ export const getStartClassSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiClassSuggestionRequestDto;
-      params: StartClassSuggestionsParams;
     },
     TContext
   >;
@@ -3098,7 +3128,6 @@ export const getStartClassSuggestionsMutationOptions = <
     number: number;
     date: string;
     data: AiClassSuggestionRequestDto;
-    params: StartClassSuggestionsParams;
   },
   TContext
 > => {
@@ -3118,19 +3147,11 @@ export const getStartClassSuggestionsMutationOptions = <
       number: number;
       date: string;
       data: AiClassSuggestionRequestDto;
-      params: StartClassSuggestionsParams;
     }
   > = (props) => {
-    const { year, number, date, data, params } = props ?? {};
+    const { year, number, date, data } = props ?? {};
 
-    return startClassSuggestions(
-      year,
-      number,
-      date,
-      data,
-      params,
-      requestOptions,
-    );
+    return startClassSuggestions(year, number, date, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -3155,7 +3176,6 @@ export const useStartClassSuggestions = <TError = unknown, TContext = unknown>(
         number: number;
         date: string;
         data: AiClassSuggestionRequestDto;
-        params: StartClassSuggestionsParams;
       },
       TContext
     >;
@@ -3170,7 +3190,6 @@ export const useStartClassSuggestions = <TError = unknown, TContext = unknown>(
     number: number;
     date: string;
     data: AiClassSuggestionRequestDto;
-    params: StartClassSuggestionsParams;
   },
   TContext
 > => {
@@ -3187,7 +3206,6 @@ Vyžaduje autentizaci.
  */
 export const dislikeSuggestions = (
   aiFeedbackRequestDto: AiFeedbackRequestDto[],
-  params: DislikeSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -3197,7 +3215,6 @@ export const dislikeSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiFeedbackRequestDto,
-      params,
       signal,
     },
     options,
@@ -3211,14 +3228,14 @@ export const getDislikeSuggestionsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof dislikeSuggestions>>,
     TError,
-    { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+    { data: AiFeedbackRequestDto[] },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof dislikeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationKey = ['dislikeSuggestions'];
@@ -3232,11 +3249,11 @@ export const getDislikeSuggestionsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof dislikeSuggestions>>,
-    { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams }
+    { data: AiFeedbackRequestDto[] }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return dislikeSuggestions(data, params, requestOptions);
+    return dislikeSuggestions(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -3256,7 +3273,7 @@ export const useDislikeSuggestions = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof dislikeSuggestions>>,
       TError,
-      { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+      { data: AiFeedbackRequestDto[] },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -3265,7 +3282,7 @@ export const useDislikeSuggestions = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof dislikeSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: DislikeSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationOptions = getDislikeSuggestionsMutationOptions(options);
@@ -3281,7 +3298,6 @@ konceptuálního modelu. Vyžaduje autentizaci.
  */
 export const acceptSuggestions = (
   aiFeedbackRequestDto: AiFeedbackRequestDto[],
-  params: AcceptSuggestionsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
@@ -3291,7 +3307,6 @@ export const acceptSuggestions = (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: aiFeedbackRequestDto,
-      params,
       signal,
     },
     options,
@@ -3305,14 +3320,14 @@ export const getAcceptSuggestionsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof acceptSuggestions>>,
     TError,
-    { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+    { data: AiFeedbackRequestDto[] },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof acceptSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationKey = ['acceptSuggestions'];
@@ -3326,11 +3341,11 @@ export const getAcceptSuggestionsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof acceptSuggestions>>,
-    { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams }
+    { data: AiFeedbackRequestDto[] }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return acceptSuggestions(data, params, requestOptions);
+    return acceptSuggestions(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -3350,7 +3365,7 @@ export const useAcceptSuggestions = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof acceptSuggestions>>,
       TError,
-      { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+      { data: AiFeedbackRequestDto[] },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -3359,7 +3374,7 @@ export const useAcceptSuggestions = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof acceptSuggestions>>,
   TError,
-  { data: AiFeedbackRequestDto[]; params: AcceptSuggestionsParams },
+  { data: AiFeedbackRequestDto[] },
   TContext
 > => {
   const mutationOptions = getAcceptSuggestionsMutationOptions(options);
@@ -3693,95 +3708,6 @@ export const useEditOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getEditOntologyMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * Uloží překryv (pending edit) jednoho uzlu do databáze. Cílový uzel je určen polem `nodeId` v těle požadavku. Tělo bez jakéhokoli pole překryvu (pouze `nodeId`) překryv zahodí. Vyžaduje oprávnění vlastníka slovníku nebo administrátora.
- * @summary Uložení překryvu uzlu
- */
-export const stageOverlay = (
-  ontologySlug: string,
-  nodeOverlayDto: NodeOverlayDto,
-  options?: SecondParameter<typeof axiosInstance>,
-) => {
-  return axiosInstance<ApiResponseDtoNode>(
-    {
-      url: `/api/diagram/${ontologySlug}/nodes/overlay`,
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      data: nodeOverlayDto,
-    },
-    options,
-  );
-};
-
-export const getStageOverlayMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof stageOverlay>>,
-    TError,
-    { ontologySlug: string; data: NodeOverlayDto },
-    TContext
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof stageOverlay>>,
-  TError,
-  { ontologySlug: string; data: NodeOverlayDto },
-  TContext
-> => {
-  const mutationKey = ['stageOverlay'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof stageOverlay>>,
-    { ontologySlug: string; data: NodeOverlayDto }
-  > = (props) => {
-    const { ontologySlug, data } = props ?? {};
-
-    return stageOverlay(ontologySlug, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type StageOverlayMutationResult = NonNullable<
-  Awaited<ReturnType<typeof stageOverlay>>
->;
-export type StageOverlayMutationBody = NodeOverlayDto;
-export type StageOverlayMutationError = unknown;
-
-/**
- * @summary Uložení překryvu uzlu
- */
-export const useStageOverlay = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof stageOverlay>>,
-      TError,
-      { ontologySlug: string; data: NodeOverlayDto },
-      TContext
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof stageOverlay>>,
-  TError,
-  { ontologySlug: string; data: NodeOverlayDto },
-  TContext
-> => {
-  const mutationOptions = getStageOverlayMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -4775,7 +4701,7 @@ export function useGetOntologyDetail<
 }
 
 /**
- * Umožňuje stáhnout slovník v požadovaném formátu (TTL, JSON-LD). Pokud je povoleno omezení stahování slovníků s chybami, slovníky s validačními chybami nelze stáhnout. Veřejný endpoint.
+ * Umožňuje stáhnout slovník v požadovaném formátu (TTL, JSON-LD). Pokud je povoleno omezení stahování slovníků s chybami, slovníky s validačními chybami nelze stáhnout a endpoint vrací 400 s kódem ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION a seznamem blokujících chyb. Veřejný endpoint.
  * @summary Stažení slovníku
  */
 export const downloadFile = (
@@ -6702,7 +6628,7 @@ export function useGetFragments<
 }
 
 /**
- * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997"), vyhledá daný právní akt přesnou shodou, vybere jeho poslední znění a vrátí celé jeho znění: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
+ * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997") a vrací celé znění daného aktu: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Bez parametru "versionIri" se vrací poslední znění; s ním zvolené znění (IRI musí patřit k danému aktu, jinak 400). Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
  * @summary Celé znění právního aktu podle reference číslo/rok
  */
 export const getLawContent = (
@@ -6845,7 +6771,7 @@ export function useGetLawContent<
 }
 
 /**
- * Vrací render-ready diagram slovníku — rozvržení spojené s živým obsahem pojmů, s aplikovanými překryvy (pending edits) a projektovanými hranami. Vyžaduje oprávnění přihlášeného uživatele.
+ * Vrací render-ready diagram slovníku — rozvržení spojené s živým obsahem pojmů, s aplikovanými overlayi (pending edits) a projektovanými hranami. Vyžaduje oprávnění přihlášeného uživatele.
  * @summary Načtení diagramu slovníku
  */
 export const getDiagram = (

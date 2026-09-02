@@ -271,6 +271,18 @@ export const DiagramCanvas = ({
           ...node.data,
           onFocus: () =>
             setFocusedNodeIds((current) => new Set(current).add(node.id)),
+          onBlur: () =>
+            setFocusedNodeIds((current) => {
+              const next = new Set(current);
+              next.delete(node.id);
+              return next;
+            }),
+          onRemove: () =>
+            setFocusedNodeIds((current) => {
+              const next = new Set(current);
+              next.delete(node.id);
+              return next;
+            }),
         },
         style: {
           ...node.style,
@@ -304,7 +316,7 @@ export const DiagramCanvas = ({
 
   return (
     <div
-      className="flex-1084 bg-white shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] rounded-md relative"
+      className="flex-1084 bg-white shadow-subtle rounded-md relative"
       ref={wrapperRef}
     >
       <DiagramDispatchContext.Provider value={dispatch}>

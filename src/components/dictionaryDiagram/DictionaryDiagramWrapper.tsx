@@ -34,9 +34,36 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
     dispatch,
   );
 
-  const { nodes, edges } = history.present;
+  const { nodes, edges, removedOverlays } = history.present;
 
   const activeConceptIds = useActiveConceptIds(nodes, edges);
+  const diagramParentByConceptId = useMemo(() => {
+    const parentByConceptId = new Map<string, string>();
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+
+    for (const node of nodes) {
+      for (const property of node.data.vlastnosti) {
+        parentByConceptId.set(
+          getConceptId(property),
+          getConceptId(node.data.concept),
+        );
+      }
+    }
+
+    for (const edge of edges) {
+      if (!edge.data?.vztahIri) continue;
+
+      const sourceNode = nodeById.get(edge.source);
+      if (sourceNode) {
+        parentByConceptId.set(
+          edge.data.vztahIri,
+          getConceptId(sourceNode.data.concept),
+        );
+      }
+    }
+
+    return parentByConceptId;
+  }, [edges, nodes]);
   const otherOntologyConceptsInDiagram = useMemo(() => {
     const localConceptIds = new Set(concepts.map(getConceptId));
     const usedConcepts = nodes.flatMap((node) => [
@@ -83,7 +110,9 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
         ontologySlug={slug}
         nodes={nodes}
         edges={edges}
+        removedOverlays={removedOverlays}
         diagramVersion={diagram.data?.data?.version}
+        onLayoutSaved={() => dispatch({ type: 'clearOverlays' })}
       />
 
       <div className="flex w-full gap-4 flex-1">
@@ -92,6 +121,7 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
           otherOntologyConceptsInDiagram={otherOntologyConceptsInDiagram}
           activeConceptIds={activeConceptIds}
           selectedConceptIds={selectedConceptIds}
+          diagramParentByConceptId={diagramParentByConceptId}
           onActiveConceptClick={(conceptId) =>
             setFocusRequest({ conceptId, requestId: Date.now() })
           }

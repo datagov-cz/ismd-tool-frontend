@@ -6,7 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { useSaveLayout } from '@/api/generated';
+import {
+  DiagramLayoutOverlay,
+  useMaterialize,
+  useSaveLayout,
+} from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import {
   buildDiagramLayoutDto,
@@ -20,7 +25,9 @@ type DictionaryDiagramHeaderProps = {
   ontologySlug: string;
   nodes: ConceptFlowNode[];
   edges: ConceptFlowEdge[];
+  removedOverlays: DiagramLayoutOverlay[];
   diagramVersion?: number;
+  onLayoutSaved: () => void;
 };
 
 export const DictionaryDiagramHeader = ({
@@ -28,22 +35,70 @@ export const DictionaryDiagramHeader = ({
   ontologySlug,
   nodes,
   edges,
+  removedOverlays,
   diagramVersion,
+  onLayoutSaved,
 }: DictionaryDiagramHeaderProps) => {
   const router = useRouter();
   const t = useTranslations('ConceptDetail');
+  const { invalidateDiagram, invalidateOntology } = useQueryInvalidator();
   const saveLayout = useSaveLayout({
     mutation: {
-      onSuccess: () => toast.success('Návrh diagramu byl uložen.'),
+      onSuccess: async () => {
+        onLayoutSaved();
+        await invalidateDiagram(ontologySlug);
+        toast.success('Návrh diagramu byl uložen.');
+      },
       onError: () => toast.error('Návrh diagramu se nepodařilo uložit.'),
+    },
+  });
+  const materialize = useMaterialize({
+    mutation: {
+      onSuccess: async () => {
+        await Promise.all([
+          invalidateDiagram(ontologySlug),
+          invalidateOntology(ontologySlug),
+        ]);
+        toast.success('Změny byly propsány do slovníku.');
+      },
+      onError: () => toast.error('Změny se nepodařilo propsat do slovníku.'),
     },
   });
 
   const handleSaveLayout = () => {
     saveLayout.mutate({
       ontologySlug: encodeURIComponent(ontologySlug),
-      data: { ...buildDiagramLayoutDto(nodes, edges, diagramVersion ?? 0) },
+      data: {
+        ...buildDiagramLayoutDto(
+          nodes,
+          edges,
+          diagramVersion ?? 0,
+          removedOverlays,
+        ),
+      },
     });
+  };
+
+  const handleMaterialize = async () => {
+    const encodedOntologySlug = encodeURIComponent(ontologySlug);
+
+    try {
+      await saveLayout.mutateAsync({
+        ontologySlug: encodedOntologySlug,
+        data: {
+          ...buildDiagramLayoutDto(
+            nodes,
+            edges,
+            diagramVersion ?? 0,
+            removedOverlays,
+          ),
+        },
+      });
+
+      materialize.mutate({ ontologySlug: encodedOntologySlug });
+    } catch {
+      // The save mutation displays the error; materialization must not continue.
+    }
   };
 
   return (
@@ -101,9 +156,15 @@ export const DictionaryDiagramHeader = ({
           <GovIcon name="bookmark-plus" size="s" slot="icon-start" />
           {saveLayout.isPending ? 'Ukládání…' : 'Uložit návrh'}
         </GovButton>
-        <GovButton type="solid" color="primary" size="s">
+        <GovButton
+          type="solid"
+          color="primary"
+          size="s"
+          disabled={saveLayout.isPending || materialize.isPending}
+          onGovClick={handleMaterialize}
+        >
           <GovIcon name="floppy" size="s" slot="icon-start" />
-          Propsat do slovníku
+          {materialize.isPending ? 'Propisuji…' : 'Propsat do slovníku'}
         </GovButton>
       </div>
     </div>

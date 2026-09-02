@@ -267,12 +267,12 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
         data: normalizeFormData(formData, originalLanguageTags),
       },
       onSuccess: (response) => {
+        const ontologySlug = response.data?.ontologySlug || graphName;
         queryInvalidate.invalidateConcept(
           decodeURIComponent(response.data?.slug || ''),
         );
-        queryInvalidate.invalidateOntology(
-          response.data?.ontologySlug || graphName,
-        );
+        queryInvalidate.invalidateOntology(ontologySlug);
+        queryInvalidate.invalidateDiagram(ontologySlug);
         router.push(`/concept/${response.data?.slug}`);
       },
       draftKey: storageKey,

@@ -12,8 +12,9 @@ import {
 
 import {
   type DiagramDto,
+  DiagramEdgeDataEdgeKind,
   type DiagramLayoutDto,
-  EdgeEdgeKind,
+  type DiagramLayoutOverlay,
 } from '@/api/generated';
 
 import {
@@ -28,6 +29,8 @@ export type ConceptNodeData = {
   concept: Concept;
   vlastnosti: Concept[];
   onFocus?: () => void;
+  onBlur?: () => void;
+  onRemove?: () => void;
 };
 
 export type RelationshipKind = 'obecny' | 'hierarchie' | 'ekvivalence';
@@ -49,13 +52,19 @@ export const isConceptNode = (node: Node): node is ConceptFlowNode =>
 export type DiagramState = {
   nodes: ConceptFlowNode[];
   edges: ConceptFlowEdge[];
+  removedOverlays: DiagramLayoutOverlay[];
 };
 
-export const initialDiagramState: DiagramState = { nodes: [], edges: [] };
+export const initialDiagramState: DiagramState = {
+  nodes: [],
+  edges: [],
+  removedOverlays: [],
+};
 
 export type DiagramAction =
   | { type: 'nodesChange'; changes: NodeChange<ConceptFlowNode>[] }
   | { type: 'edgesChange'; changes: EdgeChange<ConceptFlowEdge>[] }
+  | { type: 'removeNode'; nodeId: string }
   | {
       type: 'connect';
       connection: Connection;
@@ -71,6 +80,7 @@ export type DiagramAction =
     }
   | { type: 'setEdgeVztah'; edgeId: string; vztah: Concept }
   | { type: 'setEdgeBends'; edgeId: string; bends?: XYPosition[] }
+  | { type: 'clearOverlays' }
   | { type: 'init'; concepts: Concept[]; diagram?: DiagramDto }
   | { type: 'applyLayout'; positions: Record<string, XYPosition> }
   | {
@@ -158,32 +168,19 @@ export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
     });
   }
 
-  return { nodes, edges };
+  return { nodes, edges, removedOverlays: [] };
 };
 
 const edgeKindFromDto = (
-  edgeKind: (typeof EdgeEdgeKind)[keyof typeof EdgeEdgeKind],
+  edgeKind?: (typeof DiagramEdgeDataEdgeKind)[keyof typeof DiagramEdgeDataEdgeKind],
 ): RelationshipKind => {
   switch (edgeKind) {
-    case EdgeEdgeKind.SUBCLASS_OF:
-    case EdgeEdgeKind.SUB_PROPERTY:
-    case EdgeEdgeKind.SUB_RELATION:
+    case DiagramEdgeDataEdgeKind.SUBCLASS_OF:
       return 'hierarchie';
-    case EdgeEdgeKind.EXACT_MATCH:
+    case DiagramEdgeDataEdgeKind.EXACT_MATCH:
       return 'ekvivalence';
     default:
       return 'obecny';
-  }
-};
-
-const edgeKindToDto = (kind?: RelationshipKind) => {
-  switch (kind) {
-    case 'hierarchie':
-      return EdgeEdgeKind.SUBCLASS_OF;
-    case 'ekvivalence':
-      return EdgeEdgeKind.EXACT_MATCH;
-    default:
-      return EdgeEdgeKind.RANGE;
   }
 };
 
@@ -191,15 +188,19 @@ export const buildDiagramLayoutDto = (
   nodes: ConceptFlowNode[],
   edges: ConceptFlowEdge[],
   version: number,
+  removedOverlays: DiagramLayoutOverlay[] = [],
 ): DiagramLayoutDto => {
   const persistedIdByNodeId = new Map(
-    nodes.map((node) => [
-      node.id.replace('iri:', ''),
-      getConceptId(node.data.concept),
-    ]),
+    nodes.flatMap((node) => {
+      const conceptId = getConceptId(node.data.concept);
+      return [
+        [node.id, conceptId],
+        [node.id.replace(/^iri:/, ''), conceptId],
+      ] as const;
+    }),
   );
 
-  const edges1 = edges.flatMap((edge) => {
+  const layoutEdges = edges.flatMap((edge) => {
     const source = persistedIdByNodeId.get(edge.source.replace('iri:', ''));
     const target = persistedIdByNodeId.get(edge.target.replace('iri:', ''));
     if (!source || !target) return [];
@@ -207,9 +208,7 @@ export const buildDiagramLayoutDto = (
     return [
       {
         id: edge.data?.vztahIri ?? edge.id,
-        source,
-        target,
-        edgeKind: edgeKindToDto(edge.data?.kind),
+        segments: edge.data?.bends,
       },
     ];
   });
@@ -221,8 +220,10 @@ export const buildDiagramLayoutDto = (
       parentId: node.parentId
         ? persistedIdByNodeId.get(node.parentId)
         : undefined,
+      properties: node.data.vlastnosti.map(getConceptId),
     })),
-    edges: edges1,
+    edges: layoutEdges,
+    overlays: removedOverlays,
     version,
   };
 };
@@ -253,21 +254,51 @@ export const buildPersistedDiagram = (
 
   const nodes: ConceptFlowNode[] = (diagram.nodes ?? []).flatMap(
     (savedNode) => {
-      const concept = conceptsById.get(savedNode.id.replace(/^iri:/, ''));
+      if (!savedNode.id || !savedNode.position) return [];
+
+      const nodeId = savedNode.id.replace(/^iri:/, '');
+      const concept = conceptsById.get(nodeId);
       if (!concept || getConceptKind(concept) !== 'trida') return [];
 
-      const vlastnosti = concepts.filter(
-        (candidate) =>
-          getConceptKind(candidate) === 'vlastnost' &&
-          getDefinicniObor(candidate) === getConceptIri(concept) &&
-          !assignedProperties.has(getConceptId(candidate)),
-      );
+      const savedProperties = savedNode.data?.properties;
+      const vlastnosti = savedProperties
+        ? savedProperties.flatMap((savedProperty) => {
+            const propertyIri = savedProperty.iri;
+            const propertyId = propertyIri ?? savedProperty.slug;
+            if (!propertyId || assignedProperties.has(propertyId)) return [];
+
+            const property =
+              (propertyIri ? conceptsById.get(propertyIri) : undefined) ??
+              (savedProperty.slug
+                ? conceptsById.get(savedProperty.slug)
+                : undefined) ??
+              ({
+                iri: propertyIri,
+                slug: savedProperty.slug,
+                název: savedProperty.label,
+                metadata: {
+                  iri: propertyIri,
+                  slug: savedProperty.slug,
+                  label: savedProperty.label?.cs,
+                  conceptType: 'VLASTNOST',
+                },
+              } as Concept);
+
+            assignedProperties.add(getConceptId(property));
+            return [property];
+          })
+        : concepts.filter(
+            (candidate) =>
+              getConceptKind(candidate) === 'vlastnost' &&
+              getDefinicniObor(candidate) === getConceptIri(concept) &&
+              !assignedProperties.has(getConceptId(candidate)),
+          );
       vlastnosti.forEach((property) =>
         assignedProperties.add(getConceptId(property)),
       );
       return [
         {
-          id: savedNode.id.replace('iri:', ''),
+          id: nodeId,
           type: 'concept' as const,
           position: savedNode.position,
           parentId: savedNode.parentId,
@@ -284,32 +315,141 @@ export const buildPersistedDiagram = (
 
   const edges: ConceptFlowEdge[] = (diagram.edges ?? []).flatMap(
     (savedEdge) => {
-      const sourceNode = nodeById.get(savedEdge.source);
-      const targetNode = nodeById.get(savedEdge.target);
+      const { id, source, target } = savedEdge;
+      if (!id || !source || !target) return [];
+
+      const kind = edgeKindFromDto(savedEdge.data?.edgeKind);
+      const savedSourceId = source.replace(/^iri:/, '');
+      const savedTargetId = target.replace(/^iri:/, '');
+
+      // The API returns SUBCLASS_OF as narrower -> broader, while the editor
+      // represents hierarchy edges as broader -> narrower.
+      const sourceId = kind === 'hierarchie' ? savedTargetId : savedSourceId;
+      const targetId = kind === 'hierarchie' ? savedSourceId : savedTargetId;
+      const sourceNode = nodeById.get(sourceId);
+      const targetNode = nodeById.get(targetId);
       if (!sourceNode || !targetNode) return [];
 
-      const relationship = relationshipConcepts.find(
-        (concept) =>
-          getDefinicniObor(concept) ===
-            getConceptIri(sourceNode.data.concept) &&
-          getOborHodnot(concept) === getConceptIri(targetNode.data.concept),
-      );
+      const relationship =
+        (savedEdge.data?.iri
+          ? conceptsById.get(savedEdge.data.iri)
+          : undefined) ??
+        relationshipConcepts.find(
+          (concept) =>
+            getDefinicniObor(concept) ===
+              getConceptIri(sourceNode.data.concept) &&
+            getOborHodnot(concept) === getConceptIri(targetNode.data.concept),
+        );
 
       return [
         {
-          id: savedEdge.id,
-          source: savedEdge.source,
-          target: savedEdge.target,
+          id,
+          source: sourceId,
+          target: targetId,
           data: {
-            kind: edgeKindFromDto(savedEdge.edgeKind),
+            kind,
             label: relationship?.název?.cs,
             vztahIri: relationship && getConceptIri(relationship),
+            bends: savedEdge.segments?.length
+              ? savedEdge.segments.flatMap((segment) =>
+                  segment.x === undefined || segment.y === undefined
+                    ? []
+                    : [{ x: segment.x, y: segment.y }],
+                )
+              : undefined,
           },
         },
       ];
     },
   );
-  return { nodes, edges };
+  return { nodes, edges, removedOverlays: [] };
+};
+
+const getRemovedEdgeOverlay = (
+  edge: ConceptFlowEdge,
+  nodes: ConceptFlowNode[],
+): DiagramLayoutOverlay | undefined => {
+  if (edge.data?.kind === 'obecny') {
+    return edge.data.vztahIri ? { conceptIri: edge.data.vztahIri } : undefined;
+  }
+
+  const affectedNodeId =
+    edge.data?.kind === 'hierarchie' ? edge.target : edge.source;
+  const affectedNode = nodes.find((node) => node.id === affectedNodeId);
+  const conceptIri = affectedNode && getConceptIri(affectedNode.data.concept);
+
+  return conceptIri ? { conceptIri } : undefined;
+};
+
+const getEdgeOverlay = (
+  edge: ConceptFlowEdge,
+  nodes: ConceptFlowNode[],
+): DiagramLayoutOverlay | undefined => {
+  const sourceNode = nodes.find((node) => node.id === edge.source);
+  const targetNode = nodes.find((node) => node.id === edge.target);
+  const sourceIri = sourceNode && getConceptIri(sourceNode.data.concept);
+  const targetIri = targetNode && getConceptIri(targetNode.data.concept);
+  if (!sourceIri || !targetIri) return undefined;
+
+  switch (edge.data?.kind) {
+    case 'hierarchie':
+      return { conceptIri: targetIri, broaderConcept: [sourceIri] };
+    case 'ekvivalence':
+      return { conceptIri: sourceIri, exactMatch: [targetIri] };
+    case 'obecny':
+      return edge.data.vztahIri
+        ? {
+            conceptIri: edge.data.vztahIri,
+            domain: sourceIri,
+            range: targetIri,
+          }
+        : undefined;
+    default:
+      return undefined;
+  }
+};
+
+const addRemovedOverlays = (
+  current: DiagramLayoutOverlay[],
+  additions: Array<DiagramLayoutOverlay | undefined>,
+) => {
+  const overlays = new Map(
+    current.map((overlay) => [overlay.conceptIri, overlay]),
+  );
+
+  for (const addition of additions) {
+    if (!addition) continue;
+    const existing = overlays.get(addition.conceptIri);
+    const clearsOverlay = Object.keys(addition).length === 1;
+
+    overlays.set(
+      addition.conceptIri,
+      !existing || clearsOverlay
+        ? addition
+        : {
+            ...existing,
+            ...addition,
+            broaderConcept: addition.broaderConcept
+              ? Array.from(
+                  new Set([
+                    ...(existing.broaderConcept ?? []),
+                    ...addition.broaderConcept,
+                  ]),
+                )
+              : existing.broaderConcept,
+            exactMatch: addition.exactMatch
+              ? Array.from(
+                  new Set([
+                    ...(existing.exactMatch ?? []),
+                    ...addition.exactMatch,
+                  ]),
+                )
+              : existing.exactMatch,
+          },
+    );
+  }
+
+  return Array.from(overlays.values());
 };
 
 export const diagramReducer = (
@@ -320,8 +460,32 @@ export const diagramReducer = (
     case 'nodesChange':
       return { ...state, nodes: applyNodeChanges(action.changes, state.nodes) };
 
+    case 'removeNode': {
+      if (!state.nodes.some((node) => node.id === action.nodeId)) return state;
+
+      return {
+        ...state,
+        nodes: state.nodes.filter((node) => node.id !== action.nodeId),
+        edges: state.edges.filter(
+          (edge) =>
+            edge.source !== action.nodeId && edge.target !== action.nodeId,
+        ),
+      };
+    }
+
     case 'edgesChange':
-      return { ...state, edges: applyEdgeChanges(action.changes, state.edges) };
+      return {
+        ...state,
+        edges: applyEdgeChanges(action.changes, state.edges),
+        removedOverlays: addRemovedOverlays(
+          state.removedOverlays,
+          action.changes.flatMap((change) => {
+            if (change.type !== 'remove') return [];
+            const edge = state.edges.find((item) => item.id === change.id);
+            return edge ? [getRemovedEdgeOverlay(edge, state.nodes)] : [];
+          }),
+        ),
+      };
 
     case 'connect': {
       const edgeId = action.id ?? crypto.randomUUID();
@@ -333,62 +497,77 @@ export const diagramReducer = (
             target: c.source,
           }
         : c;
+      const edge: ConceptFlowEdge = {
+        ...conn,
+        id: edgeId,
+        ...(action.kind ? { data: { kind: action.kind } } : {}),
+      };
       return {
         ...state,
-        edges: addEdge(
-          {
-            ...conn,
-            id: edgeId,
-            ...(action.kind ? { data: { kind: action.kind } } : {}),
-          },
-          state.edges,
-        ),
+        edges: addEdge(edge, state.edges),
+        removedOverlays: addRemovedOverlays(state.removedOverlays, [
+          getEdgeOverlay(edge, state.nodes),
+        ]),
       };
     }
 
-    case 'setEdgeKind':
+    case 'setEdgeKind': {
+      const previousEdge = state.edges.find(
+        (edge) => edge.id === action.edgeId,
+      );
+      if (!previousEdge) return state;
+      const base = action.swap
+        ? {
+            ...previousEdge,
+            source: previousEdge.target,
+            target: previousEdge.source,
+          }
+        : previousEdge;
+      const updatedEdge: ConceptFlowEdge = {
+        ...base,
+        data:
+          action.kind === 'obecny'
+            ? { ...base.data, kind: action.kind }
+            : {
+                ...base.data,
+                kind: action.kind,
+                label: undefined,
+                vztahIri: undefined,
+              },
+      };
       return {
         ...state,
-        edges: state.edges.map((edge) => {
-          if (edge.id !== action.edgeId) return edge;
-          const base = action.swap
-            ? {
-                ...edge,
-                source: edge.target,
-                target: edge.source,
-              }
-            : edge;
-          return {
-            ...base,
-            data:
-              action.kind === 'obecny'
-                ? { ...base.data, kind: action.kind }
-                : {
-                    ...base.data,
-                    kind: action.kind,
-                    label: undefined,
-                    vztahIri: undefined,
-                  },
-          };
-        }),
+        edges: state.edges.map((edge) =>
+          edge.id === action.edgeId ? updatedEdge : edge,
+        ),
+        removedOverlays: addRemovedOverlays(state.removedOverlays, [
+          getRemovedEdgeOverlay(previousEdge, state.nodes),
+          getEdgeOverlay(updatedEdge, state.nodes),
+        ]),
       };
+    }
 
-    case 'setEdgeVztah':
+    case 'setEdgeVztah': {
+      const edge = state.edges.find((item) => item.id === action.edgeId);
+      if (!edge || edge.data?.kind !== 'obecny') return state;
+      const updatedEdge: ConceptFlowEdge = {
+        ...edge,
+        data: {
+          ...edge.data,
+          label: action.vztah.název?.cs,
+          vztahIri: getConceptIri(action.vztah),
+        },
+      };
       return {
         ...state,
-        edges: state.edges.map((e) => {
-          return e.id === action.edgeId && e.data?.kind === 'obecny'
-            ? {
-                ...e,
-                data: {
-                  ...e.data,
-                  label: action.vztah.název?.cs,
-                  vztahIri: getConceptIri(action.vztah),
-                },
-              }
-            : e;
-        }),
+        edges: state.edges.map((item) =>
+          item.id === action.edgeId ? updatedEdge : item,
+        ),
+        removedOverlays: addRemovedOverlays(state.removedOverlays, [
+          getEdgeOverlay(updatedEdge, state.nodes),
+        ]),
       };
+    }
 
     case 'setEdgeBends':
       return {
@@ -406,6 +585,9 @@ export const diagramReducer = (
         ),
       };
 
+    case 'clearOverlays':
+      return { ...state, removedOverlays: [] };
+
     case 'init':
       return action.diagram
         ? buildPersistedDiagram(action.concepts, action.diagram)
@@ -413,6 +595,7 @@ export const diagramReducer = (
 
     case 'applyLayout':
       return {
+        ...state,
         nodes: state.nodes.map((n) =>
           action.positions[n.id]
             ? { ...n, position: action.positions[n.id] }
@@ -452,7 +635,10 @@ export const diagramReducer = (
 
     case 'assignVlastnost': {
       const vlId = getConceptId(action.vlastnost);
-      if (!state.nodes.some((n) => n.id === action.targetNodeId)) return state;
+      const targetNode = state.nodes.find(
+        (node) => node.id === action.targetNodeId,
+      );
+      if (!targetNode) return state;
 
       const nodes = state.nodes.map((node) => {
         if (node.id === action.targetNodeId) {
@@ -483,7 +669,17 @@ export const diagramReducer = (
         return node;
       });
 
-      return { ...state, nodes };
+      const propertyIri = getConceptIri(action.vlastnost);
+      const domain = getConceptIri(targetNode.data.concept);
+      return {
+        ...state,
+        nodes,
+        removedOverlays: addRemovedOverlays(state.removedOverlays, [
+          propertyIri && domain
+            ? { conceptIri: propertyIri, domain }
+            : undefined,
+        ]),
+      };
     }
 
     case 'removeVlastnost': {
@@ -512,7 +708,19 @@ export const diagramReducer = (
           : node,
       );
 
-      return { ...state, nodes };
+      const removedProperty = targetNode.data.vlastnosti.find(
+        (vlastnost) => getConceptId(vlastnost) === action.vlastnostId,
+      );
+      const removedPropertyIri =
+        removedProperty && getConceptIri(removedProperty);
+
+      return {
+        ...state,
+        nodes,
+        removedOverlays: addRemovedOverlays(state.removedOverlays, [
+          removedPropertyIri ? { conceptIri: removedPropertyIri } : undefined,
+        ]),
+      };
     }
 
     default:

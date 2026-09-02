@@ -104,6 +104,7 @@ export const AddNewConceptDialog = ({
         onSuccess: () => {
           toast.success(tWrapper('ToastSuccess'), { position: 'bottom-right' });
           queryInvalidate.invalidateOntology(ontology);
+          queryInvalidate.invalidateDiagram(ontology);
           handleClose();
         },
         onError: () => {
