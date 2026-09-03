@@ -35,13 +35,8 @@ export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
           type="base"
           size="s"
           onClick={() => setOpenDownload(true)}
+          iconStart={<GovIcon name="download" size="l" type="components" />}
         >
-          <GovIcon
-            name="download"
-            size="l"
-            slot="icon-start"
-            type="components"
-          />
           {t('Download')}
         </GovButton>
 

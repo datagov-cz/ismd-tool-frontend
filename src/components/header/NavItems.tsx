@@ -8,6 +8,7 @@ import { federatedSignOut } from '@/utils/federatedSignOut';
 import { ConditionalTooltip } from '../shared/ConditionalTooltip';
 
 import { navDropdownItems } from './NavDropdownList';
+import { useHeaderButtonType } from './useHeaderButtonType';
 import { useNavigation } from './useNavigation';
 
 interface Props {
@@ -17,6 +18,7 @@ interface Props {
 export const NavItems = ({ session }: Props) => {
   const t = useTranslations('Header');
   const { apiDocs, help, feedback, feedbackItems } = useNavigation(session);
+  const buttonType = useHeaderButtonType();
 
   return (
     <>
@@ -26,15 +28,10 @@ export const NavItems = ({ session }: Props) => {
           position="left"
           color="primary"
           size="m"
-          type="solid"
+          type={buttonType}
           label={
             <>
-              <GovIcon
-                type="components"
-                name="person"
-                size="xl"
-                slot="icon-start"
-              />
+              <GovIcon type="components" name="person" size="xl" />
               {session.user?.name}
             </>
           }
@@ -52,36 +49,26 @@ export const NavItems = ({ session }: Props) => {
         <GovButton
           color="primary"
           size="m"
-          type="solid"
+          type={buttonType}
           className="no-underline"
           aria-label={apiDocs.label}
           href={apiDocs.href}
           target="_blank"
-        >
-          <GovIcon
-            type="components"
-            name={apiDocs.icon}
-            size="xl"
-            slot="icon-start"
-          />
-        </GovButton>
+          iconStart={
+            <GovIcon type="components" name={apiDocs.icon} size="xl" />
+          }
+        ></GovButton>
       </ConditionalTooltip>
 
       <ConditionalTooltip active message={help.label}>
         <GovButton
           color="primary"
           size="m"
-          type="solid"
+          type={buttonType}
           aria-label={help.label}
           onClick={help.onClick}
-        >
-          <GovIcon
-            type="components"
-            name={help.icon}
-            slot="icon-start"
-            size="m"
-          />
-        </GovButton>
+          iconStart={<GovIcon type="components" name={help.icon} size="m" />}
+        ></GovButton>
       </ConditionalTooltip>
 
       <ConditionalTooltip active message={feedback.label}>
@@ -91,16 +78,9 @@ export const NavItems = ({ session }: Props) => {
             position="right"
             color="primary"
             size="m"
-            type="solid"
+            type={buttonType}
             aria-label={feedback.label}
-            label={
-              <GovIcon
-                type="components"
-                name={feedback.icon}
-                size="m"
-                slot="icon-start"
-              />
-            }
+            label={<GovIcon type="components" name={feedback.icon} size="m" />}
           >
             {navDropdownItems(feedbackItems)}
           </GovDropdown>

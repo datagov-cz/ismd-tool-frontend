@@ -167,8 +167,8 @@ export const AddRelationModal = ({
                 color="primary"
                 size="s"
                 onClick={() => formCreate.handleSubmit(onSubmitCreate)()}
+                iconStart={<GovIcon name="floppy" />}
               >
-                <GovIcon name="floppy" slot="icon-start" />
                 {t('CreateAndAddRelationship')}
               </GovButton>
             </div>
@@ -253,8 +253,8 @@ export const AddRelationModal = ({
                 color="primary"
                 size="s"
                 onClick={() => formAdd.handleSubmit(onSubmit)()}
+                iconStart={<GovIcon name="tag" />}
               >
-                <GovIcon name="tag" slot="icon-start" />
                 {t('AddPropertyButton')}
               </GovButton>
             </div>

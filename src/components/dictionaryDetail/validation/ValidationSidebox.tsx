@@ -49,7 +49,7 @@ const severityConfig: Record<ValidationResultSeverity, SeverityConfig> = {
   INFO: {
     iconName: 'shield-check',
     iconColor: 'primary',
-    textColor: 'text-footer-separator',
+    textColor: 'text-status-info',
     tagColor: 'primary',
     labelKey: 'PriorityLow',
     bgColor: '[&_summary]:bg-surface-page',
@@ -117,7 +117,7 @@ const ValidationAccordionSection = ({
                     name="card-heading"
                     className="mt-1!"
                   />
-                  <p className="font-bold! text-blue-hover">
+                  <p className="font-bold! text-accent">
                     {result.focusNodeName}
                   </p>
                 </div>
@@ -126,9 +126,7 @@ const ValidationAccordionSection = ({
                   color="primary"
                   size="xs"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${getConceptSlug(result)}`}
-                  iconEnd={
-                    <GovIcon name="arrow-right" size="l" color="primary" />
-                  }
+                  iconEnd={<GovIcon name="arrow-right" size="l" />}
                 >
                   {t('OpenConcept')}
                 </GovButton>

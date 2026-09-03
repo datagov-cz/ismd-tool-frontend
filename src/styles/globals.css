@@ -32,56 +32,55 @@
   --color-warning: #feed8a;
   --color-blue-subtle: var(--background-primary-subtle);
   --color-blue-button-active: var(--button-solid-primary-active);
-  --color-secondary: #d1d1d1;
-  --color-link: var(--color-primary-200);
+  --color-secondary: var(--border-disabled);
+  --color-link: var(--component-footer-text-link);
   --color-blue-primary: var(--button-solid-primary);
-  --color-footer-separator: var(--color-primary-600);
-  --color-page-background: #f6f6f6;
-  --color-border-grey: #e7e7e7;
+  --color-footer: var(--component-footer-background);
+  --color-footer-text: var(--component-footer-text-primary);
+  --color-footer-text-muted: var(--component-footer-text-secondary);
+  --color-footer-separator: var(--component-footer-separator);
   --breakpoint-desktop: 1200px;
   --breakpoint-tablet: 768px;
   --breakpoint-full-hd: 1920px;
   --spacing-desktop: 1200px;
   --spacing-full-hd: 1920px;
   --color-blue-hover: var(--button-solid-primary-hover);
-  --color-blue-border: var(--color-primary-200);
   --color-blue-outlined-hover: var(--button-outlined-primary-hover);
-  --color-button-solid-disabled: #d1d1d1;
-  --color-green: #198754;
-  --color-gray: #6c757d;
-  --color-status-warning-100: #fff9e9;
-  --color-status-warning-200: #fac615;
-  --color-status-warning-300: #fefbe8;
-  --color-status-warning-600: #ca8504;
-  --color-status-warning-700: #6b4a0d;
-  --color-status-success: #2a6b2d;
-  --color-status-error-100: #fde3e3;
-  --color-status-error-200: #f37676;
-  --color-status-error-600: #c62828;
-  --color-status-error-700: #b32222;
-  --color-status-focus: var(--status-focus);
-  --color-gray-border: #b0b0b0;
-  --color-field-hover: var(--background-primary-subtle);
-  --color-card-description: #6d6d6d;
+  --color-button-solid-disabled: var(--background-neutral-disabled);
+  --color-status-warning-100: var(--background-status-warning-subtlest);
+  --color-status-warning-200: var(--background-status-warning);
+  --color-status-warning-300: var(--background-status-warning-subtlest);
+  --color-status-warning-600: var(--border-warning);
+  --color-status-warning-700: var(--text-status-warning);
+  --color-status-success: var(--text-status-success);
+  --color-status-info: var(--text-status-info);
+  --color-border-error: var(--border-error);
+  --color-status-error-100: var(--background-status-error-subtle);
+  --color-status-error-200: var(--color-error-400);
+  --color-status-error-600: var(--text-status-error);
+  --color-status-error-700: var(--text-status-error);
+  --color-gray-border: var(--border-subtle);
+  --color-card-description: var(--text-tertiary);
   --color-border-primary-subtle: var(--color-primary-400);
   --color-border-primary: var(--border-primary);
-  --color-border-subtlest: #e7e7e7;
-  --color-border-light: #d9d9d9;
+  --color-border-light: var(--border-disabled);
 
-  /* Semantic layer - overridden per theme in :root[data-theme='dark'] */
-  --color-surface: #ffffff;
-  --color-surface-page: #f3f7fc;
-  --color-surface-muted: #f6f6f6;
-  --color-surface-skeleton: #e7e7e7;
-  --color-surface-warning: #fdf6d9;
-  --color-surface-highlight: #fde047;
+  /* Semantic layer - the DS flips these per theme in tokens.css */
+  --color-surface: var(--background-block-primary);
+  --color-surface-page: var(--background-page);
+  --color-surface-muted: var(--background-block-secondary);
+  --color-surface-skeleton: var(--background-neutral-subtle);
+  --color-surface-warning: var(--background-status-warning-subtle);
+  --color-surface-highlight: var(--background-status-warning);
 
-  --color-foreground: #262626;
-  --color-foreground-muted: #4f4f4f;
-  --color-foreground-subtle: #8a8a8a;
+  --color-foreground: var(--text-primary);
+  --color-foreground-muted: var(--text-secondary);
+  --color-foreground-subtle: var(--text-tertiary);
 
   --color-accent: var(--text-primary-color);
-  --color-border-default: #e7e7e7;
+  --color-border-default: var(--border-subtlest);
+  --color-header: var(--color-primary-600);
+  --color-header-hero: var(--color-primary-600);
 
   --text-2xs: 0.625rem;
   --text-h1: 2rem;
@@ -117,38 +116,15 @@ body {
 }
 
 :root[data-theme='dark'] {
+  /* The DS has no equivalent of the design's dark-surface; it sits between
+     --background-block-primary and --background-neutral-primary. */
   --color-surface: #2d2d2d;
-  --color-surface-page: #1a1a1a;
-  --color-surface-muted: #232323;
-  --color-surface-skeleton: #3a3a3a;
-  --color-surface-warning: #423718;
-  --color-surface-highlight: #a16207;
 
-  --color-foreground: #ffffff;
-  --color-foreground-muted: #b3b3b3;
-  --color-foreground-subtle: #8a8a8a;
-  --color-border-default: #404040;
+  --color-header: var(--background-block-primary);
+  --color-header-hero: var(--color-surface);
 
-  --color-page-background: #232323;
-  --color-secondary: #4f4f4f;
-  --color-card-description: #b3b3b3;
-  --color-gray: #9aa0a6;
-  --color-green: #35c37d;
-
-  --color-border-grey: #404040;
-  --color-border-subtlest: #404040;
-  --color-border-light: #4a4a4a;
-  --color-gray-border: #5d5d5d;
   --color-border-primary: var(--color-primary-400);
   --color-border-primary-subtle: var(--color-primary-500);
-
-  --color-status-success: #4caf50;
-  --color-status-error-600: #f37676;
-  --color-status-error-700: #f37676;
-  --color-status-error-100: #4a1f1f;
-  --color-status-warning-100: #3a2f10;
-  --color-status-warning-300: #3a2f10;
-  --color-status-warning-700: #fac615;
 }
 
 html[data-theme='dark'] {

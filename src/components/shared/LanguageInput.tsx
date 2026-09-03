@@ -153,12 +153,7 @@ export const LanguageInput = <T extends FieldValues>({
                   className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
                   onClick={() => remove(index)}
                 >
-                  <GovIcon
-                    type="components"
-                    name="x"
-                    slot="icon-start"
-                    size="2xl"
-                  />
+                  <GovIcon type="components" name="x" size="2xl" />
                 </button>
               )}
             </div>
@@ -220,13 +215,8 @@ export const LanguageDropDownSelect = ({
                   onClick(item);
                   setOpen(false);
                 }}
+                iconStart={<GovIcon type="components" name={item} size="2xl" />}
               >
-                <GovIcon
-                  type="components"
-                  name={item}
-                  slot="icon-start"
-                  size="2xl"
-                />
                 {item}
               </GovButton>
             </li>

@@ -89,7 +89,7 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
                   </span>
                   <Link
                     href={href}
-                    className="text-blue-hover font-bold text-sm hover:underline block truncate"
+                    className="text-accent font-bold text-sm hover:underline block truncate"
                   >
                     {item.data.název?.cs}
                   </Link>
@@ -180,7 +180,7 @@ const TruncatedDefinice = ({ text }: { text: string }) => {
             e.stopPropagation();
             setExpanded((v) => !v);
           }}
-          className="ml-1 text-blue-button-active hover:underline text-xs font-medium shrink-0"
+          className="ml-1 text-accent hover:underline text-xs font-medium shrink-0"
         >
           {expanded ? t('ShowLess') : t('ShowMore')}
         </button>
@@ -211,7 +211,7 @@ const SubtermRow = ({ item, isLast, filterQuery }: SubtermRowProps) => {
       <div className="leading-snug py-0.5">
         <a
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${item.slug}`}
-          className="text-blue-button-active font-bold hover:underline"
+          className="text-accent font-bold hover:underline"
         >
           <Highlight text={name} query={filterQuery ?? ''} />
         </a>
@@ -307,7 +307,6 @@ export const Term = ({
     >
       <span className={clsx('relative flex gap-2', hasSubterms && 'pb-3')}>
         <GovIcon
-          slot="icon-start"
           name={
             data.typ?.includes('Vlastnost')
               ? 'tag'
@@ -323,7 +322,7 @@ export const Term = ({
         <span>
           <a
             href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}`}
-            className="text-blue-button-active font-bold hover:underline"
+            className="text-accent font-bold hover:underline"
           >
             <Highlight text={capitalizedName ?? ''} query={filterQuery ?? ''} />
           </a>

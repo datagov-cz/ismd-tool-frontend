@@ -142,8 +142,8 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           type="subtle"
           size="xs"
           className="w-fit border bg-surface!"
+          iconStart={<GovIcon name="journal-text" type="components" />}
         >
-          <GovIcon name="journal-text" slot="icon-start" type="components" />
           <span className="font-bold text-accent">
             {data?.data?.ontologyDetail?.název?.cs}
           </span>

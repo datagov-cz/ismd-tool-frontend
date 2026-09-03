@@ -38,7 +38,7 @@ export const DeviationSidebarCard = ({
           <Link
             key={item.iri}
             href={`#${item.iri}`}
-            className="bg-surface border border-blue-hover flex w-full group justify-between rounded-md py-1 px-1.5 font-bold text-blue-hover leading-none"
+            className="bg-surface border border-border-primary flex w-full group justify-between rounded-md py-1 px-1.5 font-bold text-accent leading-none"
           >
             <span className="group-hover:underline">{item.název?.cs}</span>
             {filteredDeviations.includes(item.iri!) && (

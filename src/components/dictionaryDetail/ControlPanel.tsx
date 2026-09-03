@@ -65,13 +65,10 @@ export const ControlPanel = ({
               size="s"
               aria-label={tEdit('Title')}
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
+              iconStart={
+                <GovIcon name="pencil-square" size="l" type="components" />
+              }
             >
-              <GovIcon
-                name="pencil-square"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">{tEdit('Title')}</span>
             </GovButton>
           )}
@@ -84,13 +81,10 @@ export const ControlPanel = ({
               size="s"
               aria-label={tEdit('Comments')}
               onClick={() => setIsCommentBoxOpen(true)}
+              iconStart={
+                <GovIcon name="chat-square-text" size="l" type="components" />
+              }
             >
-              <GovIcon
-                name="chat-square-text"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">{tEdit('Comments')}</span>
               {(commentsCount ?? 0) > 0 && (
                 <span className="font-normal">[{commentsCount}]</span>
@@ -108,13 +102,12 @@ export const ControlPanel = ({
             size="s"
             expanded
             disabled
-          >
-            <GovIcon
+           iconStart={<GovIcon
               name="diagram-3"
               size="l"
-              slot="icon-start"
               type="components"
-            />
+            />}>
+            
             {t('CreateDiagram')}
           </GovButton>
         )} */}

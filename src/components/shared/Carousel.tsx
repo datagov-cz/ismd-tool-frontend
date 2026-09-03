@@ -192,15 +192,15 @@ function CarouselPrevious({
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
+      iconStart={
+        <GovIcon
+          type="components"
+          name="chevron-compact-left"
+          size="s"
+          className="transition-transform duration-200"
+        />
+      }
     >
-      <GovIcon
-        type="components"
-        color="primary"
-        name="chevron-compact-left"
-        slot="icon-start"
-        size="s"
-        className="transition-transform duration-200"
-      />
       <span className="sr-only">Previous slide</span>
     </GovButton>
   );
@@ -229,15 +229,15 @@ function CarouselNext({
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
+      iconStart={
+        <GovIcon
+          type="components"
+          name="chevron-compact-right"
+          size={size}
+          className="transition-transform duration-200"
+        />
+      }
     >
-      <GovIcon
-        type="components"
-        color="primary"
-        name="chevron-compact-right"
-        slot="icon-start"
-        size={size}
-        className="transition-transform duration-200"
-      />
       <span className="sr-only">Next slide</span>
     </GovButton>
   );

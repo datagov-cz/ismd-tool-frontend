@@ -172,12 +172,8 @@ export const LegislativeSource = ({
             type="base"
             size="xs"
             href={data?.data?.domain}
+            iconStart={<GovIcon name="box-arrow-up-right" type="components" />}
           >
-            <GovIcon
-              name="box-arrow-up-right"
-              type="components"
-              slot="icon-start"
-            />
             {t('Main.OpenInESbirka')}
           </GovButton>
         </div>

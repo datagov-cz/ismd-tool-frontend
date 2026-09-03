@@ -27,7 +27,6 @@ export const DraftDictionariesSection = () => {
           type="components"
           color="secondary"
           name="journals"
-          slot="icon-start"
           size="m"
           className="transition-transform duration-200"
         />
