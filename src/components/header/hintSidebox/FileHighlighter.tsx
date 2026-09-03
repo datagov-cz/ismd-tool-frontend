@@ -13,7 +13,7 @@ export const FileHighlighter = ({ text, query }: Props) => {
   return (
     <>
       {text.slice(0, idx)}
-      <mark className="bg-yellow-300 dark:bg-yellow-600 text-black dark:text-white px-0.5 rounded">
+      <mark className="bg-surface-highlight text-foreground px-0.5 rounded">
         {text.slice(idx, idx + query.length)}
       </mark>
       {text.slice(idx + query.length)}

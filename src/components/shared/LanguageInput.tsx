@@ -4,6 +4,7 @@ import {
   GovChip,
   GovFormInput,
   GovFormLabel,
+  GovFormTextarea,
   GovIcon,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
@@ -103,7 +104,7 @@ export const LanguageInput = <T extends FieldValues>({
                 : 'flex flex-col',
             )}
           >
-            <GovFormLabel className="w-fit! pt-2.5">
+            <GovFormLabel size="m" className="w-fit! pt-2.5">
               <span className="font-bold">{index === 0 ? label : ''}</span>
             </GovFormLabel>
             <div className="col-span-6 relative flex items-center gap-2 ml-10">
@@ -116,13 +117,20 @@ export const LanguageInput = <T extends FieldValues>({
                 {lang}
               </GovChip>
               <div className="w-full">
-                <GovFormInput
-                  {...register(fieldPath)}
-                  placeholder={placeholder}
-                  className="[&input]:border-0! flex-1 [&_span]:pr-14!"
-                  multiline={multiline}
-                  rows={multiline ? 4 : undefined}
-                />
+                {multiline ? (
+                  <GovFormTextarea
+                    {...register(fieldPath)}
+                    placeholder={placeholder}
+                    className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                    rows={4}
+                  />
+                ) : (
+                  <GovFormInput
+                    {...register(fieldPath)}
+                    placeholder={placeholder}
+                    className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                  />
+                )}
               </div>
 
               {index === 0 && (
@@ -145,12 +153,7 @@ export const LanguageInput = <T extends FieldValues>({
                   className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
                   onClick={() => remove(index)}
                 >
-                  <GovIcon
-                    type="components"
-                    name="x"
-                    slot="icon-start"
-                    size="2xl"
-                  />
+                  <GovIcon type="components" name="x" size="2xl" />
                 </button>
               )}
             </div>
@@ -167,7 +170,7 @@ export const LanguageInput = <T extends FieldValues>({
           )}
         >
           <span
-            className="block text-red-600 text-sm col-start-2 pl-10 col-span-4"
+            className="block text-status-error-600 text-sm col-start-2 pl-10 col-span-4"
             role="alert"
           >
             {errorMessage}
@@ -194,31 +197,26 @@ export const LanguageDropDownSelect = ({
           color="primary"
           type="base"
           size="s"
-          onGovClick={() => setOpen(true)}
-        >
-          <GovIcon type="components" name="translate" slot="icon-start" />
-          <GovIcon type="components" name="plus" slot="icon-end" />
-        </GovButton>
+          onClick={() => setOpen(true)}
+          iconStart={<GovIcon type="components" name="translate" />}
+          iconEnd={<GovIcon type="components" name="plus" />}
+        ></GovButton>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0 bg-white" align="end">
+      <PopoverContent className="w-fit p-0 bg-surface" align="end">
         <ul className="p-0 m-0 list-none">
           {availableLanguages.map((item) => (
             <li key={item}>
               <GovButton
+                size="m"
                 expanded={true}
                 type="base"
                 color="neutral"
-                onGovClick={() => {
+                onClick={() => {
                   onClick(item);
                   setOpen(false);
                 }}
+                iconStart={<GovIcon type="components" name={item} size="2xl" />}
               >
-                <GovIcon
-                  type="components"
-                  name={item}
-                  slot="icon-start"
-                  size="2xl"
-                />
                 {item}
               </GovButton>
             </li>

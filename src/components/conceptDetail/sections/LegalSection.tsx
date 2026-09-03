@@ -35,7 +35,7 @@ export const LegalSection = ({
   }
 
   return (
-    <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+    <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
       {definujiciUstanoveni && definujiciUstanoveni.length > 0 && (
         <Section title={t('Sections.Resource')}>
           <div className="space-y-2">
@@ -129,7 +129,7 @@ export const LegislativeSource = ({
     <div
       className={clsx(
         'border rounded-lg border-border-primary px-2 py-1',
-        bg === 'white' ? 'bg-white ' : 'bg-primary-subtlest',
+        bg === 'white' ? 'bg-surface ' : 'bg-surface-page',
       )}
     >
       <button
@@ -172,12 +172,8 @@ export const LegislativeSource = ({
             type="base"
             size="xs"
             href={data?.data?.domain}
+            iconStart={<GovIcon name="box-arrow-up-right" type="components" />}
           >
-            <GovIcon
-              name="box-arrow-up-right"
-              type="components"
-              slot="icon-start"
-            />
             {t('Main.OpenInESbirka')}
           </GovButton>
         </div>

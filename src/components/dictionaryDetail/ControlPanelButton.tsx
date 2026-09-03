@@ -20,9 +20,8 @@ export const ControlPanelButton = ({
     <GovButton
       color={danger ? 'error' : 'primary'}
       type="base"
-      onGovClick={onClick}
-      size="m"
-      className="h-8! [&_button]:h-8!"
+      onClick={onClick}
+      size="s"
     >
       <GovIcon
         name={iconName}

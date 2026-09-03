@@ -25,14 +25,13 @@ export const ClassRelationTerm = ({
   return (
     <div
       className={clsx(
-        'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active font-bold',
+        'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-accent font-bold',
         relation.ontologyName ? 'px-2 py-1' : 'p-2',
       )}
     >
       <Link href={href} className="hover:underline cursor-pointer">
         <span className="flex gap-1.5">
           <GovIcon
-            slot="icon-start"
             name="bezier2"
             type="components"
             size="l"
@@ -63,9 +62,8 @@ export const ClassRelationTerm = ({
       </div>
 
       {relation.ontologyName?.cs && (
-        <span className="flex gap-1.5 pl-6 font-normal text-dark-primary">
+        <span className="flex gap-1.5 pl-6 font-normal text-foreground">
           <GovIcon
-            slot="icon-start"
             name="journal-text"
             type="components"
             size="s"
@@ -86,10 +84,9 @@ export const InnerTerm = ({ term }: { term: ResolvedConceptDto }) => {
   return (
     <Link
       href={conceptHref(term)}
-      className="inline-flex gap-1 px-1.5 py bg-white rounded-md border border-border-grey hover:underline"
+      className="inline-flex gap-1 px-1.5 py bg-surface rounded-md border border-border-default hover:underline"
     >
       <GovIcon
-        slot="icon-start"
         name={isProperty ? 'tag' : isRelation ? 'bezier2' : 'card-heading'}
         type="components"
         size="l"

@@ -17,14 +17,11 @@ export const LoginButton = ({
       color="secondary"
       size={size}
       className={className}
-      onGovClick={onLogin}
+      onClick={onLogin}
+      iconEnd={
+        <GovIcon type="components" name="box-arrow-in-left" size={size} />
+      }
     >
-      <GovIcon
-        type="components"
-        name="box-arrow-in-left"
-        slot="icon-end"
-        size={size}
-      />
       {t('LoginButton')}
     </GovButton>
   );

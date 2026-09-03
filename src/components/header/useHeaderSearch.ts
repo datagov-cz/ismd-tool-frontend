@@ -7,7 +7,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 export const useHeaderSearch = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const toggleRef = useRef<HTMLGovButtonElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const shouldRestoreFocus = useRef(false);
 
   const open = useCallback(() => setIsOpen(true), []);
@@ -27,7 +27,7 @@ export const useHeaderSearch = () => {
     }
 
     shouldRestoreFocus.current = false;
-    void toggleRef.current?.getRef().then((element) => element.focus());
+    toggleRef.current?.focus();
   }, [isOpen]);
 
   return { isOpen, open, close, toggleRef };

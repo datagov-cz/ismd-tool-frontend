@@ -1,11 +1,10 @@
 @import '@gov-design-system-ce/styles/tokens.css';
-/* General settings. */
+@import '@gov-design-system-ce/styles/templates.css';
+/* Global element resets from the DS; intentionally not imported - it
+   underlines every anchor and restyles base typography app-wide. */
 /* @import '@gov-design-system-ce/styles/styles.css'; */
-/* Styles for basic layout and containers. */
 @import '@gov-design-system-ce/styles/layout.css';
-/* Styles of individual components. */
 @import '@gov-design-system-ce/styles/components.css';
-/* Styles of animations. */
 @import '@gov-design-system-ce/styles/animations.css';
 
 gov-button[type='link'],

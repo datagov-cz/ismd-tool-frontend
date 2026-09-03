@@ -7,7 +7,7 @@ interface Props {
 }
 
 const DictionaryDetailLayout = ({ children }: Props) => {
-  return <div className="bg-white flex flex-1">{children}</div>;
+  return <div className="bg-surface flex flex-1">{children}</div>;
 };
 
 export default DictionaryDetailLayout;

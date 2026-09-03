@@ -185,7 +185,7 @@ export const ConceptInput = ({
         )}
       >
         {label && (
-          <GovFormLabel className="w-fit! pt-2.5">
+          <GovFormLabel size="m" className="w-fit! pt-2.5">
             <span className="font-bold">{label}</span>
           </GovFormLabel>
         )}
@@ -215,23 +215,17 @@ export const ConceptInput = ({
               <GovFormInput
                 placeholder={placeholder}
                 value={query}
-                onGovInput={(e) => setQuery(e.detail.value)}
+                onChange={(e) => setQuery(e.currentTarget.value)}
                 className="border-0! flex-1"
-                inputType="text"
-              >
-                <GovIcon
-                  name="search"
-                  slot="icon-end"
-                  type="components"
-                  size="s"
-                />
-              </GovFormInput>
+                type="text"
+                iconStart={<GovIcon name="search" type="components" size="s" />}
+              />
 
               {showDropdown && (
                 <div
                   ref={scrollContainerRef}
                   className={clsx(
-                    'z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto',
+                    'z-10 w-full mt-1 bg-surface border border-border-default rounded-md shadow-lg max-h-60 overflow-y-auto',
                     nonFloatingDropDown ? 'relative' : 'absolute',
                   )}
                 >
@@ -240,7 +234,7 @@ export const ConceptInput = ({
                       {t('ShortQuery')}
                     </div>
                   ) : isLoading ? (
-                    <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
+                    <div className="flex items-center justify-center p-4 text-foreground-muted text-sm gap-2">
                       <GovIcon
                         name="loader"
                         type="components"
@@ -250,7 +244,7 @@ export const ConceptInput = ({
                       {t('Loading')}
                     </div>
                   ) : allResults.length === 0 ? (
-                    <div className="p-4 text-gray-500 text-sm text-center">
+                    <div className="p-4 text-foreground-muted text-sm text-center">
                       {t('NoResults')}
                     </div>
                   ) : (
@@ -266,11 +260,10 @@ export const ConceptInput = ({
                               id: item.id ?? undefined,
                             });
                           }}
-                          className="border-b border-border-subtlest text-blue-primary hover:bg-primary-subtlest text-left w-full gap-1.5 flex flex-col font-bold p-2"
+                          className="border-b border-border-default text-accent hover:bg-surface-page text-left w-full gap-1.5 flex flex-col font-bold p-2"
                         >
                           <span className="flex gap-1.5">
                             <GovIcon
-                              slot="icon-start"
                               name={
                                 item.conceptType === 'VLASTNOST'
                                   ? 'tag'
@@ -286,9 +279,8 @@ export const ConceptInput = ({
                             {item.label}
                           </span>
 
-                          <span className="flex gap-1 items-center pl-4 font-normal text-dark-primary/70">
+                          <span className="flex gap-1 items-center pl-4 font-normal text-foreground/70">
                             <GovIcon
-                              slot="icon-start"
                               name="journals"
                               type="components"
                               size="s"
@@ -332,7 +324,7 @@ export const ConceptInput = ({
               <button
                 type="button"
                 onClick={() => setShowInput(true)}
-                className="self-start text-sm text-blue-primary hover:underline cursor-pointer font-medium flex items-center gap-1"
+                className="self-start text-sm text-accent hover:underline cursor-pointer font-medium flex items-center gap-1"
               >
                 {t('AddConcept')}
               </button>

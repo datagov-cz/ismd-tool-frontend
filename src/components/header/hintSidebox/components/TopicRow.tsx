@@ -16,7 +16,7 @@ export function TopicRow({
       <span className="flex flex-col min-w-0 items-start">
         <button
           onClick={onClick}
-          className="text-md font-bold underline text-blue-primary hover:no-underline"
+          className="text-md font-bold underline text-accent hover:no-underline"
         >
           {query ? (
             <FileHighlighter text={titleFromPath(file.path)} query={query} />
@@ -25,7 +25,7 @@ export function TopicRow({
           )}
         </button>
         {file.breadcrumb.length > 0 && (
-          <span className="text-xs text-gray-400 truncate cursor-default">
+          <span className="text-xs text-foreground-subtle truncate cursor-default">
             {file.breadcrumb.join(' › ')}
           </span>
         )}

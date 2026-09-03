@@ -35,13 +35,13 @@ export const DeviationItem = ({
   if (!data) return null;
 
   return (
-    <div className="py-2 px-2.5 bg-primary-subtlest rounded-sm">
+    <div className="py-2 px-2.5 bg-surface-page rounded-sm">
       <div className="flex items-center">
         {!noCheckBox && (
           <GovFormCheckbox
             id={propertyKey}
             checked={checked}
-            onGovChange={() => onToggle(propertyKey)}
+            onChange={() => onToggle(propertyKey)}
             size="s"
           />
         )}
@@ -49,7 +49,7 @@ export const DeviationItem = ({
       </div>
       <div className="ml-8 grid grid-cols-2">
         <div className="pr-4 border-r border-border-light">
-          <span className="font-bold text-blue-primary text-sm">
+          <span className="font-bold text-accent text-sm">
             {t('LocalVersion')}
           </span>
           <div>
@@ -63,7 +63,7 @@ export const DeviationItem = ({
           </div>
         </div>
         <div className="pl-4">
-          <span className="font-bold text-blue-primary text-sm">
+          <span className="font-bold text-accent text-sm">
             {t('PublishedVersion')}
           </span>
           <div>

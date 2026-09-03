@@ -56,21 +56,22 @@ export const DownloadDialog = ({
   return (
     <GovDialog
       open={open}
-      onGovClose={onClose}
-      labelTag="h2"
+      onClose={onClose}
       className="fixed z-100"
+      title={<h2>{t('Title')}</h2>}
     >
-      <h2 slot="title">{t('Title')}</h2>
       <div className="flex items-end justify-end gap-2 w-full">
         <GovButton
-          onGovClick={() => handleDownload('json-ld')}
+          size="m"
+          onClick={() => handleDownload('json-ld')}
           type="solid"
           color="primary"
         >
           JSON
         </GovButton>
         <GovButton
-          onGovClick={() => handleDownload('ttl')}
+          size="m"
+          onClick={() => handleDownload('ttl')}
           type="solid"
           color="primary"
         >

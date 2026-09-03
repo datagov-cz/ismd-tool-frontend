@@ -137,14 +137,14 @@ export const DictionaryEditForm = ({
   };
 
   return (
-    <div className="w-full h-full flex-1 bg-primary-subtlest px-5">
+    <div className="w-full h-full flex-1 bg-surface-form px-5">
       <div className="w-full relative max-w-250 mx-auto py-5">
         <div className="w-full space-y-6 relative lg:max-w-160 xl:max-w-200">
           <div className="space-y-3 relative">
             <div className="relative">
               <button
                 onClick={() => router.back()}
-                className="lg:absolute lg:top-0 lg:-left-5 pt-1 pb-3 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+                className="lg:absolute lg:top-0 lg:-left-5 pt-1 pb-3 lg:-translate-x-full flex gap-1 text-accent font-bold items-center text-sm"
               >
                 <GovIcon name="chevron-compact-left" size="s" color="primary" />
                 {t('Back')}
@@ -162,14 +162,10 @@ export const DictionaryEditForm = ({
                   color="success"
                   type="subtle"
                   size="xs"
-                  className="w-fit border bg-white! cursor-pointer!"
+                  className="w-fit border bg-surface! cursor-pointer!"
+                  iconStart={<GovIcon name="journal-text" type="components" />}
                 >
-                  <GovIcon
-                    name="journal-text"
-                    slot="icon-start"
-                    type="components"
-                  />
-                  <span className="font-bold text-blue-primary">
+                  <span className="font-bold text-accent">
                     {detail?.['název']?.cs}
                   </span>
                 </GovTag>

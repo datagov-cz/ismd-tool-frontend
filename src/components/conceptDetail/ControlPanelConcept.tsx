@@ -60,12 +60,8 @@ export const ControlPanelConcept = ({
               color="primary"
               size="s"
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}/edit`}
+              iconStart={<GovIcon name="pencil-square" type="components" />}
             >
-              <GovIcon
-                name="pencil-square"
-                slot="icon-start"
-                type="components"
-              />
               {tConcept('EditConcept')}
             </GovButton>
           )}
@@ -75,13 +71,9 @@ export const ControlPanelConcept = ({
               color="primary"
               size="s"
               aria-label={tConcept('ConceptComments')}
-              onGovClick={() => setIsCommentBoxOpen(true)}
+              onClick={() => setIsCommentBoxOpen(true)}
+              iconStart={<GovIcon name="pencil-square" type="components" />}
             >
-              <GovIcon
-                name="pencil-square"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">
                 {tConcept('ConceptComments')}
               </span>{' '}
@@ -92,43 +84,44 @@ export const ControlPanelConcept = ({
       )}
 
       <div className="self-end">
-        <GovDropdown id="copy-link-ismd" position="left">
-          <GovButton
-            color={'primary'}
-            type="base"
-            size="m"
-            className="h-8! [&_button]:h-8!"
-          >
-            <GovIcon
-              name="link"
-              size="m"
-              aria-label={t('GetLink')}
-              className="text-white"
-            />
-            {source === 'NKD' ? t('CopyLink') : undefined}
-          </GovButton>
-          <ul slot="list">
-            {iri && (
-              <GovButton
-                color="primary"
-                type="base"
-                size="s"
-                onGovClick={() => copyToClipboard(iri)}
-                className="w-full! [&_button]:w-full! max-w-none!"
-              >
-                {t('CopyIRI')}
-              </GovButton>
-            )}
+        <GovDropdown
+          id="copy-link-ismd"
+          position="left"
+          color="primary"
+          type="base"
+          size="s"
+          label={
+            <>
+              <GovIcon
+                name="link"
+                size="m"
+                aria-label={t('GetLink')}
+                className="text-white"
+              />
+              {source === 'NKD' ? t('CopyLink') : undefined}
+            </>
+          }
+        >
+          {iri && (
             <GovButton
               color="primary"
               type="base"
               size="s"
-              onGovClick={() => copyToClipboard(window.location.href)}
+              onClick={() => copyToClipboard(iri)}
               className="w-full! [&_button]:w-full! max-w-none!"
             >
-              {t('CopyURL')}
+              {t('CopyIRI')}
             </GovButton>
-          </ul>
+          )}
+          <GovButton
+            color="primary"
+            type="base"
+            size="s"
+            onClick={() => copyToClipboard(window.location.href)}
+            className="w-full! [&_button]:w-full! max-w-none!"
+          >
+            {t('CopyURL')}
+          </GovButton>
         </GovDropdown>
         {editAllowed && (
           <ControlPanelButton

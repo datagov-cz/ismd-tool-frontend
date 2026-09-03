@@ -123,17 +123,23 @@ const SourceInputForm = ({
           type="outlined"
           color="neutral"
           size="s"
-          onGovClick={onCancel}
+          onClick={onCancel}
+          iconStart={
+            <GovIcon
+              name={isExisting ? 'arrow-counterclockwise' : 'x'}
+              type="components"
+            />
+          }
         >
-          <GovIcon
-            slot="icon-start"
-            name={isExisting ? 'arrow-counterclockwise' : 'x'}
-            type="components"
-          />
           {isExisting ? 'Zpět' : 'Zrušit'}
         </GovButton>
-        <GovButton type="solid" color="primary" size="s" onGovClick={onSave}>
-          <GovIcon slot="icon-start" name="floppy" type="components" />
+        <GovButton
+          type="solid"
+          color="primary"
+          size="s"
+          onClick={onSave}
+          iconStart={<GovIcon name="floppy" type="components" />}
+        >
           {isExisting ? 'Upravit' : 'Přidat'}
         </GovButton>
       </div>
@@ -153,7 +159,7 @@ const SourceCard = ({
   <div className="flex flex-col gap-1">
     <div
       className={`w-full border rounded-lg py-2 pl-4 pr-2 flex gap-2 text-sm items-start justify-between ${
-        error ? 'border-status-errtext-status-error-600' : 'border-gray-border'
+        error ? 'border-border-error' : 'border-gray-border'
       }`}
     >
       <div className="flex flex-col">
@@ -244,7 +250,7 @@ export const NonLegislativeSourceInput = ({
       )}
       id={name}
     >
-      <GovFormLabel className="w-fit! pt-2.5">
+      <GovFormLabel size="m" className="w-fit! pt-2.5">
         <span className="font-bold">{label}</span>
       </GovFormLabel>
 

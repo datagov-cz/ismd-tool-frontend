@@ -82,7 +82,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
       id={name}
     >
       <div className="w-full grid grid-cols-7 gap-x-2 gap-y-4">
-        <GovFormLabel className="w-fit! pt-2.5">
+        <GovFormLabel size="m" className="w-fit! pt-2.5">
           <span className="font-bold">{label}</span>
         </GovFormLabel>
 
@@ -91,26 +91,20 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
             <GovFormInput
               placeholder={placeholder}
               value={query}
-              onGovInput={(e) => setQuery(e.detail.value)}
+              onChange={(e) => setQuery(e.currentTarget.value)}
               className="border-0! flex-1"
-              inputType="text"
-            >
-              <GovIcon
-                name="search"
-                slot="icon-end"
-                type="components"
-                size="s"
-              />
-            </GovFormInput>
+              type="text"
+              iconStart={<GovIcon name="search" type="components" size="s" />}
+            />
 
             {showDropdown && (
-              <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
+              <div className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md border border-border-default bg-surface shadow-lg">
                 {query.length < MIN_QUERY_LENGTH ? (
                   <div className="p-4 text-status-error-600 text-sm text-center">
                     {t('ShortQueryRPP')}
                   </div>
                 ) : isLoading ? (
-                  <div className="flex items-center justify-center p-4 text-gray-500 text-sm gap-2">
+                  <div className="flex items-center justify-center p-4 text-foreground-muted text-sm gap-2">
                     <GovIcon
                       name="loader"
                       type="components"
@@ -120,7 +114,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
                     {t('Loading')}
                   </div>
                 ) : !results?.length ? (
-                  <div className="p-4 text-gray-500 text-sm text-center">
+                  <div className="p-4 text-foreground-muted text-sm text-center">
                     {t('NoResults')}
                   </div>
                 ) : (
@@ -129,7 +123,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
                       key={item.iri}
                       type="button"
                       onClick={() => handleSelect(item)}
-                      className="flex w-full gap-1.5 border-b border-border-subtlest p-2 font-bold text-blue-primary hover:bg-primary-subtlest"
+                      className="flex w-full gap-1.5 border-b border-border-default p-2 font-bold text-accent hover:bg-surface-page"
                     >
                       {item.code} - {item.nazev}
                     </button>

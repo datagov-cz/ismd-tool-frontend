@@ -2,6 +2,7 @@ import {
   GovFormInput,
   GovFormLabel,
   GovFormMessage,
+  GovFormTextarea,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import {
@@ -61,7 +62,7 @@ export const Input = <T extends FieldValues>({
           )}
           id={anchor}
         >
-          <GovFormLabel className="w-fit! pt-2.5">
+          <GovFormLabel size="m" className="w-fit! pt-2.5">
             <span className="font-bold">
               {label}
               {required && <span className="text-status-error-700"> *</span>}
@@ -73,18 +74,28 @@ export const Input = <T extends FieldValues>({
               layout === 'grid' ? 'ml-10' : 'ml-0',
             )}
           >
-            <GovFormInput
-              {...register(name)}
-              id={field.name}
-              placeholder={placeholder}
-              className={clsx('border-0!')}
-              invalid={!!error?.message}
-              multiline={multiline}
-              rows={4}
-              disabled={disabled}
-            />
+            {multiline ? (
+              <GovFormTextarea
+                {...register(name)}
+                id={field.name}
+                placeholder={placeholder}
+                className={clsx('border-0!')}
+                invalid={!!error?.message}
+                rows={4}
+                disabled={disabled}
+              />
+            ) : (
+              <GovFormInput
+                {...register(name)}
+                id={field.name}
+                placeholder={placeholder}
+                className={clsx('border-0!')}
+                invalid={!!error?.message}
+                disabled={disabled}
+              />
+            )}
             {error?.message && (
-              <GovFormMessage color="error" slot="bottom">
+              <GovFormMessage size="m" color="error">
                 {String(error.message)}
               </GovFormMessage>
             )}

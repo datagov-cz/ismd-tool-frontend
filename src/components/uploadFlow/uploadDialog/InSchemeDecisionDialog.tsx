@@ -3,7 +3,6 @@ import {
   GovButton,
   GovFormCheckbox,
   GovTooltip,
-  GovTooltipContent,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
@@ -98,34 +97,33 @@ export const InSchemeDecisionDialog = ({
 
         <fieldset className="flex justify-center gap-2">
           {options.map((option) => (
-            <GovTooltip
-              position="top"
-              className="border-0! mt-1"
-              message={t(`Decision.Mode.${option}.Hint`)}
-              key={option}
-            >
-              <GovTooltipContent>
+            <GovTooltip placement="top" key={option}>
+              <GovTooltip.Trigger asChild>
+                <GovButton
+                  size="m"
+                  type={mode === option ? 'solid' : 'outlined'}
+                  color="secondary"
+                  onClick={() => setMode(option)}
+                >
+                  {t(`Decision.Mode.${option}.Label`)}
+                </GovButton>
+              </GovTooltip.Trigger>
+              <GovTooltip.Content>
                 {t(`Decision.Mode.${option}.Hint`)}
-              </GovTooltipContent>
-              <GovButton
-                type={mode === option ? 'solid' : 'outlined'}
-                color="secondary"
-                onGovClick={() => setMode(option)}
-              >
-                {t(`Decision.Mode.${option}.Label`)}
-              </GovButton>
+              </GovTooltip.Content>
             </GovTooltip>
           ))}
         </fieldset>
 
         {mode === UploadFromFileNormalizeMode.PER_CONCEPT && (
-          <ul className="flex flex-col gap-1 max-h-64 overflow-auto bg-primary-subtlest p-2 rounded-lg shadow-subtle">
+          <ul className="flex flex-col gap-1 max-h-64 overflow-auto bg-surface-page p-2 rounded-lg shadow-subtle">
             {data.conceptsMissingInScheme.map((concept) => (
               <li key={concept.conceptIri}>
                 <span className="flex items-center gap-2">
                   <GovFormCheckbox
+                    size="m"
                     checked={conceptsToNormalize.includes(concept.conceptIri)}
-                    onGovChange={() => toggleConcept(concept.conceptIri)}
+                    onChange={() => toggleConcept(concept.conceptIri)}
                   />
                   <span title={concept.conceptIri}>
                     {concept.conceptName.replace(/-/g, ' ')}
@@ -140,14 +138,15 @@ export const InSchemeDecisionDialog = ({
 
         <div className="flex gap-2 justify-center">
           <GovButton
+            size="m"
             type="outlined"
             color="primary"
             nativeType="button"
-            onGovClick={onCancel}
+            onClick={onCancel}
           >
             {t('Decision.Cancel')}
           </GovButton>
-          <GovButton type="solid" color="primary" nativeType="submit">
+          <GovButton size="m" type="solid" color="primary" nativeType="submit">
             {t('Decision.Confirm')}
           </GovButton>
         </div>

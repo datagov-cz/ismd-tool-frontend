@@ -27,7 +27,6 @@ export const DraftDictionariesSection = () => {
           type="components"
           color="secondary"
           name="journals"
-          slot="icon-start"
           size="m"
           className="transition-transform duration-200"
         />
@@ -75,14 +74,15 @@ export const DraftDictionariesSection = () => {
           ontologies?.data?.data &&
           ontologies.data.data.length > 1 && (
             <GovButton
+              size="m"
               type="outlined"
               color="primary"
-              className="flex items-center gap-3 mx-auto cursor-pointer text-blue-primary hover:underline"
+              className="flex items-center gap-3 mx-auto cursor-pointer text-accent hover:underline"
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/list`}
+              iconEnd={<GovIcon name="arrow-right" />}
             >
               {t('DraftDictionariesSection.ShowAll')} (
               {ontologies.data.data.length})
-              <GovIcon name="arrow-right" slot="icon-end" />
             </GovButton>
           )}
       </div>

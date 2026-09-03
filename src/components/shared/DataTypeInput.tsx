@@ -40,7 +40,7 @@ export const DataTypeInput = ({
                 : 'flex flex-col',
             )}
           >
-            <GovFormLabel className="w-fit! pt-2.5">
+            <GovFormLabel size="m" className="w-fit! pt-2.5">
               <span className="font-bold">{label}</span>
             </GovFormLabel>
             <div
@@ -50,10 +50,11 @@ export const DataTypeInput = ({
               )}
             >
               <GovFormSelect
+                size="m"
                 value={field.value?.code ?? ''}
-                onGovChange={(e) => {
+                onChange={(e) => {
                   const selected = data?.data?.find(
-                    (d) => d.code === e.target.value,
+                    (d) => d.code === e.currentTarget.value,
                   );
                   field.onChange(
                     selected
@@ -63,7 +64,6 @@ export const DataTypeInput = ({
                   field.onBlur();
                 }}
               >
-                {isLoading && <CircularLoader />}
                 <option value="" label="" />
                 {data?.data?.map((input) => (
                   <option
@@ -73,9 +73,14 @@ export const DataTypeInput = ({
                   />
                 ))}
               </GovFormSelect>
+              {isLoading && (
+                <span className="absolute right-9 top-1/2 -translate-y-1/2">
+                  <CircularLoader />
+                </span>
+              )}
 
               {form.formState.errors[name] && (
-                <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">
+                <span className="text-status-error-600 text-sm absolute bottom-0 left-2 translate-y-full">
                   {String(form.formState.errors[name]?.message)}
                 </span>
               )}

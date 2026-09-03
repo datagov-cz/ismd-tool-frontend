@@ -65,13 +65,10 @@ export const ControlPanel = ({
               size="s"
               aria-label={tEdit('Title')}
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
+              iconStart={
+                <GovIcon name="pencil-square" size="l" type="components" />
+              }
             >
-              <GovIcon
-                name="pencil-square"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">{tEdit('Title')}</span>
             </GovButton>
           )}
@@ -83,14 +80,11 @@ export const ControlPanel = ({
               type="outlined"
               size="s"
               aria-label={tEdit('Comments')}
-              onGovClick={() => setIsCommentBoxOpen(true)}
+              onClick={() => setIsCommentBoxOpen(true)}
+              iconStart={
+                <GovIcon name="chat-square-text" size="l" type="components" />
+              }
             >
-              <GovIcon
-                name="chat-square-text"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">{tEdit('Comments')}</span>
               {(commentsCount ?? 0) > 0 && (
                 <span className="font-normal">[{commentsCount}]</span>
@@ -108,13 +102,12 @@ export const ControlPanel = ({
             size="s"
             expanded
             disabled
-          >
-            <GovIcon
+           iconStart={<GovIcon
               name="diagram-3"
               size="l"
-              slot="icon-start"
               type="components"
-            />
+            />}>
+            
             {t('CreateDiagram')}
           </GovButton>
         )} */}
@@ -125,42 +118,43 @@ export const ControlPanel = ({
           ariaLabel={t('Download')}
           onClick={() => setOpenDownload(true)}
         />
-        <GovDropdown id="copy-link-ismd" position="left">
-          <GovButton
-            color={'primary'}
-            type="base"
-            size="m"
-            className="h-8! [&_button]:h-8!"
-          >
-            <GovIcon
-              name="link"
-              size="m"
-              aria-label={t('GetLink')}
-              className="text-white"
-            />
-          </GovButton>
-          <ul slot="list">
-            {iri && (
-              <GovButton
-                color="primary"
-                type="base"
-                size="s"
-                onGovClick={() => copyToClipboard(iri)}
-                className="w-full! [&_button]:w-full! max-w-none!"
-              >
-                {t('CopyIRI')}
-              </GovButton>
-            )}
+        <GovDropdown
+          id="copy-link-ismd"
+          position="left"
+          color="primary"
+          type="base"
+          size="s"
+          label={
+            <>
+              <GovIcon
+                name="link"
+                size="m"
+                aria-label={t('GetLink')}
+                className="text-white"
+              />
+            </>
+          }
+        >
+          {iri && (
             <GovButton
               color="primary"
               type="base"
               size="s"
-              onGovClick={() => copyToClipboard(window.location.href)}
+              onClick={() => copyToClipboard(iri)}
               className="w-full! [&_button]:w-full! max-w-none!"
             >
-              {t('CopyURL')}
+              {t('CopyIRI')}
             </GovButton>
-          </ul>
+          )}
+          <GovButton
+            color="primary"
+            type="base"
+            size="s"
+            onClick={() => copyToClipboard(window.location.href)}
+            className="w-full! [&_button]:w-full! max-w-none!"
+          >
+            {t('CopyURL')}
+          </GovButton>
         </GovDropdown>
 
         {isEditAllowed && (

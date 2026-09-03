@@ -120,7 +120,6 @@ export const VisitedOntologies = () => {
           type="components"
           color="neutral"
           name="history"
-          slot="icon-start"
           size="m"
           className="transition-transform duration-200"
         />
