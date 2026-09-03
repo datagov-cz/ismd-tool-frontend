@@ -21,11 +21,15 @@ export const ThemeSwitch = () => {
       }`}
     >
       <div
-        className={`absolute top-px w-4 h-4 rounded-full bg-white transition-transform duration-300 flex shadow-toggle items-center justify-center ${
+        className={`absolute top-px w-4 h-4 rounded-full bg-surface transition-transform duration-300 flex shadow-toggle items-center justify-center ${
           isDark ? 'translate-x-4' : 'translate-x-px'
         }`}
       >
-        <GovIcon name={isDark ? 'moon' : 'sun'} className="!size-3" />
+        <GovIcon
+          name={isDark ? 'moon' : 'sun'}
+          color="default"
+          className="!size-2.5"
+        />
       </div>
     </button>
   );

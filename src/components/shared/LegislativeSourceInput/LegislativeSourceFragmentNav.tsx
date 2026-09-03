@@ -55,8 +55,8 @@ const FragmentItem = ({
   return (
     <li>
       <div
-        className={`flex items-start gap-2 py-1.5 pr-2 border-b border-(--border-subtle) cursor-pointer hover:bg-blue-100 ${
-          isSelected ? 'bg-blue-200' : ''
+        className={`flex items-start gap-2 py-1.5 pr-2 border-b border-(--border-subtle) cursor-pointer hover:bg-surface-muted ${
+          isSelected ? 'bg-blue-subtle' : ''
         }`}
         style={{ paddingLeft: 8 + depth * 12 }}
         onClick={() => onSelect(fragment.iri ?? '')}

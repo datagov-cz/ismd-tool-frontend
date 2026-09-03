@@ -38,6 +38,17 @@ const nextConfig: NextConfig = {
     );
     return config;
   },
+  // GovIcon fetches every icon over HTTP at runtime, so without this each
+  // navigation re-requests the whole set. The URLs are name-addressed and the
+  // set only changes on deploy.
+  async headers() {
+    return [
+      {
+        source: '/assets/icons/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400' }],
+      },
+    ];
+  },
   async rewrites() {
     return [
       // NOTE: the root /favicon.ico 404 (browsers probe the origin root,
