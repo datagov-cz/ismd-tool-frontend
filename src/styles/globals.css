@@ -67,6 +67,11 @@
 
   /* Semantic layer - the DS flips these per theme in tokens.css */
   --color-surface: var(--background-block-primary);
+  --color-surface-base: var(--background-white);
+  --color-surface-block: var(--background-block-primary);
+  --color-surface-card: var(--background-block-primary);
+  --color-surface-subtlest: var(--background-neutral-subtlest);
+  --color-surface-form: var(--background-primary-subtlest);
   --color-surface-page: var(--background-page);
   --color-surface-muted: var(--background-block-secondary);
   --color-surface-skeleton: var(--background-neutral-subtle);
@@ -119,6 +124,11 @@ body {
   /* The DS has no equivalent of the design's dark-surface; it sits between
      --background-block-primary and --background-neutral-primary. */
   --color-surface: #2d2d2d;
+
+  /* Elevation runs the other way in dark: cards recede from the page instead of
+     lifting off it, which no single DS token expresses. */
+  --color-surface-card: var(--background-page);
+  --color-surface-form: var(--background-neutral-primary);
 
   --color-header: var(--background-block-primary);
   --color-header-hero: var(--color-surface);

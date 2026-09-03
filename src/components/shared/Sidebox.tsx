@@ -41,7 +41,7 @@ export const Sidebox = ({
 
       <aside
         className={clsx(
-          'fixed top-18 right-0 h-[calc(100vh-4.5rem)] w-full bg-surface shadow-lg z-50 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-blue border-b border-t border-l border-solid flex flex-col',
+          'fixed top-18 right-0 h-[calc(100vh-4.5rem)] w-full bg-surface-card shadow-lg z-50 transform transition-all duration-300 ease-in-out p-4 overflow-y-hidden border-border-default border-b border-t border-l border-solid flex flex-col',
           isOpen ? 'translate-x-0' : 'translate-x-full',
           size === 's' && 'md:w-1/4',
           size === 'm' && 'md:w-1/3',

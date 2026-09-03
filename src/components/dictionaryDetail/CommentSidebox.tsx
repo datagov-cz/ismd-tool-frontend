@@ -97,10 +97,8 @@ export const CommentSidebox = ({
         </div>
         <form
           className={clsx(
-            'relative w-full border rounded-md bg-surface-page',
-            errors.comment
-              ? 'border-border-error'
-              : 'border-blue/20 dark:border-white/60',
+            'relative w-full border rounded-md bg-blue-subtle',
+            errors.comment ? 'border-border-error' : 'border-border-primary',
           )}
           onSubmit={handleSubmit(onSubmit)}
         >

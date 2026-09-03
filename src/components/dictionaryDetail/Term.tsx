@@ -302,7 +302,7 @@ export const Term = ({
 
   return (
     <div
-      className="bg-surface rounded-xl px-3 py-2 border border-border-default overflow-hidden shadow-subtle flex flex-col scroll-m-24"
+      className="bg-surface-block rounded-xl px-3 py-2 border border-border-default overflow-hidden shadow-subtle flex flex-col scroll-m-24"
       id={data.iri}
     >
       <span className={clsx('relative flex gap-2', hasSubterms && 'pb-3')}>

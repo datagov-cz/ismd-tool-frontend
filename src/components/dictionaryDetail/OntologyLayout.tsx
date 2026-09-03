@@ -131,7 +131,7 @@ export const OntologyLayout = ({
   const hasSidebar = !!visibleDeviations || showValidationSummary;
 
   return (
-    <div className="w-full h-full flex-1">
+    <div className="w-full h-full flex-1 bg-surface-base">
       <div className="w-full max-w-250 mx-auto px-5 desktop:px-0 py-5 flex flex-col gap-5">
         <div className="flex flex-wrap gap-2 items-center relative">
           <GovButton
@@ -210,7 +210,7 @@ export const OntologyLayout = ({
           </div>
         </div>
       </div>
-      <div className="w-full bg-surface-page flex-1 h-full px-5">
+      <div className="w-full bg-surface flex-1 h-full px-5">
         <div className="w-full max-w-250 mx-auto py-3 grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
           <div className={hasSidebar ? 'lg:col-span-2' : 'lg:col-span-3'}>
             <p className="font-medium text-lg mb-3">
@@ -285,7 +285,7 @@ export const OntologyLayout = ({
             </div>
             <div className="space-y-2">
               {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
-                <div className="bg-surface rounded-xl py-10 items-center justify-center border border-border-default overflow-hidden shadow-subtle flex flex-col">
+                <div className="bg-surface-block rounded-xl py-10 items-center justify-center border border-border-default overflow-hidden shadow-subtle flex flex-col">
                   <span className="text-xl font-bold text-status-error-600 pb-2">
                     {t('Main.NoResults.Title')}
                   </span>
