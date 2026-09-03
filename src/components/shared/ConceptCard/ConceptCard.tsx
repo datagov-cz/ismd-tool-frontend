@@ -39,7 +39,7 @@ const TruncatedText = ({ text }: { text: string }) => {
             e.stopPropagation();
             setExpanded((v) => !v);
           }}
-          className="ml-1 text-blue-button-active hover:underline text-xs font-medium shrink-0"
+          className="ml-1 text-accent hover:underline text-xs font-medium shrink-0"
         >
           {expanded ? t('ShowLess') : t('ShowMore')}
         </button>
@@ -64,7 +64,6 @@ export const ConceptCard = ({
         className="grow px-3 py-2 flex gap-2 transition-shadow duration-200 hover:shadow-md cursor-pointer bg-surface text-foreground"
       >
         <GovIcon
-          slot="icon-start"
           name={
             conceptType === 'VZTAH'
               ? 'bezier2'

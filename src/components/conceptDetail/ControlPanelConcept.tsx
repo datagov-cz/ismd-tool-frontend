@@ -60,12 +60,8 @@ export const ControlPanelConcept = ({
               color="primary"
               size="s"
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}/edit`}
+              iconStart={<GovIcon name="pencil-square" type="components" />}
             >
-              <GovIcon
-                name="pencil-square"
-                slot="icon-start"
-                type="components"
-              />
               {tConcept('EditConcept')}
             </GovButton>
           )}
@@ -76,12 +72,8 @@ export const ControlPanelConcept = ({
               size="s"
               aria-label={tConcept('ConceptComments')}
               onClick={() => setIsCommentBoxOpen(true)}
+              iconStart={<GovIcon name="pencil-square" type="components" />}
             >
-              <GovIcon
-                name="pencil-square"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">
                 {tConcept('ConceptComments')}
               </span>{' '}

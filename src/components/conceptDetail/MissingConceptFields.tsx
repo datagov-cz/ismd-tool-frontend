@@ -51,13 +51,10 @@ export const MissingConceptFields = ({
                   color="primary"
                   type="base"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}/edit${config.anchor}`}
+                  iconStart={
+                    <GovIcon size="xs" type="components" name="plus" />
+                  }
                 >
-                  <GovIcon
-                    size="xs"
-                    slot="icon-start"
-                    type="components"
-                    name="plus"
-                  />
                   <span className="text-sm font-bold">
                     {t(config.labelKey as Parameters<typeof t>[0])}
                   </span>

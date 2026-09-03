@@ -119,16 +119,27 @@ const SourceInputForm = ({
             <GovIcon color="error" name="trash" />
           </button>
         )}
-        <GovButton type="outlined" color="neutral" size="s" onClick={onCancel}>
-          <GovIcon
-            slot="icon-start"
-            name={isExisting ? 'arrow-counterclockwise' : 'x'}
-            type="components"
-          />
+        <GovButton
+          type="outlined"
+          color="neutral"
+          size="s"
+          onClick={onCancel}
+          iconStart={
+            <GovIcon
+              name={isExisting ? 'arrow-counterclockwise' : 'x'}
+              type="components"
+            />
+          }
+        >
           {isExisting ? 'Zpět' : 'Zrušit'}
         </GovButton>
-        <GovButton type="solid" color="primary" size="s" onClick={onSave}>
-          <GovIcon slot="icon-start" name="floppy" type="components" />
+        <GovButton
+          type="solid"
+          color="primary"
+          size="s"
+          onClick={onSave}
+          iconStart={<GovIcon name="floppy" type="components" />}
+        >
           {isExisting ? 'Upravit' : 'Přidat'}
         </GovButton>
       </div>
@@ -148,7 +159,7 @@ const SourceCard = ({
   <div className="flex flex-col gap-1">
     <div
       className={`w-full border rounded-lg py-2 pl-4 pr-2 flex gap-2 text-sm items-start justify-between ${
-        error ? 'border-status-error-600' : 'border-gray-border'
+        error ? 'border-border-error' : 'border-gray-border'
       }`}
     >
       <div className="flex flex-col">

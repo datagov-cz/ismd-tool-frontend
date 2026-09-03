@@ -89,12 +89,10 @@ export const FormToolbar = <T extends FieldValues>({
                 disabled={!canUndo || isPending}
                 onClick={undo}
                 title={t('UndoTitle')}
+                iconStart={
+                  <GovIcon type="components" name="arrow-counterclockwise" />
+                }
               >
-                <GovIcon
-                  type="components"
-                  name="arrow-counterclockwise"
-                  slot="icon-start"
-                />
                 {t('Undo')}
               </GovButton>
               <span className="w-px! h-2! bg-blue-primary" />
@@ -105,13 +103,14 @@ export const FormToolbar = <T extends FieldValues>({
                 disabled={!canRedo || isPending}
                 onClick={redo}
                 title={t('RedoTitle')}
+                iconStart={
+                  <GovIcon
+                    type="components"
+                    name="arrow-counterclockwise"
+                    className="rotate-y-180"
+                  />
+                }
               >
-                <GovIcon
-                  type="components"
-                  name="arrow-counterclockwise"
-                  slot="icon-start"
-                  className="rotate-y-180"
-                />
                 {t('Redo')}
               </GovButton>
             </div>
@@ -132,8 +131,8 @@ export const FormToolbar = <T extends FieldValues>({
             size="s"
             nativeType="submit"
             disabled={isPending}
+            iconStart={<GovIcon type="components" name="floppy" />}
           >
-            <GovIcon type="components" name="floppy" slot="icon-start" />
             {t('Save')}
           </GovButton>
         </div>

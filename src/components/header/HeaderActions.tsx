@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { SearchInput } from '../searchInput/SearchInput';
 
 import { LoginButton } from './LoginButton';
+import { useHeaderButtonType } from './useHeaderButtonType';
 
 interface Props {
   isAuthenticated: boolean;
@@ -25,30 +26,30 @@ export const HeaderActions = ({
 }: Props) => {
   const t = useTranslations('Header');
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  const buttonType = useHeaderButtonType();
 
   return (
     <div className="flex-none desktop:flex-auto 2xl:flex-2 flex justify-center items-center gap-2 desktop:gap-4">
       {!isHomepage && (
         <GovButton
           size="m"
-          type="solid"
+          type={buttonType}
           color="primary"
           className="max-desktop:hidden!"
           href={`${basePath}/`}
-        >
-          <GovIcon slot="icon-start" name="home" />
-        </GovButton>
+          iconStart={<GovIcon name="home" />}
+        ></GovButton>
       )}
 
       <GovButton
         ref={searchToggleRef}
         size="m"
-        type="solid"
+        type={buttonType}
         color="primary"
         className="desktop:hidden!"
         onClick={onOpenSearch}
+        iconStart={<GovIcon type="components" name="search" size="s" />}
       >
-        <GovIcon slot="icon-start" type="components" name="search" size="s" />
         <span className="hidden tablet:inline">{t('Search')}</span>
       </GovButton>
 
@@ -65,12 +66,12 @@ export const HeaderActions = ({
       {isAuthenticated && (
         <GovButton
           size="m"
-          type="solid"
+          type={buttonType}
           color="primary"
           className="max-desktop:hidden!"
           href={`${basePath}/dictionary/create`}
+          iconStart={<GovIcon name="plus" />}
         >
-          <GovIcon slot="icon-start" name="plus" />
           {t('Ontology')}
         </GovButton>
       )}

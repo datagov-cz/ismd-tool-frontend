@@ -23,7 +23,7 @@ export const RelatedTerm = ({
   warning?: boolean;
 }) => {
   const className = clsx(
-    'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-blue-button-active',
+    'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-accent',
     noIcon ? 'grayscale' : 'font-bold',
     ontologyLabel || warning ? 'px-2 py-1' : 'p-2',
   );
@@ -35,7 +35,6 @@ export const RelatedTerm = ({
       <span className="flex gap-1.5">
         {!noIcon && (
           <GovIcon
-            slot="icon-start"
             name={
               type === 'VLASTNOST'
                 ? 'tag'
@@ -68,7 +67,6 @@ export const RelatedTerm = ({
       {ontologyLabel && (
         <span className="flex gap-1.5 pl-6 font-normal text-foreground">
           <GovIcon
-            slot="icon-start"
             name="journal-text"
             type="components"
             size="s"
@@ -86,7 +84,6 @@ export const RelatedTerm = ({
           <GovTooltip.Trigger asChild>
             <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
               <GovIcon
-                slot="icon-start"
                 name="exclamation-triangle"
                 type="components"
                 size="s"

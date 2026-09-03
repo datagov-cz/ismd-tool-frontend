@@ -44,12 +44,8 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                 type="subtle"
                 size="xs"
                 className="w-fit border bg-surface! cursor-pointer"
+                iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <GovIcon
-                  name="journal-text"
-                  slot="icon-start"
-                  type="components"
-                />
                 <span className="font-bold text-accent cursor-pointer">
                   {capitalizeFirst(
                     ontology
@@ -79,18 +75,19 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   type="subtle"
                   size="xs"
                   className="h-fit whitespace-nowrap my-1!"
+                  iconStart={
+                    <GovIcon
+                      name={
+                        conceptDetail.typ?.includes('Vztah')
+                          ? 'bezier2'
+                          : conceptDetail.typ?.includes('Vlastnost')
+                            ? 'tag'
+                            : 'card-heading'
+                      }
+                      type="components"
+                    />
+                  }
                 >
-                  <GovIcon
-                    name={
-                      conceptDetail.typ?.includes('Vztah')
-                        ? 'bezier2'
-                        : conceptDetail.typ?.includes('Vlastnost')
-                          ? 'tag'
-                          : 'card-heading'
-                    }
-                    slot="icon-start"
-                    type="components"
-                  />
                   {conceptDetail.typ
                     ?.filter((item: string) => item !== 'Koncept')
                     .map(
@@ -103,12 +100,13 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   type="subtle"
                   size="xs"
                   className="h-fit whitespace-nowrap my-1!"
+                  iconStart={
+                    <GovIcon
+                      name={isPublic ? 'globe' : 'lock-fill'}
+                      type="components"
+                    />
+                  }
                 >
-                  <GovIcon
-                    name={isPublic ? 'globe' : 'lock-fill'}
-                    slot="icon-start"
-                    type="components"
-                  />
                   {isPublic ? t('Main.Public') : t('Main.NonPublic')}
                 </GovTag>
               </div>

@@ -110,13 +110,6 @@ export const SearchTypesPopover = ({
       )}
       label={
         <>
-          <GovIcon
-            type="components"
-            name="chevron-down"
-            slot="icon-start"
-            size="xs"
-            className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
-          />
           {allOrNone ? (
             <span className="font-normal text-xs lg:text-sm">
               {t('AllTypes')}
@@ -144,6 +137,14 @@ export const SearchTypesPopover = ({
             </span>
           )}
         </>
+      }
+      iconStart={
+        <GovIcon
+          type="components"
+          name="chevron-down"
+          size="xs"
+          className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+        />
       }
     >
       {visibleFilters.map(({ key, icon, iconType, color }) => (

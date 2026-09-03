@@ -28,7 +28,7 @@ export const ButtonLink = ({
     solid:
       'bg-blue-primary text-white hover:bg-blue-hover disabled:bg-button-solid-disabled',
     outlined:
-      'border border-accent text-accent hover:text-blue-hover hover:border-blue-hover hover:bg-blue-outlined-hover disabled:border-button-solid-disabled disabled:text-button-solid-disabled',
+      'border border-accent text-accent hover:text-accent hover:border-border-primary hover:bg-blue-outlined-hover disabled:border-button-solid-disabled disabled:text-button-solid-disabled',
     base: '',
   };
 

@@ -43,9 +43,8 @@ export const HeaderNav = ({ session, isSearchOpen, onToggleMenu }: Props) => {
         color="primary"
         className="tablet:hidden!"
         onClick={onToggleMenu}
-      >
-        <GovIcon slot="icon-start" type="components" name="list" />
-      </GovButton>
+        iconStart={<GovIcon type="components" name="list" />}
+      ></GovButton>
     </div>
   );
 };

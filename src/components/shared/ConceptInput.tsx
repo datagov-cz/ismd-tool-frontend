@@ -264,7 +264,6 @@ export const ConceptInput = ({
                         >
                           <span className="flex gap-1.5">
                             <GovIcon
-                              slot="icon-start"
                               name={
                                 item.conceptType === 'VLASTNOST'
                                   ? 'tag'
@@ -282,7 +281,6 @@ export const ConceptInput = ({
 
                           <span className="flex gap-1 items-center pl-4 font-normal text-foreground/70">
                             <GovIcon
-                              slot="icon-start"
                               name="journals"
                               type="components"
                               size="s"

@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
 import { signIn } from 'next-auth/react';
@@ -35,6 +36,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
 
   const isHomepage = pathname === '/';
   const isAuthenticated = !!session;
+  const showHero = !isAuthenticated && isHomepage;
   const showHeaderContent = isAuthenticated || !isHomepage;
   const isGated = isGatedProp ?? isGatedPath(pathname);
 
@@ -47,7 +49,12 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-200 transition-colors duration-300">
+      <header
+        className={clsx(
+          'fixed top-0 left-0 right-0 py-3 z-200 transition-colors duration-300',
+          showHero ? 'bg-header-hero' : 'bg-header',
+        )}
+      >
         <section className="mx-auto max-w-full-hd px-5 min-h-12 flex justify-between items-center gap-x-2 desktop:gap-x-4">
           {search.isOpen && <SearchInput autoFocus onClose={search.close} />}
 
@@ -74,7 +81,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
           />
         </section>
 
-        {!isAuthenticated && isHomepage && <HeaderHero onLogin={handleLogin} />}
+        {showHero && <HeaderHero onLogin={handleLogin} />}
       </header>
 
       {menu.isOpen && (

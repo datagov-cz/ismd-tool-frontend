@@ -127,12 +127,10 @@ export const LegislativeSourceDetail = ({
                     color="primary"
                     size="s"
                     onClick={handleConfirmSelection}
+                    iconStart={
+                      <GovIcon name="check-square" type="components" />
+                    }
                   >
-                    <GovIcon
-                      name="check-square"
-                      type="components"
-                      slot="icon-start"
-                    />
                     {t('SelectFragment')}
                   </GovButton>
                 </div>

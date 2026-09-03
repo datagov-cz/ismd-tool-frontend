@@ -298,8 +298,8 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           type="subtle"
           size="xs"
           className="w-fit border bg-surface!"
+          iconStart={<GovIcon name="journal-text" type="components" />}
         >
-          <GovIcon name="journal-text" slot="icon-start" type="components" />
           <span className="font-bold text-accent">
             {conceptDetail?.['název']?.cs ?? slug}
           </span>

@@ -14,7 +14,7 @@ export default async function ComingSoonPage() {
   return (
     <main className="min-h-[calc(100vh-12rem)] bg-surface-muted flex items-center justify-center px-5 py-16">
       <div className="max-w-2xl text-center">
-        <h1 className="text-4xl desktop:text-5xl font-medium text-blue mb-6">
+        <h1 className="text-4xl desktop:text-5xl font-medium text-accent mb-6">
           {t('Title')}
         </h1>
         <p className="text-lg desktop:text-xl text-foreground leading-relaxed mb-4">

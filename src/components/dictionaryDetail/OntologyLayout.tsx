@@ -140,8 +140,8 @@ export const OntologyLayout = ({
             size="s"
             onClick={() => router.back()}
             className="desktop:absolute desktop:top-1/2 desktop:left-0 desktop:-ml-2 desktop:-translate-x-full desktop:-translate-y-1/2 px-0! desktop:px-4!"
+            iconStart={<GovIcon name="chevron-left" size="m" />}
           >
-            <GovIcon slot="icon-start" name="chevron-left" size="m" />
             {t('Main.BackToHome')}
           </GovButton>
 
@@ -154,13 +154,10 @@ export const OntologyLayout = ({
               size="xs"
               type="subtle"
               className="w-fit [&_span]:font-bold! [&_span]:cursor-pointer!"
+              iconStart={
+                <GovIcon name="journal-text" size="l" className="text-white" />
+              }
             >
-              <GovIcon
-                slot="icon-start"
-                name="journal-text"
-                size="l"
-                className="text-white"
-              />
               <span
                 className={clsx(!isPublished && 'text-status-warning-700!')}
               >
@@ -227,13 +224,10 @@ export const OntologyLayout = ({
                   color="primary"
                   size="s"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/create?ontology=${slug}`}
+                  iconStart={
+                    <GovIcon name="plus" size="s" className="text-white" />
+                  }
                 >
-                  <GovIcon
-                    slot="icon-start"
-                    name="plus"
-                    size="s"
-                    className="text-white"
-                  />
                   {t('Main.AddConcept')}
                 </GovButton>
               )}

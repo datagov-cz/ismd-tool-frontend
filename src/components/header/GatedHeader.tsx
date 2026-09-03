@@ -5,7 +5,7 @@ export const GatedHeader = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-footer-separator py-3 z-50">
+      <header className="fixed top-0 left-0 right-0 bg-header py-3 z-50">
         <section className="mx-auto max-w-full-hd px-5 flex items-center">
           <div className="flex items-center text-white font-medium gap-4">
             <Image

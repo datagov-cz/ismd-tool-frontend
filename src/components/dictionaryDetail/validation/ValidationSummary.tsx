@@ -123,13 +123,10 @@ export const ValidationSummary = ({
           color="primary"
           size="s"
           onClick={handleValidate}
+          iconStart={
+            <GovIcon name="shield-check" size="s" className="text-white" />
+          }
         >
-          <GovIcon
-            slot="icon-start"
-            name="shield-check"
-            size="s"
-            className="text-white"
-          />
           {t('RunValidation')}
         </GovButton>
       </div>
@@ -243,7 +240,7 @@ const ValidationSection = ({
           {
             'text-status-error-700': severity === 'ERROR',
             'text-status-warning-700': severity === 'WARNING',
-            'text-footer-separator': severity === 'INFO',
+            'text-status-info': severity === 'INFO',
           },
           'font-bold text-sm flex gap-2 items-center pb-2.5 w-full text-left',
         )}
@@ -318,7 +315,7 @@ const ValidationCard = ({
       className={clsx(
         'flex gap-3 bg-surface rounded-lg py-2 px-3 border-l-4 items-center justify-between',
         {
-          'border-status-error-600': severity === 'ERROR',
+          'border-border-error': severity === 'ERROR',
           'border-status-warning-600': severity === 'WARNING',
           'border-border-primary-subtle': severity === 'INFO',
         },

@@ -54,8 +54,8 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
           onClick?.();
           onClose();
         }}
+        iconStart={<GovIcon type="components" name={icon} size="m" />}
       >
-        <GovIcon type="components" name={icon} size="m" slot="icon-start" />
         {label}
       </GovButton>
     </li>
@@ -83,9 +83,8 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
           className="ml-auto"
           aria-label={t('MenuCloseAria')}
           onClick={onClose}
-        >
-          <GovIcon type="components" name="x-lg" size="s" slot="icon-start" />
-        </GovButton>
+          iconStart={<GovIcon type="components" name="x-lg" size="s" />}
+        ></GovButton>
       </div>
 
       <nav>

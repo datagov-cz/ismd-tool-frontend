@@ -144,9 +144,8 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
             aria-label={t('CloseSearch')}
             className="absolute! top-1/2! right-1! -translate-y-1/2! z-100 hover:bg-transparent!"
             onClick={onClose}
-          >
-            <GovIcon type="components" name="x-lg" size="s" slot="icon-start" />
-          </GovButton>
+            iconStart={<GovIcon type="components" name="x-lg" size="s" />}
+          ></GovButton>
         )}
       </GovFormGroup>
 

@@ -63,13 +63,12 @@ export const FileController = ({
         required={true}
       >
         <div>
-          <GovButton size="m" type="outlined" color="primary">
-            <GovIcon
-              type="components"
-              name="upload"
-              slot="icon-start"
-              size="m"
-            />
+          <GovButton
+            size="m"
+            type="outlined"
+            color="primary"
+            iconStart={<GovIcon type="components" name="upload" size="m" />}
+          >
             {t('FileUpload.Upload')}
           </GovButton>
           <p className="opacity-60 text-sm pt-2">{t('FileUpload.Supported')}</p>

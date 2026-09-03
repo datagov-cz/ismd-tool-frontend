@@ -81,12 +81,8 @@ export const ConceptHeader = ({
                 type="subtle"
                 size="xs"
                 className="w-fit border bg-surface! cursor-pointer"
+                iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <GovIcon
-                  name="journal-text"
-                  slot="icon-start"
-                  type="components"
-                />
                 <span className="font-bold text-accent cursor-pointer">
                   {capitalizeFirst(ontology)}
                 </span>
@@ -106,18 +102,19 @@ export const ConceptHeader = ({
                   type="subtle"
                   size="xs"
                   className="h-fit whitespace-nowrap my-1!"
+                  iconStart={
+                    <GovIcon
+                      name={
+                        conceptType === 'VZTAH'
+                          ? 'bezier2'
+                          : conceptType === 'VLASTNOST'
+                            ? 'tag'
+                            : 'card-heading'
+                      }
+                      type="components"
+                    />
+                  }
                 >
-                  <GovIcon
-                    name={
-                      conceptType === 'VZTAH'
-                        ? 'bezier2'
-                        : conceptType === 'VLASTNOST'
-                          ? 'tag'
-                          : 'card-heading'
-                    }
-                    slot="icon-start"
-                    type="components"
-                  />
                   <span className="font-bold">
                     {conceptDetail.typ
                       ?.filter((item: string) => item !== 'Koncept')
@@ -134,12 +131,13 @@ export const ConceptHeader = ({
                       type="subtle"
                       size="xs"
                       className="h-fit whitespace-nowrap my-1!"
+                      iconStart={
+                        <GovIcon
+                          name={isPublic ? 'globe' : 'lock-fill'}
+                          type="components"
+                        />
+                      }
                     >
-                      <GovIcon
-                        name={isPublic ? 'globe' : 'lock-fill'}
-                        slot="icon-start"
-                        type="components"
-                      />
                       <span className="font-bold">
                         {isPublic ? t('Main.Public') : t('Main.NonPublic')}
                       </span>
@@ -152,12 +150,13 @@ export const ConceptHeader = ({
                     type="subtle"
                     size="xs"
                     className="h-fit whitespace-nowrap my-1!"
+                    iconStart={
+                      <GovIcon
+                        name={sourceTag === 'DRAFT' ? 'gear' : 'copy'}
+                        type="components"
+                      />
+                    }
                   >
-                    <GovIcon
-                      name={sourceTag === 'DRAFT' ? 'gear' : 'copy'}
-                      slot="icon-start"
-                      type="components"
-                    />
                     <span className="font-bold">
                       {sourceTag === 'DRAFT'
                         ? t('Main.Draft')
@@ -173,12 +172,10 @@ export const ConceptHeader = ({
                       type="subtle"
                       size="xs"
                       className="h-fit whitespace-nowrap my-1!"
+                      iconStart={
+                        <GovIcon name="signpost-2-fill" type="components" />
+                      }
                     >
-                      <GovIcon
-                        name="signpost-2-fill"
-                        slot="icon-start"
-                        type="components"
-                      />
                       <span className="font-bold">
                         {t('Main.DefinedByDictionary')}
                       </span>
@@ -199,7 +196,6 @@ export const ConceptHeader = ({
                   <InnerTerm term={relation.start} />
                   <GovIcon
                     name="arrow-right"
-                    slot="icon-start"
                     type="components"
                     size="s"
                     color="primary"
@@ -207,7 +203,6 @@ export const ConceptHeader = ({
                   <InnerTerm term={relation.middle} isRelation={true} />
                   <GovIcon
                     name="arrow-right"
-                    slot="icon-start"
                     type="components"
                     size="s"
                     color="primary"
@@ -248,13 +243,12 @@ export const InnerTerm = ({
       className={clsx(
         'inline-flex gap-1 px-1.5 py  rounded-md border hover:underline',
         isRelation
-          ? 'border-accent bg-blue-subtle font-bold text-blue-hover'
+          ? 'border-accent bg-blue-subtle font-bold text-accent'
           : 'border-border-default bg-surface',
       )}
     >
       {!isRelation && (
         <GovIcon
-          slot="icon-start"
           name={'card-heading'}
           type="components"
           size="l"
