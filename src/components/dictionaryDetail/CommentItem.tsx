@@ -53,7 +53,7 @@ export const CommentItem = ({
   };
 
   return (
-    <div className="flex flex-col gap-y-2 p-2 not-last:border-b border-secondary/70">
+    <div className="flex flex-col gap-y-2 p-2 not-last:border-b border-border-default">
       <div className="flex gap-4 justify-between">
         <div className="flex gap-4 items-center">
           <span className="text-sm text-foreground flex justify-center items-center gap-1.5 font-medium">
@@ -65,7 +65,7 @@ export const CommentItem = ({
             <span className="min-w-0.5 min-h-0.5 w-0.5 h-0.5 bg-foreground rounded-full block" />
             {postedTime && new Date(postedTime).toLocaleDateString('CS')}
             {isOwner && (
-              <span className="pl-1.5 border-l border-blue/30 text-accent leading-3">
+              <span className="pl-1.5 border-l border-border-default text-accent leading-3">
                 {t('OwnComment')}
               </span>
             )}

@@ -22,8 +22,8 @@ export const FormSection = ({
       className={clsx(
         'py-5 px-3 rounded-lg shadow-subtle transition-colors duration-300 ease-in',
         variant === 'neutral'
-          ? 'bg-(--background-neutral-subtlest) border border-(--border-subtle)'
-          : 'bg-surface',
+          ? 'bg-surface-subtlest border border-gray-border'
+          : 'bg-surface-card border border-border-default',
       )}
     >
       <div className="flex gap-2 items-center pb-2 pl-2.5">

@@ -137,7 +137,7 @@ export const DictionaryEditForm = ({
   };
 
   return (
-    <div className="w-full h-full flex-1 bg-surface-page px-5">
+    <div className="w-full h-full flex-1 bg-surface-form px-5">
       <div className="w-full relative max-w-250 mx-auto py-5">
         <div className="w-full space-y-6 relative lg:max-w-160 xl:max-w-200">
           <div className="space-y-3 relative">
