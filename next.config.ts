@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
   // '/assets/icons' with no configuration hook, which ignores basePath. Swap
   // its fetch helper for one that prefixes the basePath.
   webpack: (config, { webpack }) => {
+    // patches/@gov-design-system-ce+react+4.7.0.patch edits files inside
+    // node_modules, which webpack otherwise snapshots as immutable and serves
+    // from .next/cache until the package version changes. Take that package
+    // out of managedPaths so the patch is picked up.
+    config.snapshot = {
+      ...config.snapshot,
+      managedPaths: [/^(.+?[\\/]node_modules[\\/])(?!@gov-design-system-ce)/],
+    };
     config.plugins.push(
       new webpack.NormalModuleReplacementPlugin(
         /^\.\.\/utils\/icon$/,
