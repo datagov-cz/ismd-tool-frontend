@@ -14,6 +14,8 @@ type UseDisplayEdgesProps = {
   dispatch: Dispatch<HistoryAction>;
   pending: Connection | null;
   focusedNodeIds: ReadonlySet<string>;
+  pendingConceptIds: ReadonlySet<string>;
+  pendingEdgeIds: ReadonlySet<string>;
 };
 
 export const useDisplayEdges = ({
@@ -21,6 +23,8 @@ export const useDisplayEdges = ({
   dispatch,
   pending,
   focusedNodeIds,
+  pendingConceptIds,
+  pendingEdgeIds,
 }: UseDisplayEdgesProps) => {
   const displayEdges = useMemo(() => {
     const base = edges.map((e) => {
@@ -39,6 +43,9 @@ export const useDisplayEdges = ({
         data: {
           ...e.data,
           emphasis,
+          pendingChange:
+            pendingEdgeIds.has(e.id) ||
+            (!!e.data?.vztahIri && pendingConceptIds.has(e.data.vztahIri)),
           onBendsChange: (bends?: XYPosition[]) =>
             dispatch({ type: 'setEdgeBends', edgeId: e.id, bends }),
           ...(e.data?.kind === 'obecny'
@@ -57,7 +64,14 @@ export const useDisplayEdges = ({
     });
 
     return pending ? [...base, createPendingEdge(pending)] : base;
-  }, [edges, pending, dispatch, focusedNodeIds]);
+  }, [
+    edges,
+    pending,
+    dispatch,
+    focusedNodeIds,
+    pendingConceptIds,
+    pendingEdgeIds,
+  ]);
 
   return { displayEdges };
 };

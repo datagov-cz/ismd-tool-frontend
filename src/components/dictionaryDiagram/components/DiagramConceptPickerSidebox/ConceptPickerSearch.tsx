@@ -4,6 +4,7 @@ import {
   GovFormInput,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { SearchType, useSearch } from '@/api/generated';
 import { Concept, getConceptId } from '../../model/concept';
@@ -22,6 +23,7 @@ export const ConceptPickerSearch = ({
   selectedConceptIds: Set<string>;
   onActiveConceptClick: (_conceptId: string) => void;
 }) => {
+  const t = useTranslations('DictionaryDiagram.Picker');
   const [selectedKind, setSelectedKind] = useState<SearchType | null>(null);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -89,7 +91,7 @@ export const ConceptPickerSearch = ({
     <div>
       <GovFormGroup>
         <GovFormInput
-          placeholder="Hledat pojem v ostatních slovnících"
+          placeholder={t('SearchOther')}
           size="s"
           value={query}
           onGovInput={handleInput}
@@ -100,17 +102,17 @@ export const ConceptPickerSearch = ({
 
       <div className="flex gap-4 pt-2">
         <FilterCheckbox
-          label="Třídy"
+          label={t('Classes')}
           checked={selectedKind === 'CLASS'}
           onToggle={() => toggleKind('CLASS')}
         />
         <FilterCheckbox
-          label="Vlastnosti"
+          label={t('Properties')}
           checked={selectedKind === 'PROPERTY'}
           onToggle={() => toggleKind('PROPERTY')}
         />
         <FilterCheckbox
-          label="Vztahy"
+          label={t('Relationships')}
           checked={selectedKind === 'RELATIONSHIP'}
           onToggle={() => toggleKind('RELATIONSHIP')}
         />
@@ -146,7 +148,7 @@ export const ConceptPickerSearch = ({
 
         {data?.data?.returnedCount === 0 && (
           <span className="text-xs text-card-description py-2">
-            Žádný pojem neodpovídá filtru.
+            {t('NoMatches')}
           </span>
         )}
       </div>

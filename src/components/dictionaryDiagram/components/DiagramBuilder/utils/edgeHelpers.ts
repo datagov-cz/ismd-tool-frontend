@@ -6,16 +6,19 @@ export const hasIncompleteObecnyEdge = (edges: ConceptFlowEdge[]): boolean =>
   edges.some((e) => e.data?.kind === 'obecny' && !e.data?.label);
 
 export const withEdgeMarkers = (edge: ConceptFlowEdge): ConceptFlowEdge => {
-  const markerColor =
-    edge.data?.emphasis === 'connected' ? '#67329e' : undefined;
+  const markerColor = edge.data?.pendingChange
+    ? '#ca8504'
+    : edge.data?.emphasis === 'connected'
+      ? '#67329e'
+      : undefined;
   if (edge.data?.kind === 'hierarchie') {
     return {
       ...edge,
       markerStart: {
         type: MarkerType.ArrowClosed,
         orient: 'auto-start-reverse',
-        width: 16,
-        height: 16,
+        width: 12,
+        height: 12,
         color: markerColor,
       },
     };
@@ -27,8 +30,8 @@ export const withEdgeMarkers = (edge: ConceptFlowEdge): ConceptFlowEdge => {
       markerStart: {
         type: MarkerType.Arrow,
         orient: 'auto-start-reverse',
-        width: 16,
-        height: 16,
+        width: 12,
+        height: 12,
         color: markerColor,
       },
     };

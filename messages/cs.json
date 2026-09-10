@@ -701,5 +701,110 @@
     "RedoTitle": "Znovu (Ctrl+Y)",
     "Cancel": "Zrušit",
     "Save": "Uložit"
+  },
+  "DictionaryDiagram": {
+    "RenameSuccess": "Název diagramu byl uložen.",
+    "RenameError": "Název diagramu se nepodařilo uložit.",
+    "UnsavedChanges": "Máte neuložené změny. Opravdu chcete diagram opustit? Neuložené změny budou zahozeny.",
+    "Header": {
+      "SaveSuccess": "Návrh diagramu byl uložen.",
+      "SaveError": "Návrh diagramu se nepodařilo uložit.",
+      "MaterializeSuccess": "Změny byly propsány do slovníku.",
+      "MaterializeError": "Změny se nepodařilo propsat do slovníku.",
+      "Close": "Zavřít",
+      "Saving": "Ukládání…",
+      "SaveDraft": "Uložit návrh",
+      "Materializing": "Propisuji…",
+      "Materialize": "Propsat do slovníku"
+    },
+    "Toolbar": {
+      "Clear": "Vyčistit diagram",
+      "Undo": "Zpět",
+      "Redo": "Znovu",
+      "Arrange": "Uspořádat diagram",
+      "Hierarchical": "Hierarchicky",
+      "ByRelationships": "Podle vztahů",
+      "Grid": "Do mřížky",
+      "NewConcept": "Nový pojem"
+    },
+    "TopBar": {
+      "NameTooLong": "Název může mít maximálně 255 znaků.",
+      "DiagramName": "Název diagramu",
+      "Saving": "Ukládám…",
+      "Save": "Uložit",
+      "OptionalName": "Volitelný název diagramu",
+      "Export": "Export",
+      "ExplainEdges": "Vysvětlit zakončení vztahů",
+      "EdgeHelp": "Vysvětlení zakončení vztahů",
+      "CloseHelp": "Zavřít nápovědu",
+      "RegularRelationship": "Běžný vztah",
+      "HierarchyRelationship": "Hierarchie – šipka míří k nadřazenému pojmu"
+    },
+    "Export": {
+      "Title": "Exportovat diagram",
+      "Description": "Chcete exportovat celý diagram, nebo jen jeho aktuální výřez?",
+      "Cancel": "Zrušit",
+      "Viewport": "Aktuální výřez",
+      "WholeDiagram": "Celý diagram"
+    },
+    "HighlightedRelations": {
+      "Count": "{count, plural, one {# zvýrazněný vztah} few {# zvýrazněné vztahy} other {# zvýrazněných vztahů}}"
+    },
+    "Picker": {
+      "ThisDictionary": "Tento slovník",
+      "OtherDictionaries": "Jiné slovníky",
+      "SearchThis": "Hledat pojem v tomto slovníku",
+      "SearchOther": "Hledat pojem v ostatních slovnících",
+      "Classes": "Třídy",
+      "Properties": "Vlastnosti",
+      "Relationships": "Vztahy",
+      "NoMatches": "Žádný pojem neodpovídá filtru."
+    },
+    "AddConcept": {
+      "Title": "Přidat nový pojem",
+      "Cancel": "Zrušit",
+      "Insert": "Vložit"
+    },
+    "Edge": {
+      "BendHint": "Táhnutím posunete, dvojklikem odstraníte",
+      "AddRelationship": "Přidat vztah"
+    },
+    "Canvas": {
+      "UnknownConcept": "Neznámý pojem",
+      "Hierarchy": "je nadřazený pojem",
+      "Equivalence": "je ekvivalentní",
+      "Relationship": "má vztah",
+      "HighlightedConcepts": "{count, plural, one {# zvýrazněný pojem} few {# zvýrazněné pojmy} other {# zvýrazněných pojmů}}",
+      "ExportError": "Diagram se nepodařilo exportovat.",
+      "ShortenLabels": "Zkrátit popisky vztahů",
+      "ShowFullLabels": "Zobrazit celé popisky vztahů",
+      "CompleteRelationshipFirst": "Nejdříve přidejte vztah na rozdělanou vazbu."
+    },
+    "RelationshipChooser": {
+      "Title": "Vyberte typ vazby mezi <a></a> a <b></b>",
+      "Remove": "Odebrat vazbu",
+      "Options": {
+        "AB": {
+          "Title": "Obecný vztah z A do B",
+          "Description": "A je definičním oborem vztahu a B je oborem hodnot vztahu"
+        },
+        "BA": {
+          "Title": "Obecný vztah z B do A",
+          "Description": "B je definičním oborem vztahu a A je oborem hodnot vztahu"
+        },
+        "AParent": {
+          "Title": "A je nadřazené B",
+          "Description": "B je podtypem A"
+        },
+        "BParent": {
+          "Title": "B je nadřazené A",
+          "Description": "A je podtypem B"
+        },
+        "Equivalent": {
+          "Title": "Stejný význam",
+          "Description": "Oba pojmy označují totéž"
+        }
+      }
+    }
   }
 }

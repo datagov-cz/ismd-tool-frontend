@@ -1,21 +1,46 @@
 import { useState } from 'react';
-import { GovIcon } from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { Panel } from '@xyflow/react';
+import { useTranslations } from 'next-intl';
 
 import { ToolbarButton } from './ToolbarButton';
 
 type DiagramTopBarProps = {
   onExport?: () => void;
-  onRename?: () => void;
+  diagramName?: string;
+  renaming: boolean;
+  onRename: (_name: string) => Promise<void>;
   onHelp?: () => void;
 };
 
 export const DiagramTopBar = ({
   onExport,
+  diagramName,
+  renaming,
   onRename,
   onHelp,
 }: DiagramTopBarProps) => {
+  const t = useTranslations('DictionaryDiagram.TopBar');
   const [showEdgeHelp, setShowEdgeHelp] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [name, setName] = useState('');
+  const [nameError, setNameError] = useState<string>();
+
+  const saveName = async () => {
+    const trimmedName = name.trim();
+    if (trimmedName.length > 255) {
+      setNameError(t('NameTooLong'));
+      return;
+    }
+
+    setNameError(undefined);
+    try {
+      await onRename(trimmedName);
+      setEditingName(false);
+    } catch {
+      // The mutation displays the error and the input remains open for retry.
+    }
+  };
 
   const toggleEdgeHelp = () => {
     setShowEdgeHelp((visible) => !visible);
@@ -27,32 +52,82 @@ export const DiagramTopBar = ({
       position="top-right"
       className="border border-border-grey rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-border-grey"
     >
-      <ToolbarButton
-        trailingIcon="pencil-square"
-        label="Volitelný název diagramu"
-        onClick={onRename}
-      />
+      {editingName ? (
+        <div className="nodrag nopan relative flex items-center gap-2 px-2 py-1">
+          <input
+            autoFocus
+            type="text"
+            value={name}
+            maxLength={256}
+            aria-label={t('DiagramName')}
+            aria-invalid={!!nameError}
+            onChange={(event) => {
+              setName(event.target.value);
+              setNameError(undefined);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') void saveName();
+              if (event.key === 'Escape') {
+                setName(diagramName ?? '');
+                setNameError(undefined);
+                setEditingName(false);
+              }
+            }}
+            className="h-8 w-56 rounded-sm border border-border-grey px-2 font-normal text-dark-primary outline-none focus:border-blue-primary"
+          />
+          <GovButton
+            nativeType="button"
+            type="solid"
+            color="primary"
+            size="s"
+            disabled={renaming}
+            onGovClick={() => void saveName()}
+          >
+            {renaming ? t('Saving') : t('Save')}
+          </GovButton>
+          {nameError && (
+            <span className="absolute right-0 top-[calc(100%+0.25rem)] rounded-sm bg-white px-2 py-1 text-xs font-normal text-status-error-600 shadow-subtle">
+              {nameError}
+            </span>
+          )}
+        </div>
+      ) : (
+        <ToolbarButton
+          trailingIcon="pencil-square"
+          label={diagramName?.trim() || t('OptionalName')}
+          onClick={() => {
+            setName(diagramName ?? '');
+            setNameError(undefined);
+            setEditingName(true);
+          }}
+        />
+      )}
 
-      <ToolbarButton icon="download" label="Export" onClick={onExport} />
+      <ToolbarButton
+        icon="download"
+        label={t('Export')}
+        onClick={onExport}
+        labelOnHover
+      />
 
       <div className="relative">
         <ToolbarButton
           trailingIcon="question-circle"
           onClick={toggleEdgeHelp}
-          ariaLabel="Vysvětlit zakončení vztahů"
+          ariaLabel={t('ExplainEdges')}
           ariaPressed={showEdgeHelp}
         />
 
         {showEdgeHelp && (
           <div
             role="dialog"
-            aria-label="Vysvětlení zakončení vztahů"
-            className="nodrag nopan absolute right-0 top-[calc(100%+0.5rem)] h-[70px] w-56 overflow-hidden rounded-md border border-border-grey bg-white p-2 pr-8 text-dark-blue-subtle shadow-[0_4px_12px_rgba(0,0,0,0.24)]"
+            aria-label={t('EdgeHelp')}
+            className="nodrag nopan absolute right-0 top-[calc(100%+0.5rem)] h-17.5 w-56 overflow-hidden rounded-md border border-border-grey bg-white p-2 pr-8 text-dark-blue-subtle shadow-[0_4px_12px_rgba(0,0,0,0.24)]"
           >
             <button
               type="button"
               onClick={() => setShowEdgeHelp(false)}
-              aria-label="Zavřít nápovědu"
+              aria-label={t('CloseHelp')}
               className="absolute right-1.5 top-1.5 flex rounded p-0.5 text-dark-blue-subtle hover:bg-page-background"
             >
               <GovIcon name="x-lg" size="xs" />
@@ -60,10 +135,10 @@ export const DiagramTopBar = ({
 
             <div className="grid h-full grid-cols-[56px_1fr] items-center gap-x-2 gap-y-1 text-[11px] font-bold leading-[1.1]">
               <EdgeEnding kind="relation" />
-              <span>Běžný vztah</span>
+              <span>{t('RegularRelationship')}</span>
 
               <EdgeEnding kind="hierarchy" />
-              <span>Hierarchie – šipka míří k nadřazenému pojmu</span>
+              <span>{t('HierarchyRelationship')}</span>
             </div>
           </div>
         )}

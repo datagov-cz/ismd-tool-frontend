@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 import type { RelationshipKind } from '../model/diagram';
 
@@ -18,38 +19,32 @@ const CHOOSER_OFFSET = 12;
 
 const OPTIONS: {
   symbol: string;
-  title: string;
-  description: string;
+  key: 'AB' | 'BA' | 'AParent' | 'BParent' | 'Equivalent';
   choice: RelationshipChoice;
 }[] = [
   {
     symbol: 'A → B',
-    title: 'Obecný vztah z A do B',
-    description: 'A je definičním oborem vztahu a B je oborem hodnot vztahu',
+    key: 'AB',
     choice: { kind: 'obecny' },
   },
   {
     symbol: 'B → A',
-    title: 'Obecný vztah z B do A',
-    description: 'B je definičním oborem vztahu a A je oborem hodnot vztahu',
+    key: 'BA',
     choice: { kind: 'obecny', swap: true },
   },
   {
     symbol: 'A > B',
-    title: 'A je nadřazené B',
-    description: 'B je podtypem A',
+    key: 'AParent',
     choice: { kind: 'hierarchie' },
   },
   {
     symbol: 'B > A',
-    title: 'B je nadřazené A',
-    description: 'A je podtypem B',
+    key: 'BParent',
     choice: { kind: 'hierarchie', swap: true },
   },
   {
     symbol: 'A = B',
-    title: 'Stejný význam',
-    description: 'Oba pojmy označují totéž',
+    key: 'Equivalent',
     choice: { kind: 'ekvivalence' },
   },
 ];
@@ -83,6 +78,7 @@ export const RelationshipChooser = ({
   onRemove?: () => void;
   selectedKind?: RelationshipKind;
 }) => {
+  const t = useTranslations('DictionaryDiagram.RelationshipChooser');
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<CSSProperties>({
     left: x,
@@ -158,7 +154,10 @@ export const RelationshipChooser = ({
       ref={ref}
     >
       <div className="flex items-center gap-2 font-bold border-b border-border-grey pb-3">
-        Vyberte typ vazby mezi <Badge letter="A" solid /> a <Badge letter="B" />
+        {t.rich('Title', {
+          a: () => <Badge letter="A" solid />,
+          b: () => <Badge letter="B" />,
+        })}
       </div>
 
       <div className="flex gap-6 text-blue-primary font-bold text-sm">
@@ -187,9 +186,11 @@ export const RelationshipChooser = ({
             >
               <span className="font-bold w-12 shrink-0">{option.symbol}</span>
               <span className="flex flex-col flex-1">
-                <span className="font-bold text-sm">{option.title}</span>
+                <span className="font-bold text-sm">
+                  {t(`Options.${option.key}.Title`)}
+                </span>
                 <span className="text-sm text-card-description">
-                  {option.description}
+                  {t(`Options.${option.key}.Description`)}
                 </span>
               </span>
               {selected && (
@@ -208,7 +209,7 @@ export const RelationshipChooser = ({
             className="flex w-full items-center justify-center gap-2 rounded-md border border-status-error-600 px-4 py-2.5 font-bold text-status-error-600 transition-colors hover:bg-status-error-100"
           >
             <GovIcon name="trash" size="m" />
-            Odebrat vazbu
+            {t('Remove')}
           </button>
         </div>
       )}

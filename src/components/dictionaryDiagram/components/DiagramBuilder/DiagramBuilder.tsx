@@ -22,6 +22,11 @@ export type DiagramBuilderProps = {
   focusRequest: { conceptId: string; requestId: number } | null;
   onFocusRequestHandled: () => void;
   onSelectedConceptIdsChange: (_conceptIds: Set<string>) => void;
+  pendingConceptIds: ReadonlySet<string>;
+  pendingEdgeIds: ReadonlySet<string>;
+  diagramName?: string;
+  renamingDiagram: boolean;
+  onRenameDiagram: (_name: string) => Promise<void>;
 };
 
 export const DiagramBuilder = (props: DiagramBuilderProps) => (

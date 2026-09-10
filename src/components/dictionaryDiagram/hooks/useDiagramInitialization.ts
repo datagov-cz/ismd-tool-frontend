@@ -19,10 +19,15 @@ export function useDiagramInitialization(
 
     initialized.current = true;
 
+    const hasStoredLayout =
+      (diagram?.nodes?.length ?? 0) > 0 ||
+      (diagram?.edges?.length ?? 0) > 0 ||
+      (diagram?.version ?? 0) !== 0;
+
     dispatch({
       type: 'init',
       concepts,
-      diagram: diagram?.nodes?.length ? diagram : undefined,
+      diagram: hasStoredLayout ? diagram : undefined,
     });
   }, [concepts, diagram, dispatch, isDiagramPending]);
 }

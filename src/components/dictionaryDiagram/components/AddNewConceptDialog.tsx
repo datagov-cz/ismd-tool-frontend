@@ -49,6 +49,7 @@ export const AddNewConceptDialog = ({
 }) => {
   const t = useTranslations('CreateConcept');
   const tWrapper = useTranslations('ConceptCreateWrapper');
+  const td = useTranslations('DictionaryDiagram.AddConcept');
 
   const { data } = useGetOntologyDetail(ontology);
   const { mutate: createConcept, isPending } = useCreateConcept();
@@ -123,7 +124,7 @@ export const AddNewConceptDialog = ({
               color="primary"
               size="xl"
             />
-            Přidat nový pojem
+            {td('Title')}
           </span>
 
           <div className="space-y-2.5">
@@ -148,7 +149,7 @@ export const AddNewConceptDialog = ({
               onGovClick={() => handleClose()}
               size="m"
             >
-              Zrušit
+              {td('Cancel')}
             </GovButton>
             <GovButton
               color="primary"
@@ -158,7 +159,7 @@ export const AddNewConceptDialog = ({
               disabled={isPending || !graphName}
             >
               <GovIcon slot="icon-start" name="floppy" type="components" />
-              Vložit
+              {td('Insert')}
             </GovButton>
           </div>
         </GovDialog>

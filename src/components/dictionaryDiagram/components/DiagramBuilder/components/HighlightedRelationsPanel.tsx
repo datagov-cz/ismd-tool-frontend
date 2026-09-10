@@ -1,5 +1,6 @@
 import { GovIcon } from '@gov-design-system-ce/react';
 import { Panel } from '@xyflow/react';
+import { useTranslations } from 'next-intl';
 
 export type HighlightedRelation = {
   id: string;
@@ -21,6 +22,7 @@ export const HighlightedRelationsPanel = ({
   relations,
   onRelationClick,
 }: HighlightedRelationsPanelProps) => {
+  const t = useTranslations('DictionaryDiagram.HighlightedRelations');
   if (relations.length === 0) return null;
 
   return (
@@ -35,8 +37,7 @@ export const HighlightedRelationsPanel = ({
             {title}
           </div>
           <div className="text-xs text-card-description">
-            {relations.length}{' '}
-            {relations.length === 1 ? 'zvýrazněný vztah' : 'zvýrazněné vztahy'}
+            {t('Count', { count: relations.length })}
           </div>
         </div>
       </div>

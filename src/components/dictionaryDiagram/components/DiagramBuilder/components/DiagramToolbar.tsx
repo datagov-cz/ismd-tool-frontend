@@ -1,5 +1,6 @@
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { Panel } from '@xyflow/react';
+import { useTranslations } from 'next-intl';
 
 import { ToolbarButton } from './ToolbarButton';
 
@@ -10,6 +11,8 @@ type DiagramToolbarProps = {
   onRedo: () => void;
   onLayout: (_direction: 'TB' | 'LR') => void;
   onAddConcept: () => void;
+  onClear: () => void;
+  canClear: boolean;
 };
 
 export const DiagramToolbar = ({
@@ -19,16 +22,28 @@ export const DiagramToolbar = ({
   onRedo,
   onLayout,
   onAddConcept,
+  onClear,
+  canClear,
 }: DiagramToolbarProps) => {
+  const t = useTranslations('DictionaryDiagram.Toolbar');
   return (
     <Panel
       position="top-left"
       className="border border-border-grey rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-border-grey"
     >
+      <ToolbarButton
+        icon="trash"
+        label={t('Clear')}
+        ariaLabel={t('Clear')}
+        labelOnHover
+        color="error"
+        disabled={!canClear}
+        onClick={onClear}
+      />
       <div className="flex items-center">
         <ToolbarButton
           icon="arrow-counterclockwise"
-          label="Zpět"
+          label={t('Undo')}
           disabled={!canUndo}
           onClick={onUndo}
         />
@@ -37,7 +52,7 @@ export const DiagramToolbar = ({
 
         <ToolbarButton
           icon="arrow-clockwise"
-          label="Znovu"
+          label={t('Redo')}
           disabled={!canRedo}
           onClick={onRedo}
         />
@@ -57,7 +72,7 @@ export const DiagramToolbar = ({
             size="xs"
             slot="icon-start"
           />
-          Uspořádat diagram
+          {t('Arrange')}
           <GovIcon
             type="components"
             name="chevron-down"
@@ -70,21 +85,26 @@ export const DiagramToolbar = ({
         <ul slot="list">
           <ToolbarButton
             icon="diagram-3"
-            label="Hierarchicky"
+            label={t('Hierarchical')}
             onClick={() => onLayout('TB')}
           />
 
           <ToolbarButton
             icon="share"
-            label="Podle vztahů"
+            label={t('ByRelationships')}
             onClick={() => onLayout('LR')}
           />
 
-          <ToolbarButton icon="grid" label="Do mřižky" />
+          <ToolbarButton icon="grid" label={t('Grid')} />
         </ul>
       </GovDropdown>
 
-      <ToolbarButton icon="plus" label="Nový pojem" onClick={onAddConcept} />
+      <ToolbarButton
+        icon="plus"
+        label={t('NewConcept')}
+        onClick={onAddConcept}
+        labelOnHover
+      />
     </Panel>
   );
 };

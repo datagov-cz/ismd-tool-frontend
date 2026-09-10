@@ -9,6 +9,7 @@ import {
   type XYPosition,
 } from '@xyflow/react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 import { type Concept, getConceptKind } from '../model/concept';
 import { getConceptFromDragEvent } from '../model/conceptDrag';
@@ -35,6 +36,7 @@ export const LabeledEdge = ({
   markerEnd,
   data,
 }: EdgeProps<Edge<LabeledEdgeData>>) => {
+  const t = useTranslations('DictionaryDiagram.Edge');
   const showFullLabels = useShowFullLabels();
   const [dragOver, setDragOver] = useState(false);
 
@@ -171,6 +173,7 @@ export const LabeledEdge = ({
   const incomplete = data?.kind === 'obecny' && !data?.label;
   const dimmed = data?.emphasis === 'dimmed';
   const emphasized = data?.emphasis === 'connected';
+  const pendingChange = data?.pendingChange;
 
   const dropHandlers = incomplete
     ? {
@@ -217,6 +220,12 @@ export const LabeledEdge = ({
             ? {
                 stroke: '#67329e',
                 strokeWidth: 2.25,
+              }
+            : {}),
+          ...(pendingChange
+            ? {
+                stroke: '#ca8504',
+                strokeWidth: 3,
               }
             : {}),
           ...(incomplete ? { strokeDasharray: '6 4' } : {}),
@@ -266,7 +275,7 @@ export const LabeledEdge = ({
                 e.stopPropagation();
                 removeBend(i);
               }}
-              title="Táhnutím posunete, dvojklikem odstraníte"
+              title={t('BendHint')}
             />
           ))}
 
@@ -319,7 +328,7 @@ export const LabeledEdge = ({
             title={isTruncatable && !showFull && label ? label : undefined}
             {...dropHandlers}
           >
-            {incomplete ? 'Přidat vztah' : label}
+            {incomplete ? t('AddRelationship') : label}
           </div>
         )}
       </EdgeLabelRenderer>

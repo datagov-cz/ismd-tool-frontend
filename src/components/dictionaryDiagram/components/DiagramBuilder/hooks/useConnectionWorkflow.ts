@@ -1,5 +1,6 @@
 import { Dispatch, RefObject, useCallback, useMemo, useState } from 'react';
 import { Connection } from '@xyflow/react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { RelationshipChoice } from '@/components/dictionaryDiagram/components/RelationshipChooset';
@@ -35,6 +36,7 @@ export const useConnectionWorkflow = ({
   dispatch,
   wrapperRef,
 }: UseConnectionWorkflowProps) => {
+  const t = useTranslations('DictionaryDiagram.Canvas');
   const [chooser, setChooser] = useState<ChooserState>(null);
   const [pending, setPending] = useState<Connection | null>(null);
 
@@ -79,7 +81,7 @@ export const useConnectionWorkflow = ({
   const onConnect = useCallback(
     (connection: Connection) => {
       if (hasIncompleteObecny) {
-        toast.info('Nejdříve přidejte vztah na rozdělanou vazbu.', {
+        toast.info(t('CompleteRelationshipFirst'), {
           position: 'bottom-right',
         });
         return;
@@ -94,7 +96,7 @@ export const useConnectionWorkflow = ({
       const { x, y } = midpointBetweenNodes(source, target);
       openChooser('pending', connection.source, connection.target, x, y);
     },
-    [hasIncompleteObecny, nodes, midpointBetweenNodes, openChooser],
+    [hasIncompleteObecny, nodes, midpointBetweenNodes, openChooser, t],
   );
 
   const closeChooser = useCallback(() => {

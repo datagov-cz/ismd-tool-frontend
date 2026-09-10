@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useGetConceptDetail } from '@/api/generated';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
+import { ConceptUsageDiagrams } from '@/components/conceptDetail/ConceptUsageDiagrams';
 import { buildRelation } from '@/components/conceptDetail/lib/buildRelation';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
@@ -79,6 +80,15 @@ export const ConceptContent = ({ slug }: Props) => {
           (item) => item.owningConceptId === conceptMetadata.id,
         )}
       >
+        <ConceptUsageDiagrams
+          conceptSlug={slug}
+          conceptName={
+            conceptDetail.název?.cs ??
+            conceptDetail.název?.sk ??
+            conceptDetail.název?.en ??
+            ''
+          }
+        />
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}
           source="ISMD"

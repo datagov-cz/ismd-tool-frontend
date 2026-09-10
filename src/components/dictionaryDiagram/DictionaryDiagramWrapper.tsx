@@ -1,8 +1,16 @@
 'use client';
 
-import { useCallback, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
-import { useGetDiagram, useGetOntologyDetail } from '@/api/generated';
+import {
+  useGetDiagram,
+  useGetOntologyDetail,
+  useRenameDiagram,
+} from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 
 import { DiagramBuilder } from './components/DiagramBuilder';
 import { DiagramConceptPicker } from './components/DiagramConceptPickerSidebox/DiagramConceptPicker';
@@ -14,9 +22,18 @@ import { withHistory } from './hooks/withHistory';
 import { getConceptId } from './model/concept';
 import { diagramReducer, initialDiagramState } from './model/diagram';
 
-export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
-  const diagram = useGetDiagram(encodeURIComponent(slug));
-  const ontology = useGetOntologyDetail(encodeURIComponent(slug));
+export const DictionaryDiagramWrapper = ({
+  slug,
+  id,
+}: {
+  slug: string;
+  id: number;
+}) => {
+  const t = useTranslations('DictionaryDiagram');
+  const encodedSlug = encodeURIComponent(slug);
+  const diagram = useGetDiagram(encodedSlug, id);
+  const ontology = useGetOntologyDetail(encodedSlug);
+  const { invalidateDiagram } = useQueryInvalidator();
 
   const { ontologyName, concepts } = useDiagramConcepts(ontology.data);
 
@@ -35,6 +52,25 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
   );
 
   const { nodes, edges, removedOverlays } = history.present;
+  const renameDiagram = useRenameDiagram({
+    mutation: {
+      onSuccess: async () => {
+        await invalidateDiagram(slug, id);
+        toast.success(t('RenameSuccess'));
+      },
+      onError: () => toast.error(t('RenameError')),
+    },
+  });
+
+  const handleRenameDiagram = async (name: string) => {
+    await renameDiagram.mutateAsync({
+      ontologySlug: encodedSlug,
+      diagramId: id,
+      data: {
+        name,
+      },
+    });
+  };
 
   const activeConceptIds = useActiveConceptIds(nodes, edges);
   const diagramParentByConceptId = useMemo(() => {
@@ -99,19 +135,96 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
     requestId: number;
   } | null>(null);
   const clearFocusRequest = useCallback(() => setFocusRequest(null), []);
+
+  useEffect(() => {
+    const focusConceptFromHash = () => {
+      const hash = window.location.hash.slice(1);
+      const isConceptHash = hash.startsWith('concept=');
+      const encodedConceptIri = hash.startsWith('concept=')
+        ? hash.slice('concept='.length)
+        : hash;
+      if (!encodedConceptIri) return;
+
+      if (isConceptHash) {
+        window.scrollTo(0, 0);
+        requestAnimationFrame(() => window.scrollTo(0, 0));
+      }
+
+      try {
+        setFocusRequest({
+          conceptId: decodeURIComponent(encodedConceptIri),
+          requestId: Date.now(),
+        });
+      } catch {
+        setFocusRequest({
+          conceptId: encodedConceptIri,
+          requestId: Date.now(),
+        });
+      }
+    };
+
+    focusConceptFromHash();
+    window.addEventListener('hashchange', focusConceptFromHash);
+    return () => window.removeEventListener('hashchange', focusConceptFromHash);
+  }, []);
+
   const [selectedConceptIds, setSelectedConceptIds] = useState<Set<string>>(
     () => new Set(),
   );
+  const [pendingEditsOpen, setPendingEditsOpen] = useState(false);
+  const pendingConceptIds = useMemo(
+    () =>
+      pendingEditsOpen
+        ? new Set(
+            (diagram.data?.data?.pendingEdits ?? []).flatMap((edit) =>
+              [edit.iri, edit.slug].filter(
+                (id): id is string => id !== undefined,
+              ),
+            ),
+          )
+        : new Set<string>(),
+    [diagram.data?.data?.pendingEdits, pendingEditsOpen],
+  );
+  const pendingEdgeIds = useMemo(
+    () =>
+      pendingEditsOpen
+        ? new Set(
+            (diagram.data?.data?.edges ?? []).flatMap((edge) =>
+              edge.id &&
+              (edge.data?.pending ||
+                edge.data?.hasPendingEdits ||
+                edge.data?.pendingEdit)
+                ? [edge.id]
+                : [],
+            ),
+          )
+        : new Set<string>(),
+    [diagram.data?.data?.edges, pendingEditsOpen],
+  );
+  const shouldGenerateInitialLayout =
+    (diagram.data?.data?.version ?? 0) === 0 &&
+    (diagram.data?.data?.nodes?.length ?? 0) === 0 &&
+    (diagram.data?.data?.edges?.length ?? 0) === 0;
+  const hasUnsavedChanges = history.past.length > 0;
+
+  useUnsavedChangesGuard({
+    enabled: hasUnsavedChanges,
+    message: t('UnsavedChanges'),
+  });
 
   return (
     <main className="p-4 bg-primary-subtlest w-full min-h-[calc(100vh-72px)] flex flex-col gap-4">
       <DictionaryDiagramHeader
         ontologyName={ontologyName}
         ontologySlug={slug}
+        diagramId={id}
+        diagramName={diagram.data?.data?.name}
+        concepts={concepts}
         nodes={nodes}
         edges={edges}
         removedOverlays={removedOverlays}
         diagramVersion={diagram.data?.data?.version}
+        hasUnsavedChanges={hasUnsavedChanges}
         onLayoutSaved={() => dispatch({ type: 'clearOverlays' })}
       />
 
@@ -125,13 +238,16 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
           onActiveConceptClick={(conceptId) =>
             setFocusRequest({ conceptId, requestId: Date.now() })
           }
+          pendingEdits={diagram.data?.data?.pendingEdits ?? []}
+          pendingEditsOpen={pendingEditsOpen}
+          onPendingEditsOpenChange={setPendingEditsOpen}
         />
 
         <DiagramBuilder
           concepts={concepts}
           nodes={nodes}
           edges={edges}
-          autoLayout={!diagram.data?.data?.nodes?.length}
+          autoLayout={shouldGenerateInitialLayout}
           dispatch={dispatch}
           ontology={slug}
           canUndo={history.past.length > 0}
@@ -139,6 +255,11 @@ export const DictionaryDiagramWrapper = ({ slug }: { slug: string }) => {
           focusRequest={focusRequest}
           onFocusRequestHandled={clearFocusRequest}
           onSelectedConceptIdsChange={setSelectedConceptIds}
+          pendingConceptIds={pendingConceptIds}
+          pendingEdgeIds={pendingEdgeIds}
+          diagramName={diagram.data?.data?.name}
+          renamingDiagram={renameDiagram.isPending}
+          onRenameDiagram={handleRenameDiagram}
         />
       </div>
     </main>

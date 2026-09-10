@@ -52,7 +52,7 @@ export function withHistory<S>(
 ): Reducer<HistoryState<S>, HistoryAction> {
   return (state, action) => {
     const { past, present, future, inDrag } = state;
-    if (action.type === 'clearOverlays') {
+    if (action.type === 'clearOverlays' || action.type === 'init') {
       return {
         past: [],
         present: reducer(present, action),

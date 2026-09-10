@@ -7,7 +7,9 @@ import {
   GovTabsItem,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
+import { DiagramPendingEditEntry } from '@/api/generated';
 import {
   type Concept,
   type ConceptKind,
@@ -20,6 +22,7 @@ import { onConceptDragStart } from '../../model/conceptDrag';
 
 import { ConceptPickerSearch } from './ConceptPickerSearch';
 import { FilterCheckbox } from './FilterCheckbox';
+import { PendingEditsPanel } from './PendingEditsPanel';
 
 export const DiagramConceptPicker = ({
   concepts,
@@ -28,6 +31,9 @@ export const DiagramConceptPicker = ({
   selectedConceptIds,
   diagramParentByConceptId,
   onActiveConceptClick,
+  pendingEdits,
+  pendingEditsOpen,
+  onPendingEditsOpenChange,
 }: {
   concepts: Concept[];
   otherOntologyConceptsInDiagram: Concept[];
@@ -35,7 +41,11 @@ export const DiagramConceptPicker = ({
   selectedConceptIds: Set<string>;
   diagramParentByConceptId: Map<string, string>;
   onActiveConceptClick: (_conceptId: string) => void;
+  pendingEdits: DiagramPendingEditEntry[];
+  pendingEditsOpen: boolean;
+  onPendingEditsOpenChange: (_open: boolean) => void;
 }) => {
+  const t = useTranslations('DictionaryDiagram.Picker');
   const [search, setSearch] = useState('');
   const [kinds, setKinds] = useState<Record<ConceptKind, boolean>>({
     trida: false,
@@ -115,87 +125,97 @@ export const DiagramConceptPicker = ({
   }, [concepts, search, kinds, selectedConceptIds, diagramParentByConceptId]);
 
   return (
-    <div className="flex-300 bg-white shadow-subtle rounded-md py-2 px-4">
-      <GovTabs>
-        <GovTabsItem label={`Tento slovník`}>
-          <GovFormGroup>
-            <GovFormInput
-              placeholder="Hledat pojem v tomto slovníku"
-              size="s"
-              value={search}
-              onGovInput={(e) => setSearch(e.detail.value)}
-            >
-              <GovIcon name="search" size="s" slot="icon-start" />
-            </GovFormInput>
-          </GovFormGroup>
-
-          <div className="flex gap-4 pt-2">
-            <FilterCheckbox
-              label="Třídy"
-              checked={kinds.trida}
-              onToggle={() => toggleKind('trida')}
-            />
-            <FilterCheckbox
-              label="Vlastnosti"
-              checked={kinds.vlastnost}
-              onToggle={() => toggleKind('vlastnost')}
-            />
-            <FilterCheckbox
-              label="Vztahy"
-              checked={kinds.vztah}
-              onToggle={() => toggleKind('vztah')}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1">
-            {filteredHierarchy.map(({ concept, children }, index) => (
-              <div
-                className="flex flex-col gap-1.5"
-                key={`${getConceptId(concept)}-${index}`}
+    <aside className="flex-300 flex min-h-0 flex-col gap-2">
+      <PendingEditsPanel
+        edits={pendingEdits}
+        concepts={concepts}
+        open={pendingEditsOpen}
+        onOpenChange={onPendingEditsOpenChange}
+      />
+      <div className="min-h-0 bg-white shadow-subtle rounded-md py-2 px-4">
+        <GovTabs>
+          <GovTabsItem label={t('ThisDictionary')}>
+            <GovFormGroup>
+              <GovFormInput
+                placeholder={t('SearchThis')}
+                size="s"
+                value={search}
+                onGovInput={(e) => setSearch(e.detail.value)}
               >
-                <DiagramPickerConcept
-                  concept={concept}
-                  active={activeConceptIds.has(getConceptId(concept))}
-                  selected={selectedConceptIds.has(getConceptId(concept))}
-                  onActiveClick={onActiveConceptClick}
-                />
-                {children.length > 0 && (
-                  <div className="relative ml-3 flex flex-col gap-1.5 pl-3">
-                    {children.map((child, childIndex) => (
-                      <div
-                        className="relative before:absolute before:-left-3 before:top-1/2 before:w-3 before:border-t before:border-blue-primary/30 after:absolute after:-left-3 after:-top-1.5 after:-bottom-1.5 after:border-l after:border-blue-primary/30 last:after:bottom-1/2"
-                        key={`${getConceptId(child)}-${childIndex}`}
-                      >
-                        <DiagramPickerConcept
-                          concept={child}
-                          active={activeConceptIds.has(getConceptId(child))}
-                          selected={selectedConceptIds.has(getConceptId(child))}
-                          onActiveClick={onActiveConceptClick}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                <GovIcon name="search" size="s" slot="icon-start" />
+              </GovFormInput>
+            </GovFormGroup>
 
-            {filteredHierarchy.length === 0 && (
-              <span className="text-xs text-card-description py-2">
-                Žádný pojem neodpovídá filtru.
-              </span>
-            )}
-          </div>
-        </GovTabsItem>
-        <GovTabsItem label={`Jiné slovníky`}>
-          <ConceptPickerSearch
-            conceptsInDiagram={otherOntologyConceptsInDiagram}
-            activeConceptIds={activeConceptIds}
-            selectedConceptIds={selectedConceptIds}
-            onActiveConceptClick={onActiveConceptClick}
-          />
-        </GovTabsItem>
-      </GovTabs>
-    </div>
+            <div className="flex gap-4 pt-2">
+              <FilterCheckbox
+                label={t('Classes')}
+                checked={kinds.trida}
+                onToggle={() => toggleKind('trida')}
+              />
+              <FilterCheckbox
+                label={t('Properties')}
+                checked={kinds.vlastnost}
+                onToggle={() => toggleKind('vlastnost')}
+              />
+              <FilterCheckbox
+                label={t('Relationships')}
+                checked={kinds.vztah}
+                onToggle={() => toggleKind('vztah')}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1">
+              {filteredHierarchy.map(({ concept, children }, index) => (
+                <div
+                  className="flex flex-col gap-1.5"
+                  key={`${getConceptId(concept)}-${index}`}
+                >
+                  <DiagramPickerConcept
+                    concept={concept}
+                    active={activeConceptIds.has(getConceptId(concept))}
+                    selected={selectedConceptIds.has(getConceptId(concept))}
+                    onActiveClick={onActiveConceptClick}
+                  />
+                  {children.length > 0 && (
+                    <div className="relative ml-3 flex flex-col gap-1.5 pl-3">
+                      {children.map((child, childIndex) => (
+                        <div
+                          className="relative before:absolute before:-left-3 before:top-1/2 before:w-3 before:border-t before:border-blue-primary/30 after:absolute after:-left-3 after:-top-1.5 after:-bottom-1.5 after:border-l after:border-blue-primary/30 last:after:bottom-1/2"
+                          key={`${getConceptId(child)}-${childIndex}`}
+                        >
+                          <DiagramPickerConcept
+                            concept={child}
+                            active={activeConceptIds.has(getConceptId(child))}
+                            selected={selectedConceptIds.has(
+                              getConceptId(child),
+                            )}
+                            onActiveClick={onActiveConceptClick}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {filteredHierarchy.length === 0 && (
+                <span className="text-xs text-card-description py-2">
+                  {t('NoMatches')}
+                </span>
+              )}
+            </div>
+          </GovTabsItem>
+          <GovTabsItem label={t('OtherDictionaries')}>
+            <ConceptPickerSearch
+              conceptsInDiagram={otherOntologyConceptsInDiagram}
+              activeConceptIds={activeConceptIds}
+              selectedConceptIds={selectedConceptIds}
+              onActiveConceptClick={onActiveConceptClick}
+            />
+          </GovTabsItem>
+        </GovTabs>
+      </div>
+    </aside>
   );
 };
 

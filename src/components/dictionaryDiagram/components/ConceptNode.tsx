@@ -12,6 +12,7 @@ import type {
 } from '../model/diagram';
 
 import { useDiagramDispatch } from './diagramDispatchContext';
+import { usePendingChanges } from './pendingChangesContext';
 
 export const ConceptNode = ({
   id,
@@ -19,6 +20,8 @@ export const ConceptNode = ({
   selected,
 }: NodeProps<ConceptFlowNode>) => {
   const { concept, vlastnosti } = data;
+  const pendingConceptIds = usePendingChanges();
+  const conceptHasPendingChange = pendingConceptIds.has(getConceptId(concept));
   const [openDetail, setOpenDetail] = useState(false);
 
   return (
@@ -26,7 +29,11 @@ export const ConceptNode = ({
       id={concept.iri}
       className={clsx(
         'border rounded-md bg-white w-full min-w-50 max-w-50 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] group relative',
-        selected ? 'border-blue-primary' : 'border-border-grey',
+        selected
+          ? 'border-blue-primary'
+          : conceptHasPendingChange
+            ? 'border-status-warning-600 ring-2 ring-status-warning-200'
+            : 'border-border-grey',
       )}
     >
       <ConceptNodeDetail
@@ -80,7 +87,11 @@ export const ConceptNode = ({
             {vlastnosti.map((v, i) => (
               <div
                 key={`${getConceptId(v)}-${i}`}
-                className="flex items-center gap-0.5 relative pb-0.5 font-medium"
+                className={clsx(
+                  'flex items-center gap-0.5 relative pb-0.5 font-medium rounded-sm',
+                  pendingConceptIds.has(getConceptId(v)) &&
+                    'bg-status-warning-100 ring-1 ring-status-warning-200',
+                )}
               >
                 <span className="size-1.5 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
                 <span className="text-xs text-card-description leading-none">

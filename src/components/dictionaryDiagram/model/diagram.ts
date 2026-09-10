@@ -41,6 +41,7 @@ export type ConceptEdgeData = {
   vztahIri?: string;
   bends?: XYPosition[];
   emphasis?: 'connected' | 'dimmed';
+  pendingChange?: boolean;
 };
 
 export type ConceptFlowNode = Node<ConceptNodeData, 'concept'>;
@@ -80,6 +81,7 @@ export type DiagramAction =
     }
   | { type: 'setEdgeVztah'; edgeId: string; vztah: Concept }
   | { type: 'setEdgeBends'; edgeId: string; bends?: XYPosition[] }
+  | { type: 'clearDiagram' }
   | { type: 'clearOverlays' }
   | { type: 'init'; concepts: Concept[]; diagram?: DiagramDto }
   | { type: 'applyLayout'; positions: Record<string, XYPosition> }
@@ -184,6 +186,33 @@ const edgeKindFromDto = (
   }
 };
 
+const conceptIri = (nodeId: string): string =>
+  nodeId.startsWith('iri:') ? nodeId.slice('iri:'.length) : nodeId;
+
+const edgeKindToDto = (
+  kind?: RelationshipKind,
+): (typeof DiagramEdgeDataEdgeKind)[keyof typeof DiagramEdgeDataEdgeKind] => {
+  switch (kind) {
+    case 'hierarchie':
+      return DiagramEdgeDataEdgeKind.SUBCLASS_OF;
+    case 'ekvivalence':
+      return DiagramEdgeDataEdgeKind.EXACT_MATCH;
+    default:
+      return DiagramEdgeDataEdgeKind.VZTAH;
+  }
+};
+
+export const diagramEdgeId = (
+  kind: (typeof DiagramEdgeDataEdgeKind)[keyof typeof DiagramEdgeDataEdgeKind],
+  source: string,
+  target?: string,
+): string => {
+  if (kind === DiagramEdgeDataEdgeKind.VZTAH) return conceptIri(source);
+  if (!target) throw new Error(`diagramEdgeId: ${kind} requires a target`);
+
+  return ['edge', kind, conceptIri(source), conceptIri(target)].join('|');
+};
+
 export const buildDiagramLayoutDto = (
   nodes: ConceptFlowNode[],
   edges: ConceptFlowEdge[],
@@ -205,10 +234,27 @@ export const buildDiagramLayoutDto = (
     const target = persistedIdByNodeId.get(edge.target.replace('iri:', ''));
     if (!source || !target) return [];
 
+    const kind = edgeKindToDto(edge.data?.kind);
+    // Hierarchy edges are parent -> child in the editor, but the backend keys
+    // SUBCLASS_OF links as child -> parent.
+    const persistedSource =
+      kind === DiagramEdgeDataEdgeKind.SUBCLASS_OF ? target : source;
+    const persistedTarget =
+      kind === DiagramEdgeDataEdgeKind.SUBCLASS_OF ? source : target;
+    const id = diagramEdgeId(
+      kind,
+      kind === DiagramEdgeDataEdgeKind.VZTAH
+        ? (edge.data?.vztahIri ?? edge.id)
+        : persistedSource,
+      persistedTarget,
+    );
+
     return [
       {
-        id: edge.data?.vztahIri ?? edge.id,
-        segments: edge.data?.bends,
+        id,
+        source: persistedSource,
+        target: persistedTarget,
+        segments: edge.data?.bends ?? [],
       },
     ];
   });
@@ -257,8 +303,25 @@ export const buildPersistedDiagram = (
       if (!savedNode.id || !savedNode.position) return [];
 
       const nodeId = savedNode.id.replace(/^iri:/, '');
-      const concept = conceptsById.get(nodeId);
-      if (!concept || getConceptKind(concept) !== 'trida') return [];
+      const savedConceptIri = savedNode.data?.iri ?? nodeId;
+      const concept =
+        conceptsById.get(nodeId) ??
+        conceptsById.get(savedConceptIri) ??
+        (savedNode.data?.slug
+          ? conceptsById.get(savedNode.data.slug)
+          : undefined) ??
+        ({
+          iri: savedConceptIri,
+          slug: savedNode.data?.slug,
+          název: savedNode.data?.label,
+          metadata: {
+            iri: savedConceptIri,
+            slug: savedNode.data?.slug,
+            label: savedNode.data?.label?.cs,
+            conceptType: savedNode.data?.conceptType ?? 'TRIDA',
+          },
+        } as Concept);
+      if (getConceptKind(concept) !== 'trida') return [];
 
       const savedProperties = savedNode.data?.properties;
       const vlastnosti = savedProperties
@@ -584,6 +647,11 @@ export const diagramReducer = (
             : e,
         ),
       };
+
+    case 'clearDiagram':
+      return state.nodes.length === 0 && state.edges.length === 0
+        ? state
+        : { ...state, nodes: [], edges: [] };
 
     case 'clearOverlays':
       return { ...state, removedOverlays: [] };

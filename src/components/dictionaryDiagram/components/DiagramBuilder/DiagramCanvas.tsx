@@ -13,12 +13,16 @@ import {
   ReactFlow,
   useReactFlow,
 } from '@xyflow/react';
+import { toPng } from 'html-to-image';
+import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 import { AddNewConceptDialog } from '@/components/dictionaryDiagram/components/AddNewConceptDialog';
 import { ConceptNode } from '@/components/dictionaryDiagram/components/ConceptNode';
 import { DiagramDispatchContext } from '@/components/dictionaryDiagram/components/diagramDispatchContext';
 import { LabelDisplayContext } from '@/components/dictionaryDiagram/components/labelDisplayContext';
 import { LabeledEdge } from '@/components/dictionaryDiagram/components/LabeledEdge';
+import { PendingChangesContext } from '@/components/dictionaryDiagram/components/pendingChangesContext';
 import { useConceptDrop } from '@/components/dictionaryDiagram/hooks/useConceptDrop';
 import { getConceptId } from '@/components/dictionaryDiagram/model/concept';
 import {
@@ -26,6 +30,7 @@ import {
   type ConceptFlowNode,
 } from '@/components/dictionaryDiagram/model/diagram';
 
+import { DiagramExportDialog } from './components/DiagramExportDialog';
 import { DiagramToolbar } from './components/DiagramToolbar';
 import { DiagramTopBar } from './components/DiagramTopBar';
 import {
@@ -41,24 +46,67 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const nodeTypes = { concept: ConceptNode };
 const edgeTypes = { default: LabeledEdge };
+const EXPORT_PADDING = 80;
+const MAX_EXPORT_SIDE = 16384;
+const MAX_EXPORT_PIXELS = 64_000_000;
 
-const getNodeLabel = (node?: ConceptFlowNode) => {
+const getExportPixelRatio = (
+  width: number,
+  height: number,
+  preferredRatio: number,
+) =>
+  Math.min(
+    preferredRatio,
+    MAX_EXPORT_SIDE / width,
+    MAX_EXPORT_SIDE / height,
+    Math.sqrt(MAX_EXPORT_PIXELS / (width * height)),
+  );
+
+const materializeSvgPaint = (root: HTMLElement) => {
+  const paintedElements = root.querySelectorAll<SVGElement>(
+    '.react-flow__edge-path, .react-flow__marker path, .react-flow__marker polyline',
+  );
+
+  const originalStyles = Array.from(paintedElements, (element) => ({
+    element,
+    fill: element.style.fill,
+    stroke: element.style.stroke,
+  }));
+
+  for (const element of paintedElements) {
+    const styles = getComputedStyle(element);
+    element.style.fill = styles.fill;
+    element.style.stroke = styles.stroke;
+  }
+
+  return () => {
+    for (const { element, fill, stroke } of originalStyles) {
+      element.style.fill = fill;
+      element.style.stroke = stroke;
+    }
+  };
+};
+
+const getNodeLabel = (unknownLabel: string, node?: ConceptFlowNode) => {
   const concept = node?.data.concept;
-  if (!concept) return 'Neznámý pojem';
+  if (!concept) return unknownLabel;
   const metadata = concept.metadata;
   return (
     concept.název?.cs ??
     (metadata && 'label' in metadata ? metadata.label : undefined) ??
     concept.iri ??
-    'Neznámý pojem'
+    unknownLabel
   );
 };
 
-const getRelationLabel = (edge: ConceptFlowEdge) => {
+const getRelationLabel = (
+  edge: ConceptFlowEdge,
+  labels: { hierarchy: string; equivalence: string; relationship: string },
+) => {
   if (edge.data?.label) return edge.data.label;
-  if (edge.data?.kind === 'hierarchie') return 'je nadřazený pojem';
-  if (edge.data?.kind === 'ekvivalence') return 'je ekvivalentní';
-  return 'má vztah';
+  if (edge.data?.kind === 'hierarchie') return labels.hierarchy;
+  if (edge.data?.kind === 'ekvivalence') return labels.equivalence;
+  return labels.relationship;
 };
 
 export const DiagramCanvas = ({
@@ -73,13 +121,21 @@ export const DiagramCanvas = ({
   focusRequest,
   onFocusRequestHandled,
   onSelectedConceptIdsChange,
+  pendingConceptIds,
+  pendingEdgeIds,
+  diagramName,
+  renamingDiagram,
+  onRenameDiagram,
 }: DiagramBuilderProps) => {
+  const t = useTranslations('DictionaryDiagram.Canvas');
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const { getNode, getZoom, setCenter } = useReactFlow<
+  const { getNode, getNodesBounds, getZoom, setCenter } = useReactFlow<
     ConceptFlowNode,
     ConceptFlowEdge
   >();
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [openExportDialog, setOpenExportDialog] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [showFullLabels, setShowFullLabels] = useState(false);
   const [focusedNodeIds, setFocusedNodeIds] = useState<Set<string>>(
     () => new Set(),
@@ -121,6 +177,8 @@ export const DiagramCanvas = ({
     dispatch,
     pending,
     focusedNodeIds,
+    pendingConceptIds,
+    pendingEdgeIds,
   });
 
   const visibleNodeIds = useMemo(() => {
@@ -143,17 +201,24 @@ export const DiagramCanvas = ({
       .map((edge) => ({
         id: edge.id,
         sourceId: edge.source,
-        source: getNodeLabel(nodeById.get(edge.source)),
-        relation: getRelationLabel(edge),
+        source: getNodeLabel(t('UnknownConcept'), nodeById.get(edge.source)),
+        relation: getRelationLabel(edge, {
+          hierarchy: t('Hierarchy'),
+          equivalence: t('Equivalence'),
+          relationship: t('Relationship'),
+        }),
         targetId: edge.target,
-        target: getNodeLabel(nodeById.get(edge.target)),
+        target: getNodeLabel(t('UnknownConcept'), nodeById.get(edge.target)),
       }));
-  }, [nodes, edges, focusedNodeIds]);
+  }, [nodes, edges, focusedNodeIds, t]);
 
   const highlightedRelationsTitle =
     focusedNodeIds.size === 1
-      ? getNodeLabel(nodes.find((node) => focusedNodeIds.has(node.id)))
-      : `${focusedNodeIds.size} zvýrazněné pojmy`;
+      ? getNodeLabel(
+          t('UnknownConcept'),
+          nodes.find((node) => focusedNodeIds.has(node.id)),
+        )
+      : t('HighlightedConcepts', { count: focusedNodeIds.size });
 
   const centerOnNode = useCallback(
     (nodeId: string) => {
@@ -314,72 +379,166 @@ export const DiagramCanvas = ({
     [dispatch],
   );
 
+  const exportPng = useCallback(
+    async (scope: 'diagram' | 'viewport') => {
+      const flowElement =
+        wrapperRef.current?.querySelector<HTMLElement>('.react-flow');
+      const rendererElement = flowElement?.querySelector<HTMLElement>(
+        '.react-flow__renderer',
+      );
+      const viewportElement = flowElement?.querySelector<HTMLElement>(
+        '.react-flow__viewport',
+      );
+
+      if (!flowElement || !rendererElement || !viewportElement) {
+        toast.error(t('ExportError'));
+        return;
+      }
+
+      setIsExporting(true);
+      const restoreSvgPaint = materializeSvgPaint(flowElement);
+      let restoreViewportTransform = () => {};
+
+      try {
+        const flowBounds = flowElement.getBoundingClientRect();
+        let dataUrl: string;
+
+        if (scope === 'diagram' && nodes.length > 0) {
+          const bounds = getNodesBounds(nodes);
+          const width = Math.ceil(bounds.width + EXPORT_PADDING * 2);
+          const height = Math.ceil(bounds.height + EXPORT_PADDING * 2);
+          const transformedLayers =
+            rendererElement.querySelectorAll<HTMLElement>(
+              '.react-flow__viewport, .react-flow__edgelabel-renderer',
+            );
+          const originalTransforms = Array.from(
+            transformedLayers,
+            (element) => ({ element, transform: element.style.transform }),
+          );
+          const transform = `translate(${EXPORT_PADDING - bounds.x}px, ${EXPORT_PADDING - bounds.y}px) scale(1)`;
+
+          for (const element of transformedLayers) {
+            element.style.transform = transform;
+          }
+          restoreViewportTransform = () => {
+            for (const { element, transform } of originalTransforms) {
+              element.style.transform = transform;
+            }
+          };
+
+          dataUrl = await toPng(rendererElement, {
+            backgroundColor: '#ffffff',
+            width,
+            height,
+            pixelRatio: getExportPixelRatio(width, height, 2),
+          });
+        } else {
+          dataUrl = await toPng(rendererElement, {
+            backgroundColor: '#ffffff',
+            width: flowBounds.width,
+            height: flowBounds.height,
+            pixelRatio: getExportPixelRatio(
+              flowBounds.width,
+              flowBounds.height,
+              3,
+            ),
+          });
+        }
+
+        const safeName = ontology
+          .split(/[\\/]/)
+          .pop()
+          ?.replace(/[^a-zA-Z0-9_-]+/g, '-')
+          .replace(/^-|-$/g, '');
+        const link = document.createElement('a');
+        link.download = `${safeName || 'diagram'}-${scope === 'diagram' ? 'cely' : 'vyrez'}.png`;
+        link.href = dataUrl;
+        link.click();
+        setOpenExportDialog(false);
+      } catch {
+        toast.error(t('ExportError'));
+      } finally {
+        restoreViewportTransform();
+        restoreSvgPaint();
+        setIsExporting(false);
+      }
+    },
+    [getNodesBounds, nodes, ontology, t],
+  );
+
   return (
     <div
       className="flex-1084 bg-white shadow-subtle rounded-md relative"
       ref={wrapperRef}
     >
       <DiagramDispatchContext.Provider value={dispatch}>
-        <LabelDisplayContext.Provider value={showFullLabels}>
-          <ReactFlow<ConceptFlowNode, ConceptFlowEdge>
-            nodes={displayNodes}
-            edges={displayEdges}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onEdgeClick={onEdgeClick}
-            onNodeClick={(_, node) => toggleFocusedNode(node.id)}
-            onPaneClick={() => setFocusedNodeIds(new Set())}
-            onConnect={onConnect}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            fitView
-            colorMode="system"
-          >
-            <DiagramToolbar
-              canUndo={canUndo}
-              canRedo={canRedo}
-              onUndo={() => dispatch({ type: 'undo' })}
-              onRedo={() => dispatch({ type: 'redo' })}
-              onLayout={runLayout}
-              onAddConcept={() => setOpenAddDialog(true)}
-            />
+        <PendingChangesContext.Provider value={pendingConceptIds}>
+          <LabelDisplayContext.Provider value={showFullLabels}>
+            <ReactFlow<ConceptFlowNode, ConceptFlowEdge>
+              nodes={displayNodes}
+              edges={displayEdges}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onEdgeClick={onEdgeClick}
+              onNodeClick={(_, node) => toggleFocusedNode(node.id)}
+              onPaneClick={() => setFocusedNodeIds(new Set())}
+              onConnect={onConnect}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              fitView
+              colorMode="system"
+            >
+              <DiagramToolbar
+                canUndo={canUndo}
+                canRedo={canRedo}
+                onUndo={() => dispatch({ type: 'undo' })}
+                onRedo={() => dispatch({ type: 'redo' })}
+                onLayout={runLayout}
+                onAddConcept={() => setOpenAddDialog(true)}
+                canClear={nodes.length > 0 || edges.length > 0}
+                onClear={() => dispatch({ type: 'clearDiagram' })}
+              />
 
-            <HighlightedRelationsPanel
-              title={highlightedRelationsTitle}
-              relations={highlightedRelations}
-              onRelationClick={centerOnUnfocusedRelationNode}
-            />
+              <HighlightedRelationsPanel
+                title={highlightedRelationsTitle}
+                relations={highlightedRelations}
+                onRelationClick={centerOnUnfocusedRelationNode}
+              />
 
-            <DiagramTopBar onExport={() => {}} onRename={() => {}} />
+              <DiagramTopBar
+                onExport={() => setOpenExportDialog(true)}
+                diagramName={diagramName}
+                renaming={renamingDiagram}
+                onRename={onRenameDiagram}
+              />
 
-            <Controls className="text-blue-hover" showInteractive={true}>
-              <ControlButton
-                onClick={() => setShowFullLabels((v) => !v)}
-                title={
-                  showFullLabels
-                    ? 'Zkrátit popisky vztahů'
-                    : 'Zobrazit celé popisky vztahů'
-                }
-                aria-pressed={showFullLabels}
-              >
-                <GovIcon
-                  type="components"
-                  name={
-                    showFullLabels
-                      ? 'arrows-collapse-vertical'
-                      : 'arrows-expand-vertical'
+              <Controls className="text-blue-hover" showInteractive={true}>
+                <ControlButton
+                  onClick={() => setShowFullLabels((v) => !v)}
+                  title={
+                    showFullLabels ? t('ShortenLabels') : t('ShowFullLabels')
                   }
-                  color="primary"
-                  size="xs"
-                />
-              </ControlButton>
-            </Controls>
-            <MiniMap />
-            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-          </ReactFlow>
-        </LabelDisplayContext.Provider>
+                  aria-pressed={showFullLabels}
+                >
+                  <GovIcon
+                    type="components"
+                    name={
+                      showFullLabels
+                        ? 'arrows-collapse-vertical'
+                        : 'arrows-expand-vertical'
+                    }
+                    color="primary"
+                    size="xs"
+                  />
+                </ControlButton>
+              </Controls>
+              <MiniMap />
+              <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+            </ReactFlow>
+          </LabelDisplayContext.Provider>
+        </PendingChangesContext.Provider>
       </DiagramDispatchContext.Provider>
 
       <RelationshipChooserOverlay
@@ -393,6 +552,13 @@ export const DiagramCanvas = ({
         onClose={() => setOpenAddDialog(false)}
         open={openAddDialog}
         ontology={ontology}
+      />
+
+      <DiagramExportDialog
+        open={openExportDialog}
+        isExporting={isExporting}
+        onClose={() => setOpenExportDialog(false)}
+        onExport={(scope) => void exportPng(scope)}
       />
     </div>
   );
