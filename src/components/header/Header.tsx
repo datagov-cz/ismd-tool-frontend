@@ -38,7 +38,8 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const showHeaderContent = isAuthenticated || !isHomepage;
   const isGated = isGatedProp ?? isGatedPath(pathname);
 
-  const handleLogin = () => signIn('keycloak', { callbackUrl }, { prompt: 'login' });
+  const handleLogin = () =>
+    signIn('keycloak', { callbackUrl }, { prompt: 'login' });
 
   if (isGated) {
     return <GatedHeader />;

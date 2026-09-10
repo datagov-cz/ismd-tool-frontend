@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
@@ -27,8 +28,10 @@ const TruncatedText = ({ text }: { text: string }) => {
   }, [text]);
 
   return (
-    <p className={`text-sm text-card-description ${!expanded ? 'flex' : ''}`}>
-      <span ref={textRef} className={!expanded ? 'line-clamp-1' : ''}>
+    <p
+      className={clsx('text-sm text-card-description', !expanded ? 'flex' : '')}
+    >
+      <span ref={textRef} className={clsx(!expanded ? 'line-clamp-1' : '')}>
         {text}
       </span>
       {(isTruncated || expanded) && (

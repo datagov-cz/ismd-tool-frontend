@@ -43,6 +43,20 @@ export default function Providers({
         })
         .then(() => {})
         .catch(() => {});
+    } else {
+      // In dev, tear down any SW + caches left by a prior prod-like run:
+      // its cache-first /_next/static/ handler serves stale chunks and forces
+      // a hard refresh to see code changes.
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) =>
+          registrations.forEach((registration) => registration.unregister()),
+        )
+        .catch(() => {});
+      caches
+        .keys()
+        .then((keys) => keys.forEach((key) => caches.delete(key)))
+        .catch(() => {});
     }
   }, [normalizedBasePath]);
 
