@@ -82,9 +82,7 @@ export const ControlPanelConcept = ({
                 slot="icon-start"
                 type="components"
               />
-              <span className="hidden desktop:inline">
-                {tConcept('ConceptComments')}
-              </span>{' '}
+              {tConcept('ConceptComments')}{' '}
               <span className="font-normal">[{commentsCount}]</span>
             </GovButton>
           )}

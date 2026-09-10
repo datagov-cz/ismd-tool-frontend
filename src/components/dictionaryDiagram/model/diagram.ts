@@ -266,7 +266,7 @@ export const buildDiagramLayoutDto = (
       parentId: node.parentId
         ? persistedIdByNodeId.get(node.parentId)
         : undefined,
-      properties: node.data.vlastnosti.map(getConceptId),
+      visibleProperties: node.data.vlastnosti.map(getConceptId),
     })),
     edges: layoutEdges,
     overlays: removedOverlays,

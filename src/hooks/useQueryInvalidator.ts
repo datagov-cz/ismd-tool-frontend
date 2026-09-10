@@ -53,5 +53,10 @@ export function useQueryInvalidator() {
         queryKey: getGetOntologyListQueryKey(),
       });
     },
+    invalidateOntologyDiagramsList: async (slug: string) => {
+      return await queryClient.invalidateQueries({
+        queryKey: getListForOntologyQueryKey(slug),
+      });
+    },
   };
 }

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import {
   DiagramLayoutOverlay,
   MaterializeOnConflict,
+  useDeleteDiagram,
   useMaterialize,
   useSaveLayout,
 } from '@/api/generated';
@@ -70,6 +71,17 @@ export const DictionaryDiagramHeader = ({
       onError: () => toast.error(td('SaveError')),
     },
   });
+
+  const deleteDiagram = useDeleteDiagram({
+    mutation: {
+      onSuccess: async () => {
+        await invalidateOntology(ontologySlug);
+        toast.success(td('Deleted'));
+        router.push(`/dictionary/${ontologySlug}`);
+      },
+      onError: () => toast.error(td('DeleteError')),
+    },
+  });
   const materialize = useMaterialize({
     mutation: {
       onSuccess: async (response) => {
@@ -110,6 +122,13 @@ export const DictionaryDiagramHeader = ({
           removedOverlays,
         ),
       },
+    });
+  };
+
+  const handleDeleteDiagram = () => {
+    deleteDiagram.mutate({
+      ontologySlug: encodeURIComponent(ontologySlug),
+      diagramId,
     });
   };
 
@@ -165,7 +184,7 @@ export const DictionaryDiagramHeader = ({
             </span>
 
             <Link
-              href={`/dictionary/${ontologyName?.split(' ').join('-')}`}
+              href={`/dictionary/${ontologySlug}`}
               className="cursor-pointer"
             >
               <GovTag
@@ -193,6 +212,11 @@ export const DictionaryDiagramHeader = ({
             type="outlined"
             color="neutral"
             size="s"
+            disabled={
+              saveLayout.isPending ||
+              materialize.isPending ||
+              deleteDiagram.isPending
+            }
             href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/dictionary/${encodeURIComponent(ontologySlug)}`}
           >
             {td('Close')}
@@ -202,7 +226,11 @@ export const DictionaryDiagramHeader = ({
             type="solid"
             color="secondary"
             size="s"
-            disabled={saveLayout.isPending || !hasUnsavedChanges}
+            disabled={
+              saveLayout.isPending ||
+              !hasUnsavedChanges ||
+              deleteDiagram.isPending
+            }
             onGovClick={handleSaveLayout}
           >
             <GovIcon name="bookmark-plus" size="s" slot="icon-start" />
@@ -212,11 +240,29 @@ export const DictionaryDiagramHeader = ({
             type="solid"
             color="primary"
             size="s"
-            disabled={saveLayout.isPending || materialize.isPending}
+            disabled={
+              saveLayout.isPending ||
+              materialize.isPending ||
+              deleteDiagram.isPending
+            }
             onGovClick={handleMaterialize}
           >
             <GovIcon name="floppy" size="s" slot="icon-start" />
             {materialize.isPending ? td('Materializing') : td('Materialize')}
+          </GovButton>
+          <GovButton
+            type="solid"
+            color="error"
+            size="s"
+            disabled={
+              saveLayout.isPending ||
+              materialize.isPending ||
+              deleteDiagram.isPending
+            }
+            onGovClick={handleDeleteDiagram}
+          >
+            <GovIcon name="trash" size="s" slot="icon-start" />
+            {deleteDiagram.isPending ? td('Deleting') : td('Delete')}
           </GovButton>
         </div>
       </div>

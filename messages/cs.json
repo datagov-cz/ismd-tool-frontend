@@ -715,7 +715,11 @@
       "Saving": "Ukládání…",
       "SaveDraft": "Uložit návrh",
       "Materializing": "Propisuji…",
-      "Materialize": "Propsat do slovníku"
+      "Materialize": "Propsat do slovníku",
+      "Delete": "Odstranit diagram",
+      "Deleting": "Mázání diagramu",
+      "Deleted": "Diagram úspěšně odstraněn",
+      "DeleteError": "Diagram se nepodařilo odstranit"
     },
     "Toolbar": {
       "Clear": "Vyčistit diagram",

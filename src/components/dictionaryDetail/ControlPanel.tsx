@@ -10,9 +10,11 @@ import { toast } from 'react-toastify';
 import {
   getListForOntologyQueryKey,
   useCreateDiagram,
+  useDeleteDiagram,
   useListForOntology,
   UserModel,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
@@ -43,7 +45,9 @@ export const ControlPanel = ({
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   const tEdit = useTranslations('DictionaryDetail.EditOntology');
+  const td = useTranslations('DictionaryDiagram.Header');
   const { user: currentUser, isAdmin } = useCurrentUser();
+  const { invalidateOntologyDiagramsList } = useQueryInvalidator();
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
@@ -56,6 +60,25 @@ export const ControlPanel = ({
       console.error('Failed to copy link:', error);
       toast(t('LinkCopyFailed'), { type: 'error' });
     }
+  };
+
+  const deleteDiagram = useDeleteDiagram({
+    mutation: {
+      onSuccess: async () => {
+        await invalidateOntologyDiagramsList(slug);
+        router;
+        toast.success(td('Deleted'));
+        router.push(`/dictionary/${slug}`);
+      },
+      onError: () => toast.error(td('SaveError')),
+    },
+  });
+
+  const handleDeleteDiagram = (diagramId: number) => {
+    deleteDiagram.mutate({
+      ontologySlug: encodeURIComponent(slug),
+      diagramId,
+    });
   };
 
   const isOwner = user?.userId === currentUser?.userId;
@@ -176,15 +199,20 @@ export const ControlPanel = ({
                     : 'Přidat nový diagram'}
                 </GovButton>
               </li>
-              {diagramItems.map((diagram) =>
-                diagram.diagramId === undefined ? null : (
-                  <li key={diagram.diagramId}>
+              {diagramItems.map((diagram) => {
+                const { diagramId } = diagram;
+
+                if (diagramId === undefined) return null;
+
+                return (
+                  <li key={diagramId} className="flex items-center">
                     <GovButton
+                      className="min-w-0 flex-1"
                       color="neutral"
                       type="base"
                       size="s"
                       expanded
-                      href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/diagram/${diagram.diagramId}`}
+                      href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/diagram/${diagramId}`}
                     >
                       <GovIcon
                         name="diagram-3"
@@ -194,9 +222,23 @@ export const ControlPanel = ({
                       />
                       {diagram.name?.trim() || '-- bez názvu --'}
                     </GovButton>
+
+                    <GovButton
+                      color="error"
+                      type="base"
+                      size="s"
+                      onGovClick={() => handleDeleteDiagram(diagramId)}
+                    >
+                      <GovIcon
+                        name="trash"
+                        size="l"
+                        slot="icon-start"
+                        type="components"
+                      />
+                    </GovButton>
                   </li>
-                ),
-              )}
+                );
+              })}
             </ul>
           </GovDropdown>
         )}
