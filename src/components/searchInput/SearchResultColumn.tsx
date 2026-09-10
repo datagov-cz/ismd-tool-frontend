@@ -43,15 +43,15 @@ const TYPE_CONFIG = {
     hrefPrefix: '/concept',
   },
   [SearchType.DIAGRAM]: {
-    titleKey: 'Ontologies' as const,
-    emptyKey: 'NoOntologies' as const,
+    titleKey: 'Diagrams' as const,
+    emptyKey: 'NoDiagrams' as const,
     hrefPrefix: '/dictionary',
   },
 } satisfies Record<
   SearchType,
   {
-    titleKey: 'Ontologies' | 'Concepts';
-    emptyKey: 'NoOntologies' | 'NoConcepts';
+    titleKey: 'Ontologies' | 'Concepts' | 'Diagrams';
+    emptyKey: 'NoOntologies' | 'NoConcepts' | 'NoDiagrams';
     hrefPrefix: string;
   }
 >;
@@ -69,6 +69,9 @@ export const SearchResultColumn = ({
   const hasItems = items.length > 0;
 
   const getItemHref = (item: SearchResultDto) => {
+    if (type === SearchType.DIAGRAM) {
+      return `/dictionary/${item.slug}/diagram/${item.diagramId}`;
+    }
     if (item.source === 'ISMD') return `${config.hrefPrefix}/${item.slug}`;
     if (item.source === 'NKD') {
       return `${config.hrefPrefix}/nkd?iri=${encodeURIComponent(item.iri || '')}`;

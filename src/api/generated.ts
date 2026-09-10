@@ -348,10 +348,10 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  id?: number;
-  timestamp?: string;
   results?: ValidationResult[];
   ontologyIri?: string;
+  id?: number;
+  timestamp?: string;
 }
 
 export type ValidationResultSeverity =
@@ -372,10 +372,10 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  error?: boolean;
   warning?: boolean;
   info?: boolean;
   focusNodeName?: string;
+  error?: boolean;
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
@@ -1172,11 +1172,14 @@ export interface ApiResponseDtoDiagramSummaryDto {
   errorCode?: string;
 }
 
+export type DiagramSummaryDtoOntologyLabel = { [key: string]: string };
+
 export interface DiagramSummaryDto {
   diagramId?: number;
   name?: string;
   ontologySlug?: string;
   graphName?: string;
+  ontologyLabel?: DiagramSummaryDtoOntologyLabel;
   nodeCount?: number;
   updatedAt?: string;
 }
@@ -1333,6 +1336,8 @@ export const SearchResultDtoConceptType = {
   KONCEPT: 'KONCEPT',
 } as const;
 
+export type SearchResultDtoOntologyLabel = { [key: string]: string };
+
 export type SearchResultDtoMatchedBy =
   (typeof SearchResultDtoMatchedBy)[keyof typeof SearchResultDtoMatchedBy];
 
@@ -1356,6 +1361,7 @@ export interface SearchResultDto {
   source?: SearchResultDtoSource;
   conceptType?: SearchResultDtoConceptType;
   ontologyIri?: string;
+  ontologyLabel?: SearchResultDtoOntologyLabel;
   isPublished?: boolean;
   matchedBy?: SearchResultDtoMatchedBy;
   lastModified?: string;
@@ -2073,6 +2079,13 @@ export type GetFragmentsParams = {
 export type GetLawContentParams = {
   law: string;
   versionIri?: string;
+};
+
+export type GetAllDiagramsParams = {
+  /**
+   * Vrátí jen diagramy slovníků tohoto uživatele. Bez parametru se vrací všechny.
+   */
+  userId?: string;
 };
 
 export type GetConceptListParams = {
@@ -7651,39 +7664,43 @@ export function useGetConceptUsage<
 }
 
 /**
- * Vrací odlehčený seznam všech diagramů (identita + počet uzlů), např. pro výběr diagramu. Vyžaduje oprávnění přihlášeného uživatele.
+ * Vrací odlehčený seznam všech diagramů (identita + počet uzlů), např. pro výběr diagramu. Volitelný parametr `userId` omezí výsledek na diagramy slovníků daného uživatele; bez něj se vrací všechny. Vyžaduje oprávnění přihlášeného uživatele.
  * @summary Seznam diagramů
  */
 export const getAllDiagrams = (
+  params?: GetAllDiagramsParams,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
   return axiosInstance<ApiResponseDtoListDiagramSummaryDto>(
-    { url: `/api/diagram/all`, method: 'GET', signal },
+    { url: `/api/diagram/all`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getGetAllDiagramsQueryKey = () => {
-  return [`/api/diagram/all`] as const;
+export const getGetAllDiagramsQueryKey = (params?: GetAllDiagramsParams) => {
+  return [`/api/diagram/all`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetAllDiagramsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
   TError = unknown,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof axiosInstance>;
-}) => {
+>(
+  params?: GetAllDiagramsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetAllDiagramsQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getGetAllDiagramsQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllDiagrams>>> = ({
     signal,
-  }) => getAllDiagrams(requestOptions, signal);
+  }) => getAllDiagrams(params, requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getAllDiagrams>>,
@@ -7701,6 +7718,7 @@ export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
   TError = unknown,
 >(
+  params: undefined | GetAllDiagramsParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
@@ -7723,6 +7741,7 @@ export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
   TError = unknown,
 >(
+  params?: GetAllDiagramsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
@@ -7745,6 +7764,7 @@ export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
   TError = unknown,
 >(
+  params?: GetAllDiagramsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
@@ -7763,6 +7783,7 @@ export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
   TError = unknown,
 >(
+  params?: GetAllDiagramsParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAllDiagrams>>, TError, TData>
@@ -7773,7 +7794,7 @@ export function useGetAllDiagrams<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getGetAllDiagramsQueryOptions(options);
+  const queryOptions = getGetAllDiagramsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

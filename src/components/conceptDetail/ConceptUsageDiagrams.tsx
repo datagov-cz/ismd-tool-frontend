@@ -21,8 +21,6 @@ export const ConceptUsageDiagrams = ({
   const placements = diagrams.data?.data?.placements;
   const conceptIri = diagrams.data?.data?.conceptIri;
 
-  console.log(diagrams.data, 'test');
-
   if (placements && placements?.length > 0)
     return (
       <div className="bg-white px-4 py-3 rounded-md shadow-subtle mt-6">

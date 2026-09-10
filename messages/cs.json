@@ -100,6 +100,7 @@
     "LastVisited": {
       "Title": "Naposledy navštívené"
     },
+    "DiagramSectionTitle": "Poslední upravené diagramy",
     "DraftDictionariesSection": {
       "Title": "Rozpracované slovníky",
       "ShowAll": "Zobrazit všechny rozpracované slovníky"
@@ -664,9 +665,11 @@
     "More": "Další",
     "Ontologies": "Slovníky",
     "Concepts": "Pojmy",
+    "Diagrams": "Diagramy",
     "DetailSearch": "Detailní vyhledávání",
     "NoOntologies": "Žádné slovníky nenalezeny",
     "NoConcepts": "Žádné pojmy nenalezeny",
+    "NoDiagrams": "Žádné diagramy nenalezeny",
     "SearchesFor": "Výsledky hledání pro",
     "FilterLabel": "Filtrování:",
     "Unpublished": "Rozpracované",
