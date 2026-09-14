@@ -125,10 +125,10 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
-  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
+  ontologyIri?: string;
+  results?: ValidationResult[];
 }
 
 export type ValidationResultSeverity =
@@ -149,10 +149,10 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
+  error?: boolean;
   warning?: boolean;
   info?: boolean;
-  error?: boolean;
+  focusNodeName?: string;
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
@@ -1213,6 +1213,28 @@ export interface LawDto {
   sbirka?: string;
 }
 
+export interface ApiResponseDtoLawSearchResultDto {
+  data?: LawSearchResultDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface LawSearchGroupDto {
+  cislo?: string;
+  count?: number;
+  exactNumberMatch?: boolean;
+  laws?: LawDto[];
+}
+
+export interface LawSearchResultDto {
+  query?: string;
+  ambiguous?: boolean;
+  totalMatches?: number;
+  truncated?: boolean;
+  groups?: LawSearchGroupDto[];
+}
+
 export interface ApiResponseDtoListFragmentDto {
   data?: FragmentDto[];
   message?: string;
@@ -1610,6 +1632,11 @@ export type GetVersionsParams = {
 };
 
 export type SearchLawsParams = {
+  q?: string;
+  limit?: number;
+};
+
+export type SearchLawsGroupedParams = {
   q?: string;
   limit?: number;
 };
@@ -6044,6 +6071,172 @@ export function useSearchLaws<
 }
 
 /**
+ * Stejné vyhledávání jako /law/search, ale výsledky jsou seskupené podle čísla předpisu (dotaz "49" odpovídá desítkám nesouvisejících zákonů). Příznak "ambiguous" značí, že si uživatel musí ještě vybrat (typicky ročník); "truncated" značí, že existují další shody mimo odpověď. Parametr limit omezuje počet skupin, nikoli řádků.
+ * @summary Vyhledávání právních aktů seskupené podle čísla předpisu
+ */
+export const searchLawsGrouped = (
+  params?: SearchLawsGroupedParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoLawSearchResultDto>(
+    { url: `/api/eli/law/search/grouped`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getSearchLawsGroupedQueryKey = (
+  params?: SearchLawsGroupedParams,
+) => {
+  return [`/api/eli/law/search/grouped`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchLawsGroupedQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
+  TError = unknown,
+>(
+  params?: SearchLawsGroupedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchLawsGrouped>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getSearchLawsGroupedQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof searchLawsGrouped>>
+  > = ({ signal }) => searchLawsGrouped(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof searchLawsGrouped>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type SearchLawsGroupedQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchLawsGrouped>>
+>;
+export type SearchLawsGroupedQueryError = unknown;
+
+export function useSearchLawsGrouped<
+  TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
+  TError = unknown,
+>(
+  params: undefined | SearchLawsGroupedParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchLawsGrouped>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchLawsGrouped>>,
+          TError,
+          Awaited<ReturnType<typeof searchLawsGrouped>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchLawsGrouped<
+  TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
+  TError = unknown,
+>(
+  params?: SearchLawsGroupedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchLawsGrouped>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof searchLawsGrouped>>,
+          TError,
+          Awaited<ReturnType<typeof searchLawsGrouped>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useSearchLawsGrouped<
+  TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
+  TError = unknown,
+>(
+  params?: SearchLawsGroupedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchLawsGrouped>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vyhledávání právních aktů seskupené podle čísla předpisu
+ */
+
+export function useSearchLawsGrouped<
+  TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
+  TError = unknown,
+>(
+  params?: SearchLawsGroupedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof searchLawsGrouped>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getSearchLawsGroupedQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
  * Vrací rekurzivní strom fragmentů zadaného znění (jeden SPARQL dotaz, stromová struktura sestavena na serveru).
  * @summary Strom fragmentů daného znění právního aktu
  */
@@ -6187,8 +6380,8 @@ export function useGetFragments<
 }
 
 /**
- * Přijímá referenci ve tvaru "číslo/rok" (např. "49/1997") a vrací celé znění daného aktu: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. Bez parametru "versionIri" se vrací poslední znění; s ním zvolené znění (IRI musí patřit k danému aktu, jinak 400). Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
- * @summary Celé znění právního aktu podle reference číslo/rok
+ * Parametr "law" přijímá referenci ve tvaru "číslo/rok" (např. "49/1997") nebo ELI IRI aktu, znění či fragmentu. Vrací celé znění daného aktu: hlavičku (IRI aktu, citace, znění, datum účinnosti), seznam všech znění (pro přepínač) a strom fragmentů, kde každý uzel nese své HTML "obsah" tělo pro interaktivní procházení a výběr sekcí. IRI znění (nebo fragmentu) volí zároveň znění, takže IRI z /law/versions nebo /resolve stačí předat samotné; explicitní "versionIri" má přednost. Bez volby se vrací poslední znění; zvolené znění musí patřit k danému aktu, jinak 400. Pro částečný vstup (např. "49") použijte /law/search. Výsledek je cachován (znění je neměnné).
+ * @summary Celé znění právního aktu podle reference číslo/rok nebo ELI IRI
  */
 export const getLawContent = (
   params: GetLawContentParams,
@@ -6299,7 +6492,7 @@ export function useGetLawContent<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Celé znění právního aktu podle reference číslo/rok
+ * @summary Celé znění právního aktu podle reference číslo/rok nebo ELI IRI
  */
 
 export function useGetLawContent<

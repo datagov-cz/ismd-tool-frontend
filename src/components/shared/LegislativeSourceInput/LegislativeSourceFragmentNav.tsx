@@ -23,7 +23,11 @@ export const LegislativeSourceFragmentNav = ({
 }: Props) => (
   <ul>
     {fragments
-      ?.filter((fragment) => fragment.kind !== 'ppc')
+      // `navigable` is false for unnumbered text blocks: they carry body text but no citation,
+      // so they belong in the rendered body, not in the navigation. Compared against false —
+      // the field is optional, and an absent one means navigable. A hidden node never strands a
+      // visible one: the backend only clears the flag when nothing below it is navigable either.
+      ?.filter((fragment) => fragment.navigable !== false)
       .map((fragment) => (
         <FragmentItem
           key={fragment.iri}
