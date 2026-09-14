@@ -709,10 +709,18 @@
     "RenameSuccess": "Název diagramu byl uložen.",
     "RenameError": "Název diagramu se nepodařilo uložit.",
     "UnsavedChanges": "Máte neuložené změny. Opravdu chcete diagram opustit? Neuložené změny budou zahozeny.",
+    "Loading": "Načítám diagram…",
+    "LoadErrorTitle": "Diagram se nepodařilo načíst",
+    "LoadErrorDescription": "Data diagramu nejsou dostupná nebo mají neplatný formát. Zkuste je načíst znovu.",
+    "Retry": "Zkusit znovu",
+    "Retrying": "Načítám…",
+    "BackToDictionary": "Zpět ke slovníku",
     "Header": {
       "SaveSuccess": "Návrh diagramu byl uložen.",
       "SaveError": "Návrh diagramu se nepodařilo uložit.",
       "MaterializeSuccess": "Změny byly propsány do slovníku.",
+      "MaterializePartialError": "Jednu nebo více změn se nepodařilo propsat do slovníku. Neúspěšné změny zůstaly v diagramu.",
+      "MaterializeSkippedStale": "Některé změny nebyly převzaty, protože jejich pojmy už ve slovníku neexistují.",
       "MaterializeError": "Změny se nepodařilo propsat do slovníku.",
       "Close": "Zavřít",
       "Saving": "Ukládání…",
@@ -767,6 +775,83 @@
       "Relationships": "Vztahy",
       "NoMatches": "Žádný pojem neodpovídá filtru."
     },
+    "Node": {
+      "RemovedDescription": "Pojem byl odstraněn ze slovníku.",
+      "RemovedSuffix": " · odstraněno",
+      "ForeignDictionary": "z cizího slovníku",
+      "Class": "Třída",
+      "Property": "Vlastnost",
+      "Relationship": "Vztah",
+      "Properties": "Vlastnosti",
+      "Relationships": "Vztahy",
+      "Actions": "Akce",
+      "ParentClass": "má nadřazenou třídu",
+      "Subtype": "má podtyp",
+      "RemoveProperty": "Odebrat vlastnost {name}",
+      "More": "+ {count} dalších",
+      "EditConcept": "Upravit pojem",
+      "RemoveFromDiagram": "Odebrat z diagramu"
+    },
+    "StaleItems": {
+      "Title": "Diagram obsahuje odstraněné pojmy",
+      "Description": "Následující pojmy již ve slovníku neexistují. Můžete je v diagramu ponechat, nebo diagram uložit bez nich.",
+      "Keep": "Ponechat v diagramu",
+      "Remove": "Uložit bez odstraněných pojmů",
+      "Types": {
+        "Class": "Třída",
+        "Property": "Vlastnost",
+        "Relationship": "Vztah"
+      }
+    },
+    "Conflicts": {
+      "Title": "Konfliktní změny diagramů",
+      "Description": "Některé změny kolidují se změnami rozpracovanými v jiných diagramech. Zvolte, které změny chcete zachovat.",
+      "Navigate": "Přejít na konfliktní diagram",
+      "NoName": "-- bez názvu --",
+      "Mine": "Moje změny",
+      "Theirs": "Změny v jiných diagramech",
+      "AcceptMine": "Převzít moje změny",
+      "AcceptTheirs": "Převzít změny konfliktního diagramu",
+      "UnknownConcept": "neurčený pojem",
+      "None": "žádné",
+      "PropertyParent": "Vlastnost bude zařazena pod pojem „{name}“.",
+      "RelationshipDirection": "Vztah povede z pojmu „{domain}“ na pojem „{range}“.",
+      "Parent": "Nadřazeným pojmem bude {names}.",
+      "NoParent": "Pojem nebude mít žádný nadřazený pojem.",
+      "Equivalent": "Ekvivalentními pojmy budou {names}.",
+      "NoEquivalent": "Diagram nenastavuje žádný nový ekvivalentní pojem.",
+      "ConvertHierarchy": "Vztah bude převeden na hierarchickou vazbu.",
+      "KeepRelationship": "Vztah zůstane běžným vztahem."
+    },
+    "PendingEdits": {
+      "Title": "Změny k promítnutí [{count}]",
+      "UnknownConcept": "neurčený pojem",
+      "StaleSuffix": " · Zastaralá změna",
+      "Types": {
+        "TRIDA": "Třída / Objekt",
+        "VLASTNOST": "Vlastnost",
+        "VZTAH": "Vztah",
+        "KONCEPT": "Pojem"
+      },
+      "FallbackTitle": "Změna pojmu čeká na promítnutí do slovníku.",
+      "FallbackDetail": "Podrobnosti změny nejsou k dispozici. Změna bude použita při promítnutí diagramu.",
+      "PropertyTitle": "Změna zařazení vlastnosti",
+      "PropertyMoved": "Vlastnost byla v diagramu přesunuta z pojmu „{from}“ pod pojem „{to}“. Po promítnutí se nové zařazení projeví ve slovníku.",
+      "PropertyAssigned": "Po promítnutí bude vlastnost zařazena pod pojem „{name}“.",
+      "RelationshipDirectionTitle": "Změna směru vztahu",
+      "RelationshipPlacementTitle": "Změna zařazení vztahu",
+      "RelationshipReversed": "Směr vztahu byl v diagramu otočen.",
+      "RelationshipChanged": "Začátek nebo konec vztahu byl v diagramu změněn.",
+      "RelationshipResult": "{change} Po promítnutí povede vztah z pojmu „{domain}“ na pojem „{range}“.",
+      "HierarchyRemoved": "{count, plural, one {Byla odstraněna hierarchická vazba na nadřazený pojem {names}.} other {Byla odstraněna hierarchická vazba na nadřazené pojmy {names}.}}",
+      "HierarchyAdded": "{count, plural, one {Byla přidána hierarchická vazba na nadřazený pojem {names}.} other {Byla přidána hierarchická vazba na nadřazené pojmy {names}.}}",
+      "HierarchyTitle": "Změna hierarchické vazby",
+      "HierarchyResult": "{details} Po promítnutí se tato změna projeví ve slovníku.",
+      "EquivalentTitle": "Změna ekvivalentní vazby",
+      "EquivalentDetail": "Ekvivalentní vazba pojmu byla v diagramu změněna. Po promítnutí se změna projeví ve slovníku.",
+      "ConvertTitle": "Změna vztahu na hierarchickou vazbu",
+      "ConvertDetail": "Vztah byl v diagramu převeden na hierarchickou vazbu. Po promítnutí se původní vztah nahradí hierarchií."
+    },
     "AddConcept": {
       "Title": "Přidat nový pojem",
       "Cancel": "Zrušit",
@@ -774,7 +859,8 @@
     },
     "Edge": {
       "BendHint": "Táhnutím posunete, dvojklikem odstraníte",
-      "AddRelationship": "Přidat vztah"
+      "AddRelationship": "Přidat vztah",
+      "RemovedSuffix": " · odstraněno"
     },
     "Canvas": {
       "UnknownConcept": "Neznámý pojem",
@@ -790,6 +876,7 @@
     "RelationshipChooser": {
       "Title": "Vyberte typ vazby mezi <a></a> a <b></b>",
       "Remove": "Odebrat vazbu",
+      "ForeignConceptMustBeSource": "U obecného vztahu a ekvivalence se cizí pojem uloží jako cíl. U hierarchie může být pouze zdrojem.",
       "Options": {
         "AB": {
           "Title": "Obecný vztah z A do B",

@@ -5,19 +5,27 @@ import { ConceptDetailModel, DiagramDto } from '@/api/generated';
 import { HistoryAction } from './withHistory';
 
 export function useDiagramInitialization(
-  concepts: ConceptDetailModel[],
-  diagram: DiagramDto | undefined,
-  isDiagramPending: boolean,
+  {
+    concepts,
+    diagram,
+    isReady,
+    sourceKey,
+  }: {
+    concepts: ConceptDetailModel[];
+    diagram: DiagramDto | undefined;
+    isReady: boolean;
+    sourceKey: string;
+  },
   dispatch: ActionDispatch<[action: HistoryAction]>,
 ) {
-  const initialized = useRef(false);
+  const initializedSource = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (initialized.current || concepts.length === 0 || isDiagramPending) {
+    if (!isReady || initializedSource.current === sourceKey) {
       return;
     }
 
-    initialized.current = true;
+    initializedSource.current = sourceKey;
 
     const hasStoredLayout =
       (diagram?.nodes?.length ?? 0) > 0 ||
@@ -29,5 +37,5 @@ export function useDiagramInitialization(
       concepts,
       diagram: hasStoredLayout ? diagram : undefined,
     });
-  }, [concepts, diagram, dispatch, isDiagramPending]);
+  }, [concepts, diagram, dispatch, isReady, sourceKey]);
 }

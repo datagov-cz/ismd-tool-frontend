@@ -3,7 +3,7 @@ import { Connection, MarkerType } from '@xyflow/react';
 import { ConceptFlowEdge } from '@/components/dictionaryDiagram/model/diagram';
 
 export const hasIncompleteObecnyEdge = (edges: ConceptFlowEdge[]): boolean =>
-  edges.some((e) => e.data?.kind === 'obecny' && !e.data?.label);
+  edges.some((edge) => edge.data?.kind === 'obecny' && !edge.data.vztahIri);
 
 export const withEdgeMarkers = (edge: ConceptFlowEdge): ConceptFlowEdge => {
   const markerColor = edge.data?.pendingChange
@@ -14,9 +14,10 @@ export const withEdgeMarkers = (edge: ConceptFlowEdge): ConceptFlowEdge => {
   if (edge.data?.kind === 'hierarchie') {
     return {
       ...edge,
-      markerStart: {
+      markerStart: undefined,
+      markerEnd: {
         type: MarkerType.ArrowClosed,
-        orient: 'auto-start-reverse',
+        orient: 'auto',
         width: 12,
         height: 12,
         color: markerColor,
@@ -27,9 +28,10 @@ export const withEdgeMarkers = (edge: ConceptFlowEdge): ConceptFlowEdge => {
   if (edge.data?.kind === 'obecny') {
     return {
       ...edge,
-      markerStart: {
+      markerStart: undefined,
+      markerEnd: {
         type: MarkerType.Arrow,
-        orient: 'auto-start-reverse',
+        orient: 'auto',
         width: 12,
         height: 12,
         color: markerColor,

@@ -16,7 +16,6 @@ import {
   getConceptId,
   getConceptKind,
   KIND_ICON,
-  KIND_LABEL,
 } from '../../model/concept';
 import { onConceptDragStart } from '../../model/conceptDrag';
 
@@ -231,6 +230,7 @@ export const DiagramPickerConcept = ({
   onActiveClick?: (_conceptId: string) => void;
 }) => {
   const kind = getConceptKind(concept);
+  const t = useTranslations('DictionaryDiagram.Node');
 
   const draggable = !active;
 
@@ -276,7 +276,13 @@ export const DiagramPickerConcept = ({
                 concept.metadata?.label)}
           </span>
           <span className="text-xs font-medium text-card-description leading-none">
-            {KIND_LABEL[kind]}
+            {t(
+              kind === 'trida'
+                ? 'Class'
+                : kind === 'vlastnost'
+                  ? 'Property'
+                  : 'Relationship',
+            )}
           </span>
         </div>
       </div>

@@ -6,6 +6,10 @@ import { toast } from 'react-toastify';
 import { RelationshipChoice } from '@/components/dictionaryDiagram/components/RelationshipChooset';
 import { HistoryAction } from '@/components/dictionaryDiagram/hooks/withHistory';
 import {
+  Concept,
+  getConceptId,
+} from '@/components/dictionaryDiagram/model/concept';
+import {
   ConceptFlowEdge,
   ConceptFlowNode,
   RelationshipKind,
@@ -20,11 +24,14 @@ export type ChooserState = {
   y: number;
   sourceLabel: string;
   targetLabel: string;
+  sourceForeign: boolean;
+  targetForeign: boolean;
   kind?: RelationshipKind;
 } | null;
 
 type UseConnectionWorkflowProps = {
   nodes: ConceptFlowNode[];
+  concepts: Concept[];
   edges: ConceptFlowEdge[];
   dispatch: Dispatch<HistoryAction>;
   wrapperRef: RefObject<HTMLDivElement | null>;
@@ -32,6 +39,7 @@ type UseConnectionWorkflowProps = {
 
 export const useConnectionWorkflow = ({
   nodes,
+  concepts,
   edges,
   dispatch,
   wrapperRef,
@@ -41,11 +49,12 @@ export const useConnectionWorkflow = ({
   const [pending, setPending] = useState<Connection | null>(null);
 
   const { toLocal, midpointBetweenNodes } = useChooserPosition(wrapperRef);
-
-  const hasIncompleteObecny = useMemo(
-    () => hasIncompleteObecnyEdge(edges),
-    [edges],
+  const localConceptIds = useMemo(
+    () => new Set(concepts.map(getConceptId)),
+    [concepts],
   );
+
+  const hasIncompleteObecny = hasIncompleteObecnyEdge(edges);
 
   const openChooser = useCallback(
     (
@@ -64,10 +73,16 @@ export const useConnectionWorkflow = ({
         y,
         sourceLabel: source?.data.concept.název?.cs ?? 'A',
         targetLabel: target?.data.concept.název?.cs ?? 'B',
+        sourceForeign: source
+          ? !localConceptIds.has(getConceptId(source.data.concept))
+          : false,
+        targetForeign: target
+          ? !localConceptIds.has(getConceptId(target.data.concept))
+          : false,
         kind,
       });
     },
-    [nodes],
+    [localConceptIds, nodes],
   );
 
   const onEdgeClick = useCallback(
@@ -106,21 +121,49 @@ export const useConnectionWorkflow = ({
 
   const selectRelationship = useCallback(
     (choice: RelationshipChoice) => {
+      const effectiveChoice =
+        choice.kind === 'ekvivalence'
+          ? { ...choice, swap: chooser?.sourceForeign === true }
+          : choice.kind === 'obecny'
+            ? {
+                ...choice,
+                swap: chooser?.sourceForeign
+                  ? true
+                  : chooser?.targetForeign
+                    ? false
+                    : choice.swap,
+              }
+            : choice;
+      const foreignTarget = choice.swap
+        ? chooser?.sourceForeign
+        : chooser?.targetForeign;
+      const foreignSource = choice.swap
+        ? chooser?.targetForeign
+        : chooser?.sourceForeign;
+      if (choice.kind === 'hierarchie' && foreignTarget) return;
+      if (choice.kind === 'obecny' && foreignSource) return;
+      if (
+        choice.kind === 'ekvivalence' &&
+        chooser?.sourceForeign &&
+        chooser.targetForeign
+      ) {
+        return;
+      }
+
       if (pending) {
         dispatch({
           type: 'connect',
           connection: pending,
-          id: crypto.randomUUID(),
-          kind: choice.kind,
-          swap: choice.swap,
+          kind: effectiveChoice.kind,
+          swap: effectiveChoice.swap,
         });
         setPending(null);
       } else if (chooser) {
         dispatch({
           type: 'setEdgeKind',
           edgeId: chooser.edgeId,
-          kind: choice.kind,
-          swap: choice.swap,
+          kind: effectiveChoice.kind,
+          swap: effectiveChoice.swap,
         });
       }
       setChooser(null);

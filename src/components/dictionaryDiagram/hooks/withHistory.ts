@@ -52,10 +52,12 @@ export function withHistory<S>(
 ): Reducer<HistoryState<S>, HistoryAction> {
   return (state, action) => {
     const { past, present, future, inDrag } = state;
-    if (action.type === 'clearOverlays' || action.type === 'init') {
+    if (action.type === 'layoutSaved' || action.type === 'init') {
+      const nextPresent = reducer(present, action);
+      if (nextPresent === present) return state;
       return {
         past: [],
-        present: reducer(present, action),
+        present: nextPresent,
         future: [],
         inDrag: false,
       };

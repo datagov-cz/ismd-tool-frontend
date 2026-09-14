@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   BaseEdge,
   type Edge,
@@ -39,13 +39,6 @@ export const LabeledEdge = ({
   const t = useTranslations('DictionaryDiagram.Edge');
   const showFullLabels = useShowFullLabels();
   const [dragOver, setDragOver] = useState(false);
-
-  const [labelOverride, setLabelOverride] = useState(false);
-  useEffect(() => setLabelOverride(false), [showFullLabels]);
-  const showFull = labelOverride ? !showFullLabels : showFullLabels;
-
-  const labelRef = useRef<HTMLDivElement>(null);
-  const [isTruncatable, setIsTruncatable] = useState(false);
 
   const [draftBends, setDraftBends] = useState<XYPosition[] | null>(null);
   const dragIndex = useRef<number | null>(null);
@@ -170,10 +163,11 @@ export const LabeledEdge = ({
     ]);
   };
 
-  const incomplete = data?.kind === 'obecny' && !data?.label;
+  const incomplete = data?.kind === 'obecny' && !data.vztahIri;
   const dimmed = data?.emphasis === 'dimmed';
   const emphasized = data?.emphasis === 'connected';
   const pendingChange = data?.pendingChange;
+  const stale = data?.stale;
 
   const dropHandlers = incomplete
     ? {
@@ -196,17 +190,6 @@ export const LabeledEdge = ({
 
   const label = data?.label;
 
-  useLayoutEffect(() => {
-    const el = labelRef.current;
-    if (!el || !label) return;
-    if (showFull) {
-      const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 16;
-      setIsTruncatable(el.clientHeight > lineHeight * 1.5);
-    } else {
-      setIsTruncatable(el.scrollWidth > el.clientWidth);
-    }
-  }, [label, showFull]);
-
   return (
     <>
       <BaseEdge
@@ -225,6 +208,12 @@ export const LabeledEdge = ({
           ...(pendingChange
             ? {
                 stroke: '#ca8504',
+                strokeWidth: 3,
+              }
+            : {}),
+          ...(stale
+            ? {
+                stroke: '#c62828',
                 strokeWidth: 3,
               }
             : {}),
@@ -299,10 +288,9 @@ export const LabeledEdge = ({
 
         {(label || incomplete) && (
           <div
-            ref={labelRef}
             className={clsx(
               'nodrag nopan absolute rounded px-1.5 py-0.5 text-xs font-medium max-w-37.5 border',
-              showFull
+              showFullLabels
                 ? 'whitespace-normal wrap-break-word'
                 : 'overflow-hidden text-ellipsis whitespace-nowrap',
               incomplete
@@ -311,24 +299,18 @@ export const LabeledEdge = ({
               dragOver && 'border-blue-primary bg-blue-subtle',
               dimmed && 'opacity-0 pointer-events-none',
               emphasized && 'shadow-sm border-blue-primary',
+              stale &&
+                'border-status-error-600 bg-status-error-100 text-status-error-700',
             )}
             style={{
               transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY + 16}px)`,
               pointerEvents: dimmed ? 'none' : 'all',
-              cursor: isTruncatable ? 'pointer' : 'default',
             }}
-            onClick={
-              isTruncatable
-                ? (e) => {
-                    e.stopPropagation();
-                    setLabelOverride((v) => !v);
-                  }
-                : undefined
-            }
-            title={isTruncatable && !showFull && label ? label : undefined}
+            title={!showFullLabels && label ? label : undefined}
             {...dropHandlers}
           >
             {incomplete ? t('AddRelationship') : label}
+            {!incomplete && stale && t('RemovedSuffix')}
           </div>
         )}
       </EdgeLabelRenderer>

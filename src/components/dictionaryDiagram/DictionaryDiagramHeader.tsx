@@ -16,6 +16,7 @@ import {
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
+import { hasIncompleteObecnyEdge } from './components/DiagramBuilder/utils/edgeHelpers';
 import {
   getMaterializationConflicts,
   MaterializationConflict,
@@ -27,6 +28,7 @@ import {
   ConceptFlowEdge,
   ConceptFlowNode,
 } from './model/diagram';
+import { getStaleDiagramItems, StaleItemsDialog } from './StaleItemsDialog';
 import { capitalizeFirst } from './utils/capitalizeFirst';
 
 type DictionaryDiagramHeaderProps = {
@@ -40,7 +42,10 @@ type DictionaryDiagramHeaderProps = {
   removedOverlays: DiagramLayoutOverlay[];
   diagramVersion?: number;
   hasUnsavedChanges: boolean;
-  onLayoutSaved: () => void;
+  onLayoutSaved: (
+    _expected: { nodes: ConceptFlowNode[]; edges: ConceptFlowEdge[] },
+    _saved: { nodes: ConceptFlowNode[]; edges: ConceptFlowEdge[] },
+  ) => void;
 };
 
 export const DictionaryDiagramHeader = ({
@@ -58,13 +63,22 @@ export const DictionaryDiagramHeader = ({
 }: DictionaryDiagramHeaderProps) => {
   const router = useRouter();
   const [conflicts, setConflicts] = useState<MaterializationConflict[]>([]);
+  const [pendingSaveAction, setPendingSaveAction] = useState<
+    'save' | 'materialize' | null
+  >(null);
   const t = useTranslations('ConceptDetail');
   const td = useTranslations('DictionaryDiagram.Header');
+  const tc = useTranslations('DictionaryDiagram.Canvas');
   const { invalidateDiagram, invalidateOntology } = useQueryInvalidator();
+  const openMaterializationConflicts = (value: unknown) => {
+    const responseConflicts = getMaterializationConflicts(value);
+    if (!responseConflicts) return false;
+    setConflicts(responseConflicts);
+    return true;
+  };
   const saveLayout = useSaveLayout({
     mutation: {
       onSuccess: async () => {
-        onLayoutSaved();
         await invalidateDiagram(ontologySlug, diagramId);
         toast.success(td('SaveSuccess'));
       },
@@ -85,45 +99,112 @@ export const DictionaryDiagramHeader = ({
   const materialize = useMaterialize({
     mutation: {
       onSuccess: async (response) => {
-        const responseConflicts = getMaterializationConflicts(response);
-        if (responseConflicts) {
-          setConflicts(responseConflicts);
-          return;
-        }
+        if (openMaterializationConflicts(response)) return;
 
         setConflicts([]);
         await Promise.all([
           invalidateDiagram(ontologySlug, diagramId),
           invalidateOntology(ontologySlug),
         ]);
-        toast.success(td('MaterializeSuccess'));
+        if (response.success === false || response.data?.failed?.length) {
+          toast.error(td('MaterializePartialError'));
+        } else if (response.data?.skippedStale?.length) {
+          toast.warn(td('MaterializeSkippedStale'));
+        } else {
+          toast.success(td('MaterializeSuccess'));
+        }
       },
       onError: (error) => {
-        const responseConflicts = getMaterializationConflicts(error);
-        if (responseConflicts) {
-          setConflicts(responseConflicts);
-          return;
-        }
+        if (openMaterializationConflicts(error)) return;
 
         toast.error(td('MaterializeError'));
       },
     },
   });
 
-  const handleSaveLayout = () => {
-    saveLayout.mutate({
-      ontologySlug: encodeURIComponent(ontologySlug),
-      diagramId,
-      data: {
-        ...buildDiagramLayoutDto(
-          nodes,
-          edges,
-          diagramVersion ?? 0,
-          removedOverlays,
-        ),
-      },
-    });
+  const staleItems = getStaleDiagramItems(nodes, edges);
+  const staleConceptIris = Array.from(
+    new Set(
+      staleItems.flatMap((item) => (item.conceptIri ? [item.conceptIri] : [])),
+    ),
+  );
+
+  const withoutStaleItems = () => {
+    const filteredNodes = nodes
+      .filter((node) => !node.data.concept.stale)
+      .map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          vlastnosti: node.data.vlastnosti.filter(
+            (property) => !property.stale,
+          ),
+        },
+      }));
+    const retainedNodeIds = new Set(filteredNodes.map((node) => node.id));
+    const filteredEdges = edges.filter(
+      (edge) =>
+        !edge.data?.stale &&
+        retainedNodeIds.has(edge.source) &&
+        retainedNodeIds.has(edge.target),
+    );
+
+    return { nodes: filteredNodes, edges: filteredEdges };
   };
+
+  const saveAndMaybeMaterialize = async (
+    action: 'save' | 'materialize',
+    savedNodes: ConceptFlowNode[],
+    savedEdges: ConceptFlowEdge[],
+    clearStaleOverlays = false,
+  ) => {
+    const encodedOntologySlug = encodeURIComponent(ontologySlug);
+
+    try {
+      await saveLayout.mutateAsync({
+        ontologySlug: encodedOntologySlug,
+        diagramId,
+        data: buildDiagramLayoutDto(
+          savedNodes,
+          savedEdges,
+          diagramVersion ?? 0,
+          clearStaleOverlays
+            ? [
+                ...removedOverlays.filter(
+                  (overlay) => !staleConceptIris.includes(overlay.conceptIri),
+                ),
+                ...staleConceptIris.map((conceptIri) => ({ conceptIri })),
+              ]
+            : removedOverlays,
+        ),
+      });
+    } catch {
+      // The save mutation displays the error; materialization must not continue.
+      return;
+    }
+
+    onLayoutSaved({ nodes, edges }, { nodes: savedNodes, edges: savedEdges });
+
+    if (action === 'materialize') {
+      materialize.mutate({ ontologySlug: encodedOntologySlug, diagramId });
+    }
+  };
+
+  const requestSave = (action: 'save' | 'materialize') => {
+    if (hasIncompleteObecnyEdge(edges)) {
+      toast.info(tc('CompleteRelationshipFirst'));
+      return;
+    }
+
+    if (staleItems.length > 0) {
+      setPendingSaveAction(action);
+      return;
+    }
+
+    void saveAndMaybeMaterialize(action, nodes, edges);
+  };
+
+  const handleSaveLayout = () => requestSave('save');
 
   const handleDeleteDiagram = () => {
     deleteDiagram.mutate({
@@ -132,27 +213,20 @@ export const DictionaryDiagramHeader = ({
     });
   };
 
-  const handleMaterialize = async () => {
-    const encodedOntologySlug = encodeURIComponent(ontologySlug);
+  const handleMaterialize = () => requestSave('materialize');
 
-    try {
-      await saveLayout.mutateAsync({
-        ontologySlug: encodedOntologySlug,
-        diagramId,
-        data: {
-          ...buildDiagramLayoutDto(
-            nodes,
-            edges,
-            diagramVersion ?? 0,
-            removedOverlays,
-          ),
-        },
-      });
+  const resolveStaleItems = (remove: boolean) => {
+    if (!pendingSaveAction) return;
 
-      materialize.mutate({ ontologySlug: encodedOntologySlug, diagramId });
-    } catch {
-      // The save mutation displays the error; materialization must not continue.
-    }
+    const action = pendingSaveAction;
+    const savedDiagram = remove ? withoutStaleItems() : { nodes, edges };
+    setPendingSaveAction(null);
+    void saveAndMaybeMaterialize(
+      action,
+      savedDiagram.nodes,
+      savedDiagram.edges,
+      remove,
+    );
   };
 
   const resolveConflicts = (
@@ -276,6 +350,14 @@ export const DictionaryDiagramHeader = ({
         pending={materialize.isPending}
         onClose={() => setConflicts([])}
         onResolve={resolveConflicts}
+      />
+      <StaleItemsDialog
+        open={pendingSaveAction !== null}
+        items={staleItems}
+        pending={saveLayout.isPending || materialize.isPending}
+        onClose={() => setPendingSaveAction(null)}
+        onKeep={() => resolveStaleItems(false)}
+        onRemove={() => resolveStaleItems(true)}
       />
     </>
   );

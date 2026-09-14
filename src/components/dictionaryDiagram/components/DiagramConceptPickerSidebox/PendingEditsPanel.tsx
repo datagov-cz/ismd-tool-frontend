@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
+import { useTranslations } from 'next-intl';
 
 import { DiagramPendingEditEntry } from '@/api/generated';
-import { Concept, getConceptIri, getDefinicniObor } from '../../model/concept';
+import {
+  Concept,
+  getConceptIri,
+  getConceptLabel,
+  getDefinicniObor,
+  getLabelFromConceptIri,
+} from '../../model/concept';
 import { getNadrazenaTrida, getOborHodnot } from '../../model/diagram';
-
-const TYPE_LABELS: Record<string, string> = {
-  TRIDA: 'Třída / Objekt',
-  VLASTNOST: 'Vlastnost',
-  VZTAH: 'Vztah',
-  KONCEPT: 'Pojem',
-};
 
 const TYPE_ICONS: Record<string, string> = {
   TRIDA: 'card-heading',
@@ -24,133 +24,6 @@ type EditDescription = {
   detail: string;
 };
 
-const conceptName = (iri: string | undefined, concepts: Concept[]) => {
-  if (!iri) return 'neurčený pojem';
-
-  const concept = concepts.find((item) => getConceptIri(item) === iri);
-  const metadataLabel =
-    concept?.metadata && 'label' in concept.metadata
-      ? concept.metadata.label
-      : undefined;
-  return (
-    concept?.název?.cs ??
-    metadataLabel ??
-    decodeURIComponent(iri.split('/').pop() ?? iri).replaceAll('-', ' ')
-  );
-};
-
-const conceptNames = (iris: string[], concepts: Concept[]) =>
-  `„${iris.map((iri) => conceptName(iri, concepts)).join('“, „')}“`;
-
-const describeEdit = (
-  entry: DiagramPendingEditEntry,
-  concepts: Concept[],
-): EditDescription[] => {
-  const edit = entry.pendingEdit;
-  if (!edit) {
-    return [
-      {
-        title: 'Změna pojmu čeká na promítnutí do slovníku.',
-        detail:
-          'Podrobnosti změny nejsou k dispozici. Změna bude použita při promítnutí diagramu.',
-      },
-    ];
-  }
-
-  const descriptions: EditDescription[] = [];
-  if (edit.domain != null || edit.range != null) {
-    const editedConcept = concepts.find(
-      (concept) => getConceptIri(concept) === entry.iri,
-    );
-    const originalDomain = editedConcept && getDefinicniObor(editedConcept);
-    const originalRange = editedConcept && getOborHodnot(editedConcept);
-    const resultingDomain = edit.domain ?? originalDomain;
-    const resultingRange = edit.range ?? originalRange;
-    const directionWasReversed =
-      originalDomain !== undefined &&
-      originalRange !== undefined &&
-      originalDomain === resultingRange &&
-      originalRange === resultingDomain;
-
-    if (entry.conceptType === 'VLASTNOST') {
-      const originalParentName = conceptName(originalDomain, concepts);
-      const resultingParentName = conceptName(resultingDomain, concepts);
-
-      descriptions.push({
-        title: 'Změna zařazení vlastnosti',
-        detail:
-          originalDomain && originalDomain !== resultingDomain
-            ? `Vlastnost byla v diagramu přesunuta z pojmu „${originalParentName}“ pod pojem „${resultingParentName}“. Po promítnutí se nové zařazení projeví ve slovníku.`
-            : `Po promítnutí bude vlastnost zařazena pod pojem „${resultingParentName}“.`,
-      });
-    } else {
-      descriptions.push({
-        title: directionWasReversed
-          ? 'Změna směru vztahu'
-          : 'Změna zařazení vztahu',
-        detail: `${
-          directionWasReversed
-            ? 'Směr vztahu byl v diagramu otočen.'
-            : 'Začátek nebo konec vztahu byl v diagramu změněn.'
-        } Po promítnutí povede vztah z pojmu „${conceptName(
-          resultingDomain,
-          concepts,
-        )}“ na pojem „${conceptName(resultingRange, concepts)}“.`,
-      });
-    }
-  }
-  if (edit.broaderConcept != null) {
-    const editedConcept = concepts.find(
-      (concept) => getConceptIri(concept) === entry.iri,
-    );
-    const originalParents = editedConcept
-      ? getNadrazenaTrida(editedConcept)
-      : [];
-    const resultingParents = edit.broaderConcept;
-    const addedParents = resultingParents.filter(
-      (iri) => !originalParents.includes(iri),
-    );
-    const removedParents = originalParents.filter(
-      (iri) => !resultingParents.includes(iri),
-    );
-    const details = [
-      removedParents.length > 0
-        ? `Byla odstraněna hierarchická vazba na ${
-            removedParents.length === 1 ? 'nadřazený pojem' : 'nadřazené pojmy'
-          } ${conceptNames(removedParents, concepts)}.`
-        : undefined,
-      addedParents.length > 0
-        ? `Byla přidána hierarchická vazba na ${
-            addedParents.length === 1 ? 'nadřazený pojem' : 'nadřazené pojmy'
-          } ${conceptNames(addedParents, concepts)}.`
-        : undefined,
-    ].filter((detail): detail is string => detail !== undefined);
-
-    if (details.length > 0) {
-      descriptions.push({
-        title: 'Změna hierarchické vazby',
-        detail: `${details.join(' ')} Po promítnutí se tato změna projeví ve slovníku.`,
-      });
-    }
-  }
-  if (edit.exactMatch != null) {
-    descriptions.push({
-      title: 'Změna ekvivalentní vazby',
-      detail:
-        'Ekvivalentní vazba pojmu byla v diagramu změněna. Po promítnutí se změna projeví ve slovníku.',
-    });
-  }
-  if (edit.convertToHierarchy != null) {
-    descriptions.push({
-      title: 'Změna vztahu na hierarchickou vazbu',
-      detail:
-        'Vztah byl v diagramu převeden na hierarchickou vazbu. Po promítnutí se původní vztah nahradí hierarchií.',
-    });
-  }
-
-  return descriptions;
-};
-
 export const PendingEditsPanel = ({
   edits,
   concepts,
@@ -162,7 +35,128 @@ export const PendingEditsPanel = ({
   open: boolean;
   onOpenChange: (_open: boolean) => void;
 }) => {
+  const t = useTranslations('DictionaryDiagram.PendingEdits');
   const [expandedIri, setExpandedIri] = useState<string | null>(null);
+
+  const conceptName = (iri?: string) => {
+    if (!iri) return t('UnknownConcept');
+
+    const concept = concepts.find((item) => getConceptIri(item) === iri);
+    return (
+      (concept && getConceptLabel(concept)) ??
+      getLabelFromConceptIri(iri) ??
+      iri
+    );
+  };
+
+  const conceptNames = (iris: string[]) =>
+    `„${iris.map(conceptName).join('“, „')}“`;
+
+  const describeEdit = (entry: DiagramPendingEditEntry): EditDescription[] => {
+    const edit = entry.pendingEdit;
+    if (!edit) {
+      return [{ title: t('FallbackTitle'), detail: t('FallbackDetail') }];
+    }
+
+    const descriptions: EditDescription[] = [];
+    if (edit.domain != null || edit.range != null) {
+      const editedConcept = concepts.find(
+        (concept) => getConceptIri(concept) === entry.iri,
+      );
+      const originalDomain = editedConcept && getDefinicniObor(editedConcept);
+      const originalRange = editedConcept && getOborHodnot(editedConcept);
+      const resultingDomain = edit.domain ?? originalDomain;
+      const resultingRange = edit.range ?? originalRange;
+      const directionWasReversed =
+        originalDomain !== undefined &&
+        originalRange !== undefined &&
+        originalDomain === resultingRange &&
+        originalRange === resultingDomain;
+
+      if (entry.conceptType === 'VLASTNOST') {
+        const originalParentName = conceptName(originalDomain);
+        const resultingParentName = conceptName(resultingDomain);
+
+        descriptions.push({
+          title: t('PropertyTitle'),
+          detail:
+            originalDomain && originalDomain !== resultingDomain
+              ? t('PropertyMoved', {
+                  from: originalParentName,
+                  to: resultingParentName,
+                })
+              : t('PropertyAssigned', { name: resultingParentName }),
+        });
+      } else {
+        descriptions.push({
+          title: t(
+            directionWasReversed
+              ? 'RelationshipDirectionTitle'
+              : 'RelationshipPlacementTitle',
+          ),
+          detail: t('RelationshipResult', {
+            change: t(
+              directionWasReversed
+                ? 'RelationshipReversed'
+                : 'RelationshipChanged',
+            ),
+            domain: conceptName(resultingDomain),
+            range: conceptName(resultingRange),
+          }),
+        });
+      }
+    }
+    if (edit.broaderConcept != null) {
+      const editedConcept = concepts.find(
+        (concept) => getConceptIri(concept) === entry.iri,
+      );
+      const originalParents = editedConcept
+        ? getNadrazenaTrida(editedConcept)
+        : [];
+      const resultingParents = edit.broaderConcept;
+      const addedParents = resultingParents.filter(
+        (iri) => !originalParents.includes(iri),
+      );
+      const removedParents = originalParents.filter(
+        (iri) => !resultingParents.includes(iri),
+      );
+      const details = [
+        removedParents.length > 0
+          ? t('HierarchyRemoved', {
+              count: removedParents.length,
+              names: conceptNames(removedParents),
+            })
+          : undefined,
+        addedParents.length > 0
+          ? t('HierarchyAdded', {
+              count: addedParents.length,
+              names: conceptNames(addedParents),
+            })
+          : undefined,
+      ].filter((detail): detail is string => detail !== undefined);
+
+      if (details.length > 0) {
+        descriptions.push({
+          title: t('HierarchyTitle'),
+          detail: t('HierarchyResult', { details: details.join(' ') }),
+        });
+      }
+    }
+    if (edit.exactMatch != null) {
+      descriptions.push({
+        title: t('EquivalentTitle'),
+        detail: t('EquivalentDetail'),
+      });
+    }
+    if (edit.convertToHierarchy != null) {
+      descriptions.push({
+        title: t('ConvertTitle'),
+        detail: t('ConvertDetail'),
+      });
+    }
+
+    return descriptions;
+  };
 
   if (edits.length === 0) return null;
 
@@ -176,7 +170,7 @@ export const PendingEditsPanel = ({
       >
         <span className="flex items-center gap-2">
           <GovIcon name="info-square" size="s" />
-          Změny k promítnutí [{edits.length}]
+          {t('Title', { count: edits.length })}
         </span>
         <GovIcon
           name={open ? 'chevron-up' : 'chevron-down'}
@@ -191,7 +185,7 @@ export const PendingEditsPanel = ({
             {edits.map((entry, index) => {
               const id = entry.iri ?? entry.slug ?? String(index);
               const expanded = expandedIri === id;
-              const descriptions = describeEdit(entry, concepts);
+              const descriptions = describeEdit(entry);
 
               return (
                 <article
@@ -218,8 +212,8 @@ export const PendingEditsPanel = ({
                           {entry.label?.cs ?? entry.slug ?? entry.iri}
                         </span>
                         <span className="text-xs text-card-description font-semibold">
-                          {TYPE_LABELS[entry.conceptType ?? 'KONCEPT']}
-                          {entry.stale ? ' · Zastaralá změna' : ''}
+                          {t(`Types.${entry.conceptType ?? 'KONCEPT'}`)}
+                          {entry.stale ? t('StaleSuffix') : ''}
                         </span>
                       </span>
                     </span>

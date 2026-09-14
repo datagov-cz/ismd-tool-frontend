@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { GovButton } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -11,6 +12,8 @@ import {
 } from '@/api/generated';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
+import { isQueryLoading } from '@/lib/query';
+import { PageLoader } from '../shared/PageLoader';
 
 import { DiagramBuilder } from './components/DiagramBuilder';
 import { DiagramConceptPicker } from './components/DiagramConceptPickerSidebox/DiagramConceptPicker';
@@ -36,6 +39,15 @@ export const DictionaryDiagramWrapper = ({
   const { invalidateDiagram } = useQueryInvalidator();
 
   const { ontologyName, concepts } = useDiagramConcepts(ontology.data);
+  const hydratedDiagram = diagram.data?.data;
+  const hasDiagramPayload =
+    diagram.data?.success !== false && hydratedDiagram !== undefined;
+  const hasOntologyPayload =
+    ontology.data?.success !== false &&
+    ontology.data?.data?.ontologyDetail !== undefined;
+  const isInitialLoadPending =
+    isQueryLoading(diagram) || isQueryLoading(ontology);
+  const isReady = hasDiagramPayload && hasOntologyPayload;
 
   const [history, dispatch] = useReducer(withHistory(diagramReducer), {
     past: [],
@@ -45,9 +57,12 @@ export const DictionaryDiagramWrapper = ({
   });
 
   useDiagramInitialization(
-    concepts,
-    diagram.data?.data,
-    diagram.isPending,
+    {
+      concepts,
+      diagram: hydratedDiagram,
+      isReady,
+      sourceKey: `${slug}:${id}`,
+    },
     dispatch,
   );
 
@@ -176,20 +191,20 @@ export const DictionaryDiagramWrapper = ({
     () =>
       pendingEditsOpen
         ? new Set(
-            (diagram.data?.data?.pendingEdits ?? []).flatMap((edit) =>
+            (hydratedDiagram?.pendingEdits ?? []).flatMap((edit) =>
               [edit.iri, edit.slug].filter(
                 (id): id is string => id !== undefined,
               ),
             ),
           )
         : new Set<string>(),
-    [diagram.data?.data?.pendingEdits, pendingEditsOpen],
+    [hydratedDiagram?.pendingEdits, pendingEditsOpen],
   );
   const pendingEdgeIds = useMemo(
     () =>
       pendingEditsOpen
         ? new Set(
-            (diagram.data?.data?.edges ?? []).flatMap((edge) =>
+            (hydratedDiagram?.edges ?? []).flatMap((edge) =>
               edge.id &&
               (edge.data?.pending ||
                 edge.data?.hasPendingEdits ||
@@ -199,12 +214,12 @@ export const DictionaryDiagramWrapper = ({
             ),
           )
         : new Set<string>(),
-    [diagram.data?.data?.edges, pendingEditsOpen],
+    [hydratedDiagram?.edges, pendingEditsOpen],
   );
   const shouldGenerateInitialLayout =
-    (diagram.data?.data?.version ?? 0) === 0 &&
-    (diagram.data?.data?.nodes?.length ?? 0) === 0 &&
-    (diagram.data?.data?.edges?.length ?? 0) === 0;
+    (hydratedDiagram?.version ?? 0) === 0 &&
+    (hydratedDiagram?.nodes?.length ?? 0) === 0 &&
+    (hydratedDiagram?.edges?.length ?? 0) === 0;
   const hasUnsavedChanges = history.past.length > 0;
 
   useUnsavedChangesGuard({
@@ -212,20 +227,72 @@ export const DictionaryDiagramWrapper = ({
     message: t('UnsavedChanges'),
   });
 
+  if (isInitialLoadPending) {
+    return (
+      <main
+        className="min-h-[calc(100vh-72px)] w-full bg-primary-subtlest"
+        aria-label={t('Loading')}
+      >
+        <PageLoader className="min-h-[calc(100vh-72px)]" />
+      </main>
+    );
+  }
+
+  if (!isReady) {
+    const isRetrying = diagram.isFetching || ontology.isFetching;
+
+    return (
+      <main className="min-h-[calc(100vh-72px)] w-full bg-primary-subtlest p-4">
+        <section
+          role="alert"
+          className="mx-auto flex min-h-80 max-w-2xl flex-col items-center justify-center gap-4 text-center"
+        >
+          <h1 className="text-2xl font-bold">{t('LoadErrorTitle')}</h1>
+          <p>{t('LoadErrorDescription')}</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            <GovButton
+              type="solid"
+              color="primary"
+              disabled={isRetrying}
+              onGovClick={() => {
+                void Promise.all([diagram.refetch(), ontology.refetch()]);
+              }}
+            >
+              {isRetrying ? t('Retrying') : t('Retry')}
+            </GovButton>
+            <GovButton
+              type="outlined"
+              color="neutral"
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/dictionary/${encodedSlug}`}
+            >
+              {t('BackToDictionary')}
+            </GovButton>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="p-4 bg-primary-subtlest w-full min-h-[calc(100vh-72px)] flex flex-col gap-4">
       <DictionaryDiagramHeader
         ontologyName={ontologyName}
         ontologySlug={slug}
         diagramId={id}
-        diagramName={diagram.data?.data?.name}
+        diagramName={hydratedDiagram.name}
         concepts={concepts}
         nodes={nodes}
         edges={edges}
         removedOverlays={removedOverlays}
-        diagramVersion={diagram.data?.data?.version}
+        diagramVersion={hydratedDiagram.version}
         hasUnsavedChanges={hasUnsavedChanges}
-        onLayoutSaved={() => dispatch({ type: 'clearOverlays' })}
+        onLayoutSaved={(expected, saved) =>
+          dispatch({
+            type: 'layoutSaved',
+            expected,
+            saved,
+          })
+        }
       />
 
       <div className="flex w-full gap-4 flex-1">
@@ -238,7 +305,7 @@ export const DictionaryDiagramWrapper = ({
           onActiveConceptClick={(conceptId) =>
             setFocusRequest({ conceptId, requestId: Date.now() })
           }
-          pendingEdits={diagram.data?.data?.pendingEdits ?? []}
+          pendingEdits={hydratedDiagram.pendingEdits ?? []}
           pendingEditsOpen={pendingEditsOpen}
           onPendingEditsOpenChange={setPendingEditsOpen}
         />
@@ -257,7 +324,7 @@ export const DictionaryDiagramWrapper = ({
           onSelectedConceptIdsChange={setSelectedConceptIds}
           pendingConceptIds={pendingConceptIds}
           pendingEdgeIds={pendingEdgeIds}
-          diagramName={diagram.data?.data?.name}
+          diagramName={hydratedDiagram.name}
           renamingDiagram={renameDiagram.isPending}
           onRenameDiagram={handleRenameDiagram}
         />

@@ -170,7 +170,7 @@ export const DiagramCanvas = ({
     closeChooser,
     selectRelationship,
     removeEdge,
-  } = useConnectionWorkflow({ nodes, edges, dispatch, wrapperRef });
+  } = useConnectionWorkflow({ concepts, nodes, edges, dispatch, wrapperRef });
 
   const { displayEdges } = useDisplayEdges({
     edges,
@@ -198,18 +198,25 @@ export const DiagramCanvas = ({
         (edge) =>
           focusedNodeIds.has(edge.source) || focusedNodeIds.has(edge.target),
       )
-      .map((edge) => ({
-        id: edge.id,
-        sourceId: edge.source,
-        source: getNodeLabel(t('UnknownConcept'), nodeById.get(edge.source)),
-        relation: getRelationLabel(edge, {
-          hierarchy: t('Hierarchy'),
-          equivalence: t('Equivalence'),
-          relationship: t('Relationship'),
-        }),
-        targetId: edge.target,
-        target: getNodeLabel(t('UnknownConcept'), nodeById.get(edge.target)),
-      }));
+      .map((edge) => {
+        const sourceId =
+          edge.data?.kind === 'hierarchie' ? edge.target : edge.source;
+        const targetId =
+          edge.data?.kind === 'hierarchie' ? edge.source : edge.target;
+
+        return {
+          id: edge.id,
+          sourceId,
+          source: getNodeLabel(t('UnknownConcept'), nodeById.get(sourceId)),
+          relation: getRelationLabel(edge, {
+            hierarchy: t('Hierarchy'),
+            equivalence: t('Equivalence'),
+            relationship: t('Relationship'),
+          }),
+          targetId,
+          target: getNodeLabel(t('UnknownConcept'), nodeById.get(targetId)),
+        };
+      });
   }, [nodes, edges, focusedNodeIds, t]);
 
   const highlightedRelationsTitle =

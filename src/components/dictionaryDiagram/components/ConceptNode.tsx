@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { GovButton, GovIcon, GovTag } from '@gov-design-system-ce/react';
+import {
+  GovButton,
+  GovIcon,
+  GovTag,
+  GovTooltip,
+  GovTooltipContent,
+} from '@gov-design-system-ce/react';
 import { Handle, type NodeProps, Position, useStore } from '@xyflow/react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
-import { getConceptId, KIND_LABEL } from '../model/concept';
+import { getConceptId, getConceptLabel } from '../model/concept';
 import type {
   ConceptFlowEdge,
   ConceptFlowNode,
@@ -14,6 +21,22 @@ import type {
 import { useDiagramDispatch } from './diagramDispatchContext';
 import { usePendingChanges } from './pendingChangesContext';
 
+const StaleConceptLabel = () => {
+  const t = useTranslations('DictionaryDiagram.Node');
+  return (
+    <GovTooltip
+      position="top"
+      className="nodrag nopan border-0!"
+      message={t('RemovedDescription')}
+    >
+      <GovTooltipContent className="z-2000!">
+        {t('RemovedDescription')}
+      </GovTooltipContent>
+      <span className="cursor-help">{t('RemovedSuffix')}</span>
+    </GovTooltip>
+  );
+};
+
 export const ConceptNode = ({
   id,
   data,
@@ -21,6 +44,7 @@ export const ConceptNode = ({
 }: NodeProps<ConceptFlowNode>) => {
   const { concept, vlastnosti } = data;
   const pendingConceptIds = usePendingChanges();
+  const t = useTranslations('DictionaryDiagram.Node');
   const conceptHasPendingChange = pendingConceptIds.has(getConceptId(concept));
   const [openDetail, setOpenDetail] = useState(false);
 
@@ -29,11 +53,13 @@ export const ConceptNode = ({
       id={concept.iri}
       className={clsx(
         'border rounded-md bg-white w-full min-w-50 max-w-50 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] group relative',
-        selected
-          ? 'border-blue-primary'
-          : conceptHasPendingChange
-            ? 'border-status-warning-600 ring-2 ring-status-warning-200'
-            : 'border-border-grey',
+        concept.stale
+          ? 'border-status-error-600 ring-2 ring-status-error-100'
+          : selected
+            ? 'border-blue-primary'
+            : conceptHasPendingChange
+              ? 'border-status-warning-600 ring-2 ring-status-warning-200'
+              : 'border-border-grey',
       )}
     >
       <ConceptNodeDetail
@@ -42,18 +68,37 @@ export const ConceptNode = ({
         open={openDetail}
         onClose={() => setOpenDetail(false)}
       />
-      <Handle type="target" position={Position.Top} />
+      <Handle type="source" position={Position.Top} />
 
       <div className="flex items-center gap-1.5 px-2.5 py-2 group-hover:bg-primary-subtlest justify-between rounded-t-md">
         <div className="flex flex-col gap-0.5">
-          <span className="text-dark-blue-subtle font-medium text-sm leading-none">
-            {concept.název?.cs ??
-              (concept.metadata &&
-                'label' in concept.metadata &&
-                concept.metadata?.label)}
-          </span>
+          <div className="flex flex-wrap items-center gap-1">
+            <span
+              className={clsx(
+                'font-medium text-sm leading-none',
+                concept.stale
+                  ? 'text-status-error-700'
+                  : 'text-dark-blue-subtle',
+              )}
+            >
+              {getConceptLabel(concept)}
+              {concept.stale && <StaleConceptLabel />}
+            </span>
+            {data.readOnly && (
+              <GovTag
+                type="subtle"
+                size="xs"
+                color="warning"
+                className="min-h-4! px-1! py-0!"
+              >
+                <span className="text-[10px] font-bold leading-none">
+                  {t('ForeignDictionary')}
+                </span>
+              </GovTag>
+            )}
+          </div>
           <span className="text-xs font-medium text-card-description leading-none">
-            {KIND_LABEL.trida}
+            {t('Class')}
           </span>
         </div>
         <button
@@ -72,7 +117,7 @@ export const ConceptNode = ({
           <details className="flex flex-col open:gap-1.5 open:pt-2">
             <summary className="order-last [&::-webkit-details-marker]:hidden list-none cursor-pointer text-xs font-medium flex items-center justify-between border-t border-border-grey pt-2">
               <span>
-                Vlastnosti{' '}
+                {t('Properties')}{' '}
                 <span className="px-1 py-0.5 rounded-xs bg-border-grey">
                   {vlastnosti.length}
                 </span>
@@ -94,8 +139,14 @@ export const ConceptNode = ({
                 )}
               >
                 <span className="size-1.5 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
-                <span className="text-xs text-card-description leading-none">
-                  {v.název?.cs}
+                <span
+                  className={clsx(
+                    'text-xs leading-none',
+                    v.stale ? 'text-status-error-700' : 'text-card-description',
+                  )}
+                >
+                  {getConceptLabel(v)}
+                  {v.stale && t('RemovedSuffix')}
                 </span>
               </div>
             ))}
@@ -103,7 +154,7 @@ export const ConceptNode = ({
         </div>
       )}
 
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="target" position={Position.Bottom} />
     </div>
   );
 };
@@ -120,6 +171,7 @@ const ConceptNodeDetail = ({
   onClose: () => void;
 }) => {
   const dispatch = useDiagramDispatch();
+  const t = useTranslations('DictionaryDiagram.Node');
   const detailRef = useRef<HTMLDivElement>(null);
   const [showAllProperties, setShowAllProperties] = useState(false);
   const [showAllRelations, setShowAllRelations] = useState(false);
@@ -139,8 +191,8 @@ const ConceptNodeDetail = ({
         const relatedConcept = relatedNode?.data;
         const label = isHierarchy
           ? isOutgoing
-            ? 'má podtyp'
-            : 'je podtyp'
+            ? t('ParentClass')
+            : t('Subtype')
           : edge.data?.label;
 
         if (!label) return [];
@@ -149,12 +201,12 @@ const ConceptNodeDetail = ({
           {
             id: edge.id,
             label,
-            target: relatedConcept?.concept.název?.cs,
+            target: relatedConcept && getConceptLabel(relatedConcept.concept),
             direction: isOutgoing ? '→' : '←',
           },
         ];
       }),
-    [edges, nodeId, nodes],
+    [edges, nodeId, nodes, t],
   );
   const visibleProperties = showAllProperties
     ? data.vlastnosti
@@ -188,20 +240,27 @@ const ConceptNodeDetail = ({
     >
       <div className="flex items-start justify-between pb-2">
         <div>
-          <Link
-            href={`/concept/${data.concept.slug}`}
-            className="flex gap-1.5 items-center font-medium text-blue-hover hover:underline cursor-pointer text-sm"
-          >
-            <span>{data.concept.název?.cs}</span>
-            <GovIcon name="box-arrow-up-right" size="xs" />
-          </Link>
+          {data.concept.stale ? (
+            <span className="font-medium text-sm text-status-error-700">
+              {getConceptLabel(data.concept)}
+              <StaleConceptLabel />
+            </span>
+          ) : (
+            <Link
+              href={`/concept/${data.concept.slug}`}
+              className="flex gap-1.5 items-center font-medium text-blue-hover hover:underline cursor-pointer text-sm"
+            >
+              <span>{getConceptLabel(data.concept)}</span>
+              <GovIcon name="box-arrow-up-right" size="xs" />
+            </Link>
+          )}
           <GovTag type="subtle" size="xs" color="primary" className="mt-1!">
             <span className="font-bold">
               {data.concept.typ?.includes('Vlastnost')
-                ? 'Vlastnost'
+                ? t('Property')
                 : data.concept.typ?.includes('Vztah')
-                  ? 'Vztah'
-                  : 'Třída'}
+                  ? t('Relationship')
+                  : t('Class')}
             </span>
           </GovTag>
         </div>
@@ -211,22 +270,30 @@ const ConceptNodeDetail = ({
         </button>
       </div>
       <div className="pb-2.5">
-        <span className="font-medium text-xs">Vlastnosti</span>
+        <span className="font-medium text-xs">{t('Properties')}</span>
         <div className="pl-5 space-y-1.5 pt-1.5">
           {visibleProperties.map((v, i) => (
             <div
               key={`${getConceptId(v)}-${i}`}
-              className="flex items-center justify-between gap-0.5 relative font-medium"
+              className="flex items-center justify-between gap-0.5 relative font-medium rounded-sm"
             >
               <span className="flex min-w-0 items-center gap-0.5">
                 <span className="size-1.5 shrink-0 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
-                <span className="truncate text-xs text-card-description leading-none">
-                  {v.název?.cs}
+                <span
+                  className={clsx(
+                    'truncate text-xs leading-none',
+                    v.stale ? 'text-status-error-700' : 'text-card-description',
+                  )}
+                >
+                  {getConceptLabel(v)}
+                  {v.stale && t('RemovedSuffix')}
                 </span>
               </span>
               <button
                 type="button"
-                aria-label={`Odebrat vlastnost ${v.název?.cs ?? ''}`}
+                aria-label={t('RemoveProperty', {
+                  name: getConceptLabel(v) ?? '',
+                })}
                 className="flex shrink-0 items-center"
                 onClick={() =>
                   dispatch({
@@ -246,13 +313,13 @@ const ConceptNodeDetail = ({
               onClick={() => setShowAllProperties(true)}
               className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
             >
-              + {hiddenPropertiesCount} dalších
+              {t('More', { count: hiddenPropertiesCount })}
             </button>
           )}
         </div>
       </div>
       <div className="pb-2.5">
-        <span className="font-medium text-xs">Vztahy</span>
+        <span className="font-medium text-xs">{t('Relationships')}</span>
         <div className="space-y-1.5 pt-1.5 pl-2">
           {visibleRelations.map((vztah) => (
             <div
@@ -276,23 +343,25 @@ const ConceptNodeDetail = ({
               onClick={() => setShowAllRelations(true)}
               className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
             >
-              + {hiddenRelationsCount} dalších
+              {t('More', { count: hiddenRelationsCount })}
             </button>
           )}
         </div>
       </div>
       <div>
-        <span className="font-medium text-xs">Akce</span>
+        <span className="font-medium text-xs">{t('Actions')}</span>
         <div className="flex flex-col gap-1">
-          <GovButton
-            color="primary"
-            type="outlined"
-            size="xs"
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
-          >
-            <GovIcon name="pencil" color="primary" slot="icon-start" /> Upravit
-            pojem
-          </GovButton>
+          {!data.concept.stale && (
+            <GovButton
+              color="primary"
+              type="outlined"
+              size="xs"
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
+            >
+              <GovIcon name="pencil" color="primary" slot="icon-start" />
+              {t('EditConcept')}
+            </GovButton>
+          )}
           <GovButton
             color="error"
             size="xs"
@@ -302,7 +371,7 @@ const ConceptNodeDetail = ({
               dispatch({ type: 'removeNode', nodeId });
             }}
           >
-            <GovIcon name="trash" /> Odebrat z diagramu
+            <GovIcon name="trash" /> {t('RemoveFromDiagram')}
           </GovButton>
         </div>
       </div>

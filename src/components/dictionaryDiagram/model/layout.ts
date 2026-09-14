@@ -23,7 +23,9 @@ export const layoutWithDagre = (
       height: node.measured?.height,
     });
   }
-  for (const edge of edges) g.setEdge(edge.source, edge.target);
+  for (const edge of edges) {
+    g.setEdge(edge.target, edge.source);
+  }
 
   Dagre.layout(g);
 

@@ -35,12 +35,12 @@ const OPTIONS: {
   {
     symbol: 'A > B',
     key: 'AParent',
-    choice: { kind: 'hierarchie' },
+    choice: { kind: 'hierarchie', swap: true },
   },
   {
     symbol: 'B > A',
     key: 'BParent',
-    choice: { kind: 'hierarchie', swap: true },
+    choice: { kind: 'hierarchie' },
   },
   {
     symbol: 'A = B',
@@ -64,6 +64,8 @@ export const RelationshipChooser = ({
   y,
   sourceLabel,
   targetLabel,
+  sourceForeign,
+  targetForeign,
   onSelect,
   onClose,
   onRemove,
@@ -73,6 +75,8 @@ export const RelationshipChooser = ({
   y: number;
   sourceLabel: string;
   targetLabel: string;
+  sourceForeign: boolean;
+  targetForeign: boolean;
   onSelect: (_choice: RelationshipChoice) => void;
   onClose: () => void;
   onRemove?: () => void;
@@ -169,19 +173,38 @@ export const RelationshipChooser = ({
         </span>
       </div>
 
+      {(sourceForeign || targetForeign) && (
+        <p className="text-sm text-card-description">
+          {t('ForeignConceptMustBeSource')}
+        </p>
+      )}
+
       <div className="flex flex-col gap-2">
         {OPTIONS.map((option) => {
           const selected =
             !option.choice.swap && option.choice.kind === selectedKind;
+          const disabled =
+            option.choice.kind === 'ekvivalence'
+              ? sourceForeign && targetForeign
+              : option.choice.kind === 'obecny'
+                ? option.choice.swap
+                  ? targetForeign
+                  : sourceForeign
+                : option.choice.swap
+                  ? sourceForeign
+                  : targetForeign;
           return (
             <button
               key={option.symbol}
+              disabled={disabled}
               onClick={() => onSelect(option.choice)}
               className={clsx(
                 'flex items-center gap-4 border rounded-md py-2.5 px-4 text-left transition-colors',
-                selected
-                  ? 'border-blue-primary bg-blue-subtle'
-                  : 'border-border-grey hover:bg-blue-subtle',
+                disabled
+                  ? 'cursor-not-allowed border-border-grey bg-bg-primary text-disabled opacity-50'
+                  : selected
+                    ? 'border-blue-primary bg-blue-subtle'
+                    : 'border-border-grey hover:bg-blue-subtle',
               )}
             >
               <span className="font-bold w-12 shrink-0">{option.symbol}</span>
