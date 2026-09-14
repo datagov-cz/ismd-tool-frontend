@@ -154,6 +154,7 @@ export type DiagramEdgeDataLabel = { [key: string]: string };
 export interface DiagramEdgeData {
   edgeKind?: DiagramEdgeDataEdgeKind;
   pending?: boolean;
+  asserted?: boolean;
   conceptType?: DiagramEdgeDataConceptType;
   iri?: string;
   slug?: string;
@@ -348,8 +349,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
   ontologyIri?: string;
+  results?: ValidationResult[];
   id?: number;
   timestamp?: string;
 }
@@ -372,9 +373,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
   error?: boolean;
 }
 
