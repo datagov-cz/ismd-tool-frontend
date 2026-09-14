@@ -8,6 +8,13 @@ export type Concept = ConceptDetailModel & {
   iri?: string;
   slug?: string;
   stale?: boolean;
+  /**
+   * Built from a saved diagram node rather than read from the ontology, because no concept matched the
+   * node's IRI. It carries identity fields only — every structural field is absent, and absent here does
+   * NOT mean empty. Anything deriving RDF intent (a full-replace `broaderConcept`, say) must skip such a
+   * concept rather than read `undefined` as "none".
+   */
+  synthesized?: boolean;
   'definiční-obor'?: string;
   metadata?: ConceptMetadataModel | SearchResultDto;
 };

@@ -287,6 +287,28 @@ export const buildDiagramLayoutDto = (
   };
 };
 
+/**
+ * The edge ids that were sent but are missing from the saved diagram, for a post-save sanity check.
+ *
+ * Membership decides which edges render, so the server echoes back every edge row it kept: sent and
+ * returned should agree exactly. A discrepancy means a row was rejected or dropped, and the canvas is
+ * now showing something the server does not have — a divergence that otherwise stays invisible until
+ * the next reload, because the canvas keeps its own state after a save.
+ *
+ * Read-only: it reports, and never reconciles the canvas against the response. Applying the server's
+ * edges here would fight edits the user has made since the request went out.
+ */
+export const droppedEdgeIds = (
+  sent: DiagramLayoutDto,
+  saved: DiagramDto | undefined,
+): string[] => {
+  if (!saved?.edges) return [];
+  const returned = new Set(saved.edges.map((edge) => edge.id));
+  return (sent.edges ?? [])
+    .map((edge) => edge.id)
+    .filter((id): id is string => !!id && !returned.has(id));
+};
+
 export const buildPersistedDiagram = (
   concepts: Concept[],
   diagram: DiagramDto,
@@ -345,6 +367,7 @@ export const buildPersistedDiagram = (
           iri: savedConceptIri,
           slug: savedNode.data?.slug,
           název: savedNode.data?.label,
+          synthesized: true,
           metadata: {
             iri: savedConceptIri,
             slug: savedNode.data?.slug,
@@ -479,9 +502,45 @@ export const buildPersistedDiagram = (
   return { nodes, edges, removedOverlays: [] };
 };
 
+/**
+ * The parent set a `broaderConcept` overlay must start from: this session's staged edit if the concept
+ * already has one, otherwise what RDF asserts.
+ *
+ * `broaderConcept` is a FULL REPLACE of the concept's superclasses, so every overlay must carry the
+ * complete set — including parents that are not on this canvas. Building one from the edges alone
+ * silently drops those, and sending a bare `[]` clears the predicate outright.
+ *
+ * Preferring the staged edit is what makes several edits to one concept accumulate. Seeding from RDF
+ * every time would make each edit forget the last: add a parent, add a second, and the second overlay
+ * would carry RDF's parents plus its own, dropping the first.
+ *
+ * Returns `undefined`, never `[]`, when there is no staged edit and the node carries only a synthesized
+ * concept — the stub `buildPersistedDiagram` builds for a saved node no ontology concept matched. Its
+ * structural fields are absent because nothing was read, not because the concept has none, so seeding
+ * `[]` from it would stage a clear. Callers must skip the overlay instead: membership still takes the
+ * edge off the canvas, which is the part the user asked for, and the RDF is left alone.
+ *
+ * A real concept with no parents omits `nadřazená-třída` too (the API serializes non-null only), which
+ * is why the stub is flagged explicitly rather than detected by the missing key — that test cannot tell
+ * the two apart, and reading it as "synthesized" would break the ordinary first-parent case.
+ */
+const getParentSeed = (
+  node: ConceptFlowNode | undefined,
+  conceptIri: string,
+  staged: DiagramLayoutOverlay[],
+): string[] | undefined => {
+  const stagedParents = staged.find(
+    (overlay) => overlay.conceptIri === conceptIri,
+  )?.broaderConcept;
+  if (stagedParents) return stagedParents;
+  if (!node || node.data.concept.synthesized) return undefined;
+  return getNadrazenaTrida(node.data.concept);
+};
+
 const getRemovedEdgeOverlay = (
   edge: ConceptFlowEdge,
   nodes: ConceptFlowNode[],
+  staged: DiagramLayoutOverlay[],
 ): DiagramLayoutOverlay | undefined => {
   if (edge.data?.kind === 'obecny') {
     return edge.data.vztahIri ? { conceptIri: edge.data.vztahIri } : undefined;
@@ -490,17 +549,24 @@ const getRemovedEdgeOverlay = (
   const affectedNodeId = edge.source;
   const affectedNode = nodes.find((node) => node.id === affectedNodeId);
   const conceptIri = affectedNode && getConceptIri(affectedNode.data.concept);
+  if (!conceptIri) return undefined;
 
-  return conceptIri
-    ? edge.data?.kind === 'hierarchie'
-      ? { conceptIri, broaderConcept: [] }
-      : { conceptIri }
-    : undefined;
+  if (edge.data?.kind !== 'hierarchie') return { conceptIri };
+
+  // Drop only the parent this edge draws. Sending `[]` would clear the predicate, deleting every
+  // other superclass the user never touched.
+  const targetNode = nodes.find((node) => node.id === edge.target);
+  const targetIri = targetNode && getConceptIri(targetNode.data.concept);
+  const parents = getParentSeed(affectedNode, conceptIri, staged);
+  if (!parents || !targetIri) return undefined;
+
+  return { conceptIri, broaderConcept: parents.filter((p) => p !== targetIri) };
 };
 
 const getEdgeOverlay = (
   edge: ConceptFlowEdge,
   nodes: ConceptFlowNode[],
+  staged: DiagramLayoutOverlay[],
 ): DiagramLayoutOverlay | undefined => {
   const sourceNode = nodes.find((node) => node.id === edge.source);
   const targetNode = nodes.find((node) => node.id === edge.target);
@@ -509,8 +575,16 @@ const getEdgeOverlay = (
   if (!sourceIri || !targetIri) return undefined;
 
   switch (edge.data?.kind) {
-    case 'hierarchie':
-      return { conceptIri: sourceIri, broaderConcept: [targetIri] };
+    case 'hierarchie': {
+      // Add to the concept's existing parents rather than replacing them: `broaderConcept` is a full
+      // replace, so a one-element list deletes every other superclass at Převzít.
+      const parents = getParentSeed(sourceNode, sourceIri, staged);
+      if (!parents) return undefined;
+      return {
+        conceptIri: sourceIri,
+        broaderConcept: Array.from(new Set([...parents, targetIri])),
+      };
+    }
     case 'ekvivalence':
       return sourceNode.data.readOnly && !targetNode.data.readOnly
         ? { conceptIri: targetIri, exactMatch: [sourceIri] }
@@ -534,46 +608,47 @@ const getEdgeOverlay = (
   }
 };
 
+/**
+ * Folds staged overlays together, one entry per concept — the shape the API expects, where each entry
+ * fully replaces that concept's staged edit.
+ *
+ * Each addition already carries the concept's COMPLETE intended `broaderConcept`, seeded from RDF by
+ * `getAssertedParents`. So a later addition replaces an earlier one field by field; it must not be
+ * unioned with it. Unioning was correct only while additions were one-element deltas, and it now has an
+ * active failure: add a parent then remove another, and the union would resurrect the removed one,
+ * because the removal's list is a subset of the addition's.
+ *
+ * Fields the addition does not mention are inherited, so a hierarchy edit and an `exactMatch` edit on
+ * the same concept still accumulate.
+ */
 const addRemovedOverlays = (
   current: DiagramLayoutOverlay[],
-  additions: Array<DiagramLayoutOverlay | undefined>,
+  additions: Array<
+    | DiagramLayoutOverlay
+    | undefined
+    // Built lazily, against the overlays folded so far, so several edits in one batch see each other:
+    // a removal following an addition on the same concept must seed from that addition, not from RDF.
+    | ((_staged: DiagramLayoutOverlay[]) => DiagramLayoutOverlay | undefined)
+  >,
 ) => {
   const overlays = new Map(
     current.map((overlay) => [overlay.conceptIri, overlay]),
   );
 
-  for (const addition of additions) {
+  for (const entry of additions) {
+    const addition =
+      typeof entry === 'function'
+        ? entry(Array.from(overlays.values()))
+        : entry;
     if (!addition) continue;
     const existing = overlays.get(addition.conceptIri);
+    // `{ conceptIri }` alone is a discard: it reverts the concept to live content, so it replaces
+    // rather than merges.
     const clearsOverlay = Object.keys(addition).length === 1;
 
     overlays.set(
       addition.conceptIri,
-      !existing || clearsOverlay
-        ? addition
-        : {
-            ...existing,
-            ...addition,
-            broaderConcept:
-              addition.broaderConcept !== undefined
-                ? addition.broaderConcept.length === 0
-                  ? []
-                  : Array.from(
-                      new Set([
-                        ...(existing.broaderConcept ?? []),
-                        ...addition.broaderConcept,
-                      ]),
-                    )
-                : existing.broaderConcept,
-            exactMatch: addition.exactMatch
-              ? Array.from(
-                  new Set([
-                    ...(existing.exactMatch ?? []),
-                    ...addition.exactMatch,
-                  ]),
-                )
-              : existing.exactMatch,
-          },
+      !existing || clearsOverlay ? addition : { ...existing, ...addition },
     );
   }
 
@@ -610,7 +685,12 @@ export const diagramReducer = (
           action.changes.flatMap((change) => {
             if (change.type !== 'remove') return [];
             const edge = state.edges.find((item) => item.id === change.id);
-            return edge ? [getRemovedEdgeOverlay(edge, state.nodes)] : [];
+            return edge
+              ? [
+                  (staged: DiagramLayoutOverlay[]) =>
+                    getRemovedEdgeOverlay(edge, state.nodes, staged),
+                ]
+              : [];
           }),
         ),
       };
@@ -633,7 +713,7 @@ export const diagramReducer = (
         ...state,
         edges: addEdge(edge, state.edges),
         removedOverlays: addRemovedOverlays(state.removedOverlays, [
-          getEdgeOverlay(edge, state.nodes),
+          (staged) => getEdgeOverlay(edge, state.nodes, staged),
         ]),
       };
     }
@@ -668,8 +748,8 @@ export const diagramReducer = (
           edge.id === action.edgeId ? updatedEdge : edge,
         ),
         removedOverlays: addRemovedOverlays(state.removedOverlays, [
-          getRemovedEdgeOverlay(previousEdge, state.nodes),
-          getEdgeOverlay(updatedEdge, state.nodes),
+          (staged) => getRemovedEdgeOverlay(previousEdge, state.nodes, staged),
+          (staged) => getEdgeOverlay(updatedEdge, state.nodes, staged),
         ]),
       };
     }
@@ -691,7 +771,7 @@ export const diagramReducer = (
           item.id === action.edgeId ? updatedEdge : item,
         ),
         removedOverlays: addRemovedOverlays(state.removedOverlays, [
-          getEdgeOverlay(updatedEdge, state.nodes),
+          (staged) => getEdgeOverlay(updatedEdge, state.nodes, staged),
         ]),
       };
     }

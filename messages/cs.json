@@ -718,6 +718,7 @@
     "Header": {
       "SaveSuccess": "Návrh diagramu byl uložen.",
       "SaveError": "Návrh diagramu se nepodařilo uložit.",
+      "SaveEdgesDropped": "{count, plural, one {# vazba na plátně nebyla uložena. Obnovte stránku pro aktuální stav.} few {# vazby na plátně nebyly uloženy. Obnovte stránku pro aktuální stav.} other {# vazeb na plátně nebylo uloženo. Obnovte stránku pro aktuální stav.}}",
       "MaterializeSuccess": "Změny byly propsány do slovníku.",
       "MaterializePartialError": "Jednu nebo více změn se nepodařilo propsat do slovníku. Neúspěšné změny zůstaly v diagramu.",
       "MaterializeSkippedStale": "Některé změny nebyly převzaty, protože jejich pojmy už ve slovníku neexistují.",

@@ -27,6 +27,7 @@ import {
   buildDiagramLayoutDto,
   ConceptFlowEdge,
   ConceptFlowNode,
+  droppedEdgeIds,
 } from './model/diagram';
 import { getStaleDiagramItems, StaleItemsDialog } from './StaleItemsDialog';
 import { capitalizeFirst } from './utils/capitalizeFirst';
@@ -160,27 +161,39 @@ export const DictionaryDiagramHeader = ({
   ) => {
     const encodedOntologySlug = encodeURIComponent(ontologySlug);
 
+    const payload = buildDiagramLayoutDto(
+      savedNodes,
+      savedEdges,
+      diagramVersion ?? 0,
+      clearStaleOverlays
+        ? [
+            ...removedOverlays.filter(
+              (overlay) => !staleConceptIris.includes(overlay.conceptIri),
+            ),
+            ...staleConceptIris.map((conceptIri) => ({ conceptIri })),
+          ]
+        : removedOverlays,
+    );
+
+    let response;
     try {
-      await saveLayout.mutateAsync({
+      response = await saveLayout.mutateAsync({
         ontologySlug: encodedOntologySlug,
         diagramId,
-        data: buildDiagramLayoutDto(
-          savedNodes,
-          savedEdges,
-          diagramVersion ?? 0,
-          clearStaleOverlays
-            ? [
-                ...removedOverlays.filter(
-                  (overlay) => !staleConceptIris.includes(overlay.conceptIri),
-                ),
-                ...staleConceptIris.map((conceptIri) => ({ conceptIri })),
-              ]
-            : removedOverlays,
-        ),
+        data: payload,
       });
     } catch {
       // The save mutation displays the error; materialization must not continue.
       return;
+    }
+
+    // The server keeps every edge row it accepts, so sent and returned should match. A mismatch means
+    // the canvas is now showing edges the server does not have; say so instead of letting it surface on
+    // the next reload. Reporting only — the canvas keeps the user's state.
+    const dropped = droppedEdgeIds(payload, response?.data);
+    if (dropped.length > 0) {
+      console.error('[diagram] edges sent but not saved:', dropped);
+      toast.warning(td('SaveEdgesDropped', { count: dropped.length }));
     }
 
     onLayoutSaved({ nodes, edges }, { nodes: savedNodes, edges: savedEdges });
