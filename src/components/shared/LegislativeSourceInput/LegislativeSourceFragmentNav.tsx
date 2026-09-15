@@ -55,6 +55,9 @@ const FragmentItem = ({
   const [open, setOpen] = useState(false);
   const hasChildren = (fragment.children?.length ?? 0) > 0;
   const isSelected = fragment.iri === selectedIri;
+  const hasGrandChildren =
+    fragment.children?.some((child) => (child.children?.length ?? 0) > 0) ??
+    false;
 
   return (
     <li>
@@ -65,7 +68,7 @@ const FragmentItem = ({
         style={{ paddingLeft: 8 + depth * 12 }}
         onClick={() => onSelect(fragment.iri ?? '')}
       >
-        {hasChildren ? (
+        {hasGrandChildren ? (
           <button
             type="button"
             onClick={(e) => {
