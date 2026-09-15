@@ -154,6 +154,7 @@ export type DiagramEdgeDataLabel = { [key: string]: string };
 export interface DiagramEdgeData {
   edgeKind?: DiagramEdgeDataEdgeKind;
   pending?: boolean;
+  asserted?: boolean;
   conceptType?: DiagramEdgeDataConceptType;
   iri?: string;
   slug?: string;

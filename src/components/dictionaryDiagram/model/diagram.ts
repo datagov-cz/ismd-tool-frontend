@@ -150,7 +150,10 @@ export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
     const source = nodeIdByIri.get(sourceIri);
     const target = nodeIdByIri.get(targetIri);
     if (!source || !target) return;
-    const key = `${source}->${target}:${data.kind}`;
+    const key =
+      data.kind === 'obecny' && data.vztahIri
+        ? `relationship:${data.vztahIri}`
+        : `edge:${source}->${target}:${data.kind}`;
     if (seen.has(key)) return;
     seen.add(key);
     edges.push({
@@ -437,22 +440,29 @@ export const buildPersistedDiagram = (
       if (!sourceNode || !targetNode) return [];
 
       const relationship =
-        (savedEdge.data?.iri
-          ? conceptsById.get(savedEdge.data.iri)
-          : undefined) ??
-        relationshipConcepts.find(
-          (concept) =>
-            getDefinicniObor(concept) ===
-              getConceptIri(sourceNode.data.concept) &&
-            getOborHodnot(concept) === getConceptIri(targetNode.data.concept),
-        );
+        kind === 'obecny'
+          ? ((savedEdge.data?.iri
+              ? conceptsById.get(savedEdge.data.iri)
+              : undefined) ??
+            relationshipConcepts.find(
+              (concept) =>
+                getDefinicniObor(concept) ===
+                  getConceptIri(sourceNode.data.concept) &&
+                getOborHodnot(concept) ===
+                  getConceptIri(targetNode.data.concept),
+            ))
+          : undefined;
       const relationshipIri =
-        savedEdge.data?.iri ??
-        (relationship ? getConceptIri(relationship) : undefined);
+        kind === 'obecny'
+          ? (savedEdge.data?.iri ??
+            (relationship ? getConceptIri(relationship) : undefined))
+          : undefined;
       const relationshipLabel =
-        savedEdge.data?.label?.cs ??
-        relationship?.název?.cs ??
-        getLabelFromConceptIri(relationshipIri);
+        kind === 'obecny'
+          ? (savedEdge.data?.label?.cs ??
+            relationship?.název?.cs ??
+            getLabelFromConceptIri(relationshipIri))
+          : undefined;
 
       return [
         {
@@ -650,6 +660,16 @@ export const diagramReducer = (
             target: previousEdge.source,
           }
         : previousEdge;
+      const clearsRelationship = action.kind !== 'obecny';
+      if (
+        base.source === previousEdge.source &&
+        base.target === previousEdge.target &&
+        previousEdge.data?.kind === action.kind &&
+        (!clearsRelationship ||
+          (!previousEdge.data.label && !previousEdge.data.vztahIri))
+      ) {
+        return state;
+      }
       const updatedEdge: ConceptFlowEdge = {
         ...base,
         data:
@@ -677,12 +697,17 @@ export const diagramReducer = (
     case 'setEdgeVztah': {
       const edge = state.edges.find((item) => item.id === action.edgeId);
       if (!edge || edge.data?.kind !== 'obecny') return state;
+      const label = action.vztah.název?.cs;
+      const vztahIri = getConceptIri(action.vztah);
+      if (edge.data.label === label && edge.data.vztahIri === vztahIri) {
+        return state;
+      }
       const updatedEdge: ConceptFlowEdge = {
         ...edge,
         data: {
           ...edge.data,
-          label: action.vztah.název?.cs,
-          vztahIri: getConceptIri(action.vztah),
+          label,
+          vztahIri,
         },
       };
       return {
@@ -696,7 +721,16 @@ export const diagramReducer = (
       };
     }
 
-    case 'setEdgeBends':
+    case 'setEdgeBends': {
+      const edge = state.edges.find((item) => item.id === action.edgeId);
+      const bends = action.bends?.length ? action.bends : undefined;
+      if (
+        !edge ||
+        edge.data?.bends === bends ||
+        (!edge.data?.bends && !bends)
+      ) {
+        return state;
+      }
       return {
         ...state,
         edges: state.edges.map((e) =>
@@ -705,12 +739,13 @@ export const diagramReducer = (
                 ...e,
                 data: {
                   ...e.data,
-                  bends: action.bends?.length ? action.bends : undefined,
+                  bends,
                 },
               }
             : e,
         ),
       };
+    }
 
     case 'clearDiagram':
       return state.nodes.length === 0 && state.edges.length === 0
@@ -786,13 +821,17 @@ export const diagramReducer = (
       const targetNode = state.nodes.find(
         (node) => node.id === action.targetNodeId,
       );
-      if (!targetNode) return state;
+      if (
+        !targetNode ||
+        targetNode.data.vlastnosti.some(
+          (vlastnost) => getConceptId(vlastnost) === vlId,
+        )
+      ) {
+        return state;
+      }
 
       const nodes = state.nodes.map((node) => {
         if (node.id === action.targetNodeId) {
-          if (node.data.vlastnosti.some((v) => getConceptId(v) === vlId)) {
-            return node;
-          }
           return {
             ...node,
             data: {

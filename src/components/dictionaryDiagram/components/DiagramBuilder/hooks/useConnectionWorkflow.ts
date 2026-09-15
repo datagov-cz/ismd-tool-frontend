@@ -102,12 +102,11 @@ export const useConnectionWorkflow = ({
         return;
       }
 
-      setPending(connection);
-
       const source = nodes.find((n) => n.id === connection.source);
       const target = nodes.find((n) => n.id === connection.target);
       if (!source || !target) return;
 
+      setPending(connection);
       const { x, y } = midpointBetweenNodes(source, target);
       openChooser('pending', connection.source, connection.target, x, y);
     },

@@ -728,6 +728,8 @@
       "Materializing": "Propisuji…",
       "Materialize": "Propsat do slovníku",
       "Delete": "Odstranit diagram",
+      "DeleteConfirm": "Opravdu chcete tento diagram odstranit? Tuto akci nelze vrátit zpět.",
+      "Cancel": "Zrušit",
       "Deleting": "Mázání diagramu",
       "Deleted": "Diagram úspěšně odstraněn",
       "DeleteError": "Diagram se nepodařilo odstranit"

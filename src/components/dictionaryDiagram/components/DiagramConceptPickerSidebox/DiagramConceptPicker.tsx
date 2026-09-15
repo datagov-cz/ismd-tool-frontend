@@ -52,8 +52,10 @@ export const DiagramConceptPicker = ({
     vztah: false,
   });
 
-  const toggleKind = (kind: ConceptKind) =>
-    setKinds((prev) => ({ ...prev, [kind]: !prev[kind] }));
+  const setKindEnabled = (kind: ConceptKind, checked: boolean) =>
+    setKinds((prev) =>
+      prev[kind] === checked ? prev : { ...prev, [kind]: checked },
+    );
 
   const filteredHierarchy = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -149,17 +151,17 @@ export const DiagramConceptPicker = ({
               <FilterCheckbox
                 label={t('Classes')}
                 checked={kinds.trida}
-                onToggle={() => toggleKind('trida')}
+                onToggle={(checked) => setKindEnabled('trida', checked)}
               />
               <FilterCheckbox
                 label={t('Properties')}
                 checked={kinds.vlastnost}
-                onToggle={() => toggleKind('vlastnost')}
+                onToggle={(checked) => setKindEnabled('vlastnost', checked)}
               />
               <FilterCheckbox
                 label={t('Relationships')}
                 checked={kinds.vztah}
-                onToggle={() => toggleKind('vztah')}
+                onToggle={(checked) => setKindEnabled('vztah', checked)}
               />
             </div>
 

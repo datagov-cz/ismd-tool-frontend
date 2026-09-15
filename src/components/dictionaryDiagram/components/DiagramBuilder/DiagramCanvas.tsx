@@ -137,9 +137,18 @@ export const DiagramCanvas = ({
   const [openExportDialog, setOpenExportDialog] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [showFullLabels, setShowFullLabels] = useState(false);
-  const [focusedNodeIds, setFocusedNodeIds] = useState<Set<string>>(
+  const [storedFocusedNodeIds, setFocusedNodeIds] = useState<Set<string>>(
     () => new Set(),
   );
+  const focusedNodeIds = useMemo(() => {
+    const nodeIds = new Set(nodes.map((node) => node.id));
+    if ([...storedFocusedNodeIds].every((nodeId) => nodeIds.has(nodeId))) {
+      return storedFocusedNodeIds;
+    }
+    return new Set(
+      [...storedFocusedNodeIds].filter((nodeId) => nodeIds.has(nodeId)),
+    );
+  }, [nodes, storedFocusedNodeIds]);
 
   useEffect(() => {
     onSelectedConceptIdsChange(

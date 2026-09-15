@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   GovFormGroup,
   GovFormInput,
   GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
+import { useDebounceValue } from 'usehooks-ts';
 
 import { SearchType, useSearch } from '@/api/generated';
 import { Concept, getConceptId } from '../../model/concept';
@@ -26,12 +27,11 @@ export const ConceptPickerSearch = ({
   const t = useTranslations('DictionaryDiagram.Picker');
   const [selectedKind, setSelectedKind] = useState<SearchType | null>(null);
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [debouncedQuery] = useDebounceValue(query, 300);
 
   const { data } = useSearch(
     {
-      q: query,
+      q: debouncedQuery,
       type: selectedKind ?? 'CONCEPT',
       source: 'ISMD',
       limit: 20,
@@ -42,16 +42,6 @@ export const ConceptPickerSearch = ({
       },
     },
   );
-
-  const handleInput = useCallback((e: Event) => {
-    const value = (e.target as HTMLInputElement).value;
-    setQuery(value);
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => setDebouncedQuery(value), 300);
-  }, []);
-
-  const toggleKind = (kind: SearchType) =>
-    setSelectedKind((prev) => (prev === kind ? null : kind));
 
   const resultConcepts = useMemo(() => {
     const searchConcepts = (data?.data?.results ?? []).map(
@@ -94,7 +84,7 @@ export const ConceptPickerSearch = ({
           placeholder={t('SearchOther')}
           size="s"
           value={query}
-          onGovInput={handleInput}
+          onGovInput={(event) => setQuery(event.detail.value)}
         >
           <GovIcon name="search" size="s" slot="icon-start" />
         </GovFormInput>
@@ -104,17 +94,19 @@ export const ConceptPickerSearch = ({
         <FilterCheckbox
           label={t('Classes')}
           checked={selectedKind === 'CLASS'}
-          onToggle={() => toggleKind('CLASS')}
+          onToggle={(checked) => setSelectedKind(checked ? 'CLASS' : null)}
         />
         <FilterCheckbox
           label={t('Properties')}
           checked={selectedKind === 'PROPERTY'}
-          onToggle={() => toggleKind('PROPERTY')}
+          onToggle={(checked) => setSelectedKind(checked ? 'PROPERTY' : null)}
         />
         <FilterCheckbox
           label={t('Relationships')}
           checked={selectedKind === 'RELATIONSHIP'}
-          onToggle={() => toggleKind('RELATIONSHIP')}
+          onToggle={(checked) =>
+            setSelectedKind(checked ? 'RELATIONSHIP' : null)
+          }
         />
       </div>
       {resultConcepts.some((concept) =>

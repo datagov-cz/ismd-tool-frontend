@@ -14,6 +14,7 @@ import {
   useMaterialize,
   useSaveLayout,
 } from '@/api/generated';
+import { ConfirmationModal } from '@/components/shared/ConfirmationModal';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 import { hasIncompleteObecnyEdge } from './components/DiagramBuilder/utils/edgeHelpers';
@@ -66,6 +67,7 @@ export const DictionaryDiagramHeader = ({
   const [pendingSaveAction, setPendingSaveAction] = useState<
     'save' | 'materialize' | null
   >(null);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const t = useTranslations('ConceptDetail');
   const td = useTranslations('DictionaryDiagram.Header');
   const tc = useTranslations('DictionaryDiagram.Canvas');
@@ -207,6 +209,7 @@ export const DictionaryDiagramHeader = ({
   const handleSaveLayout = () => requestSave('save');
 
   const handleDeleteDiagram = () => {
+    setDeleteConfirmationOpen(false);
     deleteDiagram.mutate({
       ontologySlug: encodeURIComponent(ontologySlug),
       diagramId,
@@ -333,7 +336,7 @@ export const DictionaryDiagramHeader = ({
               materialize.isPending ||
               deleteDiagram.isPending
             }
-            onGovClick={handleDeleteDiagram}
+            onGovClick={() => setDeleteConfirmationOpen(true)}
           >
             <GovIcon name="trash" size="s" slot="icon-start" />
             {deleteDiagram.isPending ? td('Deleting') : td('Delete')}
@@ -351,6 +354,15 @@ export const DictionaryDiagramHeader = ({
         onClose={() => setConflicts([])}
         onResolve={resolveConflicts}
       />
+      <ConfirmationModal
+        isOpen={deleteConfirmationOpen}
+        cancelBtnText={td('Cancel')}
+        confirmBtnText={td('Delete')}
+        onClose={() => setDeleteConfirmationOpen(false)}
+        onConfirm={handleDeleteDiagram}
+      >
+        {td('DeleteConfirm')}
+      </ConfirmationModal>
       <StaleItemsDialog
         open={pendingSaveAction !== null}
         items={staleItems}
