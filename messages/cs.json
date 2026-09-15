@@ -382,6 +382,11 @@
     "SearchOntologies": "Hledat slovníky",
     "NoMoreResults": "Žádné další výsledky"
   },
+  "DatasetList": {
+    "AllTitle": "Datové sady",
+    "SearchOntologies": "Hledat datové sady",
+    "NoMoreResults": "Žádné další výsledky"
+  },
   "Shared": {
     "CloseAria": "Zavřít",
     "Yes": "Ano",

@@ -1122,6 +1122,48 @@ export interface MinimalConceptDto {
   conceptType?: MinimalConceptDtoConceptType;
 }
 
+export interface ApiResponseDtoGetNkodDatasetDto {
+  data?: GetNkodDatasetDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type GetNkodDatasetDtoNázev = { [key: string]: string };
+
+export type GetNkodDatasetDtoPopis = { [key: string]: string };
+
+export interface GetNkodDatasetDto {
+  iri?: string;
+  název?: GetNkodDatasetDtoNázev;
+  popis?: GetNkodDatasetDtoPopis;
+  'vstupní-stránka'?: string;
+  pojmy?: MinimalConceptDto[];
+  'počet-pojmů'?: number;
+}
+
+export interface ApiResponseDtoNkodDatasetListDto {
+  data?: NkodDatasetListDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface NkodDatasetListDto {
+  datasets?: NkodDatasetListItemDto[];
+  'celkový-počet'?: number;
+}
+
+export type NkodDatasetListItemDtoNázev = { [key: string]: string };
+
+export type NkodDatasetListItemDtoPopis = { [key: string]: string };
+
+export interface NkodDatasetListItemDto {
+  iri?: string;
+  název?: NkodDatasetListItemDtoNázev;
+  popis?: NkodDatasetListItemDtoPopis;
+}
+
 export interface ApiResponseDtoGetNkdOntologyListDto {
   data?: GetNkdOntologyListDto;
   message?: string;
@@ -1549,6 +1591,32 @@ export const GetConceptsByIriSource = {
   UNPUBLISHED: 'UNPUBLISHED',
   ALL: 'ALL',
 } as const;
+
+export type GetDatasetDetailParams = {
+  /**
+   * IRI datové sady v NKOD
+   */
+  iri: string;
+};
+
+export type ListDatasetsParams = {
+  /**
+   * Hledaný výraz v názvu a popisu datové sady
+   */
+  q?: string;
+  /**
+   * Maximální počet výsledků na stránku (1-100)
+   */
+  limit?: number;
+  /**
+   * Offset pro stránkování
+   */
+  offset?: number;
+  /**
+   * Jazyk pro řazení a zobrazení názvu (výchozí cs)
+   */
+  lang?: string;
+};
 
 export type GetNkdOntologyListParams = {
   /**
@@ -4744,6 +4812,315 @@ export function useGetConceptsByIri<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetConceptsByIriQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací detail datové sady z Národního katalogu otevřených dat (NKOD) podle IRI, včetně seznamu pojmů, kterými je datová sada anotována (týká se pojmu). Seznam pojmů může být prázdný, pokud datová sada anotace zatím neobsahuje. Veřejný endpoint.
+ * @summary Detail datové sady z NKOD
+ */
+export const getDatasetDetail = (
+  params: GetDatasetDetailParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoGetNkodDatasetDto>(
+    { url: `/api/nkod/dataset/detail`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getGetDatasetDetailQueryKey = (
+  params?: GetDatasetDetailParams,
+) => {
+  return [`/api/nkod/dataset/detail`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetDatasetDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDatasetDetail>>,
+  TError = unknown,
+>(
+  params: GetDatasetDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getDatasetDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetDatasetDetailQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getDatasetDetail>>
+  > = ({ signal }) => getDatasetDetail(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getDatasetDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDatasetDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDatasetDetail>>
+>;
+export type GetDatasetDetailQueryError = unknown;
+
+export function useGetDatasetDetail<
+  TData = Awaited<ReturnType<typeof getDatasetDetail>>,
+  TError = unknown,
+>(
+  params: GetDatasetDetailParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getDatasetDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDatasetDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getDatasetDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDatasetDetail<
+  TData = Awaited<ReturnType<typeof getDatasetDetail>>,
+  TError = unknown,
+>(
+  params: GetDatasetDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getDatasetDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDatasetDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getDatasetDetail>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDatasetDetail<
+  TData = Awaited<ReturnType<typeof getDatasetDetail>>,
+  TError = unknown,
+>(
+  params: GetDatasetDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getDatasetDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Detail datové sady z NKOD
+ */
+
+export function useGetDatasetDetail<
+  TData = Awaited<ReturnType<typeof getDatasetDetail>>,
+  TError = unknown,
+>(
+  params: GetDatasetDetailParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getDatasetDetail>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetDatasetDetailQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Vrací stránkovaný seznam datových sad z Národního katalogu otevřených dat (NKOD), seřazený abecedně podle názvu. Volitelný parametr q filtruje datové sady podle názvu a popisu; vyhledávání nerozlišuje diakritiku ani velikost písmen. Seznam je obsluhován z lokální kopie katalogu, která se obnovuje na pozadí. Veřejný endpoint.
+ * @summary Seznam datových sad z NKOD (stránkovaně)
+ */
+export const listDatasets = (
+  params?: ListDatasetsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoNkodDatasetListDto>(
+    { url: `/api/nkod/dataset/all`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getListDatasetsQueryKey = (params?: ListDatasetsParams) => {
+  return [`/api/nkod/dataset/all`, ...(params ? [params] : [])] as const;
+};
+
+export const getListDatasetsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listDatasets>>,
+  TError = unknown,
+>(
+  params?: ListDatasetsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof listDatasets>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListDatasetsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listDatasets>>> = ({
+    signal,
+  }) => listDatasets(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listDatasets>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListDatasetsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listDatasets>>
+>;
+export type ListDatasetsQueryError = unknown;
+
+export function useListDatasets<
+  TData = Awaited<ReturnType<typeof listDatasets>>,
+  TError = unknown,
+>(
+  params: undefined | ListDatasetsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof listDatasets>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDatasets>>,
+          TError,
+          Awaited<ReturnType<typeof listDatasets>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListDatasets<
+  TData = Awaited<ReturnType<typeof listDatasets>>,
+  TError = unknown,
+>(
+  params?: ListDatasetsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof listDatasets>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDatasets>>,
+          TError,
+          Awaited<ReturnType<typeof listDatasets>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListDatasets<
+  TData = Awaited<ReturnType<typeof listDatasets>>,
+  TError = unknown,
+>(
+  params?: ListDatasetsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof listDatasets>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Seznam datových sad z NKOD (stránkovaně)
+ */
+
+export function useListDatasets<
+  TData = Awaited<ReturnType<typeof listDatasets>>,
+  TError = unknown,
+>(
+  params?: ListDatasetsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof listDatasets>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getListDatasetsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
