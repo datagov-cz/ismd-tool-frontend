@@ -350,6 +350,7 @@
         "GetLink": "Získání odkazu",
         "CopyLink": "Kopírovat odkaz",
         "LinkCopied": "Odkaz zkopírován",
+        "LinkCopyFailed": "Odkaz se nepodařilo zkopírovat",
         "Comments": "Komentáře",
         "ValidationPassed": "Validace proběhla úspěšně",
         "ValidationFailed": "Validace neprošla",
@@ -360,7 +361,9 @@
         "Updated": "aktualizováno",
         "CreateDiagram": "Vytvořit diagram",
         "CopyIRI": "Zkopírovat IRI",
-        "CopyURL": "Zkopírovat URL"
+        "CopyURL": "Zkopírovat URL",
+        "Distribution": "Distribuce",
+        "Distributions": "Distribuce datové sady"
       },
       "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",

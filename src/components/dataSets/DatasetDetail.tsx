@@ -31,11 +31,13 @@ export const DatasetDetailWrapper = ({ iri }: Props) => {
 
   return (
     <DatasetLayout
+      iri={datasetDetail.iri}
       title={datasetDetail.název}
       popis={datasetDetail.popis}
       concepts={datasetDetail.pojmy}
       conceptCount={datasetDetail.pojmy?.length}
       getConceptSlug={nkdSlug}
+      distribuce={datasetDetail.distribuce}
     />
   );
 };

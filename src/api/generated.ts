@@ -125,8 +125,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -149,9 +149,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -1137,9 +1137,20 @@ export interface GetNkodDatasetDto {
   iri?: string;
   název?: GetNkodDatasetDtoNázev;
   popis?: GetNkodDatasetDtoPopis;
-  'vstupní-stránka'?: string;
   pojmy?: MinimalConceptDto[];
   'počet-pojmů'?: number;
+  distribuce?: NkodDistributionDto[];
+}
+
+export type NkodDistributionDtoNázev = { [key: string]: string };
+
+export interface NkodDistributionDto {
+  iri?: string;
+  název?: NkodDistributionDtoNázev;
+  odkaz?: string;
+  formát?: string;
+  'media-typ'?: string;
+  'je-služba'?: boolean;
 }
 
 export interface ApiResponseDtoNkodDatasetListDto {
@@ -4824,7 +4835,7 @@ export function useGetConceptsByIri<
 }
 
 /**
- * Vrací detail datové sady z Národního katalogu otevřených dat (NKOD) podle IRI, včetně seznamu pojmů, kterými je datová sada anotována (týká se pojmu). Seznam pojmů může být prázdný, pokud datová sada anotace zatím neobsahuje. Veřejný endpoint.
+ * Vrací detail datové sady z Národního katalogu otevřených dat (NKOD) podle IRI, včetně seznamu pojmů, kterými je datová sada anotována (týká se pojmu), a seznamu distribucí. Seznam pojmů může být prázdný, pokud datová sada anotace zatím neobsahuje. Každá distribuce nese jeden odkaz; příznak je-služba rozlišuje soubor ke stažení od API či mapové služby. Veřejný endpoint.
  * @summary Detail datové sady z NKOD
  */
 export const getDatasetDetail = (

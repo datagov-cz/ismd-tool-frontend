@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
+  GovButton,
+  GovDropdown,
   GovFormGroup,
   GovFormInput,
   GovIcon,
@@ -7,8 +9,13 @@ import {
 } from '@gov-design-system-ce/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
-import { ConceptDetailModel, OntologyDetailModelNázev } from '@/api/generated';
+import {
+  ConceptDetailModel,
+  NkodDistributionDto,
+  OntologyDetailModelNázev,
+} from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
 import { LanguageSwitcher } from '../conceptDetail/LanguageSwitcher';
 import { Section } from '../conceptDetail/Section';
@@ -19,25 +26,77 @@ export interface TermWithSlug {
 }
 
 interface Props {
+  iri?: string;
   title?: OntologyDetailModelNázev;
   popis?: Record<string, string> | null;
   concepts?: ConceptDetailModel[];
   getConceptSlug: (_concept: ConceptDetailModel) => string;
   conceptCount?: number;
+  distribuce?: NkodDistributionDto[];
 }
 
 export const DatasetLayout = ({
+  iri,
   title,
   popis,
   concepts,
   getConceptSlug,
   conceptCount,
+  distribuce,
 }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
   const [filterQuery, setFilterQuery] = useState('');
 
   const router = useRouter();
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(t('Main.ControlPanel.LinkCopied'), { type: 'success' });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to copy link:', error);
+      toast(t('Main.ControlPanel.LinkCopyFailed'), { type: 'error' });
+    }
+  };
+
+  const getDistributionLabel = (
+    distribution: NkodDistributionDto,
+    index: number,
+  ) => {
+    if (distribution.formát) {
+      const formatSegment = distribution.formát
+        .split('?')[0]
+        .split(/[\/#]/)
+        .filter(Boolean)
+        .at(-1);
+
+      const formatName = (formatSegment || distribution.formát)
+        .split(';')[0]
+        .split('+')
+        .at(-1);
+
+      return (formatName || distribution.formát).toUpperCase();
+    }
+
+    if (distribution.odkaz?.toLowerCase().includes('api')) {
+      return 'API';
+    }
+
+    const fileExtension = distribution.odkaz?.match(
+      /\.([a-z0-9]+)(?:[?#]|$)/i,
+    )?.[1];
+
+    if (fileExtension) {
+      return fileExtension.toUpperCase();
+    }
+
+    return (
+      distribution.odkaz ||
+      `${t('Main.ControlPanel.Distribution')} ${index + 1}`
+    );
+  };
 
   const filteredConcepts = useMemo(() => {
     if (!filterQuery.trim()) {
@@ -91,7 +150,86 @@ export const DatasetLayout = ({
                   <span className="font-bold">Datova sada NKD</span>
                 </GovTag>
 
-                <div></div>
+                <div className="flex">
+                  <GovDropdown id="copy-link-dataset" position="left">
+                    <GovButton
+                      color="primary"
+                      type="base"
+                      size="m"
+                      className="h-8! [&_button]:h-8!"
+                    >
+                      <GovIcon
+                        name="link"
+                        size="m"
+                        aria-label={t('Main.ControlPanel.GetLink')}
+                        className="text-white"
+                      />
+                    </GovButton>
+
+                    <ul slot="list">
+                      {iri && (
+                        <GovButton
+                          color="primary"
+                          type="base"
+                          size="s"
+                          onGovClick={() => copyToClipboard(iri)}
+                          className="w-full! [&_button]:w-full! max-w-none!"
+                        >
+                          {t('Main.ControlPanel.CopyIRI')}
+                        </GovButton>
+                      )}
+                      <GovButton
+                        color="primary"
+                        type="base"
+                        size="s"
+                        onGovClick={() => copyToClipboard(window.location.href)}
+                        className="w-full! [&_button]:w-full! max-w-none!"
+                      >
+                        {t('Main.ControlPanel.CopyURL')}
+                      </GovButton>
+                    </ul>
+                  </GovDropdown>
+
+                  {!!distribuce?.length && (
+                    <GovDropdown id="dataset-distributions" position="left">
+                      <GovButton
+                        color="primary"
+                        type="base"
+                        size="m"
+                        className="h-8! [&_button]:h-8!"
+                      >
+                        <GovIcon
+                          name="download"
+                          size="m"
+                          aria-label={t('Main.ControlPanel.Distributions')}
+                          className="text-white"
+                        />
+                        Distribuce
+                      </GovButton>
+
+                      <ul slot="list">
+                        {distribuce.map((distribution, index) => (
+                          <li
+                            key={
+                              distribution.iri || distribution.odkaz || index
+                            }
+                          >
+                            <GovButton
+                              href={distribution.odkaz}
+                              target="_blank"
+                              color="primary"
+                              type="base"
+                              size="s"
+                              className="w-full! [&_button]:w-full! max-w-none!"
+                            >
+                              {getDistributionLabel(distribution, index)}
+                            </GovButton>
+                          </li>
+                        ))}
+                      </ul>
+                    </GovDropdown>
+                  )}
+                </div>
               </div>
             </div>
           </div>
