@@ -119,6 +119,9 @@ export const getNadrazenaTrida = (c: Concept): string[] => {
 export const getOborHodnot = (c: Concept): string | undefined =>
   c['obor-hodnot'] ?? undefined;
 
+export const getEkvivalentniPojem = (c: Concept): string[] =>
+  c['ekvivalentní-pojem'] ?? [];
+
 export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
   const assigned = new Set<string>();
   const tridy = concepts.filter((c) => getConceptKind(c) === 'trida');
@@ -495,29 +498,38 @@ export const buildPersistedDiagram = (
 };
 
 /**
- * The parent set a hierarchy overlay must carry: the concept's current parents with targets added
- * and removed. Always complete — materializing replaces every parent, so a set built from the single
- * edge being drawn would delete the concept's other parents.
+ * The set a hierarchy or equivalence overlay must carry: the concept's current members with targets
+ * added and removed. Always complete — materializing edits the concept as a full snapshot, so a set
+ * built from the single edge being drawn would delete the concept's other members.
  *
- * <p>Removals are applied before additions, so one reconnect that moves an edge from one parent to
+ * <p>Removals are applied before additions, so one reconnect that moves an edge from one target to
  * another composes into a single correct set.
  *
  * <p>Returns undefined when the set is unchanged, which stages nothing rather than a no-op edit.
  */
-const nextBroaderConcept = (
-  concept: Concept,
+const nextMemberSet = (
+  current: string[],
   { add, remove }: { add?: string; remove?: string },
 ): string[] | undefined => {
-  const current = getNadrazenaTrida(concept);
   const pruned = remove
-    ? current.filter((parent) => parent !== remove)
+    ? current.filter((member) => member !== remove)
     : current;
   const next = add && !pruned.includes(add) ? [...pruned, add] : pruned;
   return next.length === current.length &&
-    next.every((parent, i) => parent === current[i])
+    next.every((member, i) => member === current[i])
     ? undefined
     : next;
 };
+
+const nextBroaderConcept = (
+  concept: Concept,
+  change: { add?: string; remove?: string },
+): string[] | undefined => nextMemberSet(getNadrazenaTrida(concept), change);
+
+const nextExactMatch = (
+  concept: Concept,
+  change: { add?: string; remove?: string },
+): string[] | undefined => nextMemberSet(getEkvivalentniPojem(concept), change);
 
 const getRemovedEdgeOverlay = (
   edge: ConceptFlowEdge,
@@ -527,21 +539,33 @@ const getRemovedEdgeOverlay = (
     return edge.data.vztahIri ? { conceptIri: edge.data.vztahIri } : undefined;
   }
 
-  const affectedNodeId = edge.source;
-  const affectedNode = nodes.find((node) => node.id === affectedNodeId);
-  const conceptIri = affectedNode && getConceptIri(affectedNode.data.concept);
-  if (!conceptIri) return undefined;
-
-  if (edge.data?.kind !== 'hierarchie') return { conceptIri };
-
+  const sourceNode = nodes.find((node) => node.id === edge.source);
   const targetNode = nodes.find((node) => node.id === edge.target);
+  const sourceIri = sourceNode && getConceptIri(sourceNode.data.concept);
   const targetIri = targetNode && getConceptIri(targetNode.data.concept);
-  if (!targetIri) return { conceptIri };
+  if (!sourceNode || !sourceIri) return undefined;
 
-  const broaderConcept = nextBroaderConcept(affectedNode.data.concept, {
-    remove: targetIri,
+  if (edge.data?.kind === 'hierarchie') {
+    if (!targetIri) return { conceptIri: sourceIri };
+    const broaderConcept = nextBroaderConcept(sourceNode.data.concept, {
+      remove: targetIri,
+    });
+    return broaderConcept
+      ? { conceptIri: sourceIri, broaderConcept }
+      : undefined;
+  }
+
+  if (!targetNode || !targetIri) return { conceptIri: sourceIri };
+
+  // Mirrors getEdgeOverlay's subject choice, so removal targets the row the addition wrote.
+  const swap = sourceNode.data.readOnly && !targetNode.data.readOnly;
+  const subject = swap ? targetNode : sourceNode;
+  const exactMatch = nextExactMatch(subject.data.concept, {
+    remove: swap ? sourceIri : targetIri,
   });
-  return broaderConcept ? { conceptIri, broaderConcept } : undefined;
+  return exactMatch
+    ? { conceptIri: swap ? targetIri : sourceIri, exactMatch }
+    : undefined;
 };
 
 /**
@@ -558,15 +582,15 @@ const assertsRelationship = (
   getOborHodnot(vztah) === range;
 
 /**
- * The overlay for one drawn edge. {@code replacedParent} is the hierarchy parent this edge was just
- * moved off, so a reconnect folds the removal and the addition into one complete set rather than two
- * overlays that overwrite each other.
+ * The overlay for one drawn edge. {@code replacedMember} is the hierarchy parent or equivalent this
+ * edge was just moved off, so a reconnect folds the removal and the addition into one complete set
+ * rather than two overlays that overwrite each other.
  */
 const getEdgeOverlay = (
   edge: ConceptFlowEdge,
   nodes: ConceptFlowNode[],
   vztah?: Concept,
-  replacedParent?: string,
+  replacedMember?: string,
 ): DiagramLayoutOverlay | undefined => {
   const sourceNode = nodes.find((node) => node.id === edge.source);
   const targetNode = nodes.find((node) => node.id === edge.target);
@@ -580,16 +604,24 @@ const getEdgeOverlay = (
       // already-asserted hierarchy reaches this branch.
       const broaderConcept = nextBroaderConcept(sourceNode.data.concept, {
         add: targetIri,
-        remove: replacedParent,
+        remove: replacedMember,
       });
       return broaderConcept
         ? { conceptIri: sourceIri, broaderConcept }
         : undefined;
     }
-    case 'ekvivalence':
-      return sourceNode.data.readOnly && !targetNode.data.readOnly
-        ? { conceptIri: targetIri, exactMatch: [sourceIri] }
-        : { conceptIri: sourceIri, exactMatch: [targetIri] };
+    case 'ekvivalence': {
+      // The overlay subject must be own-graph, so a foreign source is written from the target side.
+      const swap = sourceNode.data.readOnly && !targetNode.data.readOnly;
+      const subject = swap ? targetNode : sourceNode;
+      const exactMatch = nextExactMatch(subject.data.concept, {
+        add: swap ? sourceIri : targetIri,
+        remove: replacedMember,
+      });
+      return exactMatch
+        ? { conceptIri: swap ? targetIri : sourceIri, exactMatch }
+        : undefined;
+    }
     case 'obecny': {
       if (!edge.data.vztahIri) return undefined;
       const swap = sourceNode.data.readOnly && !targetNode.data.readOnly;
@@ -625,20 +657,16 @@ const addRemovedOverlays = (
         : {
             ...existing,
             ...addition,
-            // Each hierarchy overlay already carries the complete resulting parent set, so the
-            // latest one replaces its predecessor; unioning would resurrect a removed parent.
+            // Each overlay already carries the complete resulting set, so the latest one replaces
+            // its predecessor; unioning would resurrect a removed member.
             broaderConcept:
               addition.broaderConcept !== undefined
                 ? addition.broaderConcept
                 : existing.broaderConcept,
-            exactMatch: addition.exactMatch
-              ? Array.from(
-                  new Set([
-                    ...(existing.exactMatch ?? []),
-                    ...addition.exactMatch,
-                  ]),
-                )
-              : existing.exactMatch,
+            exactMatch:
+              addition.exactMatch !== undefined
+                ? addition.exactMatch
+                : existing.exactMatch,
           },
     );
   }
@@ -733,13 +761,16 @@ export const diagramReducer = (
         },
       };
 
-      // A hierarchy reconnect is one move, not a removal plus an addition: both overlays would seed
-      // from the same unchanged parent set, so the second would overwrite the first.
+      // A hierarchy or equivalence reconnect is one move, not a removal plus an addition: both
+      // overlays would seed from the same unchanged set, so the second would overwrite the first.
       const previousTarget = state.nodes.find(
         (node) => node.id === previousEdge.target,
       );
-      const replacedParent =
-        previousEdge.data?.kind === 'hierarchie' && previousTarget
+      const setValued =
+        previousEdge.data?.kind === 'hierarchie' ||
+        previousEdge.data?.kind === 'ekvivalence';
+      const replacedMember =
+        setValued && previousTarget
           ? getConceptIri(previousTarget.data.concept)
           : undefined;
 
@@ -750,13 +781,13 @@ export const diagramReducer = (
         ),
         removedOverlays: addRemovedOverlays(
           state.removedOverlays,
-          replacedParent
+          replacedMember
             ? [
                 getEdgeOverlay(
                   updatedEdge,
                   state.nodes,
                   undefined,
-                  replacedParent,
+                  replacedMember,
                 ),
               ]
             : [
