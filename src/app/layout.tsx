@@ -27,6 +27,7 @@ const loadEnvVariables = () => {
   return {
     NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH ?? undefined,
     environment: process.env.environment ?? 'development',
+    niaEnabled: process.env.KEYCLOAK_NIA_ENABLED === 'true',
   };
 };
 
