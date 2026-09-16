@@ -1,17 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   GovFormGroup,
   GovFormInput,
   GovIcon,
 } from '@gov-design-system-ce/react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useDebounceValue } from 'usehooks-ts';
 
-import { SearchType, useSearch } from '@/api/generated';
+import { search, SearchType } from '@/api/generated';
 import { Concept, getConceptId } from '../../model/concept';
 
 import { DiagramPickerConcept } from './DiagramConceptPicker';
 import { FilterCheckbox } from './FilterCheckbox';
+
+const SEARCH_LIMIT = 20;
 
 export const ConceptPickerSearch = ({
   conceptsInDiagram,
@@ -28,22 +31,57 @@ export const ConceptPickerSearch = ({
   const [selectedKind, setSelectedKind] = useState<SearchType | null>(null);
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounceValue(query, 300);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const { data } = useSearch(
-    {
-      q: debouncedQuery,
-      type: selectedKind ?? 'CONCEPT',
-      limit: 20,
-    },
-    {
-      query: {
-        enabled: debouncedQuery.trim().length > 3,
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['diagram-concept-picker-search', debouncedQuery, selectedKind],
+      queryFn: ({ pageParam }) =>
+        search({
+          q: debouncedQuery,
+          type: selectedKind ?? 'CONCEPT',
+          limit: SEARCH_LIMIT,
+          offset: pageParam,
+        }),
+      initialPageParam: 0,
+      enabled: debouncedQuery.trim().length > 3,
+      getNextPageParam: (lastPage, allPages) => {
+        const lastCount = lastPage.data?.results?.length ?? 0;
+        if (lastCount < SEARCH_LIMIT) return undefined;
+
+        return allPages.reduce(
+          (count, page) => count + (page.data?.results?.length ?? 0),
+          0,
+        );
       },
+    });
+
+  const searchResults = useMemo(
+    () => data?.pages.flatMap((page) => page.data?.results ?? []) ?? [],
+    [data],
+  );
+
+  const sentinelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      observerRef.current?.disconnect();
+      if (!node) return;
+
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !isFetchingNextPage && hasNextPage) {
+            fetchNextPage();
+          }
+        },
+        { root: scrollContainerRef.current, threshold: 0.1 },
+      );
+      observerRef.current.observe(node);
     },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
   );
 
   const resultConcepts = useMemo(() => {
-    const searchConcepts = (data?.data?.results ?? []).map(
+    const searchConcepts = searchResults.map(
       (item): Concept => ({
         iri: item.iri,
         slug: item.slug,
@@ -69,12 +107,7 @@ export const ConceptPickerSearch = ({
         Number(selectedConceptIds.has(getConceptId(a)))
       );
     });
-  }, [
-    activeConceptIds,
-    conceptsInDiagram,
-    data?.data?.results,
-    selectedConceptIds,
-  ]);
+  }, [activeConceptIds, conceptsInDiagram, searchResults, selectedConceptIds]);
 
   return (
     <div>
@@ -125,7 +158,10 @@ export const ConceptPickerSearch = ({
             ))}
         </div>
       )}
-      <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1 bg-white">
+      <div
+        ref={scrollContainerRef}
+        className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1 bg-white"
+      >
         {resultConcepts
           .filter((concept) => !selectedConceptIds.has(getConceptId(concept)))
           .map((concept, index) => (
@@ -137,11 +173,22 @@ export const ConceptPickerSearch = ({
             />
           ))}
 
-        {data?.data?.returnedCount === 0 && (
+        {data?.pages[0]?.data?.returnedCount === 0 && (
           <span className="text-xs text-card-description py-2">
             {t('NoMatches')}
           </span>
         )}
+
+        <div ref={sentinelRef} className="flex justify-center py-1">
+          {isFetchingNextPage && (
+            <GovIcon
+              name="loader"
+              type="components"
+              size="s"
+              className="animate-spin"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
