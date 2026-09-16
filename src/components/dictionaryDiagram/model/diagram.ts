@@ -513,9 +513,23 @@ const getRemovedEdgeOverlay = (
     : undefined;
 };
 
+/**
+ * Whether the relationship already asserts this domain/range pair. Such an overlay would stage a
+ * write identical to what RDF holds, surfacing as a pending edit that changes nothing.
+ */
+const assertsRelationship = (
+  vztah: Concept | undefined,
+  domain: string,
+  range: string,
+): boolean =>
+  !!vztah &&
+  getDefinicniObor(vztah) === domain &&
+  getOborHodnot(vztah) === range;
+
 const getEdgeOverlay = (
   edge: ConceptFlowEdge,
   nodes: ConceptFlowNode[],
+  vztah?: Concept,
 ): DiagramLayoutOverlay | undefined => {
   const sourceNode = nodes.find((node) => node.id === edge.source);
   const targetNode = nodes.find((node) => node.id === edge.target);
@@ -530,20 +544,16 @@ const getEdgeOverlay = (
       return sourceNode.data.readOnly && !targetNode.data.readOnly
         ? { conceptIri: targetIri, exactMatch: [sourceIri] }
         : { conceptIri: sourceIri, exactMatch: [targetIri] };
-    case 'obecny':
-      return edge.data.vztahIri
-        ? sourceNode.data.readOnly && !targetNode.data.readOnly
-          ? {
-              conceptIri: edge.data.vztahIri,
-              domain: targetIri,
-              range: sourceIri,
-            }
-          : {
-              conceptIri: edge.data.vztahIri,
-              domain: sourceIri,
-              range: targetIri,
-            }
-        : undefined;
+    case 'obecny': {
+      if (!edge.data.vztahIri) return undefined;
+      const swap = sourceNode.data.readOnly && !targetNode.data.readOnly;
+      const domain = swap ? targetIri : sourceIri;
+      const range = swap ? sourceIri : targetIri;
+      // A foreign range is never auto-drawn, so redrawing it by hand is the common way an
+      // already-asserted relationship reaches this branch.
+      if (assertsRelationship(vztah, domain, range)) return undefined;
+      return { conceptIri: edge.data.vztahIri, domain, range };
+    }
     default:
       return undefined;
   }
@@ -756,14 +766,17 @@ export const diagramReducer = (
           vztahIri,
         },
       };
+      const overlay = getEdgeOverlay(updatedEdge, state.nodes, action.vztah);
+      // The guard found the relationship already asserted, so anything staged for it earlier in
+      // this session is a no-op too; a bare entry discards the row rather than leaving it staged.
+      const additions =
+        !overlay && vztahIri ? [{ conceptIri: vztahIri }] : [overlay];
       return {
         ...state,
         edges: state.edges.map((item) =>
           item.id === action.edgeId ? updatedEdge : item,
         ),
-        removedOverlays: addRemovedOverlays(state.removedOverlays, [
-          getEdgeOverlay(updatedEdge, state.nodes),
-        ]),
+        removedOverlays: addRemovedOverlays(state.removedOverlays, additions),
       };
     }
 
