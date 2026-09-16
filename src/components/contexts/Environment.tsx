@@ -8,6 +8,16 @@ import React, {
 export type EnvironmentVariables = {
   NEXT_PUBLIC_BASE_PATH?: string;
   environment: string;
+  /**
+   * Show the NIA login button. Set server-side from KEYCLOAK_NIA_ENABLED and read at
+   * request time, so it is a Container App env-var change rather than a rebuild —
+   * unlike NEXT_PUBLIC_*, which Next.js inlines at build time.
+   *
+   * Must be flipped together with enable_nia in keycloak-config: those live in a
+   * different Terraform state and cannot reference each other. Button without the
+   * IdP = Keycloak error page.
+   */
+  niaEnabled?: boolean;
 };
 
 interface EnvironmentContextProps {

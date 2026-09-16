@@ -8,7 +8,14 @@
     "ApiDocs": "Dokumentace API",
     "LogoTitle": "Informační systém pro modelování dat",
     "Search": "Vyhledávání",
-    "LoginButton": "Přihlásit se přes CAAIS",
+    "LoginButton": {
+      "caais": "Přihlásit se přes CAAIS",
+      "nia": "Přihlásit se přes NIA"
+    },
+    "LoginButtonShort": {
+      "caais": "CAAIS",
+      "nia": "NIA"
+    },
     "Nav": {
       "Link1": "Nápověda",
       "Dropdown": {
@@ -54,7 +61,8 @@
       "Title": "Odkazy",
       "Link1": "Portál o datech",
       "Link2": "Popis dat na portálu o datech",
-      "Link3": "Repozitář na GitHubu"
+      "Link3": "Repozitář na GitHubu",
+      "AdminLogin": "Přihlášení pro admin"
     },
     "ContactColumn": {
       "Title": "Kontakt",

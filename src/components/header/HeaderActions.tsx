@@ -4,6 +4,7 @@ import { RefObject } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { IdpAlias, useNiaEnabled } from '@/hooks/useLogin';
 import { SearchInput } from '../searchInput/SearchInput';
 
 import { LoginButton } from './LoginButton';
@@ -13,7 +14,7 @@ interface Props {
   isHomepage: boolean;
   searchToggleRef: RefObject<HTMLGovButtonElement | null>;
   onOpenSearch: () => void;
-  onLogin: () => void;
+  onLogin: (_idp: IdpAlias) => void;
 }
 
 export const HeaderActions = ({
@@ -25,6 +26,7 @@ export const HeaderActions = ({
 }: Props) => {
   const t = useTranslations('Header');
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  const niaEnabled = useNiaEnabled();
 
   return (
     <div className="flex-none desktop:flex-auto 2xl:flex-2 flex justify-center items-center gap-2 desktop:gap-4">
@@ -55,11 +57,18 @@ export const HeaderActions = ({
       <SearchInput className="hidden desktop:block max-w-150" />
 
       {!isAuthenticated && !isHomepage && (
-        <LoginButton
-          size="s"
-          className="max-desktop:order-first"
-          onLogin={onLogin}
-        />
+        <>
+          <LoginButton
+            size="s"
+            short
+            idp="caais"
+            className="max-desktop:order-first"
+            onLogin={onLogin}
+          />
+          {niaEnabled && (
+            <LoginButton size="s" short idp="nia" onLogin={onLogin} />
+          )}
+        </>
       )}
 
       {isAuthenticated && (
