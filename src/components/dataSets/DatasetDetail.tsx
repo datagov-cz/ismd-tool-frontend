@@ -27,7 +27,7 @@ export const DatasetDetailWrapper = ({ iri }: Props) => {
     return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
   }
 
-  const nkdSlug = (concept: ConceptDetailModel) => `/nkd?iri=${concept.iri}`;
+  const getPath = (concept: ConceptDetailModel) => `/nkd?iri=${concept.iri}`;
 
   return (
     <DatasetLayout
@@ -36,7 +36,7 @@ export const DatasetDetailWrapper = ({ iri }: Props) => {
       popis={datasetDetail.popis}
       concepts={datasetDetail.pojmy}
       conceptCount={datasetDetail.pojmy?.length}
-      getConceptSlug={nkdSlug}
+      getConceptSlug={getPath}
       distribuce={datasetDetail.distribuce}
     />
   );
