@@ -1,5 +1,5 @@
 import { Dispatch, RefObject, useCallback, useMemo, useState } from 'react';
-import { Connection } from '@xyflow/react';
+import { Connection, type OnReconnect } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -113,6 +113,33 @@ export const useConnectionWorkflow = ({
     [hasIncompleteObecny, nodes, midpointBetweenNodes, openChooser, t],
   );
 
+  const onReconnect = useCallback<OnReconnect<ConceptFlowEdge>>(
+    (edge, connection) => {
+      const source = nodes.find((node) => node.id === connection.source);
+      const target = nodes.find((node) => node.id === connection.target);
+      if (!source || !target) return;
+
+      const sourceForeign = !localConceptIds.has(
+        getConceptId(source.data.concept),
+      );
+      const targetForeign = !localConceptIds.has(
+        getConceptId(target.data.concept),
+      );
+      const invalidForeignEndpoint =
+        (edge.data?.kind === 'hierarchie' && targetForeign) ||
+        (edge.data?.kind === 'obecny' && sourceForeign) ||
+        (edge.data?.kind === 'ekvivalence' && sourceForeign && targetForeign);
+
+      if (invalidForeignEndpoint) {
+        toast.info(t('ReconnectNotAllowed'), { position: 'bottom-right' });
+        return;
+      }
+
+      dispatch({ type: 'reconnect', edgeId: edge.id, connection });
+    },
+    [dispatch, localConceptIds, nodes, t],
+  );
+
   const closeChooser = useCallback(() => {
     setChooser(null);
     setPending(null);
@@ -185,6 +212,7 @@ export const useConnectionWorkflow = ({
     pending,
     onEdgeClick,
     onConnect,
+    onReconnect,
     closeChooser,
     selectRelationship,
     removeEdge,

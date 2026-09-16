@@ -47,5 +47,6 @@ export const createPendingEdge = (pending: Connection): ConceptFlowEdge =>
     id: 'pending-edge',
     source: pending.source,
     target: pending.target,
+    reconnectable: false,
     style: { strokeDasharray: '6 4', opacity: 0.6 },
   }) as ConceptFlowEdge;

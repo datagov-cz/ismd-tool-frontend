@@ -78,6 +78,11 @@ export type DiagramAction =
       swap?: boolean;
     }
   | {
+      type: 'reconnect';
+      edgeId: string;
+      connection: Connection;
+    }
+  | {
       type: 'setEdgeKind';
       edgeId: string;
       kind: RelationshipKind;
@@ -644,6 +649,47 @@ export const diagramReducer = (
         edges: addEdge(edge, state.edges),
         removedOverlays: addRemovedOverlays(state.removedOverlays, [
           getEdgeOverlay(edge, state.nodes),
+        ]),
+      };
+    }
+
+    case 'reconnect': {
+      const previousEdge = state.edges.find(
+        (edge) => edge.id === action.edgeId,
+      );
+      if (
+        !previousEdge ||
+        (previousEdge.source === action.connection.source &&
+          previousEdge.target === action.connection.target) ||
+        state.edges.some(
+          (edge) =>
+            edge.id !== action.edgeId &&
+            edge.source === action.connection.source &&
+            edge.target === action.connection.target &&
+            (edge.sourceHandle ?? null) === action.connection.sourceHandle &&
+            (edge.targetHandle ?? null) === action.connection.targetHandle,
+        )
+      ) {
+        return state;
+      }
+
+      const updatedEdge: ConceptFlowEdge = {
+        ...previousEdge,
+        ...action.connection,
+        data: {
+          ...previousEdge.data,
+          bends: undefined,
+        },
+      };
+
+      return {
+        ...state,
+        edges: state.edges.map((edge) =>
+          edge.id === action.edgeId ? updatedEdge : edge,
+        ),
+        removedOverlays: addRemovedOverlays(state.removedOverlays, [
+          getRemovedEdgeOverlay(previousEdge, state.nodes),
+          getEdgeOverlay(updatedEdge, state.nodes),
         ]),
       };
     }

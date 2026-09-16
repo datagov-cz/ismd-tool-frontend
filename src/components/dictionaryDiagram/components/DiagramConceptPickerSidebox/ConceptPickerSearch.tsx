@@ -33,7 +33,6 @@ export const ConceptPickerSearch = ({
     {
       q: debouncedQuery,
       type: selectedKind ?? 'CONCEPT',
-      source: 'ISMD',
       limit: 20,
     },
     {

@@ -760,6 +760,16 @@
     "Export": {
       "Title": "Exportovat diagram",
       "Description": "Chcete exportovat celý diagram, nebo jen jeho aktuální výřez?",
+      "Format": "Formát",
+      "FormatPng": "PNG",
+      "FormatSvg": "SVG",
+      "Background": "Pozadí",
+      "BackgroundWhite": "Bílé",
+      "BackgroundTransparent": "Průhledné",
+      "Preparing": "Připravuji soubor…",
+      "Rendering": "Vykresluji diagram…",
+      "Optimizing": "Optimalizuji SVG…",
+      "Downloading": "Spouštím stahování…",
       "Cancel": "Zrušit",
       "Viewport": "Aktuální výřez",
       "WholeDiagram": "Celý diagram"
@@ -873,7 +883,8 @@
       "ExportError": "Diagram se nepodařilo exportovat.",
       "ShortenLabels": "Zkrátit popisky vztahů",
       "ShowFullLabels": "Zobrazit celé popisky vztahů",
-      "CompleteRelationshipFirst": "Nejdříve přidejte vztah na rozdělanou vazbu."
+      "CompleteRelationshipFirst": "Nejdříve přidejte vztah na rozdělanou vazbu.",
+      "ReconnectNotAllowed": "Vazbu nelze připojit k tomuto pojmu z jiného slovníku."
     },
     "RelationshipChooser": {
       "Title": "Vyberte typ vazby mezi <a></a> a <b></b>",

@@ -13,7 +13,7 @@ import {
   ReactFlow,
   useReactFlow,
 } from '@xyflow/react';
-import { toPng } from 'html-to-image';
+import { toPng, toSvg } from 'html-to-image';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
@@ -30,7 +30,12 @@ import {
   type ConceptFlowNode,
 } from '@/components/dictionaryDiagram/model/diagram';
 
-import { DiagramExportDialog } from './components/DiagramExportDialog';
+import {
+  type DiagramExportBackground,
+  DiagramExportDialog,
+  type DiagramExportFormat,
+  type DiagramExportPhase,
+} from './components/DiagramExportDialog';
 import { DiagramToolbar } from './components/DiagramToolbar';
 import { DiagramTopBar } from './components/DiagramTopBar';
 import {
@@ -49,6 +54,60 @@ const edgeTypes = { default: LabeledEdge };
 const EXPORT_PADDING = 80;
 const MAX_EXPORT_SIDE = 16384;
 const MAX_EXPORT_PIXELS = 64_000_000;
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+
+const waitForNextPaint = () =>
+  new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  });
+
+const compactSvgDataUrl = (dataUrl: string) => {
+  const separatorIndex = dataUrl.indexOf(',');
+  if (separatorIndex === -1)
+    return new Blob([dataUrl], { type: 'image/svg+xml' });
+
+  const svgMarkup = decodeURIComponent(dataUrl.slice(separatorIndex + 1));
+  const document = new DOMParser().parseFromString(svgMarkup, 'image/svg+xml');
+  if (document.querySelector('parsererror')) {
+    return new Blob([svgMarkup], { type: 'image/svg+xml' });
+  }
+
+  const elementsByStyle = new Map<string, Element[]>();
+  for (const element of document.querySelectorAll('[style]')) {
+    const style = element.getAttribute('style');
+    if (!style) continue;
+    const elements = elementsByStyle.get(style) ?? [];
+    elements.push(element);
+    elementsByStyle.set(style, elements);
+  }
+
+  const sharedStyleRules: string[] = [];
+  let sharedStyleIndex = 0;
+  for (const [style, elements] of elementsByStyle) {
+    if (elements.length < 2) continue;
+
+    const className = `diagram-export-style-${sharedStyleIndex++}`;
+    sharedStyleRules.push(`.${className}{${style}}`);
+    for (const element of elements) {
+      element.classList.add(className);
+      element.removeAttribute('style');
+    }
+  }
+
+  if (sharedStyleRules.length === 0) {
+    return new Blob([svgMarkup], { type: 'image/svg+xml' });
+  }
+
+  const styleElement = document.createElementNS(SVG_NAMESPACE, 'style');
+  styleElement.textContent = sharedStyleRules.join('');
+  document.documentElement.prepend(styleElement);
+
+  const compactedMarkup = new XMLSerializer().serializeToString(document);
+  return new Blob(
+    [compactedMarkup.length < svgMarkup.length ? compactedMarkup : svgMarkup],
+    { type: 'image/svg+xml' },
+  );
+};
 
 const getExportPixelRatio = (
   width: number,
@@ -135,7 +194,7 @@ export const DiagramCanvas = ({
   >();
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openExportDialog, setOpenExportDialog] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
+  const [exportPhase, setExportPhase] = useState<DiagramExportPhase>('idle');
   const [showFullLabels, setShowFullLabels] = useState(false);
   const [storedFocusedNodeIds, setFocusedNodeIds] = useState<Set<string>>(
     () => new Set(),
@@ -176,6 +235,7 @@ export const DiagramCanvas = ({
     pending,
     onEdgeClick,
     onConnect,
+    onReconnect,
     closeChooser,
     selectRelationship,
     removeEdge,
@@ -395,8 +455,12 @@ export const DiagramCanvas = ({
     [dispatch],
   );
 
-  const exportPng = useCallback(
-    async (scope: 'diagram' | 'viewport') => {
+  const exportDiagram = useCallback(
+    async (
+      scope: 'diagram' | 'viewport',
+      format: DiagramExportFormat,
+      background: DiagramExportBackground,
+    ) => {
       const flowElement =
         wrapperRef.current?.querySelector<HTMLElement>('.react-flow');
       const rendererElement = flowElement?.querySelector<HTMLElement>(
@@ -411,13 +475,15 @@ export const DiagramCanvas = ({
         return;
       }
 
-      setIsExporting(true);
+      setExportPhase('rendering');
+      await waitForNextPaint();
       const restoreSvgPaint = materializeSvgPaint(flowElement);
       let restoreViewportTransform = () => {};
 
       try {
         const flowBounds = flowElement.getBoundingClientRect();
         let dataUrl: string;
+        const backgroundColor = background === 'white' ? '#ffffff' : undefined;
 
         if (scope === 'diagram' && nodes.length > 0) {
           const bounds = getNodesBounds(nodes);
@@ -442,23 +508,37 @@ export const DiagramCanvas = ({
             }
           };
 
-          dataUrl = await toPng(rendererElement, {
-            backgroundColor: '#ffffff',
-            width,
-            height,
-            pixelRatio: getExportPixelRatio(width, height, 2),
-          });
+          dataUrl =
+            format === 'png'
+              ? await toPng(rendererElement, {
+                  backgroundColor,
+                  width,
+                  height,
+                  pixelRatio: getExportPixelRatio(width, height, 2),
+                })
+              : await toSvg(rendererElement, {
+                  backgroundColor,
+                  width,
+                  height,
+                });
         } else {
-          dataUrl = await toPng(rendererElement, {
-            backgroundColor: '#ffffff',
-            width: flowBounds.width,
-            height: flowBounds.height,
-            pixelRatio: getExportPixelRatio(
-              flowBounds.width,
-              flowBounds.height,
-              3,
-            ),
-          });
+          dataUrl =
+            format === 'png'
+              ? await toPng(rendererElement, {
+                  backgroundColor,
+                  width: flowBounds.width,
+                  height: flowBounds.height,
+                  pixelRatio: getExportPixelRatio(
+                    flowBounds.width,
+                    flowBounds.height,
+                    3,
+                  ),
+                })
+              : await toSvg(rendererElement, {
+                  backgroundColor,
+                  width: flowBounds.width,
+                  height: flowBounds.height,
+                });
         }
 
         const safeName = ontology
@@ -467,16 +547,27 @@ export const DiagramCanvas = ({
           ?.replace(/[^a-zA-Z0-9_-]+/g, '-')
           .replace(/^-|-$/g, '');
         const link = document.createElement('a');
-        link.download = `${safeName || 'diagram'}-${scope === 'diagram' ? 'cely' : 'vyrez'}.png`;
-        link.href = dataUrl;
+        link.download = `${safeName || 'diagram'}-${scope === 'diagram' ? 'cely' : 'vyrez'}.${format}`;
+        if (format === 'svg') {
+          setExportPhase('optimizing');
+          await waitForNextPaint();
+        }
+        const objectUrl =
+          format === 'svg'
+            ? URL.createObjectURL(compactSvgDataUrl(dataUrl))
+            : undefined;
+        link.href = objectUrl ?? dataUrl;
+        setExportPhase('downloading');
+        await waitForNextPaint();
         link.click();
+        if (objectUrl) setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
         setOpenExportDialog(false);
       } catch {
         toast.error(t('ExportError'));
       } finally {
         restoreViewportTransform();
         restoreSvgPaint();
-        setIsExporting(false);
+        setExportPhase('idle');
       }
     },
     [getNodesBounds, nodes, ontology, t],
@@ -501,6 +592,8 @@ export const DiagramCanvas = ({
               onNodeClick={(_, node) => toggleFocusedNode(node.id)}
               onPaneClick={() => setFocusedNodeIds(new Set())}
               onConnect={onConnect}
+              onReconnect={onReconnect}
+              edgesReconnectable
               onDrop={onDrop}
               onDragOver={onDragOver}
               fitView
@@ -572,9 +665,9 @@ export const DiagramCanvas = ({
 
       <DiagramExportDialog
         open={openExportDialog}
-        isExporting={isExporting}
+        exportPhase={exportPhase}
         onClose={() => setOpenExportDialog(false)}
-        onExport={(scope) => void exportPng(scope)}
+        onExport={exportDiagram}
       />
     </div>
   );

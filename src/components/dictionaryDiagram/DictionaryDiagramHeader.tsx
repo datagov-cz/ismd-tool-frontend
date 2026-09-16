@@ -320,8 +320,7 @@ export const DictionaryDiagramHeader = ({
             disabled={
               saveLayout.isPending ||
               materialize.isPending ||
-              deleteDiagram.isPending ||
-              !hasUnsavedChanges
+              deleteDiagram.isPending
             }
             onGovClick={handleMaterialize}
           >
