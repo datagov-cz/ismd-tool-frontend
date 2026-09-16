@@ -885,7 +885,9 @@
       "ShowFullLabels": "Zobrazit celé popisky vztahů",
       "CompleteRelationshipFirst": "Nejdříve přidejte vztah na rozdělanou vazbu.",
       "ReconnectNotAllowed": "Vazbu nelze připojit k tomuto pojmu z jiného slovníku.",
-      "ForeignPropertyNotAllowed": "K pojmu z jiného slovníku nelze přiřadit vlastnost."
+      "ForeignPropertyNotAllowed": "K pojmu z jiného slovníku nelze přiřadit vlastnost.",
+      "MinimumZoomWarning": "Diagram se nevejde do zobrazené oblasti. Další oddálení už není možné.",
+      "CloseMinimumZoomWarning": "Zavřít upozornění"
     },
     "RelationshipChooser": {
       "Title": "Vyberte typ vazby mezi <a></a> a <b></b>",

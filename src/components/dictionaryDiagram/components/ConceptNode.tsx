@@ -6,7 +6,13 @@ import {
   GovTooltip,
   GovTooltipContent,
 } from '@gov-design-system-ce/react';
-import { Handle, type NodeProps, Position, useStore } from '@xyflow/react';
+import {
+  Handle,
+  type NodeProps,
+  NodeToolbar,
+  Position,
+  useStore,
+} from '@xyflow/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -230,151 +236,159 @@ const ConceptNodeDetail = ({
   }, [data, onClose, open]);
 
   return (
-    <div
-      ref={detailRef}
-      onClick={(event) => event.stopPropagation()}
-      className={clsx(
-        'nodrag nopan w-75 bg-white absolute -right-2 translate-x-full bottom-0 p-3 shadow-subtle border rounded-md border-border-grey z-50 divide-y divide-border-grey space-y-2',
-        !open && 'hidden',
-      )}
+    <NodeToolbar
+      nodeId={nodeId}
+      isVisible={open}
+      position={Position.Right}
+      align="end"
+      offset={8}
+      className="z-50"
     >
-      <div className="flex items-start justify-between pb-2">
-        <div>
-          {data.concept.stale ? (
-            <span className="font-medium text-sm text-status-error-700">
-              {getConceptLabel(data.concept)}
-              <StaleConceptLabel />
-            </span>
-          ) : (
-            <Link
-              href={`/concept/${data.concept.slug}`}
-              className="flex gap-1.5 items-center font-medium text-blue-hover hover:underline cursor-pointer text-sm"
-            >
-              <span>{getConceptLabel(data.concept)}</span>
-              <GovIcon name="box-arrow-up-right" size="xs" />
-            </Link>
-          )}
-          <GovTag type="subtle" size="xs" color="primary" className="mt-1!">
-            <span className="font-bold">
-              {data.concept.typ?.includes('Vlastnost')
-                ? t('Property')
-                : data.concept.typ?.includes('Vztah')
-                  ? t('Relationship')
-                  : t('Class')}
-            </span>
-          </GovTag>
-        </div>
-
-        <button onClick={() => onClose()} className="flex items-center">
-          <GovIcon name="x-lg" />
-        </button>
-      </div>
-      <div className="pb-2.5">
-        <span className="font-medium text-xs">{t('Properties')}</span>
-        <div className="pl-5 space-y-1.5 pt-1.5">
-          {visibleProperties.map((v, i) => (
-            <div
-              key={`${getConceptId(v)}-${i}`}
-              className="flex items-center justify-between gap-0.5 relative font-medium rounded-sm"
-            >
-              <span className="flex min-w-0 items-center gap-0.5">
-                <span className="size-1.5 shrink-0 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
-                <span
-                  className={clsx(
-                    'truncate text-xs leading-none',
-                    v.stale ? 'text-status-error-700' : 'text-card-description',
-                  )}
-                >
-                  {getConceptLabel(v)}
-                  {v.stale && t('RemovedSuffix')}
-                </span>
+      <div
+        ref={detailRef}
+        onClick={(event) => event.stopPropagation()}
+        className="nodrag nopan w-75 bg-white p-3 shadow-subtle border rounded-md border-border-grey divide-y divide-border-grey space-y-2"
+      >
+        <div className="flex items-start justify-between pb-2">
+          <div>
+            {data.concept.stale ? (
+              <span className="font-medium text-sm text-status-error-700">
+                {getConceptLabel(data.concept)}
+                <StaleConceptLabel />
               </span>
+            ) : (
+              <Link
+                href={`/concept/${data.concept.slug}`}
+                className="flex gap-1.5 items-center font-medium text-blue-hover hover:underline cursor-pointer text-sm"
+              >
+                <span>{getConceptLabel(data.concept)}</span>
+                <GovIcon name="box-arrow-up-right" size="xs" />
+              </Link>
+            )}
+            <GovTag type="subtle" size="xs" color="primary" className="mt-1!">
+              <span className="font-bold">
+                {data.concept.typ?.includes('Vlastnost')
+                  ? t('Property')
+                  : data.concept.typ?.includes('Vztah')
+                    ? t('Relationship')
+                    : t('Class')}
+              </span>
+            </GovTag>
+          </div>
+
+          <button onClick={() => onClose()} className="flex items-center">
+            <GovIcon name="x-lg" />
+          </button>
+        </div>
+        <div className="pb-2.5">
+          <span className="font-medium text-xs">{t('Properties')}</span>
+          <div className="pl-5 space-y-1.5 pt-1.5">
+            {visibleProperties.map((v, i) => (
+              <div
+                key={`${getConceptId(v)}-${i}`}
+                className="flex items-center justify-between gap-0.5 relative font-medium rounded-sm"
+              >
+                <span className="flex min-w-0 items-center gap-0.5">
+                  <span className="size-1.5 shrink-0 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
+                  <span
+                    className={clsx(
+                      'truncate text-xs leading-none',
+                      v.stale
+                        ? 'text-status-error-700'
+                        : 'text-card-description',
+                    )}
+                  >
+                    {getConceptLabel(v)}
+                    {v.stale && t('RemovedSuffix')}
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  aria-label={t('RemoveProperty', {
+                    name: getConceptLabel(v) ?? '',
+                  })}
+                  className="flex shrink-0 items-center"
+                  onClick={() =>
+                    dispatch({
+                      type: 'removeVlastnost',
+                      targetNodeId: nodeId,
+                      vlastnostId: getConceptId(v),
+                    })
+                  }
+                >
+                  <GovIcon name="trash" color="error" size="xs" />
+                </button>
+              </div>
+            ))}
+            {!showAllProperties && hiddenPropertiesCount > 0 && (
               <button
                 type="button"
-                aria-label={t('RemoveProperty', {
-                  name: getConceptLabel(v) ?? '',
-                })}
-                className="flex shrink-0 items-center"
-                onClick={() =>
-                  dispatch({
-                    type: 'removeVlastnost',
-                    targetNodeId: nodeId,
-                    vlastnostId: getConceptId(v),
-                  })
-                }
+                onClick={() => setShowAllProperties(true)}
+                className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
               >
-                <GovIcon name="trash" color="error" size="xs" />
+                {t('More', { count: hiddenPropertiesCount })}
               </button>
-            </div>
-          ))}
-          {!showAllProperties && hiddenPropertiesCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setShowAllProperties(true)}
-              className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
-            >
-              {t('More', { count: hiddenPropertiesCount })}
-            </button>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-      <div className="pb-2.5">
-        <span className="font-medium text-xs">{t('Relationships')}</span>
-        <div className="space-y-1.5 pt-1.5 pl-2">
-          {visibleRelations.map((vztah) => (
-            <div
-              key={vztah.id}
-              className="flex items-center gap-2 relative font-medium"
-            >
-              <GovIcon
-                name="bezier"
-                size="s"
-                className="[&_svg]:text-[#67329E]!"
-              />
-              <span className="text-xs text-card-description leading-none">
-                {vztah.label}
-                {vztah.target && ` ${vztah.direction} ${vztah.target}`}
-              </span>
-            </div>
-          ))}
-          {!showAllRelations && hiddenRelationsCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setShowAllRelations(true)}
-              className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
-            >
-              {t('More', { count: hiddenRelationsCount })}
-            </button>
-          )}
+        <div className="pb-2.5">
+          <span className="font-medium text-xs">{t('Relationships')}</span>
+          <div className="space-y-1.5 pt-1.5 pl-2">
+            {visibleRelations.map((vztah) => (
+              <div
+                key={vztah.id}
+                className="flex items-center gap-2 relative font-medium"
+              >
+                <GovIcon
+                  name="bezier"
+                  size="s"
+                  className="[&_svg]:text-[#67329E]!"
+                />
+                <span className="text-xs text-card-description leading-none">
+                  {vztah.label}
+                  {vztah.target && ` ${vztah.direction} ${vztah.target}`}
+                </span>
+              </div>
+            ))}
+            {!showAllRelations && hiddenRelationsCount > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowAllRelations(true)}
+                className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
+              >
+                {t('More', { count: hiddenRelationsCount })}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-      <div>
-        <span className="font-medium text-xs">{t('Actions')}</span>
-        <div className="flex flex-col gap-1">
-          {!data.concept.stale && (
+        <div>
+          <span className="font-medium text-xs">{t('Actions')}</span>
+          <div className="flex flex-col gap-1">
+            {!data.concept.stale && (
+              <GovButton
+                color="primary"
+                type="outlined"
+                size="xs"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
+              >
+                <GovIcon name="pencil" color="primary" slot="icon-start" />
+                {t('EditConcept')}
+              </GovButton>
+            )}
             <GovButton
-              color="primary"
-              type="outlined"
+              color="error"
               size="xs"
-              href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
+              type="outlined"
+              onGovClick={() => {
+                data.onRemove?.();
+                dispatch({ type: 'removeNode', nodeId });
+              }}
             >
-              <GovIcon name="pencil" color="primary" slot="icon-start" />
-              {t('EditConcept')}
+              <GovIcon name="trash" /> {t('RemoveFromDiagram')}
             </GovButton>
-          )}
-          <GovButton
-            color="error"
-            size="xs"
-            type="outlined"
-            onGovClick={() => {
-              data.onRemove?.();
-              dispatch({ type: 'removeNode', nodeId });
-            }}
-          >
-            <GovIcon name="trash" /> {t('RemoveFromDiagram')}
-          </GovButton>
+          </div>
         </div>
       </div>
-    </div>
+    </NodeToolbar>
   );
 };

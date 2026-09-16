@@ -12,6 +12,7 @@ import {
   type NodeChange,
   ReactFlow,
   useReactFlow,
+  useStore,
 } from '@xyflow/react';
 import { toPng, toSvg } from 'html-to-image';
 import { useTranslations } from 'next-intl';
@@ -54,6 +55,7 @@ const edgeTypes = { default: LabeledEdge };
 const EXPORT_PADDING = 80;
 const MAX_EXPORT_SIDE = 16384;
 const MAX_EXPORT_PIXELS = 64_000_000;
+const MIN_ZOOM = 0.5;
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 const waitForNextPaint = () =>
@@ -196,6 +198,11 @@ export const DiagramCanvas = ({
   const [openExportDialog, setOpenExportDialog] = useState(false);
   const [exportPhase, setExportPhase] = useState<DiagramExportPhase>('idle');
   const [showFullLabels, setShowFullLabels] = useState(false);
+  const [minimumZoomWarningDismissed, setMinimumZoomWarningDismissed] =
+    useState(false);
+  const [viewportX, viewportY, zoom] = useStore((state) => state.transform);
+  const viewportWidth = useStore((state) => state.width);
+  const viewportHeight = useStore((state) => state.height);
   const [storedFocusedNodeIds, setFocusedNodeIds] = useState<Set<string>>(
     () => new Set(),
   );
@@ -434,6 +441,43 @@ export const DiagramCanvas = ({
     [nodes, visibleNodeIds, focusedNodeIds],
   );
 
+  const showMinimumZoomWarning = useMemo(() => {
+    if (
+      nodes.length === 0 ||
+      zoom > MIN_ZOOM + 0.001 ||
+      viewportWidth === 0 ||
+      viewportHeight === 0
+    ) {
+      return false;
+    }
+
+    const bounds = getNodesBounds(nodes);
+    const visibleBounds = {
+      left: -viewportX / zoom,
+      top: -viewportY / zoom,
+      right: (viewportWidth - viewportX) / zoom,
+      bottom: (viewportHeight - viewportY) / zoom,
+    };
+    const diagramIsOutsideViewport =
+      bounds.x < visibleBounds.left ||
+      bounds.y < visibleBounds.top ||
+      bounds.x + bounds.width > visibleBounds.right ||
+      bounds.y + bounds.height > visibleBounds.bottom;
+    const diagramIsTooLarge =
+      bounds.width > viewportWidth / zoom ||
+      bounds.height > viewportHeight / zoom;
+
+    return diagramIsOutsideViewport && diagramIsTooLarge;
+  }, [
+    getNodesBounds,
+    nodes,
+    viewportHeight,
+    viewportWidth,
+    viewportX,
+    viewportY,
+    zoom,
+  ]);
+
   const { runLayout } = useDiagramLayout({
     nodes,
     edges,
@@ -597,6 +641,7 @@ export const DiagramCanvas = ({
               onDrop={onDrop}
               onDragOver={onDragOver}
               fitView
+              minZoom={MIN_ZOOM}
               colorMode="system"
             >
               <DiagramToolbar
@@ -649,6 +694,25 @@ export const DiagramCanvas = ({
           </LabelDisplayContext.Provider>
         </PendingChangesContext.Provider>
       </DiagramDispatchContext.Provider>
+
+      {showMinimumZoomWarning && !minimumZoomWarningDismissed && (
+        <div className="pointer-events-none absolute top-4 left-1/2 z-40 -translate-x-1/2 px-4">
+          <div
+            role="status"
+            className="pointer-events-auto flex max-w-md items-center gap-3 rounded-lg border border-status-warning-600 bg-status-warning-100 px-4 py-2 text-sm font-medium text-status-warning-700 shadow-subtle"
+          >
+            <span>{t('MinimumZoomWarning')}</span>
+            <button
+              type="button"
+              onClick={() => setMinimumZoomWarningDismissed(true)}
+              aria-label={t('CloseMinimumZoomWarning')}
+              className="flex shrink-0 rounded p-0.5 hover:bg-status-warning-200"
+            >
+              <GovIcon name="x-lg" size="xs" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <RelationshipChooserOverlay
         chooser={chooser}

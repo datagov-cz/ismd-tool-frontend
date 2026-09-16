@@ -101,7 +101,6 @@ export const DiagramToolbar = ({
         icon="plus"
         label={t('NewConcept')}
         onClick={onAddConcept}
-        labelOnHover
       />
     </Panel>
   );
