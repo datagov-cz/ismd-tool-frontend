@@ -54,8 +54,9 @@ export function useQueryInvalidator() {
       });
     },
     invalidateOntologyDiagramsList: async (slug: string) => {
+      const encodedSlug = encodeURIComponent(slug);
       return await queryClient.invalidateQueries({
-        queryKey: getListForOntologyQueryKey(slug),
+        queryKey: getListForOntologyQueryKey(encodedSlug),
       });
     },
   };
