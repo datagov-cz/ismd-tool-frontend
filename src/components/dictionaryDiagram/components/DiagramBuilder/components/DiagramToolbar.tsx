@@ -94,8 +94,6 @@ export const DiagramToolbar = ({
             label={t('ByRelationships')}
             onClick={() => onLayout('LR')}
           />
-
-          <ToolbarButton icon="grid" label={t('Grid')} />
         </ul>
       </GovDropdown>
 
