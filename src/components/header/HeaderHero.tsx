@@ -3,15 +3,18 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
+import { IdpAlias, useNiaEnabled } from '@/hooks/useLogin';
+
 import { LoginButton } from './LoginButton';
 
 interface Props {
-  onLogin: () => void;
+  onLogin: (_idp: IdpAlias) => void;
 }
 
 export const HeaderHero = ({ onLogin }: Props) => {
   const t = useTranslations('Header');
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  const niaEnabled = useNiaEnabled();
 
   return (
     <div className="text-white w-full flex justify-center mt-4 desktop:mt-0 flex-col">
@@ -24,8 +27,21 @@ export const HeaderHero = ({ onLogin }: Props) => {
         />
         <h1 className="text-3xl">{t('LogoTitle')}</h1>
       </div>
-      <div className="flex flex-col items-center justify-center gap-y-8 p-5">
-        <LoginButton size="l" className="[&>button]:px-20!" onLogin={onLogin} />
+      <div className="flex flex-wrap items-center justify-center gap-y-4 gap-x-6 p-5">
+        <LoginButton
+          size="l"
+          idp="caais"
+          className="[&>button]:px-20!"
+          onLogin={onLogin}
+        />
+        {niaEnabled && (
+          <LoginButton
+            size="l"
+            idp="nia"
+            className="[&>button]:px-20!"
+            onLogin={onLogin}
+          />
+        )}
       </div>
     </div>
   );
