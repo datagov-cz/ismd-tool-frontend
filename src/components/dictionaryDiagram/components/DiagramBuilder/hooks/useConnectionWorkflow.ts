@@ -126,7 +126,7 @@ export const useConnectionWorkflow = ({
         getConceptId(target.data.concept),
       );
       const invalidForeignEndpoint =
-        (edge.data?.kind === 'hierarchie' && targetForeign) ||
+        (edge.data?.kind === 'hierarchie' && sourceForeign) ||
         (edge.data?.kind === 'obecny' && sourceForeign) ||
         (edge.data?.kind === 'ekvivalence' && sourceForeign && targetForeign);
 
@@ -160,13 +160,10 @@ export const useConnectionWorkflow = ({
                     : choice.swap,
               }
             : choice;
-      const foreignTarget = choice.swap
-        ? chooser?.sourceForeign
-        : chooser?.targetForeign;
       const foreignSource = choice.swap
         ? chooser?.targetForeign
         : chooser?.sourceForeign;
-      if (choice.kind === 'hierarchie' && foreignTarget) return;
+      if (choice.kind === 'hierarchie' && foreignSource) return;
       if (choice.kind === 'obecny' && foreignSource) return;
       if (
         choice.kind === 'ekvivalence' &&

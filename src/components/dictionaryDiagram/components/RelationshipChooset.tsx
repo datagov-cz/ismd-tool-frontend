@@ -175,7 +175,7 @@ export const RelationshipChooser = ({
 
       {(sourceForeign || targetForeign) && (
         <p className="text-sm text-card-description">
-          {t('ForeignConceptMustBeSource')}
+          {t('ForeignConceptConstraint')}
         </p>
       )}
 
@@ -191,8 +191,8 @@ export const RelationshipChooser = ({
                   ? targetForeign
                   : sourceForeign
                 : option.choice.swap
-                  ? sourceForeign
-                  : targetForeign;
+                  ? targetForeign
+                  : sourceForeign;
           return (
             <button
               key={option.symbol}

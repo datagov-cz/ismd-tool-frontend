@@ -890,7 +890,7 @@
     "RelationshipChooser": {
       "Title": "Vyberte typ vazby mezi <a></a> a <b></b>",
       "Remove": "Odebrat vazbu",
-      "ForeignConceptMustBeSource": "U obecného vztahu a ekvivalence se cizí pojem uloží jako cíl. U hierarchie může být pouze zdrojem.",
+      "ForeignConceptConstraint": "U obecného vztahu a ekvivalence se cizí pojem uloží jako cíl. U hierarchie může být pouze nadřazenou třídou.",
       "Options": {
         "AB": {
           "Title": "Obecný vztah z A do B",
