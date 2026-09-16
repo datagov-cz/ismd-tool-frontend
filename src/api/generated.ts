@@ -125,10 +125,10 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  id?: number;
-  timestamp?: string;
   ontologyIri?: string;
   results?: ValidationResult[];
+  id?: number;
+  timestamp?: string;
 }
 
 export type ValidationResultSeverity =
@@ -149,10 +149,10 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  error?: boolean;
+  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
-  focusNodeName?: string;
+  error?: boolean;
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
