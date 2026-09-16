@@ -835,16 +835,22 @@ export const diagramReducer = (
         return state;
       }
 
+      const readOnly = !action.allConcepts.some(
+        (concept) => getConceptId(concept) === tridaId,
+      );
+
       const assigned = new Set(
         state.nodes.flatMap((n) => n.data.vlastnosti.map(getConceptId)),
       );
 
-      const vlastnosti = action.allConcepts.filter(
-        (c) =>
-          getConceptKind(c) === 'vlastnost' &&
-          getDefinicniObor(c) === getConceptIri(action.concept) &&
-          !assigned.has(getConceptId(c)),
-      );
+      const vlastnosti = readOnly
+        ? []
+        : action.allConcepts.filter(
+            (c) =>
+              getConceptKind(c) === 'vlastnost' &&
+              getDefinicniObor(c) === getConceptIri(action.concept) &&
+              !assigned.has(getConceptId(c)),
+          );
 
       const node: ConceptFlowNode = {
         id: crypto.randomUUID(),
@@ -853,9 +859,7 @@ export const diagramReducer = (
         data: {
           concept: action.concept,
           vlastnosti,
-          readOnly: !action.allConcepts.some(
-            (concept) => getConceptId(concept) === tridaId,
-          ),
+          readOnly,
         },
       };
 
@@ -869,6 +873,7 @@ export const diagramReducer = (
       );
       if (
         !targetNode ||
+        targetNode.data.readOnly ||
         targetNode.data.vlastnosti.some(
           (vlastnost) => getConceptId(vlastnost) === vlId,
         )

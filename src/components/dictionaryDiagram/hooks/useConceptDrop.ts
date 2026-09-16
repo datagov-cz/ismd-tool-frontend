@@ -1,5 +1,7 @@
 import { type Dispatch, type DragEvent, useCallback } from 'react';
 import { useReactFlow } from '@xyflow/react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 import { type Concept, getConceptKind } from '../model/concept';
 import { parseConceptDrag } from '../model/conceptDrag';
@@ -23,7 +25,8 @@ export const useConceptDrop = (
   dispatch: Dispatch<DiagramAction>,
   concepts: Concept[],
 ) => {
-  const { screenToFlowPosition } = useReactFlow<
+  const t = useTranslations('DictionaryDiagram.Canvas');
+  const { getNode, screenToFlowPosition } = useReactFlow<
     ConceptFlowNode,
     ConceptFlowEdge
   >();
@@ -61,13 +64,21 @@ export const useConceptDrop = (
       if (kind === 'vlastnost') {
         const targetNodeId = nodeIdFromEvent(event);
         if (!targetNodeId) return; // not dropped on a node → ignore
+
+        if (getNode(targetNodeId)?.data.readOnly) {
+          toast.info(t('ForeignPropertyNotAllowed'), {
+            position: 'bottom-right',
+          });
+          return;
+        }
+
         dispatch({ type: 'assignVlastnost', targetNodeId, vlastnost: concept });
         return;
       }
 
       // 3) Vztah and anything else: not droppable yet.
     },
-    [concepts, dispatch, screenToFlowPosition],
+    [concepts, dispatch, getNode, screenToFlowPosition, t],
   );
 
   return { onDrop, onDragOver };
