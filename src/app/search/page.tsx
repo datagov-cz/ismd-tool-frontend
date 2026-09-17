@@ -15,6 +15,7 @@ import {
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
+import { DiagramCard } from '@/components/shared/DiagramCard/DiagramCard';
 import { DictionaryCard } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { PageLoader } from '@/components/shared/PageLoader';
 
@@ -123,7 +124,7 @@ const Search = () => {
             {t('SearchesFor')} &#39;{q}&#39;
           </h1>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             <span className="font-bold text-sm">{t('FilterLabel')} </span>
             <GovButton
               type={
@@ -146,6 +147,22 @@ const Search = () => {
               {tTypes('Types.Pojem')}{' '}
               {activeType !== 'ONTOLOGY' &&
                 `[${firstPage?.totalConcepts ?? 0}]`}
+            </GovButton>
+            <GovButton
+              type={activeType === ApiSearchType.DIAGRAM ? 'solid' : 'outlined'}
+              onGovClick={() => toggleType(ApiSearchType.DIAGRAM)}
+              color="neutral"
+              size="xs"
+              className={
+                activeType === ApiSearchType.DIAGRAM
+                  ? '[&_button]:border-purple! [&_button]:bg-purple! [&_button]:text-white!'
+                  : '[&_button]:border-purple! [&_button]:text-purple!'
+              }
+            >
+              {tTypes('Types.Diagram')}{' '}
+              {activeType !== ApiSearchType.ONTOLOGY &&
+                activeType !== ApiSearchType.CONCEPT &&
+                `[${firstPage?.totalDiagrams ?? 0}]`}
             </GovButton>
             {user?.userId && (
               <GovButton
@@ -206,6 +223,24 @@ const Search = () => {
                   item.source === 'ISMD'
                     ? `/concept/${item.slug}`
                     : `/concept/nkd?iri=${item.iri}`
+                }
+              />
+            );
+          }
+          if (item.type === 'DIAGRAM') {
+            return (
+              <DiagramCard
+                key={item.iri ?? item.label}
+                title={item.label || ''}
+                modified={
+                  item.lastModified ? new Date(item.lastModified) : undefined
+                }
+                link={`/dictionary/${item.slug}/diagram/${item.diagramId}`}
+                ontologySlug={item.slug}
+                ontologyName={
+                  item.ontologyLabel?.cs ??
+                  item.ontologyLabel?.sk ??
+                  item.ontologyLabel?.en
                 }
               />
             );

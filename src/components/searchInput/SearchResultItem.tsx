@@ -31,25 +31,31 @@ export const SearchResultItem = ({
       <GovIcon
         type="components"
         name={
-          type === SearchType.ONTOLOGY
-            ? isPublished === false
-              ? 'journals'
-              : 'journal-text'
-            : conceptType === 'VZTAH'
-              ? 'bezier2'
-              : conceptType === 'VLASTNOST'
-                ? 'tag'
-                : 'card-heading'
+          type === SearchType.DIAGRAM
+            ? 'diagram-3'
+            : type === SearchType.ONTOLOGY
+              ? isPublished === false
+                ? 'journals'
+                : 'journal-text'
+              : conceptType === 'VZTAH'
+                ? 'bezier2'
+                : conceptType === 'VLASTNOST'
+                  ? 'tag'
+                  : 'card-heading'
         }
         color={
-          type === SearchType.ONTOLOGY
-            ? isPublished === false
-              ? 'secondary'
-              : 'success'
-            : 'primary'
+          type === SearchType.DIAGRAM
+            ? undefined
+            : type === SearchType.ONTOLOGY
+              ? isPublished === false
+                ? 'secondary'
+                : 'success'
+              : 'primary'
         }
         size="s"
-        className="mt-0.5!"
+        className={
+          type === SearchType.DIAGRAM ? 'mt-0.5! text-purple!' : 'mt-0.5!'
+        }
       />
       <span className="text-sm text-blue text-left">
         {label && <SearchHighlightMatch label={label} query={query} />}

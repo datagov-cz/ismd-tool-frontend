@@ -31,12 +31,16 @@
   --color-blue-outlined-hover: #c5dbf2;
   --color-button-solid-disabled: #d1d1d1;
   --color-green: #198754;
+  --color-purple: #67329e;
   --color-gray: #6c757d;
   --color-status-warning-100: #fff9e9;
   --color-status-warning-200: #fac615;
   --color-status-warning-300: #fefbe8;
+  --color-status-warning-400: #fab413;
   --color-status-warning-600: #ca8504;
   --color-status-warning-700: #6b4a0d;
+  --color-status-success-100: #f3faf3;
+  --color-status-success-200: #e3f0e3;
   --color-status-success: #2a6b2d;
   --color-status-error-100: #fde3e3;
   --color-status-error-200: #f37676;
@@ -137,6 +141,14 @@ html[data-theme='light'] {
 gov-form-search:focus-within,
 .gov-form-search:focus-within {
   outline: none;
+}
+
+.materialization-conflict-dialog dialog,
+.materialization-conflict-dialog gov-dialog__inner,
+.materialization-conflict-dialog .gov-dialog__inner,
+.materialization-conflict-dialog gov-dialog__footer,
+.materialization-conflict-dialog .gov-dialog__footer {
+  overflow: visible !important;
 }
 
 .gov-button,

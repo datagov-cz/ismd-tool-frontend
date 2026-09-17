@@ -4,7 +4,7 @@ import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
-import { SearchResponseDto, SearchType } from '@/api/generated';
+import { SearchResponseDto, SearchSource, SearchType } from '@/api/generated';
 import { CircularLoader } from '../shared/CircularLoader';
 
 import { SearchResultColumn } from './SearchResultColumn';
@@ -12,6 +12,7 @@ import { SearchResultColumn } from './SearchResultColumn';
 type Props = {
   data?: SearchResponseDto;
   type?: SearchType;
+  source?: SearchSource;
   query: string;
   onClose?: () => void;
   loading?: boolean;
@@ -22,6 +23,7 @@ export const SearchResultsPopover = ({
   query,
   onClose,
   type,
+  source,
   loading,
 }: Props) => {
   const t = useTranslations('Search');
@@ -46,19 +48,21 @@ export const SearchResultsPopover = ({
 
   const ontologies = data?.results?.filter((r) => r.type === 'ONTOLOGY') ?? [];
   const concepts = data?.results?.filter((r) => r.type === 'CONCEPT') ?? [];
+  const diagrams = data?.results?.filter((r) => r.type === 'DIAGRAM') ?? [];
 
   const handleDetailSearch = (searchType?: SearchType) =>
-    `${base}/search?q=${encodeURIComponent(query)}${searchType ? `&type=${searchType}` : ''}`;
+    `${base}/search?q=${encodeURIComponent(query)}${searchType ? `&type=${searchType}` : ''}${source ? `&source=${source}` : ''}`;
 
-  const showOntologies = !type || type !== SearchType.CONCEPT;
-  const showConcepts = !type || type !== SearchType.ONTOLOGY;
+  const showOntologies = !type || type === SearchType.ONTOLOGY;
+  const showConcepts = !type || type === SearchType.CONCEPT;
+  const showDiagrams = !type || type === SearchType.DIAGRAM;
 
   return (
     <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
       <div
         className={clsx(
           'grid divide-x divide-gray-200',
-          type ? 'grid-cols-1' : 'grid-cols-2',
+          type ? 'grid-cols-1' : 'grid-cols-3',
         )}
       >
         {showOntologies && (
@@ -86,6 +90,21 @@ export const SearchResultsPopover = ({
                 : undefined
             }
             moreHref={handleDetailSearch(SearchType.CONCEPT)}
+            query={query}
+            onClose={onClose}
+          />
+        )}
+
+        {showDiagrams && (
+          <SearchResultColumn
+            type={SearchType.DIAGRAM}
+            items={diagrams}
+            remaining={
+              diagrams.length > 0 && data?.totalDiagrams
+                ? data.totalDiagrams - diagrams.length
+                : undefined
+            }
+            moreHref={handleDetailSearch(SearchType.DIAGRAM)}
             query={query}
             onClose={onClose}
           />
