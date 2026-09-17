@@ -1,8 +1,10 @@
 'use client';
 
+import React from 'react';
 import { GovButton, GovIcon, GovLink } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { useLogin } from '@/hooks/useLogin';
 import { scrollTop } from '@/lib/windowUtils';
 
 import { FooterColumn } from './FooterColumn';
@@ -13,6 +15,12 @@ interface Props {
 
 export const Footer = ({ isGated = false }: Props) => {
   const t = useTranslations('Footer');
+  const login = useLogin();
+
+  const handleAdminLogin = (event: React.MouseEvent) => {
+    event.preventDefault();
+    login();
+  };
 
   if (isGated) {
     return (
@@ -79,6 +87,14 @@ export const Footer = ({ isGated = false }: Props) => {
                     size="s"
                   >
                     {t('LinkColumn.Link3')}
+                  </GovLink>
+                </li>
+                <li>
+                  {/* No kc_idp_hint, so Keycloak shows its own login page — the
+                      only route to a local (admin) account once the IdP buttons
+                      above take everyone straight to CAAIS or NIA. */}
+                  <GovLink href="#" size="s" onClick={handleAdminLogin}>
+                    {t('LinkColumn.AdminLogin')}
                   </GovLink>
                 </li>
               </ul>

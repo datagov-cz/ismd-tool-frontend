@@ -9,6 +9,11 @@ const NEXTAUTH_URL = process.env.NEXTAUTH_URL!;
 // Optional: alias of a Keycloak identity provider to jump straight to,
 // bypassing the Keycloak login page. Set to `caais` in deployed envs.
 const KEYCLOAK_IDP_HINT = process.env.KEYCLOAK_IDP_HINT;
+// Optional: Level of Assurance to request, per eIDAS (e.g. `loalow`). Keycloak
+// forwards acr_values to the upstream identity provider only when the incoming
+// request carries it — its own "Default ACR Values" client setting is not
+// forwarded — so the value has to originate here.
+const KEYCLOAK_ACR_VALUES = process.env.KEYCLOAK_ACR_VALUES;
 
 interface KeycloakToken extends JWT {
   accessToken: string;
@@ -109,6 +114,14 @@ export function keycloakLogoutUrl(idToken: string): string {
   return logoutUrl.toString();
 }
 
+// Extra query parameters for the authorization request, omitted when none apply.
+const authorizationParams: Record<string, string> | undefined = (() => {
+  const params: Record<string, string> = {};
+  if (KEYCLOAK_IDP_HINT) params.kc_idp_hint = KEYCLOAK_IDP_HINT;
+  if (KEYCLOAK_ACR_VALUES) params.acr_values = KEYCLOAK_ACR_VALUES;
+  return Object.keys(params).length > 0 ? params : undefined;
+})();
+
 export const authOptions: NextAuthOptions = {
   providers: [
     KeycloakProvider({
@@ -119,8 +132,10 @@ export const authOptions: NextAuthOptions = {
       // Keycloak's own login screen and redirect straight to that identity
       // provider. Left unset locally so the Keycloak login page (and the
       // `testuser` local account) stays reachable for dev without CAAIS.
-      ...(KEYCLOAK_IDP_HINT
-        ? { authorization: { params: { kc_idp_hint: KEYCLOAK_IDP_HINT } } }
+      // KEYCLOAK_ACR_VALUES rides along the same request when set. Both are
+      // omitted entirely when unset, leaving the authorization request as it was.
+      ...(authorizationParams
+        ? { authorization: { params: authorizationParams } }
         : {}),
     }),
   ],

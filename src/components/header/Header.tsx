@@ -2,11 +2,9 @@
 
 import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
-import { signIn } from 'next-auth/react';
 
-import { normalizeBasePath } from '@/lib/basePath';
+import { useLogin } from '@/hooks/useLogin';
 import { isGatedPath } from '@/lib/site-status';
-import { useEnvironment } from '../contexts/Environment';
 import { SearchInput } from '../searchInput/SearchInput';
 
 import { GatedHeader } from './GatedHeader';
@@ -26,9 +24,6 @@ interface Props {
 
 export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const pathname = usePathname();
-  const { variables } = useEnvironment();
-  const callbackUrl =
-    normalizeBasePath(variables?.NEXT_PUBLIC_BASE_PATH) || '/';
 
   const search = useHeaderSearch();
   const menu = useMobileMenu();
@@ -38,8 +33,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const showHeaderContent = isAuthenticated || !isHomepage;
   const isGated = isGatedProp ?? isGatedPath(pathname);
 
-  const handleLogin = () =>
-    signIn('keycloak', { callbackUrl }, { prompt: 'login' });
+  const login = useLogin();
 
   if (isGated) {
     return <GatedHeader />;
@@ -62,7 +56,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 isHomepage={isHomepage}
                 searchToggleRef={search.toggleRef}
                 onOpenSearch={search.open}
-                onLogin={handleLogin}
+                onLogin={login}
               />
             </>
           )}
@@ -74,7 +68,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
           />
         </section>
 
-        {!isAuthenticated && isHomepage && <HeaderHero onLogin={handleLogin} />}
+        {!isAuthenticated && isHomepage && <HeaderHero onLogin={login} />}
       </header>
 
       {menu.isOpen && (
