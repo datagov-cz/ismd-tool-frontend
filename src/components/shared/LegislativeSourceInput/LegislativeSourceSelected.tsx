@@ -15,6 +15,15 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
     { iri },
     { query: { enabled: !!iri } },
   );
+  const resolvedSource = data?.data;
+  const citation =
+    resolvedSource?.displayLabel ?? resolvedSource?.fragmentCitation ?? iri;
+  const resolvedIri =
+    resolvedSource?.fragmentIri ??
+    resolvedSource?.versionIri ??
+    resolvedSource?.lawIri ??
+    resolvedSource?.originalUrl ??
+    iri;
 
   return (
     <div className="relative">
@@ -31,19 +40,12 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
             <LegislativeSourceSelectedSkeleton />
           ) : (
             <>
-              <span className="block h-4 w-full truncate text-xs leading-4 text-(--text-subtle)">
-                {data?.data?.displayLabel}
+              <span className="block h-5 w-full truncate text-xs font-semibold leading-5">
+                {citation}
               </span>
-              <span
-                className="block h-5 w-full text-xs font-semibold truncate leading-5"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    data?.data?.fragmentBody ??
-                    data?.data?.fragmentIri ??
-                    data?.data?.originalUrl ??
-                    '',
-                }}
-              />
+              <span className="block h-4 w-full truncate text-xs leading-4 text-(--text-subtle)">
+                {resolvedIri}
+              </span>
             </>
           )}
         </span>
