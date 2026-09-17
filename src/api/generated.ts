@@ -349,10 +349,10 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  results?: ValidationResult[];
-  ontologyIri?: string;
   id?: number;
   timestamp?: string;
+  results?: ValidationResult[];
+  ontologyIri?: string;
 }
 
 export type ValidationResultSeverity =
@@ -373,10 +373,10 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
+  error?: boolean;
   warning?: boolean;
   info?: boolean;
   focusNodeName?: string;
-  error?: boolean;
 }
 
 export interface ApiResponseDtoOntologyMetadataModel {
@@ -402,6 +402,52 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
+}
+
+export interface ResolveConceptsRequest {
+  /** @minItems 1 */
+  iris: string[];
+}
+
+export interface ApiResponseDtoResolveConceptsResponse {
+  data?: ResolveConceptsResponse;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export type ResolveConceptsResponseResolved = {
+  [key: string]: ResolvedConceptDto;
+};
+
+export interface ResolveConceptsResponse {
+  resolved?: ResolveConceptsResponseResolved;
+}
+
+export type ResolvedConceptDtoConceptName = { [key: string]: string };
+
+export type ResolvedConceptDtoOntologyName = { [key: string]: string };
+
+export type ResolvedConceptDtoSource =
+  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ResolvedConceptDtoSource = {
+  NKD: 'NKD',
+  ISMD: 'ISMD',
+  UNPUBLISHED: 'UNPUBLISHED',
+  ALL: 'ALL',
+} as const;
+
+export interface ResolvedConceptDto {
+  iri?: string;
+  conceptName?: ResolvedConceptDtoConceptName;
+  conceptSlug?: string;
+  ontologyIri?: string;
+  ontologyName?: ResolvedConceptDtoOntologyName;
+  source?: ResolvedConceptDtoSource;
+  resolvedDomain?: ResolvedConceptDto;
+  resolvedRange?: ResolvedConceptDto;
 }
 
 /**
@@ -927,32 +973,6 @@ export interface PublishedConceptDeviationModel {
   'obor-hodnot-resolved'?: PublishedConceptDeviationModelOborHodnotResolved;
   'agenda-resolved'?: PublishedConceptDeviationModelAgendaResolved;
   'ais-resolved'?: PublishedConceptDeviationModelAisResolved;
-}
-
-export type ResolvedConceptDtoConceptName = { [key: string]: string };
-
-export type ResolvedConceptDtoOntologyName = { [key: string]: string };
-
-export type ResolvedConceptDtoSource =
-  (typeof ResolvedConceptDtoSource)[keyof typeof ResolvedConceptDtoSource];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ResolvedConceptDtoSource = {
-  NKD: 'NKD',
-  ISMD: 'ISMD',
-  UNPUBLISHED: 'UNPUBLISHED',
-  ALL: 'ALL',
-} as const;
-
-export interface ResolvedConceptDto {
-  iri?: string;
-  conceptName?: ResolvedConceptDtoConceptName;
-  conceptSlug?: string;
-  ontologyIri?: string;
-  ontologyName?: ResolvedConceptDtoOntologyName;
-  source?: ResolvedConceptDtoSource;
-  resolvedDomain?: ResolvedConceptDto;
-  resolvedRange?: ResolvedConceptDto;
 }
 
 export type ResolvedLegalSourceDtoLevel =
@@ -2472,6 +2492,99 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Pro zadaná IRI vrací název pojmu, slug, IRI a název mateřského slovníku a zdroj (ISMD/NKD). Slouží plátnu diagramu k vykreslení pojmů z jiných slovníků, které detail slovníku vrací jen jako holá IRI. IRI datových typů (xsd:*, rdfs:Literal) se přeskakují — nejde o pojmy. Nerozpoznaná IRI v odpovědi chybí, nejde o chybu. Veřejný endpoint.
+ * @summary Doplnění metadat referencovaných pojmů
+ */
+export const resolveConceptReferences = (
+  resolveConceptsRequest: ResolveConceptsRequest,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoResolveConceptsResponse>(
+    {
+      url: `/api/ontology/concepts/resolve`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: resolveConceptsRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getResolveConceptReferencesMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resolveConceptReferences>>,
+    TError,
+    { data: ResolveConceptsRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resolveConceptReferences>>,
+  TError,
+  { data: ResolveConceptsRequest },
+  TContext
+> => {
+  const mutationKey = ['resolveConceptReferences'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resolveConceptReferences>>,
+    { data: ResolveConceptsRequest }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return resolveConceptReferences(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ResolveConceptReferencesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resolveConceptReferences>>
+>;
+export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
+export type ResolveConceptReferencesMutationError = unknown;
+
+/**
+ * @summary Doplnění metadat referencovaných pojmů
+ */
+export const useResolveConceptReferences = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resolveConceptReferences>>,
+      TError,
+      { data: ResolveConceptsRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof resolveConceptReferences>>,
+  TError,
+  { data: ResolveConceptsRequest },
+  TContext
+> => {
+  const mutationOptions = getResolveConceptReferencesMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
