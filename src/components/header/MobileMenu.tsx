@@ -50,12 +50,12 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
         href={href}
         target={external ? '_blank' : undefined}
         className="no-underline [&_.element]:justify-start! [&_.element]:text-left!"
-        onGovClick={() => {
+        onClick={() => {
           onClick?.();
           onClose();
         }}
+        iconStart={<GovIcon type="components" name={icon} size="m" />}
       >
-        <GovIcon type="components" name={icon} size="m" slot="icon-start" />
         {label}
       </GovButton>
     </li>
@@ -65,11 +65,11 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
     <aside
       inert={!isOpen}
       className={clsx(
-        'fixed top-0 left-0 h-full w-72 bg-white shadow-lg z-3000 flex flex-col transform transition-all duration-300 ease-in-out tablet:hidden',
+        'fixed top-0 left-0 h-full w-72 bg-surface shadow-lg z-3000 flex flex-col transform transition-all duration-300 ease-in-out tablet:hidden',
         isOpen ? 'translate-x-0' : '-translate-x-full',
       )}
     >
-      <div className="flex items-center justify-between gap-2 p-4 border-b border-border-grey">
+      <div className="flex items-center justify-between gap-2 p-4 border-b border-border-default">
         {session && (
           <span className="flex items-center gap-2 font-medium">
             <GovIcon type="components" name="person" size="l" />
@@ -82,10 +82,9 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
           size="s"
           className="ml-auto"
           aria-label={t('MenuCloseAria')}
-          onGovClick={onClose}
-        >
-          <GovIcon type="components" name="x-lg" size="s" slot="icon-start" />
-        </GovButton>
+          onClick={onClose}
+          iconStart={<GovIcon type="components" name="x-lg" size="s" />}
+        ></GovButton>
       </div>
 
       <nav>
@@ -94,12 +93,12 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
 
       <div className="mt-auto">
         {accountItems.length > 0 && (
-          <ul className="flex flex-col p-2 gap-1 border-t border-border-grey">
+          <ul className="flex flex-col p-2 gap-1 border-t border-border-default">
             {accountItems.map(renderItem)}
           </ul>
         )}
 
-        <div className="flex items-center justify-between gap-2 p-4 border-t border-border-grey">
+        <div className="flex items-center justify-between gap-2 p-4 border-t border-border-default">
           <span className="font-medium">{t('ThemeSwitchLabel')}</span>
           <ThemeSwitch />
         </div>

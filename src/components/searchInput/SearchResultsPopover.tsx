@@ -30,7 +30,7 @@ export const SearchResultsPopover = ({
 
   if (query.length < 4) {
     return (
-      <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-10 text-status-error-600">
+      <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface border border-border-default rounded-lg shadow-lg p-10 text-status-error-600">
         {t('ShortQuery')}
       </div>
     );
@@ -38,7 +38,7 @@ export const SearchResultsPopover = ({
 
   if (loading) {
     return (
-      <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+      <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface border border-border-default rounded-lg shadow-lg">
         <CircularLoader />
       </div>
     );
@@ -54,10 +54,10 @@ export const SearchResultsPopover = ({
   const showConcepts = !type || type !== SearchType.ONTOLOGY;
 
   return (
-    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface border border-border-default rounded-lg shadow-lg">
       <div
         className={clsx(
-          'grid divide-x divide-gray-200',
+          'grid divide-x divide-border-default',
           type ? 'grid-cols-1' : 'grid-cols-2',
         )}
       >
@@ -92,7 +92,7 @@ export const SearchResultsPopover = ({
         )}
       </div>
 
-      <div className="border-t border-gray-200 py-3 flex justify-center">
+      <div className="border-t border-border-default py-3 flex justify-center">
         <GovButton
           type="solid"
           color="primary"

@@ -79,21 +79,30 @@ export const DeleteDialog = ({
 
   return (
     <GovDialog
-      labelTag="h2"
-      onGovClose={() => onClose()}
+      onClose={() => onClose()}
       open={open}
       className="fixed z-100"
+      title={<h2>{t(`Title.${titleKey}`)}</h2>}
     >
-      <h2 slot="title">{t(`Title.${titleKey}`)}</h2>
       <p>
         <span>{t('Name')}:</span> {name}
       </p>
 
       <div className="w-full flex gap-2 justify-end">
-        <GovButton type="outlined" color="primary" onGovClick={() => onClose()}>
+        <GovButton
+          size="m"
+          type="outlined"
+          color="primary"
+          onClick={() => onClose()}
+        >
           {t('No')}
         </GovButton>
-        <GovButton type="solid" color="error" onGovClick={() => handleDelete()}>
+        <GovButton
+          size="m"
+          type="solid"
+          color="error"
+          onClick={() => handleDelete()}
+        >
           {t('Yes')}
         </GovButton>
       </div>

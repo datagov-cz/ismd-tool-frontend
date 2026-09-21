@@ -21,10 +21,7 @@ export const HintSidebar = ({
 
   return (
     <aside
-      className={clsx(
-        `rounded-lg bg-white text-sm shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)]`,
-        className,
-      )}
+      className={clsx(`rounded-lg bg-surface text-sm shadow-raised`, className)}
     >
       <div className="flex items-center justify-between py-2 px-3 bg-blue-subtle overflow-hidden rounded-t-lg">
         <span className="flex items-center gap-2 font-medium">

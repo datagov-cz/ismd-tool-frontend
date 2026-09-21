@@ -22,26 +22,27 @@ export const ConfirmationModal = ({
 }: Props) => {
   return (
     <GovDialog
-      onGovClose={() => onClose()}
-      labelTag="h2"
+      onClose={() => onClose()}
       open={isOpen}
       className="[&_dialog]:max-w-1/2!"
+      title={<h2>{children}</h2>}
     >
-      <h2 slot="title">{children}</h2>
       <div className="w-full flex gap-3 justify-end">
         <GovButton
+          size="m"
           color="primary"
           type="outlined"
           nativeType="button"
-          onGovClick={() => onClose()}
+          onClick={() => onClose()}
         >
           {cancelBtnText}
         </GovButton>
         <GovButton
+          size="m"
           color="error"
           type="solid"
           nativeType="button"
-          onGovClick={() => onConfirm()}
+          onClick={() => onConfirm()}
         >
           {confirmBtnText}
         </GovButton>

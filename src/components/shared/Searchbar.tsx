@@ -13,23 +13,20 @@ interface Props {
   onChange?: (_value: string) => void;
 }
 
-type GovInputEventType = CustomEvent<{ value: string }>;
-
 export const Searchbar = ({ placeholder, size = 'm', onChange }: Props) => {
   return (
-    <GovFormControl>
+    <GovFormControl size="m">
       <GovFormGroup>
-        <GovFormSearch size={size}>
+        <GovFormSearch size={size} button={null}>
           <GovFormInput
-            slot="input"
+            identifier="searchbar-input"
             size="s"
             placeholder={placeholder}
-            onGovInput={(e: GovInputEventType) => {
-              onChange?.(e.detail.value ?? '');
+            onChange={(e) => {
+              onChange?.(e.currentTarget.value ?? '');
             }}
-          >
-            <GovIcon name="search" slot="icon-start" type="components" />
-          </GovFormInput>
+            iconStart={<GovIcon name="search" type="components" />}
+          />
         </GovFormSearch>
       </GovFormGroup>
     </GovFormControl>

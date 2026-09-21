@@ -7,7 +7,8 @@ import { useTranslations } from 'next-intl';
 import { federatedSignOut } from '@/utils/federatedSignOut';
 import { ConditionalTooltip } from '../shared/ConditionalTooltip';
 
-import { NavDropdownList } from './NavDropdownList';
+import { navDropdownItems } from './NavDropdownList';
+import { useHeaderButtonType } from './useHeaderButtonType';
 import { useNavigation } from './useNavigation';
 
 interface Props {
@@ -17,91 +18,74 @@ interface Props {
 export const NavItems = ({ session }: Props) => {
   const t = useTranslations('Header');
   const { apiDocs, help, feedback, feedbackItems } = useNavigation(session);
+  const buttonType = useHeaderButtonType();
 
   return (
     <>
       {session && (
-        <GovDropdown id="nav-dropdown-user" position="left">
-          <GovButton
-            color="primary"
-            size="m"
-            type="solid"
-            className="no-underline"
-          >
-            <GovIcon
-              type="components"
-              name="person"
-              size="xl"
-              slot="icon-start"
-            />
-            {session.user?.name}
-          </GovButton>
-          <NavDropdownList
-            items={[
-              {
-                icon: 'upload',
-                label: t('NavLogged.Logout'),
-                onClick: () => void federatedSignOut(),
-              },
-            ]}
-          />
+        <GovDropdown
+          id="nav-dropdown-user"
+          position="left"
+          color="primary"
+          size="m"
+          type={buttonType}
+          label={
+            <>
+              <GovIcon type="components" name="person" size="xl" />
+              {session.user?.name}
+            </>
+          }
+        >
+          {navDropdownItems([
+            {
+              icon: 'upload',
+              label: t('NavLogged.Logout'),
+              onClick: () => void federatedSignOut(),
+            },
+          ])}
         </GovDropdown>
       )}
       <ConditionalTooltip active message={apiDocs.label}>
         <GovButton
           color="primary"
           size="m"
-          type="solid"
+          type={buttonType}
           className="no-underline"
           aria-label={apiDocs.label}
           href={apiDocs.href}
           target="_blank"
-        >
-          <GovIcon
-            type="components"
-            name={apiDocs.icon}
-            size="xl"
-            slot="icon-start"
-          />
-        </GovButton>
+          iconStart={
+            <GovIcon type="components" name={apiDocs.icon} size="xl" />
+          }
+        ></GovButton>
       </ConditionalTooltip>
 
       <ConditionalTooltip active message={help.label}>
         <GovButton
           color="primary"
           size="m"
-          type="solid"
+          type={buttonType}
           aria-label={help.label}
-          onGovClick={help.onClick}
-        >
-          <GovIcon
-            type="components"
-            name={help.icon}
-            slot="icon-start"
-            size="m"
-          />
-        </GovButton>
+          onClick={help.onClick}
+          iconStart={<GovIcon type="components" name={help.icon} size="m" />}
+        ></GovButton>
       </ConditionalTooltip>
 
-      <GovDropdown id="nav-dropdown-feedback-user" position="right">
-        <ConditionalTooltip active message={feedback.label}>
-          <GovButton
+      <ConditionalTooltip active message={feedback.label}>
+        <span className="inline-flex">
+          <GovDropdown
+            id="nav-dropdown-feedback-user"
+            position="right"
             color="primary"
             size="m"
-            type="solid"
-            className="no-underline"
+            type={buttonType}
             aria-label={feedback.label}
+            label={<GovIcon type="components" name={feedback.icon} size="m" />}
           >
-            <GovIcon
-              type="components"
-              name={feedback.icon}
-              size="m"
-              slot="icon-start"
-            />
-          </GovButton>
-        </ConditionalTooltip>
-        <NavDropdownList items={feedbackItems} />
-      </GovDropdown>
+            {navDropdownItems(feedbackItems)}
+          </GovDropdown>
+        </span>
+      </ConditionalTooltip>
     </>
   );
 };

@@ -43,19 +43,15 @@ export const AddPropertyRelation = ({
 
         {isOwnerLoggedIn && (
           <GovButton
+            size="m"
             className="block! py-2"
             color="primary"
             type="base"
-            onGovClick={() => {
+            onClick={() => {
               openModal();
             }}
+            iconStart={<GovIcon size="xs" type="components" name="plus" />}
           >
-            <GovIcon
-              size="xs"
-              slot="icon-start"
-              type="components"
-              name="plus"
-            />
             <span className="text-sm font-bold">
               {type === 'property'
                 ? t('AddPropertyButton')

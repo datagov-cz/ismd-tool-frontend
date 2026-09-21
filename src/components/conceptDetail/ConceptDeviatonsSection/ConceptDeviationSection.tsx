@@ -95,7 +95,7 @@ export const ConceptDeviationSection = ({
                 <span className="text-sm font-bold">
                   {t('DifferencesLabelConcept')}{' '}
                 </span>
-                <span className="text-sm font-bold text-blue-hover">
+                <span className="text-sm font-bold text-accent">
                   {snapshotDeviations
                     .map(({ snapshot }) => snapshot.nkdConcept?.label)
                     .filter(Boolean)

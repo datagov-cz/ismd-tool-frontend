@@ -14,7 +14,7 @@ export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
   const t = useTranslations('UploadOntology');
 
   return (
-    <div className="w-full space-y-10 bg-page-background p-6 rounded-lg shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)]">
+    <div className="w-full space-y-10 bg-surface-muted p-6 rounded-lg shadow-raised">
       <h2 className="font-medium text-xl">{t('SuccessDialog.Title')}</h2>
 
       <div className="flex flex-col gap-4 pb-4">
@@ -32,14 +32,16 @@ export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
 
       <div className="gap-2 flex justify-end w-full">
         <GovButton
+          size="m"
           type="outlined"
           color="primary"
           nativeType="button"
-          onGovClick={onClose}
+          onClick={onClose}
         >
           {t('SuccessDialog.CloseDialog')}
         </GovButton>
         <GovButton
+          size="m"
           type="solid"
           color="primary"
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}`}

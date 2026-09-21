@@ -45,7 +45,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
       id={anchor}
       className="w-full grid grid-cols-7 gap-x-2 px-2.5 items-start"
     >
-      <GovFormLabel className="w-fit! min-h-15 items-center">
+      <GovFormLabel size="m" className="w-fit! min-h-15 items-center">
         <span className="font-bold">{label}</span>
       </GovFormLabel>
 
@@ -80,7 +80,7 @@ export const LegislativeSourceArrayInput = <T extends FieldValues>({
           <button
             type="button"
             onClick={handleAdd}
-            className="self-start text-sm py-1 font-bold text-blue-primary cursor-pointer"
+            className="self-start text-sm py-1 font-bold text-accent cursor-pointer"
           >
             {`+ ${t('AddAnother')}`}
           </button>

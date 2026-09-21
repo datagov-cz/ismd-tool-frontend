@@ -122,14 +122,11 @@ export const ValidationSummary = ({
           type="solid"
           color="primary"
           size="s"
-          onGovClick={handleValidate}
+          onClick={handleValidate}
+          iconStart={
+            <GovIcon name="shield-check" size="s" className="text-white" />
+          }
         >
-          <GovIcon
-            slot="icon-start"
-            name="shield-check"
-            size="s"
-            className="text-white"
-          />
           {t('RunValidation')}
         </GovButton>
       </div>
@@ -145,7 +142,7 @@ export const ValidationSummary = ({
           </span>
         </span>
         <span className="text-sm flex gap-2 items-center">
-          <GovIcon name="clock-history" size="s" className="text-black" />
+          <GovIcon name="clock-history" size="s" className="text-foreground" />
           {(() => {
             const d = new Date(validationReport.timestamp || '');
             const time = d.toLocaleTimeString('cs-CZ', {
@@ -200,7 +197,7 @@ export const ValidationSummary = ({
             type="outlined"
             color="primary"
             size="xs"
-            onGovClick={handleValidate}
+            onClick={handleValidate}
           >
             <GovIcon
               type="components"
@@ -243,7 +240,7 @@ const ValidationSection = ({
           {
             'text-status-error-700': severity === 'ERROR',
             'text-status-warning-700': severity === 'WARNING',
-            'text-footer-separator': severity === 'INFO',
+            'text-status-info': severity === 'INFO',
           },
           'font-bold text-sm flex gap-2 items-center pb-2.5 w-full text-left',
         )}
@@ -268,7 +265,7 @@ const ValidationSection = ({
         />
         <span>
           {label}{' '}
-          <span className="text-black/70 font-normal">[{totalCount}]</span>
+          <span className="text-foreground/70 font-normal">[{totalCount}]</span>
         </span>
         <span className="ml-auto flex items-center justify-center text-current">
           <GovIcon
@@ -316,9 +313,9 @@ const ValidationCard = ({
   return (
     <div
       className={clsx(
-        'flex gap-3 bg-white rounded-lg py-2 px-3 border-l-4 items-center justify-between',
+        'flex gap-3 bg-surface rounded-lg py-2 px-3 border-l-4 items-center justify-between',
         {
-          'border-status-error-600': severity === 'ERROR',
+          'border-border-error': severity === 'ERROR',
           'border-status-warning-600': severity === 'WARNING',
           'border-border-primary-subtle': severity === 'INFO',
         },
@@ -332,7 +329,7 @@ const ValidationCard = ({
           className="justify-self-end"
           color="primary"
           size="xs"
-          onGovClick={onClick}
+          onClick={onClick}
         >
           {showConceptsLabel}
         </GovButton>

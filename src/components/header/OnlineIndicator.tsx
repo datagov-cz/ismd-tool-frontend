@@ -15,7 +15,7 @@ export const OnlineIndicator = () => {
     : t('OnlineIndicator.Offline');
 
   return (
-    <div className="relative flex items-center group gap-x-2 bg-blue-subtle px-2 py-1 rounded-lg">
+    <div className="relative flex items-center group gap-x-2 bg-surface-muted px-2 py-1 rounded-lg">
       <div className="relative flex items-center">
         <GovIcon
           name="cloud-check"

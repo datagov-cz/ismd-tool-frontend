@@ -21,12 +21,12 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
   const isPublic = conceptDetail['typ']?.includes('Veřejný údaj');
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-surface">
       <div className="max-w-250 mx-auto py-5 px-4 flex flex-col gap-3 w-full">
         <div className="flex items-center lg:justify-between relative gap-5">
           <button
             onClick={() => window.history.back()}
-            className="lg:absolute top-0 lg:-left-5 lg:pt-1 lg:-translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+            className="lg:absolute top-0 lg:-left-5 lg:pt-1 lg:-translate-x-full flex gap-1 text-accent font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
             {t('Main.ControlPanel.Back')}
@@ -43,14 +43,10 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                 color="success"
                 type="subtle"
                 size="xs"
-                className="w-fit border bg-white! cursor-pointer"
+                className="w-fit border bg-surface! cursor-pointer"
+                iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <GovIcon
-                  name="journal-text"
-                  slot="icon-start"
-                  type="components"
-                />
-                <span className="font-bold text-blue-primary cursor-pointer">
+                <span className="font-bold text-accent cursor-pointer">
                   {capitalizeFirst(
                     ontology
                       ?.split('/')
@@ -79,18 +75,19 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   type="subtle"
                   size="xs"
                   className="h-fit whitespace-nowrap my-1!"
+                  iconStart={
+                    <GovIcon
+                      name={
+                        conceptDetail.typ?.includes('Vztah')
+                          ? 'bezier2'
+                          : conceptDetail.typ?.includes('Vlastnost')
+                            ? 'tag'
+                            : 'card-heading'
+                      }
+                      type="components"
+                    />
+                  }
                 >
-                  <GovIcon
-                    name={
-                      conceptDetail.typ?.includes('Vztah')
-                        ? 'bezier2'
-                        : conceptDetail.typ?.includes('Vlastnost')
-                          ? 'tag'
-                          : 'card-heading'
-                    }
-                    slot="icon-start"
-                    type="components"
-                  />
                   {conceptDetail.typ
                     ?.filter((item: string) => item !== 'Koncept')
                     .map(
@@ -103,12 +100,13 @@ export const ConceptHeaderNKD = ({ ontology, conceptDetail }: Props) => {
                   type="subtle"
                   size="xs"
                   className="h-fit whitespace-nowrap my-1!"
+                  iconStart={
+                    <GovIcon
+                      name={isPublic ? 'globe' : 'lock-fill'}
+                      type="components"
+                    />
+                  }
                 >
-                  <GovIcon
-                    name={isPublic ? 'globe' : 'lock-fill'}
-                    slot="icon-start"
-                    type="components"
-                  />
                   {isPublic ? t('Main.Public') : t('Main.NonPublic')}
                 </GovTag>
               </div>

@@ -105,11 +105,11 @@ export const DeviationGroup = ({
   };
 
   return (
-    <div className="p-2 border border-border-primary-subtle rounded-sm space-y-2 bg-white">
+    <div className="p-2 border border-border-primary-subtle rounded-sm space-y-2 bg-surface">
       <span className="text-sm font-bold mb-3 block">
         {t(snapshotId ? 'DifferencesLabelConcept' : 'DifferencesLabel')}{' '}
         {conceptLabel && (
-          <span className="text-blue-hover font-bold">{conceptLabel}</span>
+          <span className="text-accent font-bold">{conceptLabel}</span>
         )}
       </span>
 
@@ -148,15 +148,14 @@ export const DeviationGroup = ({
               type="outlined"
               color="primary"
               size="s"
-              onGovClick={toggleAll}
+              onClick={toggleAll}
+              iconStart={
+                <GovIcon name={allSelected ? 'x-square' : 'check-square'} />
+              }
             >
-              <GovIcon
-                slot="icon-start"
-                name={allSelected ? 'x-square' : 'check-square'}
-              />
               {allSelected ? t('DeselectAll') : t('SelectAll')}
             </GovButton>
-            <span className="text-sm text-blue-hover">
+            <span className="text-sm text-accent">
               {t('SelectedCount', {
                 selected: selectedKeys.length,
                 total: keys.length,
@@ -170,16 +169,17 @@ export const DeviationGroup = ({
             type="outlined"
             color="primary"
             size="s"
-            onGovClick={() => setExpanded((prev) => !prev)}
+            onClick={() => setExpanded((prev) => !prev)}
+            iconStart={
+              <GovIcon
+                name="chevron-compact-down"
+                className={clsx(
+                  expanded && 'rotate-180',
+                  'transition-transform duration-300',
+                )}
+              />
+            }
           >
-            <GovIcon
-              slot="icon-start"
-              name="chevron-compact-down"
-              className={clsx(
-                expanded && 'rotate-180',
-                'transition-transform duration-300',
-              )}
-            />
             {expanded ? t('HideDifferences') : t('ShowDifferences')}
           </GovButton>
 
@@ -189,9 +189,9 @@ export const DeviationGroup = ({
               color="primary"
               size="s"
               disabled={!selectedKeys.length || mutation.isPending}
-              onGovClick={handleSubmitSelected}
+              onClick={handleSubmitSelected}
+              iconStart={<GovIcon name="check-circle" />}
             >
-              <GovIcon slot="icon-start" name="check-circle" />
               {t('AcceptSelected')}
             </GovButton>
           ) : (
@@ -200,9 +200,9 @@ export const DeviationGroup = ({
               color="primary"
               size="s"
               disabled={mutation.isPending}
-              onGovClick={handleUpdateLocalCopy}
+              onClick={handleUpdateLocalCopy}
+              iconStart={<GovIcon name="cloud-download" />}
             >
-              <GovIcon slot="icon-start" name="cloud-download" />
               {mutation.isPending ? t('Updating') : t('UpdateAndKeepLink')}
             </GovButton>
           )}

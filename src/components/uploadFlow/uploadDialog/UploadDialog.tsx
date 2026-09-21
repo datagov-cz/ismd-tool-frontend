@@ -172,7 +172,7 @@ export const UploadDialog = ({
           />
           {submitError && <ErrorText text={submitError} />}
 
-          <GovButton type="solid" color="primary" nativeType="submit">
+          <GovButton size="m" type="solid" color="primary" nativeType="submit">
             {t('Dialog.SubmitButton')}
           </GovButton>
         </form>

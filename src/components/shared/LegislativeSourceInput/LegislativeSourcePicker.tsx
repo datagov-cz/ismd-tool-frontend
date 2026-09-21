@@ -103,34 +103,41 @@ export const LegislativeSourcePicker = ({
         <div className="flex flex-col">
           <GovFormInput
             value={selectedIri}
-            onGovInput={(event) => handleManualChange(event.detail.value ?? '')}
-            onGovBlur={onBlur}
+            onChange={(event) =>
+              handleManualChange(event.currentTarget.value ?? '')
+            }
+            onBlur={onBlur}
             placeholder={t('ManualPlaceholder')}
-            inputType="text"
+            type="text"
             id={id}
             invalid={!!error}
             className="border-0!"
-          >
-            <button
-              slot="icon-end"
-              type="button"
-              data-action="clear"
-              aria-label={t('RemoveManualEntry')}
-              className="cursor-pointer flex items-center"
-              onClick={handleClear}
-            >
-              <GovIcon type="components" name="x" size="2xl" color="primary" />
-            </button>
-          </GovFormInput>
+            sufix={
+              <button
+                type="button"
+                data-action="clear"
+                aria-label={t('RemoveManualEntry')}
+                className="cursor-pointer flex items-center"
+                onClick={handleClear}
+              >
+                <GovIcon
+                  type="components"
+                  name="x"
+                  size="2xl"
+                  color="primary"
+                />
+              </button>
+            }
+          />
           {error && (
-            <GovFormMessage color="error" slot="bottom">
+            <GovFormMessage size="m" color="error">
               {error}
             </GovFormMessage>
           )}
           <button
             type="button"
             onClick={handlePickerEntry}
-            className="self-end cursor-pointer py-1 text-sm font-bold text-blue-primary"
+            className="self-end cursor-pointer py-1 text-sm font-bold text-accent"
           >
             {t('SelectFromList')}
           </button>
@@ -158,7 +165,7 @@ export const LegislativeSourcePicker = ({
             <button
               type="button"
               onClick={handleManualEntry}
-              className="self-end cursor-pointer py-1 text-sm font-bold text-blue-primary"
+              className="self-end cursor-pointer py-1 text-sm font-bold text-accent"
             >
               {t('EnterManually')}
             </button>
@@ -166,7 +173,7 @@ export const LegislativeSourcePicker = ({
         </div>
       )}
       {error && !isManualEntry && (
-        <GovFormMessage color="error" slot="bottom">
+        <GovFormMessage size="m" color="error">
           {error}
         </GovFormMessage>
       )}

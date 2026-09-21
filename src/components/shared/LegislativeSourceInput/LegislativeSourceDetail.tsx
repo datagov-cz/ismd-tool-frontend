@@ -93,7 +93,7 @@ export const LegislativeSourceDetail = ({
         align="start"
         sideOffset={0}
         style={{ width: 'var(--radix-popover-trigger-width)' }}
-        className="bg-white p-4 border border-(--border-subtle) max-h-96 overflow-hidden flex flex-col"
+        className="bg-surface p-4 border border-(--border-subtle) max-h-96 overflow-hidden flex flex-col"
         onInteractOutside={(e) => {
           const target = e.detail.originalEvent.target as HTMLElement | null;
           if (target?.closest('[data-action="clear"]')) {
@@ -121,18 +121,16 @@ export const LegislativeSourceDetail = ({
                 dangerouslySetInnerHTML={{ __html: bodyHtml ?? '' }}
               />
               {draftIri && (
-                <div className="sticky text-center bottom-0 bg-white pt-2 border-t border-primary-subtlest">
+                <div className="sticky text-center bottom-0 bg-surface pt-2 border-t border-border-default">
                   <GovButton
                     type="solid"
                     color="primary"
                     size="s"
-                    onGovClick={handleConfirmSelection}
+                    onClick={handleConfirmSelection}
+                    iconStart={
+                      <GovIcon name="check-square" type="components" />
+                    }
                   >
-                    <GovIcon
-                      name="check-square"
-                      type="components"
-                      slot="icon-start"
-                    />
                     {t('SelectFragment')}
                   </GovButton>
                 </div>

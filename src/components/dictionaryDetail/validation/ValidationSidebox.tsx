@@ -49,10 +49,10 @@ const severityConfig: Record<ValidationResultSeverity, SeverityConfig> = {
   INFO: {
     iconName: 'shield-check',
     iconColor: 'primary',
-    textColor: 'text-footer-separator',
+    textColor: 'text-status-info',
     tagColor: 'primary',
     labelKey: 'PriorityLow',
-    bgColor: '[&_summary]:bg-primary-subtlest',
+    bgColor: '[&_summary]:bg-surface-page',
   },
 };
 
@@ -76,7 +76,7 @@ const ValidationAccordionSection = ({
     concepts?.find((m) => m.conceptIri === concept.value)?.slug || '';
 
   return (
-    <GovAccordion className="space-y-2!">
+    <GovAccordion size="m" className="space-y-2!">
       {rules.map((item) => (
         <GovAccordionItem
           key={item.ruleName}
@@ -85,26 +85,28 @@ const ValidationAccordionSection = ({
             `[&_summary]:p-2! before:content-none! [&_details>div]:p-0!`,
             config.bgColor,
           )}
+          label={
+            <span className="flex! items-start gap-2">
+              <GovIcon
+                type="components"
+                size="s"
+                color={config.iconColor}
+                name={config.iconName}
+                className="mt-1!"
+              />
+              <p className={clsx('font-bold', config.textColor)}>
+                {item.message} [{item.items.length}]
+              </p>
+            </span>
+          }
         >
-          <span slot="label" className="flex! items-start gap-2">
-            <GovIcon
-              type="components"
-              size="s"
-              color={config.iconColor}
-              name={config.iconName}
-              className="mt-1!"
-            />
-            <p className={clsx('font-bold', config.textColor)}>
-              {item.message} [{item.items.length}]
-            </p>
-          </span>
           <div>
             {item.items.map((result: ValidationResult, index: number) => (
               <div
                 key={result.focusNodeUri}
                 className={clsx(
                   'flex justify-between w-full p-2',
-                  index !== 0 && 'border-t border-gray-200',
+                  index !== 0 && 'border-t border-border-default',
                 )}
               >
                 <div className="flex gap-2 items-center">
@@ -115,7 +117,7 @@ const ValidationAccordionSection = ({
                     name="card-heading"
                     className="mt-1!"
                   />
-                  <p className="font-bold! text-blue-hover">
+                  <p className="font-bold! text-accent">
                     {result.focusNodeName}
                   </p>
                 </div>
@@ -124,14 +126,9 @@ const ValidationAccordionSection = ({
                   color="primary"
                   size="xs"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${getConceptSlug(result)}`}
+                  iconEnd={<GovIcon name="arrow-right" size="l" />}
                 >
                   {t('OpenConcept')}
-                  <GovIcon
-                    slot="icon-end"
-                    name="arrow-right"
-                    size="l"
-                    color="primary"
-                  />
                 </GovButton>
               </div>
             ))}
@@ -189,8 +186,12 @@ export const ValidationSidebox = ({
         <span className="flex items-center gap-4">
           <span className="font-bold">{t('Title')}</span>
           {timestamp && (
-            <span className="text-sm flex gap-2 items-center text-black/70">
-              <GovIcon name="clock-history" size="s" className="text-black" />
+            <span className="text-sm flex gap-2 items-center text-foreground/70">
+              <GovIcon
+                name="clock-history"
+                size="s"
+                className="text-foreground"
+              />
               {(() => {
                 const d = new Date(timestamp);
                 const time = d.toLocaleTimeString('cs-CZ', {
@@ -223,27 +224,27 @@ export const ValidationSidebox = ({
               type={activeFilters.ERROR ? 'solid' : 'outlined'}
               color="error"
               size="xs"
-              onGovClick={() => toggleFilter('ERROR')}
+              onClick={() => toggleFilter('ERROR')}
+              iconStart={<GovIcon name="shield-x" size="s" />}
             >
-              <GovIcon slot="left-icon" name="shield-x" size="s" />
               {t('PriorityHigh')} [{totalErrors}]
             </GovButton>
             <GovButton
               type={activeFilters.WARNING ? 'solid' : 'outlined'}
               color="warning"
               size="xs"
-              onGovClick={() => toggleFilter('WARNING')}
+              onClick={() => toggleFilter('WARNING')}
+              iconStart={<GovIcon name="shield-exclamation" size="s" />}
             >
-              <GovIcon slot="left-icon" name="shield-exclamation" size="s" />
               {t('PriorityMedium')} [{totalWarnings}]
             </GovButton>
             <GovButton
               type={activeFilters.INFO ? 'solid' : 'outlined'}
               color="primary"
               size="xs"
-              onGovClick={() => toggleFilter('INFO')}
+              onClick={() => toggleFilter('INFO')}
+              iconStart={<GovIcon name="shield-check" size="s" />}
             >
-              <GovIcon slot="left-icon" name="shield-check" size="s" />
               {t('PriorityLow')} [{totalInfos}]
             </GovButton>
           </div>

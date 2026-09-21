@@ -22,12 +22,12 @@ const CreateDictionary = () => {
   if (!user?.userId) return null;
 
   return (
-    <div className="w-full pt-5 pb-10 bg-primary-subtlest px-5">
+    <div className="w-full pt-5 pb-10 bg-surface-form px-5">
       <div className="max-w-250 mx-auto space-y-5">
         <div className="relative">
           <button
             onClick={() => router.back()}
-            className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-blue-primary font-bold items-center text-sm"
+            className="absolute top-0 -left-5 pt-1 -translate-x-full flex gap-1 text-accent font-bold items-center text-sm"
           >
             <GovIcon name="chevron-compact-left" size="s" color="primary" />
             {t('Form.Back')}
@@ -36,7 +36,7 @@ const CreateDictionary = () => {
           <span className="font-medium text-md">{t('Form.Title')}</span>
         </div>
         <CreateForm />
-        <h2 className="text-dark-primary font-medium text-center">
+        <h2 className="w-full lg:max-w-160 xl:max-w-200 text-foreground font-medium text-center">
           {t('Form.Or')}
         </h2>
         <div className="relative w-full lg:max-w-160 xl:max-w-200">

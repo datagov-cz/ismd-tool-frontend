@@ -14,11 +14,16 @@
     "copy:fonts": "copyfiles --flat ./node_modules/@gov-design-system-ce/fonts/lib/* ./src/fonts",
     "generate:api": "orval --config ./orval.config.cjs",
     "prepare": "husky",
+    "postinstall": "patch-package",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@azure/monitor-opentelemetry": "1.18.1",
-    "@gov-design-system-ce/react": "^2.4.2",
+    "@gov-design-system-ce/components": "^4.7.0",
+    "@gov-design-system-ce/fonts": "^4.7.0",
+    "@gov-design-system-ce/icons": "^4.7.0",
+    "@gov-design-system-ce/react": "^4.7.0",
+    "@gov-design-system-ce/styles": "^4.7.0",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
@@ -65,6 +70,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "orval": "^7.13.2",
+    "patch-package": "^8.0.1",
     "prettier": "^3.7.3",
     "typescript": "^5.9.3"
   },

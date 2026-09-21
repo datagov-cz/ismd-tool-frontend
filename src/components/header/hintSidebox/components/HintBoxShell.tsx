@@ -19,10 +19,10 @@ export function HintboxShell({ isOpen, onClose, children }: HintboxShellProps) {
 
       <aside
         className={clsx(
-          'fixed top-1/2 -translate-y-1/2 right-0 h-[90vh] bg-white rounded-l-xl shadow-2xl z-1000',
+          'fixed top-1/2 -translate-y-1/2 right-0 h-[90vh] bg-surface rounded-l-xl shadow-2xl z-1000',
           'w-full md:w-2/3 2xl:w-1/3',
           'flex flex-col',
-          'border border-r-0 border-blue-200',
+          'border border-r-0 border-border-default',
           'transform transition-all duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}

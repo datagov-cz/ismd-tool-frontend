@@ -27,14 +27,11 @@ export const LoginButton = ({
       color="secondary"
       size={size}
       className={className}
-      onGovClick={() => onLogin(idp)}
+      onClick={() => onLogin(idp)}
+      iconEnd={
+        <GovIcon type="components" name="box-arrow-in-left" size={size} />
+      }
     >
-      <GovIcon
-        type="components"
-        name="box-arrow-in-left"
-        slot="icon-end"
-        size={size}
-      />
       {t(`${labelKey}.${idp}`)}
     </GovButton>
   );

@@ -20,7 +20,7 @@ export const SharingTypeSection = ({
     item.split('položky/')[1].split('-').join(' ');
 
   return (
-    <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+    <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
       {typObsahuUdaje && (
         <Section title={t('Sections.DataContentType')}>
           <span>{getType(typObsahuUdaje)}</span>

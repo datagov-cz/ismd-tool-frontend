@@ -17,27 +17,31 @@ export const ConfirmDialog = ({
   return (
     <GovDialog
       open={open}
-      onGovClose={onClose}
+      onClose={onClose}
       aria-label="confirm-close-dialog"
       className="[&_dialog]:max-w-125! [&_dialog]:z-110! [&_gov-backdrop_div]:z-105!"
+      title={
+        <h2 className="font-medium text-xl">
+          {t('ConfirmCancelDialog.Title')}
+        </h2>
+      }
     >
-      <h2 slot="title" className="font-medium text-xl">
-        {t('ConfirmCancelDialog.Title')}
-      </h2>
       <div className="flex gap-2 justify-end">
         <GovButton
+          size="m"
           type="outlined"
           color="primary"
           nativeType="button"
-          onGovClick={onClose}
+          onClick={onClose}
         >
           {t('ConfirmCancelDialog.NoButton')}
         </GovButton>
         <GovButton
+          size="m"
           type="solid"
           color="primary"
           nativeType="button"
-          onGovClick={handleUnsavedClose}
+          onClick={handleUnsavedClose}
         >
           {t('ConfirmCancelDialog.YesButton')}
         </GovButton>

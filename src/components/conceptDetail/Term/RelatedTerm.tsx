@@ -1,8 +1,4 @@
-import {
-  GovIcon,
-  GovTooltip,
-  GovTooltipContent,
-} from '@gov-design-system-ce/react';
+import { GovIcon, GovTooltip } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -27,7 +23,7 @@ export const RelatedTerm = ({
   warning?: boolean;
 }) => {
   const className = clsx(
-    'border border-border-primary bg-primary-subtlest w-full flex flex-col rounded-md text-blue-button-active',
+    'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-accent',
     noIcon ? 'grayscale' : 'font-bold',
     ontologyLabel || warning ? 'px-2 py-1' : 'p-2',
   );
@@ -39,7 +35,6 @@ export const RelatedTerm = ({
       <span className="flex gap-1.5">
         {!noIcon && (
           <GovIcon
-            slot="icon-start"
             name={
               type === 'VLASTNOST'
                 ? 'tag'
@@ -70,9 +65,8 @@ export const RelatedTerm = ({
         )}
       </span>
       {ontologyLabel && (
-        <span className="flex gap-1.5 pl-6 font-normal text-dark-primary">
+        <span className="flex gap-1.5 pl-6 font-normal text-foreground">
           <GovIcon
-            slot="icon-start"
             name="journal-text"
             type="components"
             size="s"
@@ -83,21 +77,22 @@ export const RelatedTerm = ({
         </span>
       )}
       {warning && (
-        <GovTooltip position="bottom" className="border-0!">
-          <GovTooltipContent className="z-1000!">
+        <GovTooltip placement="bottom">
+          <GovTooltip.Content className="z-1000!">
             {t('WarningTooltip')}
-          </GovTooltipContent>
-          <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
-            <GovIcon
-              slot="icon-start"
-              name="exclamation-triangle"
-              type="components"
-              size="s"
-              color="warning"
-              className="shrink-0 mt-1!"
-            />
-            {t('Warning')}
-          </span>
+          </GovTooltip.Content>
+          <GovTooltip.Trigger asChild>
+            <span className="flex gap-1.5 pl-6 font-normal text-status-warning-600 text-sm w-fit cursor-help">
+              <GovIcon
+                name="exclamation-triangle"
+                type="components"
+                size="s"
+                color="warning"
+                className="shrink-0 mt-1!"
+              />
+              {t('Warning')}
+            </span>
+          </GovTooltip.Trigger>
         </GovTooltip>
       )}
     </>

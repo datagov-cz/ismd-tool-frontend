@@ -58,8 +58,8 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
   if (items.length === 0) return null;
 
   return (
-    <div className="-mx-3 -mb-2 mt-3 bg-[#FDF6D9] px-3 py-3">
-      <p className="flex items-center gap-1.5 font-medium text-sm text-dark-secondary pl-1">
+    <div className="-mx-3 -mb-2 mt-3 bg-surface-warning px-3 py-3">
+      <p className="flex items-center gap-1.5 font-medium text-sm text-foreground-muted pl-1">
         <GovIcon
           name="info-circle"
           size="s"
@@ -79,22 +79,24 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
               key={item.data.iri || index}
               className={clsx(
                 'flex gap-2 ml-8 py-2',
-                index !== items.length - 1 && 'border-b border-black/10',
+                index !== items.length - 1 && 'border-b border-border-default',
               )}
             >
               <div className="min-w-0">
                 <div className="flex gap-1">
-                  <span className="text-sm text-black">{t('LocatedIn')}</span>
+                  <span className="text-sm text-foreground">
+                    {t('LocatedIn')}
+                  </span>
                   <Link
                     href={href}
-                    className="text-blue-hover font-bold text-sm hover:underline block truncate"
+                    className="text-accent font-bold text-sm hover:underline block truncate"
                   >
                     {item.data.název?.cs}
                   </Link>
                 </div>
                 {item.deviation.source?.label && (
                   <div className="flex gap-1">
-                    <span className="text-sm text-black">Ze zdroje</span>
+                    <span className="text-sm text-foreground">Ze zdroje</span>
                     <Link
                       href={`/concept/nkd?iri=${item.deviation.source.iri}`}
                       className="text-card-description font-bold text-sm hover:underline block truncate"
@@ -105,11 +107,11 @@ const DeviationFooter = ({ items }: { items: DeviatedItem[] }) => {
                   </div>
                 )}
                 {hasError ? (
-                  <p className="text-sm text-black">
+                  <p className="text-sm text-foreground">
                     {item.deviation.errorMessage || t('VerifyError')}
                   </p>
                 ) : (
-                  <p className="text-sm text-black">
+                  <p className="text-sm text-foreground">
                     {t('CheckChanges')}
                     {fields.map((field, i) => (
                       <span key={field}>
@@ -178,7 +180,7 @@ const TruncatedDefinice = ({ text }: { text: string }) => {
             e.stopPropagation();
             setExpanded((v) => !v);
           }}
-          className="ml-1 text-blue-button-active hover:underline text-xs font-medium shrink-0"
+          className="ml-1 text-accent hover:underline text-xs font-medium shrink-0"
         >
           {expanded ? t('ShowLess') : t('ShowMore')}
         </button>
@@ -209,7 +211,7 @@ const SubtermRow = ({ item, isLast, filterQuery }: SubtermRowProps) => {
       <div className="leading-snug py-0.5">
         <a
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${item.slug}`}
-          className="text-blue-button-active font-bold hover:underline"
+          className="text-accent font-bold hover:underline"
         >
           <Highlight text={name} query={filterQuery ?? ''} />
         </a>
@@ -247,7 +249,7 @@ const SubtermGroup = ({
         )}
       />
 
-      <p className="text-sm text-black font-medium mb-1.5 relative">
+      <p className="text-sm text-foreground font-medium mb-1.5 relative">
         <span className="absolute -left-4 top-1/2 w-2 h-px bg-blue-primary/30" />
         {label}
       </p>
@@ -300,12 +302,11 @@ export const Term = ({
 
   return (
     <div
-      className="bg-white rounded-xl px-3 py-2 border border-border-grey overflow-hidden shadow-subtle flex flex-col scroll-m-24"
+      className="bg-surface-block rounded-xl px-3 py-2 border border-border-default overflow-hidden shadow-subtle flex flex-col scroll-m-24"
       id={data.iri}
     >
       <span className={clsx('relative flex gap-2', hasSubterms && 'pb-3')}>
         <GovIcon
-          slot="icon-start"
           name={
             data.typ?.includes('Vlastnost')
               ? 'tag'
@@ -321,7 +322,7 @@ export const Term = ({
         <span>
           <a
             href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}`}
-            className="text-blue-button-active font-bold hover:underline"
+            className="text-accent font-bold hover:underline"
           >
             <Highlight text={capitalizedName ?? ''} query={filterQuery ?? ''} />
           </a>

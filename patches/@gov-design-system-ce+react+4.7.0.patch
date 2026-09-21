@@ -1,0 +1,522 @@
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-breadcrumbs/GovBreadcrumbs.js b/node_modules/@gov-design-system-ce/react/dist/gov-breadcrumbs/GovBreadcrumbs.js
+index 986ba6d..6902f26 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-breadcrumbs/GovBreadcrumbs.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-breadcrumbs/GovBreadcrumbs.js
+@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from "react";
+ import classNames from "classnames";
+ import { GovButton } from "../gov-button/button/GovButton";
+ import { GovIcon } from "../gov-icon/GovIcon";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ export const GovBreadcrumbs = (_a) => {
+     var { isExpanded = false, className, accessibleToggleLabel, accessibleLabel, accessibleLabelledBy, children } = _a, rest = __rest(_a, ["isExpanded", "className", "accessibleToggleLabel", "accessibleLabel", "accessibleLabelledBy", "children"]);
+-    const contentIdRef = useRef(createID('GovBreadcrumbsContent'));
+-    const controlIdRef = useRef(createID('GovBreadcrumbsControl'));
++    const contentIdRef = useRef(useCreateID('GovBreadcrumbsContent'));
++    const controlIdRef = useRef(useCreateID('GovBreadcrumbsControl'));
+     const hostRef = useRef(null);
+     const [toggleOption, setToggleOption] = useState(false);
+     const [expanded, setExpanded] = useState(isExpanded);
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-button/dropdown/GovDropdown.js b/node_modules/@gov-design-system-ce/react/dist/gov-button/dropdown/GovDropdown.js
+index 66029ab..9d52ded 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-button/dropdown/GovDropdown.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-button/dropdown/GovDropdown.js
+@@ -4,13 +4,13 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import classNames from "classnames";
+ import { GovButton } from "../button/GovButton";
+ import { Children, isValidElement, useEffect, useRef, useState } from "react";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { useClickOutside } from "../../hooks/useClickOutside";
+ export const GovDropdown = (_a) => {
+     var { open = false, position, className, children, onChange, label } = _a, button = __rest(_a, ["open", "position", "className", "children", "onChange", "label"]);
+     const wrapperRef = useRef(null);
+-    const listIdRef = useRef(createID('GovDropdownList'));
+-    const controlIdRef = useRef(createID('GovDropdownControl'));
++    const listIdRef = useRef(useCreateID('GovDropdownList'));
++    const controlIdRef = useRef(useCreateID('GovDropdownControl'));
+     const [opened, setOpened] = useState(open);
+     useClickOutside(wrapperRef, () => {
+         setTimeout(() => {
+@@ -25,13 +25,14 @@ export const GovDropdown = (_a) => {
+     }, [open]);
+     const items = Children.toArray(children).filter((child) => isValidElement(child) &&
+         child.type);
+-    return (_jsxs("span", { className: classNames('gov-dropdown', className), "data-open": opened, "data-position": position, children: [_jsx(GovButton, Object.assign({}, button, { ref: wrapperRef, id: controlIdRef.current, "aria-controls": listIdRef.current, onClick: () => setOpened((o) => {
++    return (_jsxs("span", { className: classNames('gov-dropdown', className), "data-open": opened, "data-position": position, children: [_jsx(GovButton, Object.assign({}, button, { ref: wrapperRef, id: controlIdRef.current, "aria-controls": listIdRef.current, onClick: () => {
++                    const next = !opened;
++                    setOpened(next);
+                     if (onChange) {
+-                        onChange(!o);
++                        onChange(next);
+                     }
+-                    return !o;
+-                }), children: label })), _jsx("div", { 
++                }, children: label })), _jsx("div", { 
+                 /*ref={el => registerClickOutside(this, el, () => this.open = false)}*/
+-                className: 'gov-dropdown__list', id: listIdRef.current, "aria-labelledby": controlIdRef.current, "aria-hidden": !opened, hidden: !opened, children: _jsx("ul", { slot: "list", role: "menu", style: { display: 'block' }, children: Array.isArray(items) && items.map((child, i) => (_jsx("li", { role: "presentation", children: child }, i + createID('Key')))) }) })] }));
++                className: 'gov-dropdown__list', id: listIdRef.current, "aria-labelledby": controlIdRef.current, "aria-hidden": !opened, hidden: !opened, children: _jsx("ul", { slot: "list", role: "menu", style: { display: 'block' }, children: Array.isArray(items) && items.map((child, i) => (_jsx("li", { role: "presentation", children: child }, i))) }) })] }));
+ };
+ //# sourceMappingURL=GovDropdown.js.map
+\ No newline at end of file
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-chip/GovChip.js b/node_modules/@gov-design-system-ce/react/dist/gov-chip/GovChip.js
+index 73f196e..80b03c0 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-chip/GovChip.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-chip/GovChip.js
+@@ -3,9 +3,9 @@ import { Fragment as _Fragment, jsxs as _jsxs, jsx as _jsx } from "react/jsx-run
+ import { useRef } from "react";
+ import classNames from "classnames";
+ import { transferAttributes } from "../utils/attributes";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ export const GovChip = ({ left, right, disabled, color, type, size, href, target, tag, iconStart, iconEnd, children, identifier, className, role, onClick, tabIndex, focusable = true }) => {
+-    const chipIdRef = useRef(createID('GovChip'));
++    const chipIdRef = useRef(useCreateID('GovChip'));
+     const hostAttrs = {
+         'data-size': size,
+         type: type,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-collapsible/GovCollapsible.js b/node_modules/@gov-design-system-ce/react/dist/gov-collapsible/GovCollapsible.js
+index 061b50a..9a17847 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-collapsible/GovCollapsible.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-collapsible/GovCollapsible.js
+@@ -3,12 +3,12 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { useEffect, useRef, useState } from "react";
+ import classNames from "classnames";
+ import { GovButton } from "../gov-button/button/GovButton";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ import { GovIcon } from "../gov-icon/GovIcon";
+ export const GovCollapsible = (_a) => {
+     var { disabled, size, open = false, label, children, className, direction = 'down' } = _a, rest = __rest(_a, ["disabled", "size", "open", "label", "children", "className", "direction"]);
+-    const triggerIdRef = useRef(createID('GovCollapsibleTrigger'));
+-    const contentIdRef = useRef(createID('GovCollapsibleContent'));
++    const triggerIdRef = useRef(useCreateID('GovCollapsibleTrigger'));
++    const contentIdRef = useRef(useCreateID('GovCollapsibleContent'));
+     const [opened, setOpened] = useState(open);
+     useEffect(() => {
+         setOpened(open);
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-dialog/GovDialog.js b/node_modules/@gov-design-system-ce/react/dist/gov-dialog/GovDialog.js
+index dfe7044..3d76551 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-dialog/GovDialog.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-dialog/GovDialog.js
+@@ -1,15 +1,15 @@
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { useEffect, useRef, useState } from "react";
+ import classNames from "classnames";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ import { transferAttributes } from "../utils/attributes";
+ import { GovButton } from "../gov-button/button/GovButton";
+ import { GovIcon } from "../gov-icon/GovIcon";
+ import { GovBackdrop } from "../gov-backdrop/GovBackdrop";
+ export const GovDialog = ({ open, accessibleDescribedBy, accessibleLabelledBy, accessibleCloseLabelledBy, accessibleCloseLabel, role = 'dialog', blockBackdropClose = false, footer, className, blockClose = false, onClose, children, title, icon, onChange, }) => {
+     const [opened, setOpened] = useState(open);
+-    const labelIdRef = useRef(createID('GovDialogLabel'));
+-    const contentIdRef = useRef(createID('GovDialogContent'));
++    const labelIdRef = useRef(useCreateID('GovDialogLabel'));
++    const contentIdRef = useRef(useCreateID('GovDialogContent'));
+     const hostAttrs = {
+         'data-open': opened ? '' : undefined,
+     };
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/autocomplete/GovFormAutocomplete.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/autocomplete/GovFormAutocomplete.js
+index 266efb1..311df98 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/autocomplete/GovFormAutocomplete.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/autocomplete/GovFormAutocomplete.js
+@@ -3,7 +3,7 @@ import { __rest } from "tslib";
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { useRef, } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { GovFormInput } from "../input/GovFormInput";
+ import { GovSkeleton } from "../../gov-loading/skeleton/GovSkeleton";
+ import { delay, has } from "../../utils/utils";
+@@ -11,8 +11,9 @@ import { useAutoCompleteReducer } from "./state";
+ export const GovFormAutocomplete = (_a) => {
+     var { size = 'm', required, disabled, identifier, invalid, messageEmpty = 'Nebyly nalezeny žádné výsledky', className, templateResolver, searchCallback, onChange, value, valueResolver, keyResolver, minlength = 3, clearOnSelect = false, inputRef } = _a, rest = __rest(_a, ["size", "required", "disabled", "identifier", "invalid", "messageEmpty", "className", "templateResolver", "searchCallback", "onChange", "value", "valueResolver", "keyResolver", "minlength", "clearOnSelect", "inputRef"]);
+     const listRef = useRef(null);
+-    const listBoxIdRef = useRef(createID('GovFormAutocompleteList'));
+-    const inputIdRef = useRef(identifier !== null && identifier !== void 0 ? identifier : createID('GovFormAutocomplete'));
++    const listBoxIdRef = useRef(useCreateID('GovFormAutocompleteList'));
++    const generatedId = useCreateID('GovFormAutocomplete');
++    const inputIdRef = useRef(identifier !== null && identifier !== void 0 ? identifier : generatedId);
+     const { onFocusAction, onBlurAction, onSelectAction, onArrowUpAction, onArrowDownAction, processingStartedAction, processingFinishedAction, processingFailedAction, processingInvalidAction, showList, list, arrowCounter, processing, } = useAutoCompleteReducer();
+     const doSearch = async (input) => {
+         if (processing)
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/checkbox/GovFormCheckbox.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/checkbox/GovFormCheckbox.js
+index 36ed8c7..f62eec9 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/checkbox/GovFormCheckbox.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/checkbox/GovFormCheckbox.js
+@@ -5,10 +5,10 @@ import { forwardRef, useRef, } from "react";
+ import classNames from "classnames";
+ import { GovIcon } from "../../gov-icon/GovIcon";
+ import { transferAttributes } from "../../utils/attributes";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ export const GovFormCheckbox = forwardRef((_a, ref) => {
+     var { noLabel, checked, size, invalid, identifier, required, disabled, children, indeterminate, className } = _a, rest = __rest(_a, ["noLabel", "checked", "size", "invalid", "identifier", "required", "disabled", "children", "indeterminate", "className"]);
+-    const inputIdRef = useRef(createID('GovFormCheckbox'));
++    const inputIdRef = useRef(useCreateID('GovFormCheckbox'));
+     const resolvedSize = size !== null && size !== void 0 ? size : 'm';
+     const hostAttrs = {
+         'data-size': resolvedSize,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/file/GovFormFile.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/file/GovFormFile.js
+index 50fa03b..88a5e60 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/file/GovFormFile.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/file/GovFormFile.js
+@@ -3,7 +3,7 @@ import { __rest } from "tslib";
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { createID, useCreateID } from "../../utils/string";
+ import { transferAttributes } from "../../utils/attributes";
+ import { GovAttachments } from "../../gov-attachments/GovAttachments";
+ import { GovAttachmentsItem } from "../../gov-attachments/GovAttachmentsItem";
+@@ -13,7 +13,8 @@ import { fileAcceptValidation, fileSizeValidation, formatBytes } from "../../uti
+ import { isNumber } from "../../utils/helpers.types";
+ export const GovFormFile = forwardRef((props, ref) => {
+     const { disabled = false, invalid = false, expanded = false, required = false, ignoreFileDuplicationCheck = false, resetAfterPick = false, displayAttachments = true, maxFileSize = -1, accept, accessibleAttachmentsLabel = "Přílohy", accessibleRemoveLabel = "Odebrat soubor {FILE_NAME}", errorAccept = "Soubor tohoto typu není povolen", errorSize = "Soubor je větší než povolená velikost {FILE_SIZE}", attachments, identifier, className, files = [], onFilesUpdated, children } = props, rest = __rest(props, ["disabled", "invalid", "expanded", "required", "ignoreFileDuplicationCheck", "resetAfterPick", "displayAttachments", "maxFileSize", "accept", "accessibleAttachmentsLabel", "accessibleRemoveLabel", "errorAccept", "errorSize", "attachments", "identifier", "className", "files", "onFilesUpdated", "children"]);
+-    const inputIdRef = useRef(identifier !== null && identifier !== void 0 ? identifier : createID("GovFormFile"));
++    const generatedId = useCreateID("GovFormFile");
++    const inputIdRef = useRef(identifier !== null && identifier !== void 0 ? identifier : generatedId);
+     const areaRef = useRef(null);
+     const inputRef = useRef(null);
+     useImperativeHandle(ref, () => inputRef.current);
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/input/GovFormInput.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/input/GovFormInput.js
+index 11d61cc..974b580 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/input/GovFormInput.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/input/GovFormInput.js
+@@ -3,14 +3,14 @@ import { __rest } from "tslib";
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { forwardRef, useRef, useState, } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { toBoolAttrIfDefined } from "../../utils/template";
+ import { transferAttributes } from "../../utils/attributes";
+ import { GovIcon } from "../../gov-icon/GovIcon";
+ import { GovButton } from "../../gov-button/button/GovButton";
+ export const GovFormInput = forwardRef((_a, ref) => {
+     var { size, required, disabled, sufix, success, identifier, type = 'text', prefix, invalid, iconStart, iconEnd, slot, accessibleHidePasswordLabel, accessibleShowPasswordLabel, className } = _a, rest = __rest(_a, ["size", "required", "disabled", "sufix", "success", "identifier", "type", "prefix", "invalid", "iconStart", "iconEnd", "slot", "accessibleHidePasswordLabel", "accessibleShowPasswordLabel", "className"]);
+-    const inputIdRef = useRef(createID('GovFormInput'));
++    const inputIdRef = useRef(useCreateID('GovFormInput'));
+     const [showPassword, setShowPassword] = useState(false);
+     const hostAttrs = {
+         'data-size': size !== null && size !== void 0 ? size : 'm',
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/message/GovFormMessage.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/message/GovFormMessage.js
+index 0e6e9cb..54b6e8a 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/message/GovFormMessage.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/message/GovFormMessage.js
+@@ -3,9 +3,9 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { useRef } from "react";
+ import classNames from "classnames";
+ import { transferAttributes } from "../../utils/attributes";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ export const GovFormMessage = ({ color, size, icon, children, className }) => {
+-    const messageIdRef = useRef(createID('GovFormMessage'));
++    const messageIdRef = useRef(useCreateID('GovFormMessage'));
+     const hostAttrs = {
+         color: color,
+         'data-size': size,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/multiselect/GovFormMultiSelect.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/multiselect/GovFormMultiSelect.js
+index 7ff9e42..295ff6a 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/multiselect/GovFormMultiSelect.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/multiselect/GovFormMultiSelect.js
+@@ -5,13 +5,14 @@ import { useRef, useState } from "react";
+ import classNames from "classnames";
+ import { transferAttributes } from "../../utils/attributes";
+ import { GovFormAutocomplete } from "../autocomplete/GovFormAutocomplete";
+-import { createID, removeDiacritics } from "../../utils/string";
++import { useCreateID, removeDiacritics } from "../../utils/string";
+ import { GovButton } from "../../gov-button/button/GovButton";
+ import { GovIcon } from "../../gov-icon/GovIcon";
+ export const GovFormMultiSelect = (_a) => {
+     var { size, className, prefix, sufix, options, identifier, disabled = false, messageEmpty = 'Nebyly nalezeny žádné výsledky', hideSelectedList = false, onSelect, value } = _a, rest = __rest(_a, ["size", "className", "prefix", "sufix", "options", "identifier", "disabled", "messageEmpty", "hideSelectedList", "onSelect", "value"]);
+-    const listIdRef = useRef(createID('GovFormMultiSelectList'));
+-    const inputIdRef = useRef(identifier !== null && identifier !== void 0 ? identifier : createID('GovFormMultiSelect'));
++    const listIdRef = useRef(useCreateID('GovFormMultiSelectList'));
++    const generatedId = useCreateID('GovFormMultiSelect');
++    const inputIdRef = useRef(identifier !== null && identifier !== void 0 ? identifier : generatedId);
+     const [state, setState] = useState({ input: '', selected: undefined });
+     const getOption = (value) => {
+         var _a;
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/radio/GovFormRadio.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/radio/GovFormRadio.js
+index 20d0b2f..d65cd41 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/radio/GovFormRadio.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/radio/GovFormRadio.js
+@@ -4,10 +4,10 @@ import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-run
+ import { forwardRef, useRef, } from "react";
+ import classNames from "classnames";
+ import { transferAttributes } from "../../utils/attributes";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ export const GovFormRadio = forwardRef((_a, ref) => {
+     var { noLabel, checked, size, invalid, identifier, required, disabled, children, className } = _a, rest = __rest(_a, ["noLabel", "checked", "size", "invalid", "identifier", "required", "disabled", "children", "className"]);
+-    const inputIdRef = useRef(createID('GovFormRadio'));
++    const inputIdRef = useRef(useCreateID('GovFormRadio'));
+     const hostAttrs = {
+         'data-size': size !== null && size !== void 0 ? size : 'm',
+         invalid: invalid ? '' : undefined,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/range/GovFormRange.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/range/GovFormRange.js
+index 687cc2f..1ff78d2 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/range/GovFormRange.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/range/GovFormRange.js
+@@ -4,14 +4,14 @@ import { __rest } from "tslib";
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { forwardRef, useEffect, useRef, useState, } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { transferAttributes } from "../../utils/attributes";
+ import { GovFormInput } from "../input/GovFormInput";
+ import { isNumber } from "../../utils/helpers.types";
+ export const GovFormRange = forwardRef((_a, ref) => {
+     var { size = 'm', required, disabled, sufix, identifier, prefix, input = true, invalid, tooltip, className, datalist = [] } = _a, rest = __rest(_a, ["size", "required", "disabled", "sufix", "identifier", "prefix", "input", "invalid", "tooltip", "className", "datalist"]);
+     const inputRef = useRef(null);
+-    const inputIdRef = useRef(createID('GovFormRange'));
++    const inputIdRef = useRef(useCreateID('GovFormRange'));
+     const fillRef = useRef(null);
+     const outputRef = useRef(null);
+     const [value, setValue] = useState(rest.value || rest.defaultValue);
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/select/GovFormSelect.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/select/GovFormSelect.js
+index 2315867..174b0b3 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/select/GovFormSelect.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/select/GovFormSelect.js
+@@ -3,12 +3,12 @@ import { __rest } from "tslib";
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { forwardRef, useRef, } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { transferAttributes } from "../../utils/attributes";
+ import { GovIcon } from "../../gov-icon/GovIcon";
+ export const GovFormSelect = forwardRef((_a, ref) => {
+     var { size, required, disabled, success, identifier, children, invalid, prefix, sufix, className } = _a, rest = __rest(_a, ["size", "required", "disabled", "success", "identifier", "children", "invalid", "prefix", "sufix", "className"]);
+-    const selectIdRef = useRef(createID('GovFormSelect'));
++    const selectIdRef = useRef(useCreateID('GovFormSelect'));
+     const hostAttrs = {
+         'data-size': size,
+         invalid: invalid ? '' : undefined,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/switch/GovFormSwitch.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/switch/GovFormSwitch.js
+index e46e6c6..77b0c68 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/switch/GovFormSwitch.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/switch/GovFormSwitch.js
+@@ -5,10 +5,10 @@ import { forwardRef, useRef, } from "react";
+ import classNames from "classnames";
+ import { GovIcon } from "../../gov-icon/GovIcon";
+ import { transferAttributes } from "../../utils/attributes";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ export const GovFormSwitch = forwardRef((_a, ref) => {
+     var { noLabel, checked, size = 'm', invalid, identifier, required, disabled, children, className } = _a, rest = __rest(_a, ["noLabel", "checked", "size", "invalid", "identifier", "required", "disabled", "children", "className"]);
+-    const inputIdRef = useRef(createID('GovFormSwitch'));
++    const inputIdRef = useRef(useCreateID('GovFormSwitch'));
+     const hostAttrs = {
+         'data-size': size,
+         checked: checked ? '' : undefined,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-form/textarea/GovFormTextArea.js b/node_modules/@gov-design-system-ce/react/dist/gov-form/textarea/GovFormTextArea.js
+index dd629c1..f3f6043 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-form/textarea/GovFormTextArea.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-form/textarea/GovFormTextArea.js
+@@ -3,12 +3,12 @@ import { __rest } from "tslib";
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { forwardRef, useRef, } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { toBoolAttrIfDefined } from "../../utils/template";
+ import { transferAttributes } from "../../utils/attributes";
+ export const GovFormTextarea = forwardRef((_a, ref) => {
+     var { size, required, disabled, sufix, identifier, prefix, invalid, slot, className } = _a, rest = __rest(_a, ["size", "required", "disabled", "sufix", "identifier", "prefix", "invalid", "slot", "className"]);
+-    const inputIdRef = useRef(createID('GovFormTextarea'));
++    const inputIdRef = useRef(useCreateID('GovFormTextarea'));
+     const hostAttrs = {
+         'data-size': size !== null && size !== void 0 ? size : 'm',
+         invalid: invalid ? '' : undefined,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-pagination/GovPagination.js b/node_modules/@gov-design-system-ce/react/dist/gov-pagination/GovPagination.js
+index 29f695e..0dd8853 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-pagination/GovPagination.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-pagination/GovPagination.js
+@@ -1,6 +1,6 @@
+ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+ import { useRef, useState } from "react";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ import { GovButton } from "../gov-button/button/GovButton";
+ import { paginate } from "./pagination";
+ import classNames from "classnames";
+@@ -8,8 +8,8 @@ import { GovIcon } from "../gov-icon/GovIcon";
+ import { GovFormSelect } from "../gov-form/select/GovFormSelect";
+ import { createArrayRange } from "../utils/array";
+ export const GovPagination = ({ className, color, size, pageSize = 10, maxPages = 5, total, labelStart, labelPrev, type = 'button', accessibleSelectLabel, accessiblePageLabel, selectIdentifier, labelNext, labelEnd, link, onPage, current, }) => {
+-    const pageSelectIdRef = useRef(createID("GovPageSelect"));
+-    const selectIdRef = useRef(createID("GovSelect"));
++    const pageSelectIdRef = useRef(useCreateID("GovPageSelect"));
++    const selectIdRef = useRef(useCreateID("GovSelect"));
+     const spreadSelectRef = useRef(null);
+     const [pagination, setPagination] = useState(paginate(total || 0, current, pageSize, maxPages));
+     const hostAttrs = {
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-stepper/stepper/GovStepperItem.js b/node_modules/@gov-design-system-ce/react/dist/gov-stepper/stepper/GovStepperItem.js
+index 9fac3eb..a2ac1a4 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-stepper/stepper/GovStepperItem.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-stepper/stepper/GovStepperItem.js
+@@ -2,11 +2,11 @@
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { useRef } from "react";
+ import classNames from "classnames";
+-import { createID } from "../../utils/string";
++import { useCreateID } from "../../utils/string";
+ import { transferAttributes } from "../../utils/attributes";
+ export const GovStepperItem = ({ color, size, className, children, headline, annotation, prefix }) => {
+-    const controlIdRef = useRef(createID('GovStepperItemControl'));
+-    const contentIdRef = useRef(createID('GovStepperItemContent'));
++    const controlIdRef = useRef(useCreateID('GovStepperItemControl'));
++    const contentIdRef = useRef(useCreateID('GovStepperItemContent'));
+     return (_jsx("div", { id: controlIdRef.current, "aria-controls": contentIdRef.current, className: classNames('gov-stepper-item', className), "data-size": size, "data-color": color, role: "listitem", "data-hydrated": "hydrated", children: _jsxs("div", { children: [_jsxs("div", { className: 'gov-stepper-item__steps', children: [_jsx("span", {}), _jsx("span", { className: 'gov-stepper-item__prefix', children: prefix && transferAttributes(prefix, { slot: 'prefix' }) }), _jsx("span", {})] }), _jsxs("div", { className: 'gov-stepper-item__main', children: [_jsx("span", { className: 'gov-stepper-item__headline', children: headline && transferAttributes(headline, { slot: 'headline' }) }), annotation && transferAttributes(annotation, { slot: 'annotation' }), children && (_jsx("div", { className: 'gov-stepper-item__content', id: contentIdRef.current, "aria-labelledby": contentIdRef.current, role: "tabpanel", children: children && transferAttributes(children, { slot: 'content' }) }))] })] }) }));
+ };
+ //# sourceMappingURL=GovStepperItem.js.map
+\ No newline at end of file
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-tabs/GovTabs.js b/node_modules/@gov-design-system-ce/react/dist/gov-tabs/GovTabs.js
+index f0a074c..04a287f 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-tabs/GovTabs.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-tabs/GovTabs.js
+@@ -2,14 +2,15 @@ import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+ import classNames from "classnames";
+ import { GovChip } from "../gov-chip/GovChip";
+ import { useEffect, useRef, useState } from "react";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ import { transferAttributes } from "../utils/attributes";
+ export const GovTabs = ({ size = 'm', color = 'primary', type = 'text', direction, className, items, orientation }) => {
+     const [activeTab, setActiveTab] = useState(0);
+     const focusIndex = useRef(0);
+-    const [extendedItems] = useState(items.map((item) => {
+-        const contentId = (item === null || item === void 0 ? void 0 : item.contentIdentifier) || createID('GovTabContent');
+-        const triggerId = (item === null || item === void 0 ? void 0 : item.triggerIdentifier) || createID('GovTabTrigger');
++    const baseId = useCreateID('GovTab');
++    const [extendedItems] = useState(items.map((item, index) => {
++        const contentId = (item === null || item === void 0 ? void 0 : item.contentIdentifier) || `${baseId}-content-${index}`;
++        const triggerId = (item === null || item === void 0 ? void 0 : item.triggerIdentifier) || `${baseId}-trigger-${index}`;
+         return Object.assign(Object.assign({}, item), {
+             contentIdentifier: contentId,
+             triggerIdentifier: triggerId,
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-toast/GovToast.js b/node_modules/@gov-design-system-ce/react/dist/gov-toast/GovToast.js
+index 2a315fe..890ad9b 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-toast/GovToast.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-toast/GovToast.js
+@@ -6,10 +6,10 @@ import classNames from "classnames";
+ import { transferAttributes } from "../utils/attributes";
+ import { GovButton } from "../gov-button/button/GovButton";
+ import { GovIcon } from "../gov-icon/GovIcon";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ export const GovToast = (_a) => {
+     var { gravity, position, color, type, time = 0, icon, children, accessibleCloseLabel, closeLabel, onClose, className } = _a, rest = __rest(_a, ["gravity", "position", "color", "type", "time", "icon", "children", "accessibleCloseLabel", "closeLabel", "onClose", "className"]);
+-    const toastIdRef = useRef(createID('GovToast'));
++    const toastIdRef = useRef(useCreateID('GovToast'));
+     useEffect(() => {
+         if (!(Number.isInteger(time) && time > 0)) {
+             return;
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-tooltip/GovTooltipTrigger.js b/node_modules/@gov-design-system-ce/react/dist/gov-tooltip/GovTooltipTrigger.js
+index 939acc2..98630ab 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-tooltip/GovTooltipTrigger.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-tooltip/GovTooltipTrigger.js
+@@ -4,10 +4,11 @@ import { jsx as _jsx } from "react/jsx-runtime";
+ import { cloneElement, forwardRef, isValidElement, useMemo } from "react";
+ import { mergeRefs } from "react-merge-refs";
+ import { useTooltipState } from "./useTooltipState";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ export const TooltipTrigger = forwardRef(function TooltipTrigger(_a, propRef) {
+     var { children, asChild = false } = _a, props = __rest(_a, ["children", "asChild"]);
+     const state = useTooltipState();
++    const tooltipId = useCreateID('GovTooltip');
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     const childrenRef = children.ref;
+     const ref = useMemo(() => mergeRefs([state.reference, propRef, childrenRef]), [state.reference, propRef, childrenRef]);
+@@ -17,6 +18,6 @@ export const TooltipTrigger = forwardRef(function TooltipTrigger(_a, propRef) {
+     return (_jsx("button", Object.assign({ 
+         //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore
+-        ref: ref, "aria-describedby": createID('GovTooltip'), "data-state": state.open ? "open" : "closed" }, state.getReferenceProps(props), { children: children })));
++        ref: ref, "aria-describedby": tooltipId, "data-state": state.open ? "open" : "closed" }, state.getReferenceProps(props), { children: children })));
+ });
+ //# sourceMappingURL=GovTooltipTrigger.js.map
+\ No newline at end of file
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-user-navigation/GovUserNavigation.js b/node_modules/@gov-design-system-ce/react/dist/gov-user-navigation/GovUserNavigation.js
+index 49e298f..c365714 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-user-navigation/GovUserNavigation.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-user-navigation/GovUserNavigation.js
+@@ -1,7 +1,7 @@
+ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { useRef, useState } from "react";
+ import classNames from "classnames";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ import { useClickOutside } from "../utils/useClickOutside";
+ import { GovButton } from "../gov-button/button/GovButton";
+ import { GovIcon } from "../gov-icon/GovIcon";
+@@ -9,10 +9,10 @@ import { GovBadge } from "../gov-badge/GovBadge";
+ import { GovUserNavigationItem } from "./GovUserNavigationItem";
+ export const GovUserNavigation = ({ position = 'left', numberOfDisplayed = 3, ariaLabelExpandHide = 'Skrýt všechny položky', ariaLabelExpandShow = 'Zobrazit všechny položky', labelExpandHide = 'Skrýt', labelExpandShow = 'Zobrazit více', ariaLabelTriggerHide = 'Zavřít menu', ariaLabelTriggerShow = 'Zobrazit všechny položky', onSelect, items, children, className }) => {
+     const popupRef = useRef(null);
+-    const controlIdRef = useRef(createID('GovUserNavigationControl'));
+-    const contentIdRef = useRef(createID('GovUserNavigationContent'));
+-    const contentExpandedIdRef = useRef(createID('GovUserNavigationExpanded'));
+-    const controlExpandedIdRef = useRef(createID('GovUserNavigationControlExpanded'));
++    const controlIdRef = useRef(useCreateID('GovUserNavigationControl'));
++    const contentIdRef = useRef(useCreateID('GovUserNavigationContent'));
++    const contentExpandedIdRef = useRef(useCreateID('GovUserNavigationExpanded'));
++    const controlExpandedIdRef = useRef(useCreateID('GovUserNavigationControlExpanded'));
+     const [opened, setOpened] = useState(false);
+     const [expanded, setExpanded] = useState(false);
+     useClickOutside({ ref: popupRef, callback: () => setOpened(false) });
+diff --git a/node_modules/@gov-design-system-ce/react/dist/gov-wizard/GovWizardItem.js b/node_modules/@gov-design-system-ce/react/dist/gov-wizard/GovWizardItem.js
+index bda6713..8b21b03 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/gov-wizard/GovWizardItem.js
++++ b/node_modules/@gov-design-system-ce/react/dist/gov-wizard/GovWizardItem.js
+@@ -3,11 +3,11 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ import { forwardRef, useRef } from "react";
+ import classNames from "classnames";
+ import { transferAttributes } from "../utils/attributes";
+-import { createID } from "../utils/string";
++import { useCreateID } from "../utils/string";
+ import { GovIcon } from "../gov-icon/GovIcon";
+ export const GovWizardItem = forwardRef(({ size = 'm', color, isExpanded = false, children, collapsible = false, className, disabled = false, prefix, annotation, onChange, headline }, ref) => {
+-    const contentIdRef = useRef(createID('GovWizzardItemContent'));
+-    const controlIdRef = useRef(createID('GovWizzardItemControl'));
++    const contentIdRef = useRef(useCreateID('GovWizzardItemContent'));
++    const controlIdRef = useRef(useCreateID('GovWizzardItemControl'));
+     return (_jsxs("div", { className: classNames('gov-wizard-item', className), ref: ref, "data-is-expanded": isExpanded, "data-color": color, "data-size": size, role: "listitem", "data-collapsible": collapsible, "data-hydrated": 'hydrated', children: [_jsxs("div", { className: 'gov-wizard-item__header', children: [prefix && _jsx("span", { className: 'gov-wizard-item__prefix', children: transferAttributes(prefix, { slot: 'prefix' }) }), collapsible ? (_jsxs("button", { id: controlIdRef.current, className: 'gov-wizard-item__label', "aria-expanded": isExpanded, "aria-controls": contentIdRef.current, disabled: disabled, "aria-disabled": disabled, onClick: () => {
+                             if (onChange) {
+                                 onChange(!isExpanded);
+diff --git a/node_modules/@gov-design-system-ce/react/dist/utils/string.d.ts b/node_modules/@gov-design-system-ce/react/dist/utils/string.d.ts
+index 2895c93..dcafe12 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/utils/string.d.ts
++++ b/node_modules/@gov-design-system-ce/react/dist/utils/string.d.ts
+@@ -1,4 +1,5 @@
+ export declare function chr4(): string;
+ export declare function createID(prefix: string): string;
++export declare function useCreateID(prefix: string): string;
+ export declare function removeDiacritics(string: any): string | any;
+ export declare function splitByWhitespace(string: any): string | any;
+diff --git a/node_modules/@gov-design-system-ce/react/dist/utils/string.js b/node_modules/@gov-design-system-ce/react/dist/utils/string.js
+index 36a158b..1c60539 100644
+--- a/node_modules/@gov-design-system-ce/react/dist/utils/string.js
++++ b/node_modules/@gov-design-system-ce/react/dist/utils/string.js
+@@ -1,9 +1,13 @@
++import { useId } from "react";
+ export function chr4() {
+     return Math.random().toString(16).slice(-4);
+ }
+ export function createID(prefix) {
+     return `${prefix}-${chr4()}${chr4()}-${chr4()}-${chr4()}-${chr4()}-${chr4()}${chr4()}${chr4()}`;
+ }
++export function useCreateID(prefix) {
++    return `${prefix}-${useId()}`;
++}
+ export function removeDiacritics(string) {
+     if (typeof string !== 'string')
+         return string;
