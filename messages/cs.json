@@ -406,7 +406,9 @@
     "EnterManually": "Zadat IRI zákona ručně",
     "ManualPlaceholder": "Zadejte IRI zákona",
     "SelectFromList": "Vyhledat IRI zákona",
-    "RemoveManualEntry": "Odebrat IRI zákona"
+    "RemoveManualEntry": "Odebrat IRI zákona",
+    "Version": "Znění",
+    "CurrentVersion": "(aktuální)"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
