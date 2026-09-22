@@ -174,7 +174,7 @@ export const ConceptForm = ({
         <LegalSourceAutofillSection />
         <div className="my-4 flex items-center gap-2 text-sm">
           <span className="font-semibold">{tConcept('ConceptDataLabel')}</span>
-          <span className="flex-1 h-px bg-(--button-outlined-primary-hover)" />
+          <span className="flex-1 h-px bg-primary-outlined-hover" />
         </div>
         <form
           onSubmit={form.handleSubmit((data) => onSubmit(data, form))}
