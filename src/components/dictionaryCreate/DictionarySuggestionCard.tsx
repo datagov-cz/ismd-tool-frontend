@@ -63,6 +63,7 @@ export const DictionarySuggestionCard = ({
               <GovFormCheckbox
                 id={`${id}-${item.key}`}
                 checked={selectedItems.includes(item.key)}
+                readOnly
                 size="s"
                 aria-hidden="true"
                 className="pointer-events-none"
@@ -89,6 +90,7 @@ export const DictionarySuggestionCard = ({
           <GovFormCheckbox
             id={id}
             checked={checked}
+            readOnly
             size="s"
             aria-hidden="true"
             className="pointer-events-none"

@@ -191,6 +191,7 @@ export const LegalSourceAutofillSection = () => {
                 <GovFormCheckbox
                   id={`${id}-select-all`}
                   checked={allSelected}
+                  readOnly
                   size="s"
                   aria-hidden="true"
                   className="pointer-events-none"
