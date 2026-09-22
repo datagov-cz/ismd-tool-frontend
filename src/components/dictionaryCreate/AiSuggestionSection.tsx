@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useMemo } from 'react';
 import {
   GovButton,
   GovChip,
@@ -8,145 +8,89 @@ import {
   GovIcon,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 import { FormSection } from '@/components/conceptForm/components/FormSection';
-import {
-  DictionarySuggestionCard,
-  type SuggestionItem,
-} from '@/components/dictionaryCreate/DictionarySuggestionCard';
+import { AiFeedback } from '@/components/dictionaryCreate/AiFeedback';
+import { AiProgress } from '@/components/dictionaryCreate/AiProgress';
+import { DictionarySuggestionCard } from '@/components/dictionaryCreate/DictionarySuggestionCard';
+import { IriStatus } from '@/components/dictionaryCreate/IriStatus';
+import { SuggestionCardSkeleton } from '@/components/dictionaryCreate/SuggestionSkeleton';
 import { LegislativeSourcePicker } from '@/components/shared/LegislativeSourceInput/LegislativeSourcePicker';
+import type { IriStatus as IriStatusType } from '@/hooks/useIriCheck';
+import { useIsOnline } from '@/hooks/useIsOnline';
+import { useVocabularyAi } from '@/hooks/useVocabularyAi';
+import { useVocabularyJob } from '@/hooks/useVocabularyJob';
+import { displayedRefs, groupForDisplay } from '@/lib/vocabularyDraft/grouping';
+import { parseLegalActIri } from '@/lib/vocabularyDraft/legalAct';
+import { useVocabularyDraftStore } from '@/store/vocabularyDraftStore';
 
-type DictionarySuggestion = {
-  key: string;
-  label: string;
-  description: string;
-  properties: SuggestionItem[];
-  relations: SuggestionItem[];
+type Props = {
+  iriStatus: IriStatusType;
+  iri?: string;
 };
 
-const SUGGESTIONS: DictionarySuggestion[] = [
-  {
-    key: 'vehicle',
-    label: 'Vozidlo',
-    description:
-      'Motorové vozidlo, nemotorové vozidlo nebo tramvaj, které se pohybuje po pozemní komunikaci.',
-    properties: [
-      {
-        key: 'vehicle-registration-number',
-        label: 'Registrační značka',
-        description:
-          'Jednoznačný identifikátor vozidla přidělený při registraci.',
-      },
-      {
-        key: 'vehicle-category',
-        label: 'Kategorie vozidla',
-        description:
-          'Zařazení vozidla podle hmotnosti, počtu míst a účelu užití.',
-      },
-    ],
-    relations: [
-      {
-        key: 'vehicle-operator',
-        label: 'má provozovatele',
-        description: 'Vazba na osobu, která vozidlo provozuje.',
-      },
-      {
-        key: 'vehicle-driver',
-        label: 'je řízeno řidičem',
-        description: 'Vazba na řidiče, který vozidlo v daném okamžiku řídí.',
-      },
-    ],
-  },
-  {
-    key: 'driver',
-    label: 'Řidič',
-    description:
-      'Účastník provozu na pozemních komunikacích, který řídí motorové nebo nemotorové vozidlo.',
-    properties: [
-      {
-        key: 'driver-licence-number',
-        label: 'Číslo řidičského oprávnění',
-        description:
-          'Identifikátor řidičského oprávnění vydaného obecním úřadem.',
-      },
-      {
-        key: 'driver-point-total',
-        label: 'Počet bodů',
-        description: 'Aktuální bodové hodnocení řidiče v bodovém systému.',
-      },
-    ],
-    relations: [
-      {
-        key: 'driver-vehicle',
-        label: 'řídí vozidlo',
-        description: 'Vazba na vozidlo, které řidič řídí.',
-      },
-      {
-        key: 'driver-offence',
-        label: 'dopustil se přestupku',
-        description:
-          'Vazba na přestupek spáchaný při provozu na pozemních komunikacích.',
-      },
-    ],
-  },
-  {
-    key: 'road',
-    label: 'Pozemní komunikace',
-    description:
-      'Dopravní cesta určená k užití silničními a jinými vozidly a chodci.',
-    properties: [
-      {
-        key: 'road-class',
-        label: 'Třída komunikace',
-        description:
-          'Zařazení komunikace do třídy podle jejího dopravního významu.',
-      },
-      {
-        key: 'road-length',
-        label: 'Délka úseku',
-        description:
-          'Délka evidovaného úseku pozemní komunikace v kilometrech.',
-      },
-    ],
-    relations: [
-      {
-        key: 'road-owner',
-        label: 'má vlastníka',
-        description: 'Vazba na vlastníka pozemní komunikace.',
-      },
-      {
-        key: 'road-sign',
-        label: 'je označena dopravní značkou',
-        description: 'Vazba na dopravní značky umístěné na komunikaci.',
-      },
-    ],
-  },
-];
-
-const ALL_KEYS = SUGGESTIONS.flatMap((suggestion) => [
-  suggestion.key,
-  ...suggestion.properties.map((property) => property.key),
-  ...suggestion.relations.map((relation) => relation.key),
-]);
-
-export const AiSuggestionSection = () => {
+export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
   const id = useId();
   const t = useTranslations('CreateOntology.AiSuggestion');
+  const isOnline = useIsOnline();
 
-  const [legalSource, setLegalSource] = useState<string | null>(null);
-  const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
+  const legalAct = useVocabularyDraftStore((state) => state.legalAct);
+  const items = useVocabularyDraftStore((state) => state.items);
+  const selectedRefs = useVocabularyDraftStore((state) => state.selectedRefs);
+  const activeJob = useVocabularyDraftStore((state) => state.activeJob);
+  const initialFailed = useVocabularyDraftStore((state) => state.initialFailed);
+  const startingJob = useVocabularyDraftStore((state) => state.startingJob);
+  const setLegalAct = useVocabularyDraftStore((state) => state.setLegalAct);
+  const toggleAll = useVocabularyDraftStore((state) => state.toggleAll);
 
-  const allSelected = selectedSuggestions.length === ALL_KEYS.length;
+  const { isReconnecting } = useVocabularyJob();
+  const { canRun, generate, expand, regenerate } = useVocabularyAi();
 
-  const toggleSuggestion = (key: string) =>
-    setSelectedSuggestions((current) =>
-      current.includes(key)
-        ? current.filter((item) => item !== key)
-        : [...current, key],
-    );
+  useEffect(() => {
+    void useVocabularyDraftStore.persist.rehydrate();
+  }, []);
 
-  const toggleAllSuggestions = () =>
-    setSelectedSuggestions(allSelected ? [] : ALL_KEYS);
+  const enabled = iriStatus === 'ok';
+  const groups = useMemo(() => groupForDisplay(items), [items]);
+  const visibleRefs = useMemo(() => displayedRefs(groups), [groups]);
+  const selectedVisibleCount = visibleRefs.filter((ref) =>
+    selectedRefs.includes(ref),
+  ).length;
+  const allSelected =
+    visibleRefs.length > 0 && selectedVisibleCount === visibleRefs.length;
+  const hasDraft = items.length > 0;
+  const pendingJob = activeJob ?? startingJob;
+  const isStarting = startingJob !== null;
+  const isInitialRunning = activeJob?.op === 'initial';
+  const isExpandingClasses =
+    pendingJob?.op === 'expand' && pendingJob.kind === 'classes';
+  const aiDisabled = !enabled || !canRun;
+  const pickerLocked = Boolean(activeJob || isStarting || !enabled);
+  const showPicker = enabled || !!legalAct || hasDraft;
+
+  const handleIncompleteRetry = () => {
+    void generate();
+  };
+
+  const handleLegalSourceChange = (iri: string) => {
+    if (iri === (legalAct?.iri ?? '')) {
+      return;
+    }
+    if (!iri) {
+      setLegalAct(null);
+      return;
+    }
+    const parsed = parseLegalActIri(iri);
+    if (!parsed) {
+      toast.error(t('LegalAct.Unsupported'));
+      return;
+    }
+    setLegalAct(parsed);
+    if (enabled) {
+      void generate();
+    }
+  };
 
   return (
     <FormSection
@@ -161,93 +105,158 @@ export const AiSuggestionSection = () => {
       }
     >
       <div className="px-2.5">{t('SectionDescription')}</div>
-      <div className="px-2.5">
-        <LegislativeSourcePicker
-          id={id}
-          onChange={setLegalSource}
-          value={legalSource}
-        />
-      </div>
-      {legalSource ? (
-        <div className="px-2.5 space-y-2">
-          <div className="text-base">{t('AIAssistDetail')}</div>
-          <div className="flex items-center justify-between gap-2 pt-2">
-            <GovButton
-              type="outlined"
-              color="primary"
-              size="s"
-              aria-pressed={allSelected}
-              onClick={toggleAllSuggestions}
+      <IriStatus status={iriStatus} iri={iri} />
+      {enabled && !isOnline ? (
+        <div className="px-2.5 text-sm text-muted">{t('OfflineHint')}</div>
+      ) : null}
+      {showPicker ? (
+        <>
+          <div className="px-2.5">
+            <div
+              inert={pickerLocked}
+              className={
+                pickerLocked ? 'pointer-events-none opacity-60' : undefined
+              }
             >
-              <span className="flex items-center gap-2">
-                <GovFormCheckbox
-                  id={`${id}-select-all`}
-                  checked={allSelected}
-                  readOnly
+              <LegislativeSourcePicker
+                id={id}
+                value={legalAct?.iri ?? null}
+                onChange={handleLegalSourceChange}
+                allowManualEntry={false}
+              />
+            </div>
+          </div>
+
+          {legalAct && !hasDraft && !activeJob && !isStarting ? (
+            <div className="px-2.5 flex items-center justify-between gap-2 text-sm text-muted">
+              {t('RetryHint')}
+              <GovButton
+                type="outlined"
+                color="primary"
+                size="s"
+                nativeType="button"
+                disabled={aiDisabled}
+                onClick={generate}
+              >
+                {t('Retry')}
+              </GovButton>
+            </div>
+          ) : null}
+
+          {isInitialRunning || (isStarting && !hasDraft) ? (
+            <div className="px-2.5">
+              <AiProgress isReconnecting={isInitialRunning && isReconnecting} />
+            </div>
+          ) : null}
+
+          {hasDraft && !isInitialRunning ? (
+            <div className="px-2.5 space-y-2">
+              {initialFailed ? (
+                <div
+                  className="flex items-center justify-between gap-2 rounded-lg border border-status-warning-700 p-3 text-sm"
+                  role="alert"
+                >
+                  <span className="flex items-center gap-2">
+                    <GovIcon
+                      type="components"
+                      name="exclamation-triangle"
+                      size="s"
+                    />
+                    {t('IncompleteDraft')}
+                  </span>
+                  <GovButton
+                    type="outlined"
+                    color="primary"
+                    size="s"
+                    nativeType="button"
+                    disabled={aiDisabled}
+                    onClick={handleIncompleteRetry}
+                  >
+                    {t('Retry')}
+                  </GovButton>
+                </div>
+              ) : (
+                <div className="text-base">{t('AIAssistDetail')}</div>
+              )}
+
+              {activeJob && isReconnecting ? (
+                <div className="text-sm text-muted" aria-live="polite">
+                  {t('Progress.Reconnecting')}
+                </div>
+              ) : null}
+
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <GovButton
+                  type="outlined"
+                  color="primary"
                   size="s"
-                  aria-hidden="true"
-                  className="pointer-events-none"
+                  nativeType="button"
+                  aria-pressed={allSelected}
+                  onClick={() => toggleAll(visibleRefs)}
+                >
+                  <span className="flex items-center gap-2">
+                    <GovFormCheckbox
+                      id={`${id}-select-all`}
+                      checked={allSelected}
+                      readOnly
+                      size="s"
+                      aria-hidden="true"
+                      className="pointer-events-none"
+                    />
+                    {t('SelectAll')}
+                  </span>
+                </GovButton>
+                <span className="text-sm text-muted">
+                  {t('SelectedCount', {
+                    selected: selectedVisibleCount,
+                    total: visibleRefs.length,
+                  })}
+                </span>
+              </div>
+
+              {groups.map((group) => (
+                <DictionarySuggestionCard
+                  key={group.item.ref}
+                  id={`${id}-${group.item.ref}`}
+                  group={group}
+                  pendingJob={pendingJob}
+                  aiDisabled={aiDisabled}
+                  onExpand={(kind, classRef) =>
+                    expand({
+                      kind,
+                      count: 1,
+                      contextText: '',
+                      selectedClassId: classRef,
+                    })
+                  }
+                  onRegenerate={regenerate}
                 />
-                {t('SelectAll')}
-              </span>
-            </GovButton>
-            <span className="text-sm text-muted">
-              {t('SelectedCount', {
-                selected: selectedSuggestions.length,
-                total: ALL_KEYS.length,
-              })}
-            </span>
-          </div>
+              ))}
 
-          {SUGGESTIONS.map((suggestion) => (
-            <DictionarySuggestionCard
-              key={suggestion.key}
-              id={`${id}-${suggestion.key}`}
-              label={suggestion.label}
-              description={suggestion.description}
-              properties={suggestion.properties}
-              relations={suggestion.relations}
-              checked={selectedSuggestions.includes(suggestion.key)}
-              onToggle={() => toggleSuggestion(suggestion.key)}
-              selectedItems={selectedSuggestions}
-              onToggleItem={toggleSuggestion}
-            />
-          ))}
+              {isExpandingClasses ? <SuggestionCardSkeleton /> : null}
 
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-sm text-muted">{t('SuggestionUseful')}</span>
-            <GovButton
-              type="base"
-              color="primary"
-              size="s"
-              aria-label={t('SuggestionUsefulYes')}
-            >
-              <GovIcon
-                slot="icon-start"
-                type="components"
-                name="hand-thumbs-up"
-              />
-            </GovButton>
-            <GovButton
-              type="base"
-              color="primary"
-              size="s"
-              aria-label={t('SuggestionUsefulNo')}
-            >
-              <GovIcon
-                slot="icon-start"
-                type="components"
-                name="hand-thumbs-down"
-              />
-            </GovButton>
-          </div>
+              <div className="flex justify-center">
+                <GovButton
+                  type="outlined"
+                  color="primary"
+                  size="s"
+                  nativeType="button"
+                  disabled={aiDisabled && !isExpandingClasses}
+                  loading={isExpandingClasses ? 'true' : undefined}
+                  aria-busy={isExpandingClasses}
+                  iconEnd={<GovIcon type="components" name="chevron-down" />}
+                  onClick={() =>
+                    expand({ kind: 'classes', count: 1, contextText: '' })
+                  }
+                >
+                  {t('MoreClasses')}
+                </GovButton>
+              </div>
 
-          <div className="flex justify-center">
-            <GovButton type="solid" color="primary">
-              {t('ApplySelected')}
-            </GovButton>
-          </div>
-        </div>
+              <AiFeedback />
+            </div>
+          ) : null}
+        </>
       ) : null}
     </FormSection>
   );
