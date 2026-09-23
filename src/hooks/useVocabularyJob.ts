@@ -27,15 +27,15 @@ export const useVocabularyJob = () => {
   const completeJob = useVocabularyDraftStore((state) => state.completeJob);
   const failJob = useVocabularyDraftStore((state) => state.failJob);
   const cancelJob = useVocabularyDraftStore((state) => state.cancelJob);
+  const jobId = activeJob?.jobId;
 
   const { data, error, isError } = useGetVocabularySuggestions(
-    { jobIds: activeJob ? [activeJob.jobId] : [] },
+    { jobIds: jobId ? [jobId] : [] },
     {
       query: {
-        enabled: !!activeJob,
-        refetchInterval: activeJob
-          ? () => pollInterval(activeJob.startedAt)
-          : false,
+        enabled: !!jobId,
+        refetchInterval:
+          activeJob && jobId ? () => pollInterval(activeJob.startedAt) : false,
         refetchIntervalInBackground: true,
         retry: false,
         gcTime: 0,
@@ -43,28 +43,25 @@ export const useVocabularyJob = () => {
     },
   );
 
-  const job = data?.find((item) => item.jobId === activeJob?.jobId);
+  const job = data?.find((item) => item.jobId === jobId);
 
   useEffect(() => {
-    if (!activeJob) {
+    if (!jobId) {
       return;
     }
     if (axios.isAxiosError(error) && error.response?.status === 404) {
-      cancelJob(activeJob.jobId);
+      cancelJob(jobId);
       toast.error(t('NotFound'));
       return;
     }
     if (data && !job) {
-      cancelJob(activeJob.jobId);
+      cancelJob(jobId);
       toast.error(t('NotFound'));
       return;
     }
     if (job?.status === 'completed') {
-      const outcome = completeJob(job.jobId, job.draft);
-      if (outcome === 'stale') {
-        toast.info(t('Stale'));
-      }
-      if (outcome === 'empty') {
+      const unchanged = completeJob(job.jobId, job.draft);
+      if (unchanged) {
         toast.info(t('NoChange'));
       }
       return;
@@ -73,7 +70,7 @@ export const useVocabularyJob = () => {
       failJob(job.jobId, job.draft);
       toast.error(t('Failed'));
     }
-  }, [activeJob, data, job, error, completeJob, failJob, cancelJob, t]);
+  }, [jobId, data, job, error, completeJob, failJob, cancelJob, t]);
 
   return {
     isReconnecting: isError,

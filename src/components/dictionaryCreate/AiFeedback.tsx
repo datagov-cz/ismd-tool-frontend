@@ -1,17 +1,24 @@
 'use client';
 
+import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
 import { useVocabularyAi } from '@/hooks/useVocabularyAi';
-import { useVocabularyDraftStore } from '@/store/vocabularyDraftStore';
+import type { FeedbackVote } from '@/lib/vocabularyDraft/types';
 
 export const AiFeedback = () => {
   const t = useTranslations('CreateOntology.AiSuggestion');
-  const feedback = useVocabularyDraftStore((state) => state.feedback);
+  const [sentVote, setSentVote] = useState<FeedbackVote | null>(null);
   const { vote } = useVocabularyAi();
 
-  if (feedback) {
+  const handleVote = (value: FeedbackVote) => {
+    if (vote(value)) {
+      setSentVote(value);
+    }
+  };
+
+  if (sentVote) {
     return (
       <div className="text-center text-sm text-muted" role="status">
         {t('FeedbackThanks')}
@@ -28,7 +35,7 @@ export const AiFeedback = () => {
         size="s"
         nativeType="button"
         aria-label={t('SuggestionUsefulYes')}
-        onClick={() => vote('like')}
+        onClick={() => handleVote('like')}
       >
         <GovIcon slot="icon-start" type="components" name="hand-thumbs-up" />
       </GovButton>
@@ -38,7 +45,7 @@ export const AiFeedback = () => {
         size="s"
         nativeType="button"
         aria-label={t('SuggestionUsefulNo')}
-        onClick={() => vote('dislike')}
+        onClick={() => handleVote('dislike')}
       >
         <GovIcon slot="icon-start" type="components" name="hand-thumbs-down" />
       </GovButton>

@@ -25,6 +25,9 @@ export const SuggestionEditForm = ({ item, onSave, onCancel }: Props) => {
   const t = useTranslations('CreateOntology.AiSuggestion');
   const [name, setName] = useState(item.data.name?.cs ?? '');
   const [definition, setDefinition] = useState(item.data.definition?.cs ?? '');
+  const [explanation, setExplanation] = useState(
+    item.data.explanation?.cs ?? '',
+  );
   const [type, setType] = useState<AiDraftClassDtoType>(
     item.kind === 'class'
       ? (item.data.type ?? AiDraftClassDtoType.CLASS)
@@ -38,6 +41,7 @@ export const SuggestionEditForm = ({ item, onSave, onCancel }: Props) => {
     onSave({
       name: name.trim(),
       definition: definition.trim(),
+      explanation,
       type: item.kind === 'class' ? type : undefined,
     });
   };
@@ -69,6 +73,17 @@ export const SuggestionEditForm = ({ item, onSave, onCancel }: Props) => {
           rows={3}
           value={definition}
           onChange={(event) => setDefinition(event.currentTarget.value ?? '')}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <GovFormLabel size="s" identifier={`${id}-explanation`}>
+          {t('Edit.Explanation')}
+        </GovFormLabel>
+        <GovFormTextarea
+          id={`${id}-explanation`}
+          rows={3}
+          value={explanation}
+          onChange={(event) => setExplanation(event.currentTarget.value ?? '')}
         />
       </div>
       {item.kind === 'class' ? (

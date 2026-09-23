@@ -15,7 +15,6 @@ import { AiFeedback } from '@/components/dictionaryCreate/AiFeedback';
 import { AiProgress } from '@/components/dictionaryCreate/AiProgress';
 import { DictionarySuggestionCard } from '@/components/dictionaryCreate/DictionarySuggestionCard';
 import { IriStatus } from '@/components/dictionaryCreate/IriStatus';
-import { SuggestionCardSkeleton } from '@/components/dictionaryCreate/SuggestionSkeleton';
 import { LegislativeSourcePicker } from '@/components/shared/LegislativeSourceInput/LegislativeSourcePicker';
 import type { IriStatus as IriStatusType } from '@/hooks/useIriCheck';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -40,7 +39,6 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
   const selectedRefs = useVocabularyDraftStore((state) => state.selectedRefs);
   const activeJob = useVocabularyDraftStore((state) => state.activeJob);
   const initialFailed = useVocabularyDraftStore((state) => state.initialFailed);
-  const startingJob = useVocabularyDraftStore((state) => state.startingJob);
   const setLegalAct = useVocabularyDraftStore((state) => state.setLegalAct);
   const toggleAll = useVocabularyDraftStore((state) => state.toggleAll);
 
@@ -60,13 +58,13 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
   const allSelected =
     visibleRefs.length > 0 && selectedVisibleCount === visibleRefs.length;
   const hasDraft = items.length > 0;
-  const pendingJob = activeJob ?? startingJob;
-  const isStarting = startingJob !== null;
-  const isInitialRunning = activeJob?.op === 'initial';
+  const isStarting = activeJob?.jobId === null;
+  const isRunning = !!activeJob?.jobId;
+  const isInitialRunning = isRunning && activeJob?.op === 'initial';
   const isExpandingClasses =
-    pendingJob?.op === 'expand' && pendingJob.kind === 'classes';
+    activeJob?.op === 'expand' && activeJob.kind === 'classes';
   const aiDisabled = !enabled || !canRun;
-  const pickerLocked = Boolean(activeJob || isStarting || !enabled);
+  const pickerLocked = Boolean(activeJob || !enabled);
   const showPicker = enabled || !!legalAct || hasDraft;
 
   const handleIncompleteRetry = () => {
@@ -127,7 +125,7 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
             </div>
           </div>
 
-          {legalAct && !hasDraft && !activeJob && !isStarting ? (
+          {legalAct && !hasDraft && !activeJob ? (
             <div className="px-2.5 flex items-center justify-between gap-2 text-sm text-muted">
               {t('RetryHint')}
               <GovButton
@@ -179,7 +177,7 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
                 <div className="text-base">{t('AIAssistDetail')}</div>
               )}
 
-              {activeJob && isReconnecting ? (
+              {isRunning && isReconnecting ? (
                 <div className="text-sm text-muted" aria-live="polite">
                   {t('Progress.Reconnecting')}
                 </div>
@@ -219,7 +217,7 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
                   key={group.item.ref}
                   id={`${id}-${group.item.ref}`}
                   group={group}
-                  pendingJob={pendingJob}
+                  activeJob={activeJob}
                   aiDisabled={aiDisabled}
                   onExpand={(kind, classRef) =>
                     expand({
@@ -232,8 +230,6 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
                   onRegenerate={regenerate}
                 />
               ))}
-
-              {isExpandingClasses ? <SuggestionCardSkeleton /> : null}
 
               <div className="flex justify-center">
                 <GovButton
@@ -253,7 +249,7 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
                 </GovButton>
               </div>
 
-              <AiFeedback />
+              <AiFeedback key={items.length} />
             </div>
           ) : null}
         </>

@@ -14,21 +14,18 @@ const toItems = (draft: AiVocabularyDraftDto, jobId: string): DraftItem[] => [
     ref: data.ref,
     data,
     originJobId: jobId,
-    revision: 0,
   })),
   ...(draft.attributes ?? []).filter(hasRef).map((data) => ({
     kind: 'attribute' as const,
     ref: data.ref,
     data,
     originJobId: jobId,
-    revision: 0,
   })),
   ...(draft.relationships ?? []).filter(hasRef).map((data) => ({
     kind: 'relationship' as const,
     ref: data.ref,
     data,
     originJobId: jobId,
-    revision: 0,
   })),
 ];
 
@@ -49,25 +46,18 @@ export const applyExpand = (
   ];
 };
 
-export type RegenerateOutcome = 'replaced' | 'empty' | 'stale';
-
 export const applyRegenerate = (
   items: DraftItem[],
   draft: AiVocabularyDraftDto,
   jobId: string,
   targetRef: string,
-  startRevision: number,
-): { items: DraftItem[]; outcome: RegenerateOutcome } => {
+): { items: DraftItem[]; replaced: boolean } => {
   const replacement = toItems(draft, jobId).find(
     (item) => item.ref === targetRef,
   );
-  const current = items.find((item) => item.ref === targetRef);
 
-  if (!replacement || !current) {
-    return { items, outcome: 'empty' };
-  }
-  if (current.revision !== startRevision) {
-    return { items, outcome: 'stale' };
+  if (!replacement || !items.some((item) => item.ref === targetRef)) {
+    return { items, replaced: false };
   }
 
   const { name, definition, explanation, legalAct } = replacement.data;
@@ -78,18 +68,18 @@ export const applyRegenerate = (
         ? ({
             ...item,
             originJobId: jobId,
-            revision: item.revision + 1,
             data: { ...item.data, name, definition, explanation, legalAct },
           } as DraftItem)
         : item,
     ),
-    outcome: 'replaced',
+    replaced: true,
   };
 };
 
 export type DraftEdit = {
   name: string;
   definition: string;
+  explanation: string;
   type?: AiDraftClassDtoType;
 };
 
@@ -102,11 +92,21 @@ export const applyEdit = (
     if (item.ref !== ref) {
       return item;
     }
+    const trimmedExplanation = edit.explanation.trim();
+    const explanation: Record<string, string> = {
+      ...(item.data.explanation as Record<string, string> | undefined),
+    };
+    if (trimmedExplanation) {
+      explanation.cs = edit.explanation;
+    } else {
+      delete explanation.cs;
+    }
     const data = {
       ...item.data,
       name: { ...item.data.name, cs: edit.name },
       definition: { ...item.data.definition, cs: edit.definition },
+      explanation,
       ...(item.kind === 'class' && edit.type ? { type: edit.type } : {}),
     };
-    return { ...item, revision: item.revision + 1, data } as DraftItem;
+    return { ...item, data } as DraftItem;
   });

@@ -73,10 +73,15 @@ export const SuggestionActions = ({
 
 type DefinitionLineProps = {
   text?: string;
+  explanation?: string;
   className?: string;
 };
 
-export const DefinitionLine = ({ text, className }: DefinitionLineProps) => {
+export const DefinitionLine = ({
+  text,
+  explanation,
+  className,
+}: DefinitionLineProps) => {
   const t = useTranslations('CreateOntology.AiSuggestion');
   const textRef = useRef<HTMLSpanElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -95,27 +100,46 @@ export const DefinitionLine = ({ text, className }: DefinitionLineProps) => {
     return () => observer.disconnect();
   }, [text, isExpanded]);
 
-  if (!text) {
+  const hasExplanation = !!explanation;
+
+  if (!text && !hasExplanation) {
     return null;
   }
 
+  const showToggle = isExpanded || isTruncated || hasExplanation;
+
   return (
-    <div className={clsx('flex items-baseline gap-4', className)}>
-      <span
-        ref={textRef}
-        className={clsx('min-w-0 flex-1 text-muted', !isExpanded && 'truncate')}
-      >
-        {text}
-      </span>
-      {isExpanded || isTruncated ? (
-        <button
-          type="button"
-          aria-expanded={isExpanded}
-          className="shrink-0 text-sm text-blue-primary underline cursor-pointer"
-          onClick={() => setIsExpanded((value) => !value)}
+    <div className={clsx('flex flex-col gap-1', className)}>
+      <div className="flex items-baseline gap-4">
+        <span
+          ref={textRef}
+          className={clsx(
+            'min-w-0 flex-1 text-muted',
+            !isExpanded && 'truncate',
+          )}
         >
-          [{isExpanded ? t('Less') : t('More')}]
-        </button>
+          {text}
+        </span>
+        {showToggle ? (
+          <button
+            type="button"
+            aria-expanded={isExpanded}
+            className="shrink-0 text-sm text-accent underline cursor-pointer"
+            onClick={() => setIsExpanded((value) => !value)}
+          >
+            [{isExpanded ? t('Less') : t('More')}]
+          </button>
+        ) : null}
+      </div>
+      {isExpanded && hasExplanation ? (
+        <div>
+          <div className="text-sm font-semibold text-muted">
+            {t('Explanation')}
+          </div>
+          <div className="text-sm text-muted whitespace-pre-line">
+            {explanation}
+          </div>
+        </div>
       ) : null}
     </div>
   );
@@ -171,7 +195,7 @@ export const SuggestionItemRow = ({
               type="button"
               aria-pressed={checked}
               className={clsx(
-                'select-none min-w-0 flex items-start gap-2 text-base font-bold text-blue-primary text-left',
+                'select-none min-w-0 flex items-start gap-2 text-base font-bold text-accent text-left',
                 isRegenerating && 'opacity-60',
               )}
               onClick={onToggle}
@@ -204,6 +228,7 @@ export const SuggestionItemRow = ({
           </div>
           <DefinitionLine
             text={item.data.definition?.cs}
+            explanation={item.data.explanation?.cs}
             className={clsx('pl-6 text-sm', isRegenerating && 'opacity-60')}
           />
           {issue ? (

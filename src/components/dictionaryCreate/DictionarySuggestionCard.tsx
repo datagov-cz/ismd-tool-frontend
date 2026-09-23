@@ -18,7 +18,6 @@ import {
   SuggestionActions,
   SuggestionItemRow,
 } from '@/components/dictionaryCreate/SuggestionItemRow';
-import { SuggestionItemRowSkeleton } from '@/components/dictionaryCreate/SuggestionSkeleton';
 import {
   TreeItem,
   TreeList,
@@ -28,7 +27,7 @@ import {
   type ClassGroup,
   resolveTargetLabel,
 } from '@/lib/vocabularyDraft/grouping';
-import type { DraftItem, PendingJob } from '@/lib/vocabularyDraft/types';
+import type { ActiveJob, DraftItem } from '@/lib/vocabularyDraft/types';
 import { useVocabularyDraftStore } from '@/store/vocabularyDraftStore';
 
 type ExpandKind = 'properties' | 'relationships';
@@ -36,7 +35,7 @@ type ExpandKind = 'properties' | 'relationships';
 type Props = {
   id: string;
   group: ClassGroup;
-  pendingJob: PendingJob | null;
+  activeJob: ActiveJob | null;
   aiDisabled: boolean;
   onExpand: (_kind: ExpandKind, _classRef: string) => void;
   onRegenerate: (_ref: string, _contextText: string) => void;
@@ -45,7 +44,7 @@ type Props = {
 export const DictionarySuggestionCard = ({
   id,
   group,
-  pendingJob,
+  activeJob,
   aiDisabled,
   onExpand,
   onRegenerate,
@@ -60,11 +59,11 @@ export const DictionarySuggestionCard = ({
 
   const { item: classItem } = group;
   const isRegenerating = (ref: string) =>
-    pendingJob?.op === 'regenerate' && pendingJob.targetRef === ref;
+    activeJob?.op === 'regenerate' && activeJob.targetRef === ref;
   const isExpanding = (kind: ExpandKind) =>
-    pendingJob?.op === 'expand' &&
-    pendingJob.kind === kind &&
-    pendingJob.selectedClassId === classItem.ref;
+    activeJob?.op === 'expand' &&
+    activeJob.kind === kind &&
+    activeJob.selectedClassId === classItem.ref;
   const isClassRegenerating = isRegenerating(classItem.ref);
 
   const renderGroup = (
@@ -99,9 +98,6 @@ export const DictionarySuggestionCard = ({
               }
             />
           ))}
-          {isExpanding(kind) ? (
-            <SuggestionItemRowSkeleton className="animate-pulse motion-reduce:animate-none" />
-          ) : null}
         </TreeList>
       ) : null}
       <div className="pt-2 pl-12">
@@ -136,7 +132,7 @@ export const DictionarySuggestionCard = ({
               aria-pressed={selectedRefs.includes(classItem.ref)}
               aria-busy={isClassRegenerating}
               className={clsx(
-                'select-none min-w-0 flex items-start gap-2 text-lg text-blue-primary text-left',
+                'select-none min-w-0 flex items-start gap-2 text-lg text-accent text-left',
                 isClassRegenerating && 'opacity-60',
               )}
               onClick={() => toggle(classItem.ref)}
@@ -194,6 +190,7 @@ export const DictionarySuggestionCard = ({
             <>
               <DefinitionLine
                 text={classItem.data.definition?.cs}
+                explanation={classItem.data.explanation?.cs}
                 className={clsx(isClassRegenerating && 'opacity-60')}
               />
               {namingIssues[classItem.ref] ? (

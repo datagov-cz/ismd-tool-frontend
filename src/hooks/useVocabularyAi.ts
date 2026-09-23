@@ -19,8 +19,8 @@ import {
   type DraftItem,
   type FeedbackVote,
   INITIAL_GENERATION_COUNTS,
+  type JobOp,
   type LegalActRef,
-  type PendingJob,
 } from '@/lib/vocabularyDraft/types';
 import { useVocabularyDraftStore } from '@/store/vocabularyDraftStore';
 import { getErrorMessage } from '@/utils/getErrorMessage';
@@ -47,33 +47,25 @@ export const useVocabularyAi = () => {
   const isOnline = useIsOnline();
   const legalAct = useVocabularyDraftStore((state) => state.legalAct);
   const activeJob = useVocabularyDraftStore((state) => state.activeJob);
-  const startingJob = useVocabularyDraftStore((state) => state.startingJob);
 
-  const canRun = isOnline && !!legalAct && !activeJob && !startingJob;
+  const canRun = isOnline && !!legalAct && !activeJob;
 
   const run = async (
     request: (_legalAct: LegalActRef) => Promise<AiJobStartResponseDto>,
-    pending: PendingJob,
+    job: JobOp,
   ) => {
     const store = useVocabularyDraftStore.getState();
-    if (!store.legalAct || store.activeJob || store.startingJob || !isOnline) {
+    if (!store.legalAct || store.activeJob || !isOnline) {
       return;
     }
-    const startedFor = store.legalAct.iri;
-    store.setStartingJob(pending);
+    const pending = store.requestJob(job);
     try {
       const { jobId } = await request(store.legalAct);
-      const current = useVocabularyDraftStore.getState();
-      if (!current.startingJob || current.legalAct?.iri !== startedFor) {
-        return;
-      }
-      current.startJob({ ...pending, jobId, startedAt: Date.now() });
+      useVocabularyDraftStore.getState().startJob(pending, jobId);
     } catch (error) {
-      const current = useVocabularyDraftStore.getState();
-      if (current.legalAct?.iri !== startedFor) {
+      if (!useVocabularyDraftStore.getState().cancelRequest(pending)) {
         return;
       }
-      current.setStartingJob(null);
       toast.error(getErrorMessage(error, () => t('StartError')));
     }
   };
@@ -106,10 +98,10 @@ export const useVocabularyAi = () => {
     );
 
   const regenerate = (ref: string, contextText: string) => {
-    const item = useVocabularyDraftStore
+    const exists = useVocabularyDraftStore
       .getState()
-      .items.find((entry) => entry.ref === ref);
-    if (!item) {
+      .items.some((entry) => entry.ref === ref);
+    if (!exists) {
       return Promise.resolve();
     }
     return run(
@@ -122,19 +114,19 @@ export const useVocabularyAi = () => {
             useVocabularyDraftStore.getState().items,
           ),
         }),
-      { op: 'regenerate', targetRef: ref, startRevision: item.revision },
+      { op: 'regenerate', targetRef: ref },
     );
   };
 
   const vote = (value: FeedbackVote) => {
-    const { items, setFeedback } = useVocabularyDraftStore.getState();
+    const { items } = useVocabularyDraftStore.getState();
     const body = groupByJob(items, displayedRefs(groupForDisplay(items)));
     if (body.length === 0) {
-      return;
+      return false;
     }
-    setFeedback(value);
     const send = value === 'like' ? likeSuggestions : dislikeSuggestions;
     send(body).catch(() => undefined);
+    return true;
   };
 
   return { canRun, generate, expand, regenerate, vote };

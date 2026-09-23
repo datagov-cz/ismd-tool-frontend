@@ -531,6 +531,7 @@
       "GenerateMore": "Vygenerovat další",
       "More": "více",
       "Less": "méně",
+      "Explanation": "Popis",
       "RegenerateItem": "Přegenerovat pomocí AI",
       "EditItem": "Upravit",
       "SuggestionUseful": "Je tento návrh použitelný?",
@@ -564,6 +565,7 @@
       "Edit": {
         "Name": "Název",
         "Definition": "Definice",
+        "Explanation": "Popis",
         "Type": "Typ",
         "Save": "Uložit",
         "Cancel": "Zrušit"
@@ -572,7 +574,6 @@
         "StartError": "AI generování se nepodařilo spustit.",
         "Failed": "AI generování selhalo.",
         "NotFound": "AI úloha již není dostupná.",
-        "Stale": "Položka byla mezitím upravena, AI výsledek nebyl použit.",
         "NoChange": "AI nenavrhla žádnou změnu."
       }
     }

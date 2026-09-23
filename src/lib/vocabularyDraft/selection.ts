@@ -69,11 +69,3 @@ export const toggleSelection = (
   }
   return [...selected];
 };
-
-export const pruneSelection = (
-  items: DraftItem[],
-  selectedRefs: string[],
-): string[] => {
-  const existing = new Set(items.map((item) => item.ref));
-  return selectedRefs.filter((ref) => existing.has(ref));
-};

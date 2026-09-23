@@ -8,7 +8,6 @@ import type {
 type DraftBase = {
   ref: string;
   originJobId: string;
-  revision: number;
 };
 
 export type DraftClass = DraftBase & { kind: 'class'; data: AiDraftClassDto };
@@ -38,28 +37,16 @@ export const INITIAL_GENERATION_COUNTS = {
   relationshipsPerClass: 3,
 } as const;
 
-export type ActiveJob =
-  | { jobId: string; op: 'initial'; startedAt: number }
+export type JobOp =
+  | { op: 'initial' }
   | {
-      jobId: string;
       op: 'expand';
       kind: AiVocabularyExpansionRequestDtoKind;
       selectedClassId?: string;
-      startedAt: number;
     }
-  | {
-      jobId: string;
-      op: 'regenerate';
-      targetRef: string;
-      startRevision: number;
-      startedAt: number;
-    };
+  | { op: 'regenerate'; targetRef: string };
 
-export type PendingJob = ActiveJob extends infer Job
-  ? Job extends ActiveJob
-    ? Omit<Job, 'jobId' | 'startedAt'>
-    : never
-  : never;
+export type ActiveJob = JobOp & { jobId: string | null; startedAt: number };
 
 export type FeedbackVote = 'like' | 'dislike';
 
