@@ -155,6 +155,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           onSubmit={handleSubmit}
           isPending={isPending && !isPaused}
           storageKey={storageKey}
+          aiOntologySlug={ontology}
         />
       )}
     </div>

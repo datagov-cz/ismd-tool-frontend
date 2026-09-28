@@ -716,7 +716,25 @@
       "ApplySelected": "Převzít vybrané návrhy",
       "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
       "NotFound": "Pro vybrané ustanovení nebyly nalezeny žádné údaje.",
-      "Success": "Údaje z e-Sbírky byly předvyplněny."
+      "Success": "Údaje z e-Sbírky byly předvyplněny.",
+      "Ai": {
+        "NeedsDomain": "Pro AI návrh vyberte Typ pojmu → Definiční obor.",
+        "Unsupported": "Pro vybrané ustanovení nelze AI návrh připravit.",
+        "Offline": "AI návrh není dostupný offline.",
+        "LoadingTitle": "AI připravuje návrhy pojmu…",
+        "LoadingHint": "Může to trvat až několik minut. Můžete mezitím pokračovat ve vyplňování formuláře.",
+        "Reconnecting": "Obnovuji spojení…",
+        "StartError": "AI návrh se nepodařilo spustit.",
+        "DomainNotInModel": "AI návrh pro vybraný definiční obor není dostupný.",
+        "Failed": "AI návrh selhal.",
+        "NotFound": "AI úloha již není dostupná.",
+        "Empty": "AI pro toto ustanovení nenašla žádné návrhy.",
+        "Retry": "Zkusit znovu",
+        "CandidatesLabel": "Navržené pojmy",
+        "Applied": "Vybrané návrhy byly převzaty do formuláře.",
+        "TargetNotInDictionary": "Cílová třída {target} není v tomto slovníku. Obor hodnot vyberte ručně.",
+        "FeedbackThanks": "Děkujeme za zpětnou vazbu."
+      }
     },
     "ConceptMeaningSection": {
       "Label": "Význam pojmu",

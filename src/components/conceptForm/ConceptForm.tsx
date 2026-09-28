@@ -85,6 +85,7 @@ interface ConceptFormProps {
   storageKey?: string;
   conceptIri?: string;
   slug?: string;
+  aiOntologySlug?: string;
 }
 
 export const ConceptForm = ({
@@ -96,6 +97,7 @@ export const ConceptForm = ({
   storageKey,
   conceptIri,
   slug,
+  aiOntologySlug,
 }: ConceptFormProps) => {
   const tConcept = useTranslations('CreateConcept');
   const t = useTranslations('DictionaryDetail.EditOntology');
@@ -171,7 +173,7 @@ export const ConceptForm = ({
   return (
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
-        <LegalSourceAutofillSection />
+        <LegalSourceAutofillSection ontologySlug={aiOntologySlug} />
         <div className="my-4 flex items-center gap-2 text-sm">
           <span className="font-semibold">{tConcept('ConceptDataLabel')}</span>
           <span className="flex-1 h-px bg-primary-outlined-hover" />
