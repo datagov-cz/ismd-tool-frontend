@@ -254,7 +254,7 @@ export const DictionaryDiagramWrapper = ({
               type="solid"
               color="primary"
               disabled={isRetrying}
-              onGovClick={() => {
+              onClick={() => {
                 void Promise.all([diagram.refetch(), ontology.refetch()]);
               }}
             >

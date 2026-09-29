@@ -165,19 +165,16 @@ export const ControlPanel = ({
               type="outlined"
               size="s"
               expanded
+              iconStart={
+                <GovIcon name="diagram-3" size="l" type="components" />
+              }
+              iconEnd={<GovIcon name="chevron-down" size="s" />}
             >
-              <GovIcon
-                name="diagram-3"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               Diagramy [{diagramItems.length}]
-              <GovIcon name="chevron-down" size="s" slot="icon-end" />
             </GovButton>
 
             <ul slot="list" className="min-w-72 p-0!">
-              <li className="border-b border-border-grey">
+              <li className="border-b border-gray-border/50">
                 <GovButton
                   nativeType="button"
                   color="neutral"
@@ -185,9 +182,9 @@ export const ControlPanel = ({
                   size="s"
                   expanded
                   disabled={createDiagram.isPending}
-                  onGovClick={handleCreateDiagram}
+                  onClick={handleCreateDiagram}
+                  iconStart={<GovIcon name="plus" size="l" />}
                 >
-                  <GovIcon name="plus" size="l" slot="icon-start" />
                   {createDiagram.isPending
                     ? 'Vytvářím diagram…'
                     : 'Přidat nový diagram'}
@@ -207,13 +204,10 @@ export const ControlPanel = ({
                       size="s"
                       expanded
                       href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/diagram/${diagramId}`}
+                      iconStart={
+                        <GovIcon name="diagram-3" size="l" type="components" />
+                      }
                     >
-                      <GovIcon
-                        name="diagram-3"
-                        size="l"
-                        slot="icon-start"
-                        type="components"
-                      />
                       {diagram.name?.trim() || '-- bez názvu --'}
                     </GovButton>
 
@@ -221,15 +215,11 @@ export const ControlPanel = ({
                       color="error"
                       type="base"
                       size="s"
-                      onGovClick={() => handleDeleteDiagram(diagramId)}
-                    >
-                      <GovIcon
-                        name="trash"
-                        size="l"
-                        slot="icon-start"
-                        type="components"
-                      />
-                    </GovButton>
+                      onClick={() => handleDeleteDiagram(diagramId)}
+                      iconStart={
+                        <GovIcon name="trash" size="l" type="components" />
+                      }
+                    />
                   </li>
                 );
               })}

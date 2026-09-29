@@ -1,4 +1,4 @@
-import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
+import { GovDropdown, GovIcon } from '@gov-design-system-ce/react';
 import { Panel } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 
@@ -29,7 +29,7 @@ export const DiagramToolbar = ({
   return (
     <Panel
       position="top-left"
-      className="border border-border-grey rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-border-grey"
+      className="border border-gray-border/50 rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-gray-border/50"
     >
       <ToolbarButton
         icon="trash"
@@ -48,7 +48,7 @@ export const DiagramToolbar = ({
           onClick={onUndo}
         />
 
-        <span className="h-1/2 w-px bg-border-grey" />
+        <span className="h-1/2 w-px bg-gray-border/50" />
 
         <ToolbarButton
           icon="arrow-clockwise"
@@ -58,30 +58,25 @@ export const DiagramToolbar = ({
         />
       </div>
 
-      <GovDropdown id="diagram-layout-ismd" position="left">
-        <GovButton
-          color="primary"
-          type="base"
-          size="s"
-          className="h-8! [&_button]:h-8! rounded-none!"
-        >
-          <GovIcon
-            type="components"
-            name="magic"
-            color="primary"
-            size="xs"
-            slot="icon-start"
-          />
-          {t('Arrange')}
+      <GovDropdown
+        id="diagram-layout-ismd"
+        position="left"
+        label={t('Arrange')}
+        type="base"
+        size="s"
+        iconStart={
+          <GovIcon type="components" name="magic" color="primary" size="xs" />
+        }
+        iconEnd={
           <GovIcon
             type="components"
             name="chevron-down"
             color="primary"
             size="s"
-            slot="icon-end"
           />
-        </GovButton>
-
+        }
+      >
+        {t('Arrange')}
         <ul slot="list">
           <ToolbarButton
             icon="diagram-3"

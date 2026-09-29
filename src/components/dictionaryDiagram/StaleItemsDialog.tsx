@@ -75,19 +75,39 @@ export const StaleItemsDialog = ({
   return (
     <GovDialog
       open={open}
-      labelTag="h2"
-      onGovClose={onClose}
+      onClose={onClose}
       className="fixed z-100 [&_dialog]:max-w-2xl!"
+      title={
+        <h2 className="flex items-center gap-3">
+          <GovIcon name="exclamation-triangle" color="error" size="xl" />
+          {t('Title')}
+        </h2>
+      }
+      footer={
+        <div className="flex flex-wrap justify-end gap-2">
+          <GovButton
+            type="outlined"
+            color="primary"
+            disabled={pending}
+            onClick={onKeep}
+          >
+            {t('Keep')}
+          </GovButton>
+          <GovButton
+            type="solid"
+            color="primary"
+            disabled={pending}
+            onClick={onRemove}
+          >
+            {t('Remove')}
+          </GovButton>
+        </div>
+      }
     >
-      <span slot="title" className="flex items-center gap-3">
-        <GovIcon name="exclamation-triangle" color="error" size="xl" />
-        {t('Title')}
-      </span>
-
       <div className="flex max-h-[55vh] flex-col gap-4 overflow-y-auto pr-1">
         <p>{t('Description')}</p>
 
-        <ul className="divide-y divide-border-grey rounded-md border border-border-grey">
+        <ul className="divide-y divide-border-grey rounded-md border border-gray-border/50">
           {items.map((item) => (
             <li key={`${item.type}-${item.id}`} className="px-3 py-2">
               <span className="block text-xs font-medium text-card-description">
@@ -99,25 +119,6 @@ export const StaleItemsDialog = ({
             </li>
           ))}
         </ul>
-      </div>
-
-      <div slot="footer" className="flex flex-wrap justify-end gap-2">
-        <GovButton
-          type="outlined"
-          color="primary"
-          disabled={pending}
-          onGovClick={onKeep}
-        >
-          {t('Keep')}
-        </GovButton>
-        <GovButton
-          type="solid"
-          color="primary"
-          disabled={pending}
-          onGovClick={onRemove}
-        >
-          {t('Remove')}
-        </GovButton>
       </div>
     </GovDialog>
   );

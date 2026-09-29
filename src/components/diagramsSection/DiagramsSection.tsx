@@ -26,7 +26,6 @@ export const DiagramsSection = () => {
         <GovIcon
           type="components"
           name="diagram-3"
-          slot="icon-start"
           size="m"
           className="transition-transform duration-200 text-purple"
         />

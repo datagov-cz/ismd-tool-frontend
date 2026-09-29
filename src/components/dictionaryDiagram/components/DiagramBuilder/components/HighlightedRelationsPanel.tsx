@@ -30,7 +30,7 @@ export const HighlightedRelationsPanel = ({
       position="top-left"
       className="mt-15 w-90 max-w-[calc(100%-2rem)] overflow-hidden rounded-md border border-blue-primary bg-white shadow-subtle top-10!"
     >
-      <div className="flex items-center gap-2 border-b border-border-grey bg-primary-subtlest px-3 py-2">
+      <div className="flex items-center gap-2 border-b border-gray-border/50 bg-primary-subtlest px-3 py-2">
         <GovIcon name="bezier" size="s" color="primary" />
         <div className="min-w-0">
           <div className="break-words text-sm font-bold text-dark-blue-subtle">

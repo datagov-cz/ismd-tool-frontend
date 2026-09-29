@@ -153,11 +153,11 @@ export const RelationshipChooser = ({
 
   return (
     <div
-      className="absolute z-10 w-[min(420px,calc(100vw-16px))] max-h-[calc(100dvh-16px)] overflow-y-auto bg-white rounded-lg border border-border-grey shadow-[0px_4px_12px_0px_rgba(0,0,0,0.15)] p-4 flex flex-col gap-3"
+      className="absolute z-10 w-[min(420px,calc(100vw-16px))] max-h-[calc(100dvh-16px)] overflow-y-auto bg-white rounded-lg border border-gray-border/50 shadow-[0px_4px_12px_0px_rgba(0,0,0,0.15)] p-4 flex flex-col gap-3"
       style={position}
       ref={ref}
     >
-      <div className="flex items-center gap-2 font-bold border-b border-border-grey pb-3">
+      <div className="flex items-center gap-2 font-bold border-b border-gray-border/50 pb-3">
         {t.rich('Title', {
           a: () => <Badge letter="A" solid />,
           b: () => <Badge letter="B" />,
@@ -201,10 +201,10 @@ export const RelationshipChooser = ({
               className={clsx(
                 'flex items-center gap-4 border rounded-md py-2.5 px-4 text-left transition-colors',
                 disabled
-                  ? 'cursor-not-allowed border-border-grey bg-bg-primary text-disabled opacity-50'
+                  ? 'cursor-not-allowed border-gray-border/50 bg-bg-primary text-disabled opacity-50'
                   : selected
                     ? 'border-blue-primary bg-blue-subtle'
-                    : 'border-border-grey hover:bg-blue-subtle',
+                    : 'border-gray-border/50 hover:bg-blue-subtle',
               )}
             >
               <span className="font-bold w-12 shrink-0">{option.symbol}</span>
@@ -225,7 +225,7 @@ export const RelationshipChooser = ({
       </div>
 
       {onRemove && (
-        <div className="border-t border-border-grey pt-3">
+        <div className="border-t border-gray-border/50 pt-3">
           <button
             type="button"
             onClick={onRemove}

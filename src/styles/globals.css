@@ -25,11 +25,17 @@
   --color-primary-950: rgb(19, 38, 62);
   --color-primary-1000: rgb(15, 31, 51);
   --color-primary-1050: rgb(1, 4, 9);
+
+  --color-project-blue-border: rgb(212, 231, 255);
+  --color-project-green: rgb(25, 135, 84);
+  --color-project-gray: rgb(108, 117, 125);
+  --color-project-success-subtle: rgb(227, 240, 227);
+  --color-surface-dark: rgb(45, 45, 45);
 }
 
 @theme {
-  --color-blue: #1d3c5d;
-  --color-warning: #feed8a;
+  --color-blue: var(--color-primary-900);
+  --color-warning: var(--color-warning-200);
   --color-blue-subtle: var(--background-primary-subtle);
   --color-blue-button-active: var(--button-solid-primary-active);
   --color-secondary: var(--border-disabled);
@@ -44,23 +50,23 @@
   --breakpoint-full-hd: 1920px;
   --spacing-desktop: 1200px;
   --spacing-full-hd: 1920px;
-  --color-blue-border: #d4e7ff;
-  --color-green: #198754;
-  --color-purple: #67329e;
-  --color-gray: #6c757d;
-  --color-status-success-100: #f3faf3;
-  --color-status-success-200: #e3f0e3;
-  --color-status-focus: #007bff;
-  --color-field-hover: #c5dbf2;
-  --color-primary-subtlest: #f3f7fc;
-  --color-border-subtlest: #e7e7e7;
+  --color-blue-border: var(--color-project-blue-border);
+  --color-green: var(--color-project-green);
+  --color-purple: var(--color-visited-600);
+  --color-gray: var(--color-project-gray);
+  --color-status-success-100: var(--color-success-50);
+  --color-status-success-200: var(--color-project-success-subtle);
+  --color-status-focus: var(--color-focus-600);
+  --color-field-hover: var(--color-primary-200);
+  --color-primary-subtlest: var(--color-primary-50);
+  --color-border-subtlest: var(--color-neutral-100);
   --color-blue-hover: var(--button-solid-primary-hover);
   --color-blue-outlined-hover: var(--button-outlined-primary-hover);
   --color-button-solid-disabled: var(--background-neutral-disabled);
   --color-status-warning-100: var(--background-status-warning-subtlest);
   --color-status-warning-200: var(--background-status-warning);
   --color-status-warning-300: var(--background-status-warning-subtlest);
-  --color-status-warning-400: #fab413;
+  --color-status-warning-400: var(--color-secondary-600);
   --color-status-warning-600: var(--border-warning);
   --color-status-warning-700: var(--text-status-warning);
   --color-status-success: var(--text-status-success);
@@ -134,7 +140,7 @@ body {
 :root[data-theme='dark'] {
   /* The DS has no equivalent of the design's dark-surface; it sits between
      --background-block-primary and --background-neutral-primary. */
-  --color-surface: #2d2d2d;
+  --color-surface: var(--color-surface-dark);
 
   /* Elevation runs the other way in dark: cards recede from the page instead of
      lifting off it, which no single DS token expresses. */

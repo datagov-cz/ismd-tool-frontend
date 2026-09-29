@@ -295,7 +295,7 @@ export const LabeledEdge = ({
                 : 'overflow-hidden text-ellipsis whitespace-nowrap',
               incomplete
                 ? 'border-dashed text-card-description bg-white'
-                : 'border-border-grey text-dark-blue-subtle bg-white',
+                : 'border-gray-border/50 text-dark-blue-subtle bg-white',
               dragOver && 'border-blue-primary bg-blue-subtle',
               dimmed && 'opacity-0 pointer-events-none',
               emphasized && 'shadow-sm border-blue-primary',

@@ -116,17 +116,43 @@ export const AddNewConceptDialog = ({
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <GovDialog open={open} onGovClose={() => handleClose()}>
-          <span slot="title" className="flex gap-3 items-center">
-            <GovIcon
-              type="components"
-              name="card-heading"
-              color="primary"
-              size="xl"
-            />
-            {td('Title')}
-          </span>
-
+        <GovDialog
+          open={open}
+          onClose={() => handleClose()}
+          footer={
+            <div className="space-x-2">
+              <GovButton
+                color="neutral"
+                type="outlined"
+                onClick={() => handleClose()}
+                size="m"
+              >
+                {td('Cancel')}
+              </GovButton>
+              <GovButton
+                color="primary"
+                type="solid"
+                nativeType="submit"
+                size="m"
+                disabled={isPending || !graphName}
+                iconStart={<GovIcon name="floppy" type="components" />}
+              >
+                {td('Insert')}
+              </GovButton>
+            </div>
+          }
+          title={
+            <span className="flex gap-3 items-center">
+              <GovIcon
+                type="components"
+                name="card-heading"
+                color="primary"
+                size="xl"
+              />
+              {td('Title')}
+            </span>
+          }
+        >
           <div className="space-y-2.5">
             <LanguageInput<ConceptForm>
               name="nameModel.name"
@@ -140,27 +166,6 @@ export const AddNewConceptDialog = ({
               label={t('ClassCreateFields.Labels.ConceptType')}
               options={CONCEPT_TYPE_OPTIONS}
             />
-          </div>
-
-          <div slot="footer" className="space-x-2">
-            <GovButton
-              color="neutral"
-              type="outlined"
-              onGovClick={() => handleClose()}
-              size="m"
-            >
-              {td('Cancel')}
-            </GovButton>
-            <GovButton
-              color="primary"
-              type="solid"
-              nativeType="submit"
-              size="m"
-              disabled={isPending || !graphName}
-            >
-              <GovIcon slot="icon-start" name="floppy" type="components" />
-              {td('Insert')}
-            </GovButton>
           </div>
         </GovDialog>
       </form>

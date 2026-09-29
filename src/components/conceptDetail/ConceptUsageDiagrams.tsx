@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import {
-  GovButton,
-  GovIcon,
-  GovTooltip,
-  GovTooltipContent,
-} from '@gov-design-system-ce/react';
+import { GovButton, GovIcon, GovTooltip } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 
 import { DiagramConceptPlacement, useGetConceptUsage } from '@/api/generated';
@@ -44,7 +39,7 @@ export const ConceptUsageDiagrams = ({
             expanded
             color="primary"
             type="base"
-            onGovClick={() => setOpen((prev) => !prev)}
+            onClick={() => setOpen((prev) => !prev)}
           >
             Zobrazit {open ? 'méně' : 'více'}{' '}
             <GovIcon name={open ? 'chevron-up' : 'chevron-down'} />
@@ -76,10 +71,10 @@ export const ConceptInDiagram = ({
           <div>
             <span className="font-bold flex items-center gap-2">
               {item.diagramName}{' '}
-              <GovTooltip position="top" className="border-0!">
-                <GovTooltipContent className="z-1000!">
+              <GovTooltip placement="top">
+                <span className="z-1000!">
                   Diagram obsahuje změny k materializaci
-                </GovTooltipContent>
+                </span>
                 <GovIcon name="clock-history" size="s" color="warning" />
               </GovTooltip>
             </span>

@@ -219,7 +219,7 @@ export const PendingEditsPanel = ({
                     </span>
 
                     {descriptions.length > 0 && (
-                      <span className="mt-2 ml-7 flex items-start justify-between gap-2 border-t border-border-grey pt-2">
+                      <span className="mt-2 ml-7 flex items-start justify-between gap-2 border-t border-gray-border/50 pt-2">
                         <span className="font-bold leading-tight text-dark-primary text-sm">
                           {descriptions.map(({ title }) => title).join(' ')}
                         </span>

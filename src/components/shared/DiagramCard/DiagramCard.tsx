@@ -21,15 +21,14 @@ export const DiagramCard = ({
 }: DiagramCardProps) => {
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   return (
-    <div className="rounded-xl border border-border-grey overflow-hidden shadow-subtle flex flex-col">
+    <div className="rounded-xl border border-border-default overflow-hidden shadow-subtle flex flex-col">
       <div className="grow group px-3 py-2 flex flex-col bg-white dark:bg-dark-bg text-black dark:text-white">
         <Link
           href={link}
           className="flex gap-2 transition-shadow duration-200 cursor-pointer"
         >
           <GovIcon
-            slot="icon-start"
-            name={'diagram-3'}
+            name="diagram-3"
             type="components"
             size="m"
             className="mt-0.5! text-purple"

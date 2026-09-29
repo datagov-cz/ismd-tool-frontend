@@ -150,7 +150,7 @@ const Search = () => {
             </GovButton>
             <GovButton
               type={activeType === ApiSearchType.DIAGRAM ? 'solid' : 'outlined'}
-              onGovClick={() => toggleType(ApiSearchType.DIAGRAM)}
+              onClick={() => toggleType(ApiSearchType.DIAGRAM)}
               color="neutral"
               size="xs"
               className={

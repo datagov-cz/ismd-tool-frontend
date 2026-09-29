@@ -179,9 +179,13 @@ export const MaterializationConflictDialog = ({
         position="right"
         className="z-2000! [&_.gov-dropdown__list]:top-auto! [&_.gov-dropdown__list]:bottom-full! [&_.gov-dropdown__list]:z-2000!"
       >
-        <GovButton type="outlined" color="primary" disabled={pending}>
+        <GovButton
+          type="outlined"
+          color="primary"
+          disabled={pending}
+          iconEnd={<GovIcon name="chevron-down" size="s" />}
+        >
           {t('Navigate')}
-          <GovIcon name="chevron-down" size="s" slot="icon-end" />
         </GovButton>
         <ul slot="list" className="min-w-64 p-0!">
           {diagrams.map((diagram) => (
@@ -192,8 +196,8 @@ export const MaterializationConflictDialog = ({
                 expanded
                 href={diagramHref(diagram.diagramId)}
                 target="_blank"
+                iconStart={<GovIcon name="diagram-3" size="m" />}
               >
-                <GovIcon name="diagram-3" size="m" slot="icon-start" />
                 {diagram.diagramName?.trim() || t('NoName')}
               </GovButton>
             </li>
@@ -215,12 +219,77 @@ export const MaterializationConflictDialog = ({
   return (
     <GovDialog
       open={open}
-      labelTag="h2"
-      onGovClose={onClose}
+      title={<h2>{t('Title')}</h2>}
+      footer={
+        <div className="flex w-full flex-wrap justify-end gap-2 z-10000! overflow-visible!">
+          {diagramNavigation}
+          <GovButton
+            type="solid"
+            color="primary"
+            disabled={pending}
+            onClick={() => onResolve(MaterializeOnConflict.ACCEPT_MINE)}
+          >
+            {t('AcceptMine')}
+          </GovButton>
+          {diagrams.length > 1 ? (
+            <GovDropdown
+              id="accept-conflicting-diagram"
+              position="right"
+              className="z-2000! relative [&_.gov-dropdown__list]:top-auto! [&_.gov-dropdown__list]:bottom-full! [&_.gov-dropdown__list]:z-2000!"
+            >
+              <GovButton
+                type="outlined"
+                color="primary"
+                disabled={pending}
+                iconEnd={<GovIcon name="chevron-down" size="s" />}
+              >
+                {t('AcceptTheirs')}
+              </GovButton>
+              <ul
+                slot="list"
+                className="min-w-64 p-0! absolute z-3000! right-0"
+              >
+                {diagrams.map((diagram) => (
+                  <li key={diagram.diagramId}>
+                    <GovButton
+                      type="base"
+                      color="neutral"
+                      expanded
+                      disabled={pending}
+                      onClick={() =>
+                        onResolve(
+                          MaterializeOnConflict.ACCEPT_THEIRS,
+                          diagram.diagramId,
+                        )
+                      }
+                      iconStart={<GovIcon name="diagram-3" size="m" />}
+                    >
+                      {diagram.diagramName?.trim() || t('NoName')}
+                    </GovButton>
+                  </li>
+                ))}
+              </ul>
+            </GovDropdown>
+          ) : (
+            <GovButton
+              type="outlined"
+              color="primary"
+              disabled={pending || diagrams.length === 0}
+              onClick={() =>
+                onResolve(
+                  MaterializeOnConflict.ACCEPT_THEIRS,
+                  diagrams[0]?.diagramId,
+                )
+              }
+            >
+              {t('AcceptTheirs')}
+            </GovButton>
+          )}
+        </div>
+      }
+      onClose={onClose}
       className="materialization-conflict-dialog fixed z-100 [&_dialog]:max-w-4xl! [&_.gov-dialog__content]:min-h-0 [&_.gov-dialog__footer]:relative [&_.gov-dialog__footer]:z-10"
     >
-      <h2 slot="title">{t('Title')}</h2>
-
       <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto pr-1">
         <p>{t('Description')}</p>
 
@@ -281,67 +350,6 @@ export const MaterializationConflictDialog = ({
             </div>
           </section>
         ))}
-      </div>
-      <div
-        className="flex w-full flex-wrap justify-end gap-2 z-10000! overflow-visible!"
-        slot="footer"
-      >
-        {diagramNavigation}
-        <GovButton
-          type="solid"
-          color="primary"
-          disabled={pending}
-          onGovClick={() => onResolve(MaterializeOnConflict.ACCEPT_MINE)}
-        >
-          {t('AcceptMine')}
-        </GovButton>
-        {diagrams.length > 1 ? (
-          <GovDropdown
-            id="accept-conflicting-diagram"
-            position="right"
-            className="z-2000! relative [&_.gov-dropdown__list]:top-auto! [&_.gov-dropdown__list]:bottom-full! [&_.gov-dropdown__list]:z-2000!"
-          >
-            <GovButton type="outlined" color="primary" disabled={pending}>
-              {t('AcceptTheirs')}
-              <GovIcon name="chevron-down" size="s" slot="icon-end" />
-            </GovButton>
-            <ul slot="list" className="min-w-64 p-0! absolute z-3000! right-0">
-              {diagrams.map((diagram) => (
-                <li key={diagram.diagramId}>
-                  <GovButton
-                    type="base"
-                    color="neutral"
-                    expanded
-                    disabled={pending}
-                    onGovClick={() =>
-                      onResolve(
-                        MaterializeOnConflict.ACCEPT_THEIRS,
-                        diagram.diagramId,
-                      )
-                    }
-                  >
-                    <GovIcon name="diagram-3" size="m" slot="icon-start" />
-                    {diagram.diagramName?.trim() || t('NoName')}
-                  </GovButton>
-                </li>
-              ))}
-            </ul>
-          </GovDropdown>
-        ) : (
-          <GovButton
-            type="outlined"
-            color="primary"
-            disabled={pending || diagrams.length === 0}
-            onGovClick={() =>
-              onResolve(
-                MaterializeOnConflict.ACCEPT_THEIRS,
-                diagrams[0]?.diagramId,
-              )
-            }
-          >
-            {t('AcceptTheirs')}
-          </GovButton>
-        )}
       </div>
     </GovDialog>
   );

@@ -269,13 +269,8 @@ export const DictionaryDiagramHeader = ({
                 type="subtle"
                 size="xs"
                 className="w-fit border bg-white! cursor-pointer"
+                iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <GovIcon
-                  name="journal-text"
-                  slot="icon-start"
-                  type="components"
-                />
-
                 <span className="font-bold text-blue-primary cursor-pointer">
                   {capitalizeFirst(ontologyName ?? '')}
                 </span>
@@ -308,9 +303,9 @@ export const DictionaryDiagramHeader = ({
               !hasUnsavedChanges ||
               deleteDiagram.isPending
             }
-            onGovClick={handleSaveLayout}
+            onClick={handleSaveLayout}
+            iconStart={<GovIcon name="bookmark-plus" size="s" />}
           >
-            <GovIcon name="bookmark-plus" size="s" slot="icon-start" />
             {saveLayout.isPending ? td('Saving') : td('SaveDraft')}
           </GovButton>
           <GovButton
@@ -322,9 +317,9 @@ export const DictionaryDiagramHeader = ({
               materialize.isPending ||
               deleteDiagram.isPending
             }
-            onGovClick={handleMaterialize}
+            onClick={handleMaterialize}
+            iconStart={<GovIcon name="floppy" size="s" />}
           >
-            <GovIcon name="floppy" size="s" slot="icon-start" />
             {materialize.isPending ? td('Materializing') : td('Materialize')}
           </GovButton>
           <GovButton
@@ -336,9 +331,9 @@ export const DictionaryDiagramHeader = ({
               materialize.isPending ||
               deleteDiagram.isPending
             }
-            onGovClick={() => setDeleteConfirmationOpen(true)}
+            onClick={() => setDeleteConfirmationOpen(true)}
+            iconStart={<GovIcon name="trash" size="s" />}
           >
-            <GovIcon name="trash" size="s" slot="icon-start" />
             {deleteDiagram.isPending ? td('Deleting') : td('Delete')}
           </GovButton>
         </div>

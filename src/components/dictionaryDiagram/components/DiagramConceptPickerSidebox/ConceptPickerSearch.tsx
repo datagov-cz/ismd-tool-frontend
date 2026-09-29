@@ -116,10 +116,9 @@ export const ConceptPickerSearch = ({
           placeholder={t('SearchOther')}
           size="s"
           value={query}
-          onGovInput={(event) => setQuery(event.detail.value)}
-        >
-          <GovIcon name="search" size="s" slot="icon-start" />
-        </GovFormInput>
+          onChange={(event) => setQuery(event.target.value)}
+          iconStart={<GovIcon name="search" size="s" />}
+        />
       </GovFormGroup>
 
       <div className="flex gap-4 pt-2">
@@ -144,7 +143,7 @@ export const ConceptPickerSearch = ({
       {resultConcepts.some((concept) =>
         selectedConceptIds.has(getConceptId(concept)),
       ) && (
-        <div className="z-10 flex flex-col gap-1.5 border-b mt-2 border-border-grey bg-white pb-1.5">
+        <div className="z-10 flex flex-col gap-1.5 border-b mt-2 border-gray-border/50 bg-white pb-1.5">
           {resultConcepts
             .filter((concept) => selectedConceptIds.has(getConceptId(concept)))
             .map((concept, index) => (

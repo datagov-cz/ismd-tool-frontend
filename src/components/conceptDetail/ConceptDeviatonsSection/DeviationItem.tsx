@@ -35,7 +35,7 @@ export const DeviationItem = ({
   if (!data) return null;
 
   return (
-    <div className="py-2 px-2.5 bg-surface-page rounded-sm">
+    <div className="py-2 px-2.5 bg-blue-border/40 rounded-sm">
       <div className="flex items-center">
         {!noCheckBox && (
           <GovFormCheckbox

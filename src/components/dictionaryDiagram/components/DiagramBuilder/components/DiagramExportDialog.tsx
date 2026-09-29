@@ -51,15 +51,57 @@ export const DiagramExportDialog = ({
   return (
     <GovDialog
       open={open}
-      onGovClose={() => {
+      onClose={() => {
         if (!isExporting) onClose();
       }}
+      title={
+        <span className="flex items-center gap-3">
+          <GovIcon name="download" color="primary" size="xl" />
+          {t('Title')}
+        </span>
+      }
+      footer={
+        <div className="flex flex-wrap justify-end gap-2">
+          <GovButton
+            color="neutral"
+            type="outlined"
+            nativeType="button"
+            disabled={isExporting}
+            onClick={onClose}
+          >
+            {t('Cancel')}
+          </GovButton>
+          <GovButton
+            color="primary"
+            type="outlined"
+            nativeType="button"
+            disabled={isExporting}
+            loading={
+              isExporting && exportingScope === 'viewport' ? 'true' : undefined
+            }
+            onClick={() => void startExport('viewport')}
+          >
+            {isExporting && exportingScope === 'viewport'
+              ? t('Preparing')
+              : t('Viewport')}
+          </GovButton>
+          <GovButton
+            color="primary"
+            type="solid"
+            nativeType="button"
+            disabled={isExporting}
+            loading={
+              isExporting && exportingScope === 'diagram' ? 'true' : undefined
+            }
+            onClick={() => void startExport('diagram')}
+          >
+            {isExporting && exportingScope === 'diagram'
+              ? t('Preparing')
+              : t('WholeDiagram')}
+          </GovButton>
+        </div>
+      }
     >
-      <span slot="title" className="flex items-center gap-3">
-        <GovIcon name="download" color="primary" size="xl" />
-        {t('Title')}
-      </span>
-
       <p>{t('Description')}</p>
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -133,46 +175,6 @@ export const DiagramExportDialog = ({
           </span>
         </div>
       )}
-
-      <div slot="footer" className="flex flex-wrap justify-end gap-2">
-        <GovButton
-          color="neutral"
-          type="outlined"
-          nativeType="button"
-          disabled={isExporting}
-          onGovClick={onClose}
-        >
-          {t('Cancel')}
-        </GovButton>
-        <GovButton
-          color="primary"
-          type="outlined"
-          nativeType="button"
-          disabled={isExporting}
-          loading={
-            isExporting && exportingScope === 'viewport' ? 'true' : undefined
-          }
-          onGovClick={() => void startExport('viewport')}
-        >
-          {isExporting && exportingScope === 'viewport'
-            ? t('Preparing')
-            : t('Viewport')}
-        </GovButton>
-        <GovButton
-          color="primary"
-          type="solid"
-          nativeType="button"
-          disabled={isExporting}
-          loading={
-            isExporting && exportingScope === 'diagram' ? 'true' : undefined
-          }
-          onGovClick={() => void startExport('diagram')}
-        >
-          {isExporting && exportingScope === 'diagram'
-            ? t('Preparing')
-            : t('WholeDiagram')}
-        </GovButton>
-      </div>
     </GovDialog>
   );
 };

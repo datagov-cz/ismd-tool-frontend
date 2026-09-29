@@ -50,7 +50,7 @@ export const DiagramTopBar = ({
   return (
     <Panel
       position="top-right"
-      className="border border-border-grey rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-border-grey"
+      className="border border-gray-border/50 rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-gray-border/50"
     >
       {editingName ? (
         <div className="nodrag nopan relative flex items-center gap-2 px-2 py-1">
@@ -73,7 +73,7 @@ export const DiagramTopBar = ({
                 setEditingName(false);
               }
             }}
-            className="h-8 w-56 rounded-sm border border-border-grey px-2 font-normal text-dark-primary outline-none focus:border-blue-primary"
+            className="h-8 w-56 rounded-sm border border-gray-border/50 px-2 font-normal text-dark-primary outline-none focus:border-blue-primary"
           />
           <GovButton
             nativeType="button"
@@ -81,7 +81,7 @@ export const DiagramTopBar = ({
             color="primary"
             size="s"
             disabled={renaming}
-            onGovClick={() => void saveName()}
+            onClick={() => void saveName()}
           >
             {renaming ? t('Saving') : t('Save')}
           </GovButton>
@@ -122,7 +122,7 @@ export const DiagramTopBar = ({
           <div
             role="dialog"
             aria-label={t('EdgeHelp')}
-            className="nodrag nopan absolute right-0 top-[calc(100%+0.5rem)] h-17.5 w-56 overflow-hidden rounded-md border border-border-grey bg-white p-2 pr-8 text-dark-blue-subtle shadow-[0_4px_12px_rgba(0,0,0,0.24)]"
+            className="nodrag nopan absolute right-0 top-[calc(100%+0.5rem)] h-17.5 w-56 overflow-hidden rounded-md border border-gray-border/50 bg-white p-2 pr-8 text-dark-blue-subtle shadow-[0_4px_12px_rgba(0,0,0,0.24)]"
           >
             <button
               type="button"

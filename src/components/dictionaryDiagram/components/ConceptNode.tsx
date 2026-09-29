@@ -4,7 +4,6 @@ import {
   GovIcon,
   GovTag,
   GovTooltip,
-  GovTooltipContent,
 } from '@gov-design-system-ce/react';
 import {
   Handle,
@@ -30,14 +29,8 @@ import { usePendingChanges } from './pendingChangesContext';
 const StaleConceptLabel = () => {
   const t = useTranslations('DictionaryDiagram.Node');
   return (
-    <GovTooltip
-      position="top"
-      className="nodrag nopan border-0!"
-      message={t('RemovedDescription')}
-    >
-      <GovTooltipContent className="z-2000!">
-        {t('RemovedDescription')}
-      </GovTooltipContent>
+    <GovTooltip placement="top">
+      <span className="z-2000!">{t('RemovedDescription')}</span>
       <span className="cursor-help">{t('RemovedSuffix')}</span>
     </GovTooltip>
   );
@@ -58,14 +51,14 @@ export const ConceptNode = ({
     <div
       id={concept.iri}
       className={clsx(
-        'border rounded-md bg-white w-full min-w-50 max-w-50 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.08)] group relative',
+        'border rounded-md bg-white w-full min-w-50 max-w-50 shadow-subtle group relative',
         concept.stale
           ? 'border-status-error-600 ring-2 ring-status-error-100'
           : selected
             ? 'border-blue-primary'
             : conceptHasPendingChange
               ? 'border-status-warning-600 ring-2 ring-status-warning-200'
-              : 'border-border-grey',
+              : 'border-gray-border/50',
       )}
     >
       <ConceptNodeDetail
@@ -97,7 +90,7 @@ export const ConceptNode = ({
                 color="warning"
                 className="min-h-4! px-1! py-0!"
               >
-                <span className="text-[10px] font-bold leading-none">
+                <span className="text-2xs font-bold leading-none">
                   {t('ForeignDictionary')}
                 </span>
               </GovTag>
@@ -121,7 +114,7 @@ export const ConceptNode = ({
       {vlastnosti.length !== 0 && (
         <div className="flex flex-col gap-1.5 px-2.5 pb-2">
           <details className="flex flex-col open:gap-1.5 open:pt-2">
-            <summary className="order-last [&::-webkit-details-marker]:hidden list-none cursor-pointer text-xs font-medium flex items-center justify-between border-t border-border-grey pt-2">
+            <summary className="order-last [&::-webkit-details-marker]:hidden list-none cursor-pointer text-xs font-medium flex items-center justify-between border-t border-gray-border/50 pt-2">
               <span>
                 {t('Properties')}{' '}
                 <span className="px-1 py-0.5 rounded-xs bg-border-grey">
@@ -247,7 +240,7 @@ const ConceptNodeDetail = ({
       <div
         ref={detailRef}
         onClick={(event) => event.stopPropagation()}
-        className="nodrag nopan w-75 bg-white p-3 shadow-subtle border rounded-md border-border-grey divide-y divide-border-grey space-y-2"
+        className="nodrag nopan w-75 bg-white p-3 shadow-subtle border rounded-md border-gray-border/50 divide-y divide-gray-border/50 space-y-2"
       >
         <div className="flex items-start justify-between pb-2">
           <div>
@@ -370,8 +363,8 @@ const ConceptNodeDetail = ({
                 type="outlined"
                 size="xs"
                 href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
+                iconStart={<GovIcon name="pencil" color="primary" />}
               >
-                <GovIcon name="pencil" color="primary" slot="icon-start" />
                 {t('EditConcept')}
               </GovButton>
             )}
@@ -379,7 +372,7 @@ const ConceptNodeDetail = ({
               color="error"
               size="xs"
               type="outlined"
-              onGovClick={() => {
+              onClick={() => {
                 data.onRemove?.();
                 dispatch({ type: 'removeNode', nodeId });
               }}

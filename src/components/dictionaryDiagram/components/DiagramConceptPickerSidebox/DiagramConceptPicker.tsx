@@ -4,7 +4,6 @@ import {
   GovFormInput,
   GovIcon,
   GovTabs,
-  GovTabsItem,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -134,87 +133,104 @@ export const DiagramConceptPicker = ({
         onOpenChange={onPendingEditsOpenChange}
       />
       <div className="min-h-0 bg-white shadow-subtle rounded-md py-2 px-4">
-        <GovTabs>
-          <GovTabsItem label={t('ThisDictionary')}>
-            <GovFormGroup>
-              <GovFormInput
-                placeholder={t('SearchThis')}
-                size="s"
-                value={search}
-                onGovInput={(e) => setSearch(e.detail.value)}
-              >
-                <GovIcon name="search" size="s" slot="icon-start" />
-              </GovFormInput>
-            </GovFormGroup>
+        <GovTabs
+          items={[
+            {
+              label: t('ThisDictionary'),
+              children: (
+                <div>
+                  <GovFormGroup>
+                    <GovFormInput
+                      placeholder={t('SearchThis')}
+                      size="s"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      iconStart={<GovIcon name="search" size="s" />}
+                    ></GovFormInput>
+                  </GovFormGroup>
 
-            <div className="flex gap-4 pt-2">
-              <FilterCheckbox
-                label={t('Classes')}
-                checked={kinds.trida}
-                onToggle={(checked) => setKindEnabled('trida', checked)}
-              />
-              <FilterCheckbox
-                label={t('Properties')}
-                checked={kinds.vlastnost}
-                onToggle={(checked) => setKindEnabled('vlastnost', checked)}
-              />
-              <FilterCheckbox
-                label={t('Relationships')}
-                checked={kinds.vztah}
-                onToggle={(checked) => setKindEnabled('vztah', checked)}
-              />
-            </div>
+                  <div className="flex gap-4 pt-2">
+                    <FilterCheckbox
+                      label={t('Classes')}
+                      checked={kinds.trida}
+                      onToggle={(checked) => setKindEnabled('trida', checked)}
+                    />
+                    <FilterCheckbox
+                      label={t('Properties')}
+                      checked={kinds.vlastnost}
+                      onToggle={(checked) =>
+                        setKindEnabled('vlastnost', checked)
+                      }
+                    />
+                    <FilterCheckbox
+                      label={t('Relationships')}
+                      checked={kinds.vztah}
+                      onToggle={(checked) => setKindEnabled('vztah', checked)}
+                    />
+                  </div>
 
-            <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1">
-              {filteredHierarchy.map(({ concept, children }, index) => (
-                <div
-                  className="flex flex-col gap-1.5"
-                  key={`${getConceptId(concept)}-${index}`}
-                >
-                  <DiagramPickerConcept
-                    concept={concept}
-                    active={activeConceptIds.has(getConceptId(concept))}
-                    selected={selectedConceptIds.has(getConceptId(concept))}
-                    onActiveClick={onActiveConceptClick}
-                  />
-                  {children.length > 0 && (
-                    <div className="relative ml-3 flex flex-col gap-1.5 pl-3">
-                      {children.map((child, childIndex) => (
-                        <div
-                          className="relative before:absolute before:-left-3 before:top-1/2 before:w-3 before:border-t before:border-blue-primary/30 after:absolute after:-left-3 after:-top-1.5 after:-bottom-1.5 after:border-l after:border-blue-primary/30 last:after:bottom-1/2"
-                          key={`${getConceptId(child)}-${childIndex}`}
-                        >
-                          <DiagramPickerConcept
-                            concept={child}
-                            active={activeConceptIds.has(getConceptId(child))}
-                            selected={selectedConceptIds.has(
-                              getConceptId(child),
-                            )}
-                            onActiveClick={onActiveConceptClick}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1">
+                    {filteredHierarchy.map(({ concept, children }, index) => (
+                      <div
+                        className="flex flex-col gap-1.5"
+                        key={`${getConceptId(concept)}-${index}`}
+                      >
+                        <DiagramPickerConcept
+                          concept={concept}
+                          active={activeConceptIds.has(getConceptId(concept))}
+                          selected={selectedConceptIds.has(
+                            getConceptId(concept),
+                          )}
+                          onActiveClick={onActiveConceptClick}
+                        />
+                        {children.length > 0 && (
+                          <div className="relative ml-3 flex flex-col gap-1.5 pl-3">
+                            {children.map((child, childIndex) => (
+                              <div
+                                className="relative before:absolute before:-left-3 before:top-1/2 before:w-3 before:border-t before:border-blue-primary/30 after:absolute after:-left-3 after:-top-1.5 after:-bottom-1.5 after:border-l after:border-blue-primary/30 last:after:bottom-1/2"
+                                key={`${getConceptId(child)}-${childIndex}`}
+                              >
+                                <DiagramPickerConcept
+                                  concept={child}
+                                  active={activeConceptIds.has(
+                                    getConceptId(child),
+                                  )}
+                                  selected={selectedConceptIds.has(
+                                    getConceptId(child),
+                                  )}
+                                  onActiveClick={onActiveConceptClick}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {filteredHierarchy.length === 0 && (
+                      <span className="text-xs text-card-description py-2">
+                        {t('NoMatches')}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              ))}
-
-              {filteredHierarchy.length === 0 && (
-                <span className="text-xs text-card-description py-2">
-                  {t('NoMatches')}
-                </span>
-              )}
-            </div>
-          </GovTabsItem>
-          <GovTabsItem label={t('OtherDictionaries')}>
-            <ConceptPickerSearch
-              conceptsInDiagram={otherOntologyConceptsInDiagram}
-              activeConceptIds={activeConceptIds}
-              selectedConceptIds={selectedConceptIds}
-              onActiveConceptClick={onActiveConceptClick}
-            />
-          </GovTabsItem>
-        </GovTabs>
+              ),
+            },
+            {
+              label: t('OtherDictionaries'),
+              children: (
+                <div>
+                  <ConceptPickerSearch
+                    conceptsInDiagram={otherOntologyConceptsInDiagram}
+                    activeConceptIds={activeConceptIds}
+                    selectedConceptIds={selectedConceptIds}
+                    onActiveConceptClick={onActiveConceptClick}
+                  />
+                </div>
+              ),
+            },
+          ]}
+        ></GovTabs>
       </div>
     </aside>
   );
@@ -265,7 +281,7 @@ export const DiagramPickerConcept = ({
           ? 'cursor-pointer border-blue-primary bg-primary-subtlest ring-1 ring-blue-primary'
           : active
             ? 'cursor-pointer bg-status-success-100 border-status-success-200'
-            : 'border-border-grey bg-white',
+            : 'border-gray-border/50 bg-white',
       )}
     >
       <div className="flex items-center gap-1.5">
