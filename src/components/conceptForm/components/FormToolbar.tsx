@@ -66,10 +66,8 @@ export const FormToolbar = <T extends FieldValues>({
     <>
       <div
         className={clsx(
-          'sticky bottom-0 z-10 py-5 px-6 bg-white flex justify-between items-center transition-shadow duration-200',
-          isFloating
-            ? 'shadow-[0px_16px_40px_0px_rgba(0,0,0,0.3)]'
-            : 'rounded-lg shadow-subtle',
+          'sticky bottom-0 z-10 py-5 px-6 bg-surface-card flex justify-between items-center transition-shadow duration-200',
+          isFloating ? 'shadow-floating' : 'rounded-lg shadow-subtle',
         )}
       >
         <div className="flex items-center gap-6">
@@ -89,14 +87,12 @@ export const FormToolbar = <T extends FieldValues>({
                 color="primary"
                 size="s"
                 disabled={!canUndo || isPending}
-                onGovClick={undo}
+                onClick={undo}
                 title={t('UndoTitle')}
+                iconStart={
+                  <GovIcon type="components" name="arrow-counterclockwise" />
+                }
               >
-                <GovIcon
-                  type="components"
-                  name="arrow-counterclockwise"
-                  slot="icon-start"
-                />
                 {t('Undo')}
               </GovButton>
               <span className="w-px! h-2! bg-blue-primary" />
@@ -105,15 +101,16 @@ export const FormToolbar = <T extends FieldValues>({
                 color="primary"
                 size="s"
                 disabled={!canRedo || isPending}
-                onGovClick={redo}
+                onClick={redo}
                 title={t('RedoTitle')}
+                iconStart={
+                  <GovIcon
+                    type="components"
+                    name="arrow-counterclockwise"
+                    className="rotate-y-180"
+                  />
+                }
               >
-                <GovIcon
-                  type="components"
-                  name="arrow-counterclockwise"
-                  slot="icon-start"
-                  className="rotate-y-180"
-                />
                 {t('Redo')}
               </GovButton>
             </div>
@@ -124,7 +121,7 @@ export const FormToolbar = <T extends FieldValues>({
             type="outlined"
             color="neutral"
             size="s"
-            onGovClick={onCancel}
+            onClick={onCancel}
           >
             {t('Cancel')}
           </GovButton>
@@ -134,8 +131,8 @@ export const FormToolbar = <T extends FieldValues>({
             size="s"
             nativeType="submit"
             disabled={isPending}
+            iconStart={<GovIcon type="components" name="floppy" />}
           >
-            <GovIcon type="components" name="floppy" slot="icon-start" />
             {t('Save')}
           </GovButton>
         </div>

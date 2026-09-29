@@ -21,7 +21,7 @@ export function SearchPanel({
 
   if (!query) {
     return (
-      <p className="text-sm text-gray-400 text-center mt-10">
+      <p className="text-sm text-foreground-subtle text-center mt-10">
         {t('EnterSearch')}
       </p>
     );
@@ -29,7 +29,7 @@ export function SearchPanel({
 
   if (results.length === 0) {
     return (
-      <p className="text-sm text-gray-400 text-center mt-10">
+      <p className="text-sm text-foreground-subtle text-center mt-10">
         {t('NoResults')} &quot;{query}&quot;
       </p>
     );
@@ -37,7 +37,7 @@ export function SearchPanel({
 
   return (
     <div className="flex flex-col gap-0.5 overflow-y-auto h-full pb-4 px-1">
-      <p className="text-dark-secondary px-3 pb-1">
+      <p className="text-foreground-muted px-3 pb-1">
         {results.length} výsledk
         {results.length === 1 ? '' : results.length < 5 ? 'y' : 'ů'} pro{' '}
         <strong>&quot;{query}&quot;</strong>

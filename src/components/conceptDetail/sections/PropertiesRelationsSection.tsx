@@ -49,7 +49,7 @@ export const PropertiesRelationsSection = ({
 
   return (
     <>
-      <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+      <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
         <AddPropertyRelation
           title={t('Sections.Properties')}
           concepts={properties}

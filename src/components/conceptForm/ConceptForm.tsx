@@ -69,8 +69,8 @@ export const BASE_DEFAULTS: Omit<
   isPublic: undefined,
   privacyProvisions: [],
   domain: undefined,
-  codeListDataset: undefined,
-  codeListIri: undefined,
+  codeListDataset: '',
+  codeListIri: '',
 };
 
 interface ConceptFormProps {

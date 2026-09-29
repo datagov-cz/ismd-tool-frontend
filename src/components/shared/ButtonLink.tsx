@@ -26,9 +26,9 @@ export const ButtonLink = ({
 
   const typeClasses = {
     solid:
-      'bg-blue-primary text-dark-text hover:bg-blue-hover disabled:bg-button-solid-disabled dark:hover:bg-dark-blue-hover',
+      'bg-blue-primary text-white hover:bg-blue-hover disabled:bg-button-solid-disabled',
     outlined:
-      'border border-blue-primary text-blue-primary hover:text-blue-hover hover:border-blue-hover hover:bg-blue-outlined-hover disabled:border-button-solid-disabled disabled:text-button-solid-disabled',
+      'border border-accent text-accent hover:text-accent hover:border-border-primary hover:bg-blue-outlined-hover disabled:border-button-solid-disabled disabled:text-button-solid-disabled',
     base: '',
   };
 

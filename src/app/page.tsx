@@ -25,7 +25,7 @@ export default async function Home() {
         {!session && <WelcomeSection />}
         {session && <DiagramsSection />}
         {session && <VisitedOntologies />}
-        <hr className="text-dark-primary/20" />
+        <hr className="text-foreground/20" />
         <NewsSlider />
       </div>
     </div>
