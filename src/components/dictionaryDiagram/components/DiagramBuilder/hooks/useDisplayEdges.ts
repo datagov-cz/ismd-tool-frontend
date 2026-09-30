@@ -45,7 +45,9 @@ export const useDisplayEdges = ({
           emphasis,
           pendingChange:
             pendingEdgeIds.has(e.id) ||
-            (!!e.data?.vztahIri && pendingConceptIds.has(e.data.vztahIri)),
+            (!!e.data?.vztahIri && pendingConceptIds.has(e.data.vztahIri)) ||
+            (!!e.data?.convertedFrom &&
+              pendingConceptIds.has(e.data.convertedFrom.vztahIri)),
           onBendsChange: (bends?: XYPosition[]) =>
             dispatch({ type: 'setEdgeBends', edgeId: e.id, bends }),
           ...(e.data?.kind === 'obecny'

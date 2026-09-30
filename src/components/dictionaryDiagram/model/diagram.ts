@@ -50,6 +50,16 @@ export type ConceptEdgeData = {
   emphasis?: 'connected' | 'dimmed';
   pendingChange?: boolean;
   stale?: boolean;
+  /** The relationship this hierarchy edge replaces; staged as a conversion until Převzít deletes it. */
+  convertedFrom?: ConvertedRelationship;
+};
+
+export type ConvertedRelationship = {
+  vztahIri: string;
+  label?: string;
+  /** The relationship's own domain and range node ids, restored when the edge reverts to it. */
+  source: string;
+  target: string;
 };
 
 export type ConceptFlowNode = Node<ConceptNodeData, 'concept'>;
@@ -458,6 +468,28 @@ export const buildPersistedDiagram = (
     (concept) => getConceptKind(concept) === 'vztah',
   );
 
+  /** The staged conversion a hierarchy edge stands for, so it can still be discarded or reverted. */
+  const convertedFromFor = (
+    sourceIri: string | undefined,
+    targetIri: string | undefined,
+    sourceId: string,
+    targetId: string,
+  ): ConvertedRelationship | undefined => {
+    const entry = (diagram.pendingEdits ?? []).find(
+      (item) =>
+        item.pendingEdit?.convertToHierarchy?.addBroaderOn === sourceIri &&
+        item.pendingEdit?.convertToHierarchy?.broader === targetIri,
+    );
+    if (!entry?.iri) return undefined;
+    const vztah = conceptsById.get(entry.iri);
+    return {
+      vztahIri: entry.iri,
+      label: entry.label?.cs ?? vztah?.název?.cs,
+      source: (vztah && getDefinicniObor(vztah)) ?? sourceId,
+      target: (vztah && getOborHodnot(vztah)) ?? targetId,
+    };
+  };
+
   const edges: ConceptFlowEdge[] = (diagram.edges ?? []).flatMap(
     (savedEdge) => {
       const { id, source, target } = savedEdge;
@@ -497,6 +529,15 @@ export const buildPersistedDiagram = (
             relationship?.název?.cs ??
             getLabelFromConceptIri(relationshipIri))
           : undefined;
+      const convertedFrom =
+        kind === 'hierarchie'
+          ? convertedFromFor(
+              getConceptIri(sourceNode.data.concept),
+              getConceptIri(targetNode.data.concept),
+              sourceId,
+              targetId,
+            )
+          : undefined;
 
       return [
         {
@@ -507,6 +548,7 @@ export const buildPersistedDiagram = (
             kind,
             label: relationshipLabel,
             vztahIri: relationshipIri,
+            convertedFrom,
             stale: savedEdge.data?.stale,
             bends: savedEdge.segments?.length
               ? savedEdge.segments.flatMap((segment) =>
@@ -557,12 +599,37 @@ const nextExactMatch = (
   change: { add?: string; remove?: string },
 ): string[] | undefined => nextMemberSet(getEkvivalentniPojem(concept), change);
 
+/**
+ * The conversion overlay for a hierarchy edge that replaces a relationship: one marker on the
+ * relationship, which adds the parent and deletes the relationship together at Převzít.
+ */
+const getConvertOverlay = (
+  edge: ConceptFlowEdge,
+  nodes: ConceptFlowNode[],
+): DiagramLayoutOverlay | undefined => {
+  const from = edge.data?.convertedFrom;
+  if (!from) return undefined;
+  const sourceNode = nodes.find((node) => node.id === edge.source);
+  const targetNode = nodes.find((node) => node.id === edge.target);
+  const addBroaderOn = sourceNode && getConceptIri(sourceNode.data.concept);
+  const broader = targetNode && getConceptIri(targetNode.data.concept);
+  if (!addBroaderOn || !broader) return undefined;
+  return {
+    conceptIri: from.vztahIri,
+    convertToHierarchy: { addBroaderOn, broader },
+  };
+};
+
 const getRemovedEdgeOverlay = (
   edge: ConceptFlowEdge,
   nodes: ConceptFlowNode[],
 ): DiagramLayoutOverlay | undefined => {
   if (edge.data?.kind === 'obecny') {
     return edge.data.vztahIri ? { conceptIri: edge.data.vztahIri } : undefined;
+  }
+  // The parent is not in RDF yet, so discarding the conversion is the whole removal.
+  if (edge.data?.convertedFrom) {
+    return { conceptIri: edge.data.convertedFrom.vztahIri };
   }
 
   const sourceNode = nodes.find((node) => node.id === edge.source);
@@ -626,6 +693,7 @@ const getEdgeOverlay = (
 
   switch (edge.data?.kind) {
     case 'hierarchie': {
+      if (edge.data.convertedFrom) return getConvertOverlay(edge, nodes);
       // A foreign parent is never auto-drawn, so redrawing it by hand is the common way an
       // already-asserted hierarchy reaches this branch.
       const broaderConcept = nextBroaderConcept(sourceNode.data.concept, {
@@ -678,11 +746,14 @@ const addRemovedOverlays = (
 
     overlays.set(
       addition.conceptIri,
-      !existing || clearsOverlay
+      // A conversion deletes the relationship, so no repoint staged on it earlier survives.
+      !existing || clearsOverlay || addition.convertToHierarchy
         ? addition
         : {
             ...existing,
             ...addition,
+            // Any later edit to the relationship supersedes its conversion.
+            convertToHierarchy: undefined,
             // Each overlay already carries the complete resulting set, so the latest one replaces
             // its predecessor; unioning would resurrect a removed member.
             broaderConcept:
@@ -846,27 +917,70 @@ export const diagramReducer = (
       ) {
         return state;
       }
+      // Relationship → hierarchy is one op (convertToHierarchy), not a removal plus an addition:
+      // the removal half is a bare discard, which never deletes the relationship.
+      const converting =
+        action.kind === 'hierarchie' &&
+        previousEdge.data?.kind === 'obecny' &&
+        !!previousEdge.data.vztahIri;
+      const convertedFrom = previousEdge.data?.convertedFrom;
+      const reverting = !!convertedFrom && action.kind === 'obecny';
+
       const updatedEdge: ConceptFlowEdge = {
         ...base,
-        data:
-          action.kind === 'obecny'
-            ? { ...base.data, kind: action.kind }
-            : {
+        data: converting
+          ? {
+              ...base.data,
+              kind: action.kind,
+              label: undefined,
+              vztahIri: undefined,
+              convertedFrom: {
+                vztahIri: previousEdge.data!.vztahIri!,
+                label: previousEdge.data!.label,
+                source: previousEdge.source,
+                target: previousEdge.target,
+              },
+            }
+          : reverting
+            ? {
                 ...base.data,
                 kind: action.kind,
-                label: undefined,
-                vztahIri: undefined,
-              },
+                label: convertedFrom.label,
+                vztahIri: convertedFrom.vztahIri,
+                convertedFrom: undefined,
+              }
+            : action.kind === 'obecny'
+              ? { ...base.data, kind: action.kind }
+              : {
+                  ...base.data,
+                  kind: action.kind,
+                  label: undefined,
+                  vztahIri: undefined,
+                  convertedFrom: undefined,
+                },
       };
+
+      const revertsToOriginal =
+        reverting &&
+        updatedEdge.source === convertedFrom.source &&
+        updatedEdge.target === convertedFrom.target;
+      const additions = converting
+        ? [getConvertOverlay(updatedEdge, state.nodes)]
+        : revertsToOriginal
+          ? // Back where RDF has it, so the conversion is discarded and nothing is restaged.
+            [{ conceptIri: convertedFrom.vztahIri }]
+          : reverting
+            ? [getEdgeOverlay(updatedEdge, state.nodes)]
+            : [
+                getRemovedEdgeOverlay(previousEdge, state.nodes),
+                getEdgeOverlay(updatedEdge, state.nodes),
+              ];
       return {
         ...state,
         edges: state.edges.map((edge) =>
           edge.id === action.edgeId ? updatedEdge : edge,
         ),
-        removedOverlays: addRemovedOverlays(state.removedOverlays, [
-          getRemovedEdgeOverlay(previousEdge, state.nodes),
-          getEdgeOverlay(updatedEdge, state.nodes),
-        ]),
+        removedOverlays: addRemovedOverlays(state.removedOverlays, additions),
       };
     }
 
