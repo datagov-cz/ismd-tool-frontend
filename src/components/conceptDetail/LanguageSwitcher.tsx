@@ -18,7 +18,6 @@ export const LanguageSwitcher = ({
   showCsTag = false,
 }: LanguageSwitcherProps) => {
   if (Object.keys(item).length === 0) return;
-  console.log(item, 'test');
   return (
     <div className="flex justify-between w-full gap-4">
       <div className="flex flex-col w-full">
