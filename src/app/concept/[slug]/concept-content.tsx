@@ -36,6 +36,12 @@ export const ConceptContent = ({ slug }: Props) => {
   const conceptMetadata = concept.data.data?.conceptMetadata;
   if (!conceptDetail || !conceptMetadata) return null;
 
+  const conceptName = [
+    conceptDetail.název?.cs,
+    conceptDetail.název?.sk,
+    conceptDetail.název?.en,
+  ].find((name) => name?.trim());
+
   const ontology = extractOntologyFromUrl(conceptMetadata.graphName || '');
   const conceptType = conceptMetadata.conceptType as
     | 'TRIDA'
@@ -80,15 +86,7 @@ export const ConceptContent = ({ slug }: Props) => {
           (item) => item.owningConceptId === conceptMetadata.id,
         )}
       >
-        <ConceptUsageDiagrams
-          conceptSlug={slug}
-          conceptName={
-            conceptDetail.název?.cs ??
-            conceptDetail.název?.sk ??
-            conceptDetail.název?.en ??
-            ''
-          }
-        />
+        <ConceptUsageDiagrams conceptSlug={slug} conceptName={conceptName} />
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}
           source="ISMD"
