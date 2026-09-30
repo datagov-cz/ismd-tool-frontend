@@ -34,14 +34,15 @@ export const Select = ({
         disabled={disabled}
         render={({ field }) => (
           <div className="w-full grid grid-cols-7 gap-y-4 gap-x-2">
-            <GovFormLabel className="w-fit! pt-2.5">
+            <GovFormLabel size="m" className="w-fit! pt-2.5">
               <span className="font-bold">{label}</span>
             </GovFormLabel>
             <div className="col-span-6 relative ml-10">
               <GovFormSelect
+                size="m"
                 value={field.value}
-                onGovChange={(e) => {
-                  const val = e.target.value;
+                onChange={(e) => {
+                  const val = e.currentTarget.value;
                   field.onChange(val);
                   field.onBlur();
                   if (changeMultiple) {
@@ -55,7 +56,7 @@ export const Select = ({
                 ))}
               </GovFormSelect>
               {form.formState.errors[name] && (
-                <span className="text-red-600 text-sm absolute bottom-0 left-2 translate-y-full">
+                <span className="text-status-error-600 text-sm absolute bottom-0 left-2 translate-y-full">
                   {String(form.formState.errors[name]?.message)}
                 </span>
               )}

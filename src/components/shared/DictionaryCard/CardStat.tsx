@@ -6,7 +6,7 @@ export const CardStat = ({
   value: React.ReactNode;
 }) => (
   <div className="space-x-1.5">
-    <span className="text-dark-secondary text-[10px]">{label}</span>
-    <span className="text-[12px]">{value}</span>
+    <span className="text-foreground-muted text-2xs">{label}</span>
+    <span className="text-xs">{value}</span>
   </div>
 );

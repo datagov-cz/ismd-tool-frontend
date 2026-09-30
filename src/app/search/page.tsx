@@ -116,7 +116,7 @@ const Search = () => {
   };
 
   return (
-    <div className="w-full py-10 px-5">
+    <div className="w-full flex-1 py-10 px-5 bg-surface-form">
       <div className="max-w-250 mx-auto space-y-3">
         <div className="flex flex-col items-center justify-center gap-4">
           <h1 className="text-center text-xl font-medium">
@@ -129,7 +129,7 @@ const Search = () => {
               type={
                 activeType === ApiSearchType.ONTOLOGY ? 'solid' : 'outlined'
               }
-              onGovClick={() => toggleType(ApiSearchType.ONTOLOGY)}
+              onClick={() => toggleType(ApiSearchType.ONTOLOGY)}
               color="success"
               size="xs"
             >
@@ -139,7 +139,7 @@ const Search = () => {
             </GovButton>
             <GovButton
               type={activeType === ApiSearchType.CONCEPT ? 'solid' : 'outlined'}
-              onGovClick={() => toggleType(ApiSearchType.CONCEPT)}
+              onClick={() => toggleType(ApiSearchType.CONCEPT)}
               color="primary"
               size="xs"
             >
@@ -154,7 +154,7 @@ const Search = () => {
                     ? 'solid'
                     : 'outlined'
                 }
-                onGovClick={() => toggleSource(SearchSource.UNPUBLISHED)}
+                onClick={() => toggleSource(SearchSource.UNPUBLISHED)}
                 color="warning"
                 size="xs"
               >

@@ -97,10 +97,8 @@ export const CommentSidebox = ({
         </div>
         <form
           className={clsx(
-            'relative w-full border rounded-md bg-primary-subtlest',
-            errors.comment
-              ? 'border-red-500'
-              : 'border-blue/20 dark:border-white/60',
+            'relative w-full border rounded-md bg-blue-subtle',
+            errors.comment ? 'border-border-error' : 'border-border-primary',
           )}
           onSubmit={handleSubmit(onSubmit)}
         >
@@ -115,7 +113,7 @@ export const CommentSidebox = ({
             {...register('comment')}
           />
           {errors.comment && (
-            <p className="text-red-500 text-sm absolute bottom-1 left-3">
+            <p className="text-status-error-600 text-sm absolute bottom-1 left-3">
               {errors.comment.message}
             </p>
           )}
@@ -127,9 +125,9 @@ export const CommentSidebox = ({
             disabled={isSubmitting || !!errors.comment}
             size="xs"
             className="absolute z-1000 bottom-2 right-3"
+            iconEnd={<GovIcon name="send" size="l" />}
           >
             {t('Send')}
-            <GovIcon name="send" size="l" slot="icon-end" />
           </GovButton>
         </form>
       </div>

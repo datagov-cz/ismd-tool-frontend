@@ -1,8 +1,10 @@
 'use client';
 
+import React from 'react';
 import { GovButton, GovIcon, GovLink } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
+import { useLogin } from '@/hooks/useLogin';
 import { scrollTop } from '@/lib/windowUtils';
 
 import { FooterColumn } from './FooterColumn';
@@ -13,15 +15,24 @@ interface Props {
 
 export const Footer = ({ isGated = false }: Props) => {
   const t = useTranslations('Footer');
+  const login = useLogin();
+
+  const handleAdminLogin = (event: React.MouseEvent) => {
+    event.preventDefault();
+    login();
+  };
 
   if (isGated) {
     return (
-      <footer className="bg-blue py-12 text-white mt-auto">
+      <footer className="bg-footer py-12 text-footer-text mt-auto">
         <section className="max-w-desktop px-5 mx-auto space-y-12">
           <div className="space-y-4">
             <h5 className="font-medium text-xl">{t('ContactColumn.Title')}</h5>
-            <GovLink href={`mailto:${t('ContactColumn.Email')}`} size="s">
-              <GovIcon slot="icon-start" name="envelope" />
+            <GovLink
+              href={`mailto:${t('ContactColumn.Email')}`}
+              size="s"
+              iconStart={<GovIcon name="envelope" />}
+            >
               {t('ContactColumn.Email')}
             </GovLink>
           </div>
@@ -42,7 +53,7 @@ export const Footer = ({ isGated = false }: Props) => {
           </div>
           <div className="space-y-4">
             <hr className="border-t-footer-separator!" />
-            <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-secondary text-xs">
+            <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-footer-text-muted text-xs">
               <p>{t('FooterCopySection.Copyright')}</p>
               <div className="flex gap-x-3">
                 <p>{t('FooterCopySection.Version')}</p>|
@@ -56,7 +67,7 @@ export const Footer = ({ isGated = false }: Props) => {
   }
 
   return (
-    <footer className="bg-blue py-12 text-white mt-auto">
+    <footer className="bg-footer py-12 text-footer-text mt-auto">
       <section className="max-w-desktop px-5 mx-auto space-y-12">
         <div className="flex justify-between">
           <ul className="flex justify-between w-full flex-wrap flex-col md:flex-row gap-y-10 md:pr-28">
@@ -81,26 +92,34 @@ export const Footer = ({ isGated = false }: Props) => {
                     {t('LinkColumn.Link3')}
                   </GovLink>
                 </li>
+                <li>
+                  {/* No kc_idp_hint, so Keycloak shows its own login page — the
+                      only route to a local (admin) account once the IdP buttons
+                      above take everyone straight to CAAIS or NIA. */}
+                  <GovLink href="#" size="s" onClick={handleAdminLogin}>
+                    {t('LinkColumn.AdminLogin')}
+                  </GovLink>
+                </li>
               </ul>
             </FooterColumn>
             <FooterColumn title={t('ContactColumn.Title')}>
-              <GovLink href={`mailto:${t('ContactColumn.Email')}`} size="s">
-                <GovIcon slot="icon-start" name="envelope" />
+              <GovLink
+                href={`mailto:${t('ContactColumn.Email')}`}
+                size="s"
+                iconStart={<GovIcon name="envelope" />}
+              >
                 {t('ContactColumn.Email')}
               </GovLink>
             </FooterColumn>
           </ul>
           <GovButton
-            slot="icon-start"
-            name="arrow-up"
             aria-label={t('BackToTopAria')}
             type="solid"
             size="m"
-            className="bg-white cursor-pointer"
-            onGovClick={scrollTop}
-          >
-            <GovIcon name="arrow-up" />
-          </GovButton>
+            className="bg-white cursor-pointer [&_button]:text-blue"
+            onClick={scrollTop}
+            iconStart={<GovIcon name="arrow-up" />}
+          />
         </div>
         <div className="space-y-4">
           <h6 className="text-lg font-medium">{t('ThanksSection.Title')}</h6>
@@ -119,7 +138,7 @@ export const Footer = ({ isGated = false }: Props) => {
         </div>
         <div className="space-y-4">
           <hr className="border-t-footer-separator!" />
-          <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-secondary text-xs">
+          <div className="flex justify-between flex-wrap gap-y-4 gap-x-8 text-footer-text-muted text-xs">
             <p>{t('FooterCopySection.Copyright')}</p>
             <div className="flex gap-x-3">
               <p>{t('FooterCopySection.Version')}</p>|

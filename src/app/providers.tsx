@@ -12,15 +12,18 @@ import { SessionGuard } from '@/components/contexts/SessionGuard';
 import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 import { normalizeBasePath } from '@/lib/basePath';
+import type { Theme } from '@/lib/theme';
 
 export default function Providers({
   children,
   environmentVariables,
   session,
+  initialTheme,
 }: {
   children: ReactNode;
   environmentVariables: EnvironmentVariables;
   session: Session | null;
+  initialTheme: Theme;
 }) {
   const normalizedBasePath = normalizeBasePath(
     environmentVariables.NEXT_PUBLIC_BASE_PATH,
@@ -47,7 +50,7 @@ export default function Providers({
   }, [normalizedBasePath]);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider initialTheme={initialTheme}>
       <Environment variables={environmentVariables}>
         <QueryProvider>
           <SessionProvider session={session} basePath={nextAuthBasePath}>
