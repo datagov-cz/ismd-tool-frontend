@@ -9,7 +9,7 @@ export const ConceptUsageDiagrams = ({
   conceptName,
 }: {
   conceptSlug: string;
-  conceptName: string;
+  conceptName?: string;
 }) => {
   const [open, setOpen] = useState(false);
   const diagrams = useGetConceptUsage(conceptSlug);
@@ -24,6 +24,14 @@ export const ConceptUsageDiagrams = ({
           {placements.length}]
         </h4>
         <div className="py-2">
+          {!conceptName && (
+            <p
+              role="alert"
+              className="mb-2 text-sm font-bold text-status-error-700"
+            >
+              Tomuto pojmu chybí název.
+            </p>
+          )}
           {placements.slice(0, open ? placements.length : 3).map((item) => (
             <ConceptInDiagram
               key={item.diagramId}
@@ -56,7 +64,7 @@ export const ConceptInDiagram = ({
   conceptIri,
 }: {
   item: DiagramConceptPlacement;
-  conceptName: string;
+  conceptName?: string;
   conceptIri?: string;
 }) => {
   const diagramHref = `/dictionary/${item.ontologySlug}/diagram/${item.diagramId}`;
@@ -72,10 +80,14 @@ export const ConceptInDiagram = ({
             <span className="font-bold flex items-center gap-2">
               {item.diagramName}{' '}
               <GovTooltip placement="top">
-                <span className="z-1000!">
-                  Diagram obsahuje změny k materializaci
-                </span>
-                <GovIcon name="clock-history" size="s" color="warning" />
+                <GovTooltip.Content>
+                  <span className="z-1000!">
+                    Diagram obsahuje změny k materializaci
+                  </span>
+                </GovTooltip.Content>
+                <GovTooltip.Trigger>
+                  <GovIcon name="clock-history" size="s" color="warning" />
+                </GovTooltip.Trigger>
               </GovTooltip>
             </span>
             {item.kind === 'NODE' && (
@@ -88,7 +100,7 @@ export const ConceptInDiagram = ({
                         {item.conceptName?.cs}
                       </span>{' '}
                       <span className="pt-2">&rarr;</span>{' '}
-                      <span className="font-bold">{conceptName}</span>
+                      <span className="font-bold">{conceptName ?? '—'}</span>
                     </div>
                   ))}
                 {item.exactMatch &&
@@ -98,7 +110,7 @@ export const ConceptInDiagram = ({
                       <span className="font-bold text-dark-secondary">
                         {item.conceptName?.cs}
                       </span>{' '}
-                      = <span className="font-bold">{conceptName}</span>
+                      = <span className="font-bold">{conceptName ?? '—'}</span>
                     </div>
                   ))}
               </>
@@ -111,7 +123,7 @@ export const ConceptInDiagram = ({
                       {item.domain.conceptName?.cs}
                     </span>{' '}
                     <span className="pt-2">&rarr;</span>{' '}
-                    <span className="font-bold">{conceptName}</span>
+                    <span className="font-bold">{conceptName ?? '—'}</span>
                     <span className="pt-2">&rarr;</span>{' '}
                     <span className="font-bold text-dark-secondary">
                       {item.range.conceptName?.cs}
@@ -129,7 +141,7 @@ export const ConceptInDiagram = ({
                     </span>
                     <div className="flex items-center gap-1">
                       <span className="inline-block size-2 border-l border-b border-secondary rounded-bl-sm" />
-                      <span className="font-bold">{conceptName}</span>
+                      <span className="font-bold">{conceptName ?? '—'}</span>
                     </div>
                   </div>
                 )}
