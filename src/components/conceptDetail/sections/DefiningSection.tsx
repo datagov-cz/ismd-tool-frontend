@@ -33,7 +33,7 @@ export const DefiningSection = ({
     return null;
   }
   return (
-    <div className="bg-white px-4 py-3 rounded-md shadow-subtle">
+    <div className="bg-surface px-4 py-3 rounded-md shadow-subtle">
       {definice && (
         <Section title={t('Sections.Definition')}>
           <LanguageSwitcher item={definice} />

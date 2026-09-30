@@ -131,17 +131,17 @@ export const OntologyLayout = ({
   const hasSidebar = !!visibleDeviations || showValidationSummary;
 
   return (
-    <div className="w-full h-full flex-1">
+    <div className="w-full h-full flex-1 bg-surface-base">
       <div className="w-full max-w-250 mx-auto px-5 desktop:px-0 py-5 flex flex-col gap-5">
         <div className="flex flex-wrap gap-2 items-center relative">
           <GovButton
             type="base"
             color="primary"
             size="s"
-            onGovClick={() => router.back()}
+            onClick={() => router.back()}
             className="desktop:absolute desktop:top-1/2 desktop:left-0 desktop:-ml-2 desktop:-translate-x-full desktop:-translate-y-1/2 px-0! desktop:px-4!"
+            iconStart={<GovIcon name="chevron-left" size="m" />}
           >
-            <GovIcon slot="icon-start" name="chevron-left" size="m" />
             {t('Main.BackToHome')}
           </GovButton>
 
@@ -154,13 +154,10 @@ export const OntologyLayout = ({
               size="xs"
               type="subtle"
               className="w-fit [&_span]:font-bold! [&_span]:cursor-pointer!"
+              iconStart={
+                <GovIcon name="journal-text" size="l" className="text-white" />
+              }
             >
-              <GovIcon
-                slot="icon-start"
-                name="journal-text"
-                size="l"
-                className="text-white"
-              />
               <span
                 className={clsx(!isPublished && 'text-status-warning-700!')}
               >
@@ -180,7 +177,7 @@ export const OntologyLayout = ({
           </Link>
 
           {updatedAt && (
-            <span className="ml-auto text-sm font-semibold text-dark-primary whitespace-nowrap">
+            <span className="ml-auto text-sm font-semibold text-foreground whitespace-nowrap">
               {t('Main.ControlPanel.Updated')}:{' '}
               {new Date(updatedAt).toLocaleDateString('CS')}
             </span>
@@ -189,7 +186,7 @@ export const OntologyLayout = ({
 
         <div className="grid grid-cols-12 gap-5">
           <div className="col-span-12 tablet:col-span-9 desktop:col-span-8 flex flex-col gap-2">
-            <h1 className="text-[32px] font-medium">
+            <h1 className="text-h1 font-medium">
               {title?.cs || title?.en || title?.sk}
             </h1>
 
@@ -213,7 +210,7 @@ export const OntologyLayout = ({
           </div>
         </div>
       </div>
-      <div className="w-full bg-primary-subtlest flex-1 h-full px-5">
+      <div className="w-full bg-surface flex-1 h-full px-5">
         <div className="w-full max-w-250 mx-auto py-3 grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
           <div className={hasSidebar ? 'lg:col-span-2' : 'lg:col-span-3'}>
             <p className="font-medium text-lg mb-3">
@@ -227,13 +224,10 @@ export const OntologyLayout = ({
                   color="primary"
                   size="s"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/create?ontology=${slug}`}
+                  iconStart={
+                    <GovIcon name="plus" size="s" className="text-white" />
+                  }
                 >
-                  <GovIcon
-                    slot="icon-start"
-                    name="plus"
-                    size="s"
-                    className="text-white"
-                  />
                   {t('Main.AddConcept')}
                 </GovButton>
               )}
@@ -255,7 +249,7 @@ export const OntologyLayout = ({
                     >
                       <span
                         className={clsx(
-                          'absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200',
+                          'absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-surface shadow transition-transform duration-200',
                           showDeviations && 'translate-x-4',
                         )}
                       />
@@ -268,27 +262,30 @@ export const OntologyLayout = ({
 
                 <GovFormGroup className="relative w-full max-w-60">
                   <GovFormInput
+                    identifier="ontology-concept-filter"
                     className="max-w-60 w-full border-0!"
                     size="s"
                     placeholder={t('Main.SearchConcepts')}
                     value={filterQuery}
-                    onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
-                  >
-                    <GovIcon
-                      type="components"
-                      color="neutral"
-                      name="funnel"
-                      slot="icon-start"
-                      size="s"
-                      className="transition-transform duration-200"
-                    />
-                  </GovFormInput>
+                    onChange={(e) =>
+                      setFilterQuery(e.currentTarget.value ?? '')
+                    }
+                    iconStart={
+                      <GovIcon
+                        type="components"
+                        color="neutral"
+                        name="funnel"
+                        size="s"
+                        className="transition-transform duration-200"
+                      />
+                    }
+                  />
                 </GovFormGroup>
               </div>
             </div>
             <div className="space-y-2">
               {filteredParentTerms.length === 0 && concepts?.length !== 0 && (
-                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-subtle flex flex-col">
+                <div className="bg-surface-block rounded-xl py-10 items-center justify-center border border-border-default overflow-hidden shadow-subtle flex flex-col">
                   <span className="text-xl font-bold text-status-error-600 pb-2">
                     {t('Main.NoResults.Title')}
                   </span>

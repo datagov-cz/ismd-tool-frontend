@@ -31,7 +31,7 @@ export const MissingConceptFields = ({
   return (
     <div className="mt-2 pl-4">
       <div>
-        <span className="font-bold text-blue-primary text-lg">
+        <span className="font-bold text-accent text-lg">
           {t('UdajeKDoplneni.Title')}
         </span>
         {missingGroups.map((group) => (
@@ -39,24 +39,22 @@ export const MissingConceptFields = ({
             key={group.groupLabelKey}
             className="pb-4 pt-2 grid grid-cols-7 border-b border-border-primary-subtle/20 last:border-0"
           >
-            <span className="text-sm text-dark-secondary font-bold mb-1 col-span-2 pt-2.5">
+            <span className="text-sm text-foreground-muted font-bold mb-1 col-span-2 pt-2.5">
               {t(group.groupLabelKey as Parameters<typeof t>[0])}
             </span>
             <div className="col-span-5">
               {group.fields.map((config) => (
                 <GovButton
+                  size="m"
                   key={config.key}
                   className="block! py-2"
                   color="primary"
                   type="base"
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${slug}/edit${config.anchor}`}
+                  iconStart={
+                    <GovIcon size="xs" type="components" name="plus" />
+                  }
                 >
-                  <GovIcon
-                    size="xs"
-                    slot="icon-start"
-                    type="components"
-                    name="plus"
-                  />
                   <span className="text-sm font-bold">
                     {t(config.labelKey as Parameters<typeof t>[0])}
                   </span>

@@ -39,7 +39,7 @@ const TruncatedText = ({ text }: { text: string }) => {
             e.stopPropagation();
             setExpanded((v) => !v);
           }}
-          className="ml-1 text-blue-button-active hover:underline text-xs font-medium shrink-0"
+          className="ml-1 text-accent hover:underline text-xs font-medium shrink-0"
         >
           {expanded ? t('ShowLess') : t('ShowMore')}
         </button>
@@ -58,13 +58,12 @@ export const ConceptCard = ({
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
 
   return (
-    <div className="rounded-xl border border-border-grey overflow-hidden shadow-subtle flex flex-col">
+    <div className="rounded-xl border border-border-default overflow-hidden shadow-subtle flex flex-col">
       <Link
         href={link}
-        className="grow px-3 py-2 flex gap-2 transition-shadow duration-200 hover:shadow-md cursor-pointer bg-white dark:bg-dark-bg text-black dark:text-white"
+        className="grow px-3 py-2 flex gap-2 transition-shadow duration-200 hover:shadow-md cursor-pointer bg-surface text-foreground"
       >
         <GovIcon
-          slot="icon-start"
           name={
             conceptType === 'VZTAH'
               ? 'bezier2'
@@ -78,12 +77,12 @@ export const ConceptCard = ({
           className="mt-0.5!"
         />
         <span>
-          <p className="font-medium text-blue-primary text-[16px]">{title}</p>
+          <p className="font-medium text-accent text-base">{title}</p>
           {text && <TruncatedText text={text} />}
         </span>
       </Link>
 
-      <div className="flex justify-between bg-page-background pl-9 pr-4 py-0.5">
+      <div className="flex justify-between bg-surface-muted pl-9 pr-4 py-0.5">
         <div className="flex gap-3 items-center min-h-6">
           {modified && (
             <CardStat

@@ -16,21 +16,21 @@ export const MainControls = () => {
           color="secondary"
           slot="button"
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/create`}
+          iconStart={
+            <GovIcon
+              type="components"
+              name="journal-plus"
+              size="m"
+              className="transition-transform duration-200"
+            />
+          }
         >
-          <GovIcon
-            type="components"
-            color="neutral"
-            name="journal-plus"
-            slot="icon-start"
-            size="m"
-            className="transition-transform duration-200"
-          />
           {t('MainControls.CreateNewDict')}
         </GovButton>
 
         <Link
           href="/dictionary/list-all"
-          className="underline text-sm text-dark-primary"
+          className="underline text-sm text-foreground"
         >
           {t('WelcomeSection.BrowseDictionaries')}
         </Link>
