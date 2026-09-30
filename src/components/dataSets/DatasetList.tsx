@@ -60,7 +60,7 @@ export const DatasetList = ({
             size="s"
             placeholder={t('SearchOntologies')}
             value={filterQuery}
-            onGovInput={(e) => onFilterChange(e.detail.value ?? '')}
+            onChange={(e) => onFilterChange(e.target.value ?? '')}
           >
             <GovIcon
               type="components"

@@ -51,7 +51,7 @@ export const DatasetCard = ({ iri, název, popis }: DictionaryCardProps) => {
   const displayedText = getPreferredTranslation(popis);
 
   return (
-    <div className="rounded-xl border border-border-grey overflow-hidden shadow-subtle flex flex-col">
+    <div className="rounded-xl border border-gray-border/50 overflow-hidden shadow-subtle flex flex-col">
       <Link
         href={`/dataset/detail?iri=${iri}`}
         className="grow px-3 py-2 flex gap-2 transition-shadow duration-200 hover:shadow-md cursor-pointer bg-white dark:bg-dark-bg text-black dark:text-white"

@@ -128,7 +128,7 @@ export const DatasetLayout = ({
 
           <div className="">
             <div className="flex flex-col gap-2">
-              <h1 className="text-[32px] font-medium">
+              <h1 className="text-h1 font-medium">
                 {title?.cs || title?.en || title?.sk}
               </h1>
 
@@ -172,7 +172,7 @@ export const DatasetLayout = ({
                           color="primary"
                           type="base"
                           size="s"
-                          onGovClick={() => copyToClipboard(iri)}
+                          onClick={() => copyToClipboard(iri)}
                           className="w-full! [&_button]:w-full! max-w-none!"
                         >
                           {t('Main.ControlPanel.CopyIRI')}
@@ -182,7 +182,7 @@ export const DatasetLayout = ({
                         color="primary"
                         type="base"
                         size="s"
-                        onGovClick={() => copyToClipboard(window.location.href)}
+                        onClick={() => copyToClipboard(window.location.href)}
                         className="w-full! [&_button]:w-full! max-w-none!"
                       >
                         {t('Main.ControlPanel.CopyURL')}
@@ -252,7 +252,7 @@ export const DatasetLayout = ({
                     size="s"
                     placeholder={t('Main.SearchConcepts')}
                     value={filterQuery}
-                    onGovInput={(e) => setFilterQuery(e.detail.value ?? '')}
+                    onChange={(e) => setFilterQuery(e.target.value ?? '')}
                   >
                     <GovIcon
                       type="components"
@@ -268,7 +268,7 @@ export const DatasetLayout = ({
             </div>
             <div className="space-y-2">
               {filteredConcepts?.length === 0 && concepts?.length !== 0 && (
-                <div className="bg-white rounded-xl py-10 items-center justify-center border border-border-grey overflow-hidden shadow-subtle flex flex-col">
+                <div className="bg-white rounded-xl py-10 items-center justify-center border border-gray-border/50 overflow-hidden shadow-subtle flex flex-col">
                   <span className="text-xl font-bold text-status-error-600 pb-2">
                     {t('Main.NoResults.Title')}
                   </span>
