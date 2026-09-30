@@ -12,183 +12,129 @@ import {
 } from '@/lib/conceptSuggestion/api';
 import type {
   ConceptSuggestion,
-  ConceptSuggestionKind,
+  ConceptSuggestionJob,
+  ConceptSuggestionRequest,
 } from '@/lib/conceptSuggestion/types';
-import { parseLegalActIri } from '@/lib/vocabularyDraft/legalAct';
 
-type Input = {
-  kind: ConceptSuggestionKind;
-  fragmentIri: string | null;
-  domainIri?: string;
-  knownSlugs: string[];
-  ready?: boolean;
-};
+const START_DELAY_MS = 600;
+const MAX_POLL_ERRORS = 10;
+
+type Failure = 'Rejected' | 'StartError' | 'NotFound' | 'Failed' | 'PollError';
 
 type Job = {
-  kind: ConceptSuggestionKind;
   jobId: string;
   startedAt: number;
 };
 
-type Result = {
-  jobId: string;
-  suggestions: ConceptSuggestion[];
-};
-
-type PendingStatus =
-  | 'idle'
-  | 'unsupported'
-  | 'offline'
-  | 'needsDomain'
-  | 'loading'
-  | 'failed';
+type Outcome =
+  | { status: 'done'; jobId: string; suggestions: ConceptSuggestion[] }
+  | { status: 'failed'; failure: Failure };
 
 export type ConceptSuggestionState =
-  | { [Status in PendingStatus]: { status: Status } }[PendingStatus]
-  | { status: 'done'; result: Result };
+  | { status: 'offline' }
+  | { status: 'loading'; isReconnecting: boolean }
+  | { status: 'failed' }
+  | { status: 'done'; jobId: string; suggestions: ConceptSuggestion[] };
 
-export type ConceptSuggestionStatus = ConceptSuggestionState['status'];
+const startFailure = (
+  kind: ConceptSuggestionRequest['kind'],
+  error: unknown,
+): Failure =>
+  kind !== 'TRIDA' &&
+  axios.isAxiosError(error) &&
+  error.response?.status === 422
+    ? 'Rejected'
+    : 'StartError';
 
-export const useConceptSuggestions = ({
-  kind,
-  fragmentIri,
-  domainIri,
-  knownSlugs,
-  ready = true,
-}: Input) => {
+const pollFailure = (error: unknown, errorCount: number): Failure | null => {
+  if (!error) {
+    return null;
+  }
+  const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+  if (status === 404) {
+    return 'NotFound';
+  }
+  if (status !== undefined && status < 500) {
+    return 'PollError';
+  }
+  return errorCount >= MAX_POLL_ERRORS ? 'PollError' : null;
+};
+
+const outcomeOf = (
+  data: ConceptSuggestionJob | null | undefined,
+  error: unknown,
+  errorCount: number,
+): Outcome | null => {
+  if (data?.status === 'completed') {
+    return { status: 'done', jobId: data.jobId, suggestions: data.suggestions };
+  }
+  if (data?.status === 'failed') {
+    return { status: 'failed', failure: 'Failed' };
+  }
+  if (data === null) {
+    return { status: 'failed', failure: 'NotFound' };
+  }
+  const failure = pollFailure(error, errorCount);
+  return failure ? { status: 'failed', failure } : null;
+};
+
+export const useConceptSuggestions = (
+  request: ConceptSuggestionRequest,
+): ConceptSuggestionState => {
   const t = useTranslations('CreateConcept.LegalSourceAutofill.Ai');
-  const tRef = useRef(t);
   const isOnline = useIsOnline();
-  const requestCounter = useRef(0);
-  const startedRequest = useRef<number | null>(null);
-  const [attempt, setAttempt] = useState(0);
+  const started = useRef(false);
   const [job, setJob] = useState<Job | null>(null);
-  const [result, setResult] = useState<Result | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  const legalAct = fragmentIri ? parseLegalActIri(fragmentIri) : null;
-  const needsDomain = kind !== 'TRIDA' && !domainIri;
-  const knownSlugsKey = knownSlugs.join('|');
-  const canStart = !!legalAct && !needsDomain && isOnline && ready;
+  const [startError, setStartError] = useState<Failure | null>(null);
 
   useEffect(() => {
-    tRef.current = t;
-  }, [t]);
-
-  useEffect(() => {
-    setJob(null);
-    setResult(null);
-    setFailed(false);
-    return () => {
-      requestCounter.current += 1;
-    };
-  }, [kind, fragmentIri, domainIri, knownSlugsKey, attempt]);
-
-  useEffect(() => {
-    if (job || result || failed || !canStart || !fragmentIri) {
+    if (!isOnline || started.current) {
       return;
     }
-    const requestId = requestCounter.current;
-    if (startedRequest.current === requestId) {
-      return;
-    }
-    const act = parseLegalActIri(fragmentIri);
-    if (!act) {
-      return;
-    }
-    startedRequest.current = requestId;
+    const timer = setTimeout(() => {
+      started.current = true;
+      startConceptSuggestionJob(request)
+        .then(({ jobId }) => setJob({ jobId, startedAt: Date.now() }))
+        .catch((error: unknown) =>
+          setStartError(startFailure(request.kind, error)),
+        );
+    }, START_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [isOnline, request]);
 
-    startConceptSuggestionJob(kind, act, knownSlugs, domainIri)
-      .then(({ jobId }) => {
-        if (requestCounter.current === requestId) {
-          setJob({ kind, jobId, startedAt: Date.now() });
-        }
-      })
-      .catch((error: unknown) => {
-        if (requestCounter.current === requestId) {
-          setFailed(true);
-          const domainRejected =
-            kind !== 'TRIDA' &&
-            axios.isAxiosError(error) &&
-            error.response?.status === 422;
-          toast.error(
-            tRef.current(domainRejected ? 'DomainNotInModel' : 'StartError'),
-          );
-        }
-      });
-  }, [
-    job,
-    result,
-    failed,
-    canStart,
-    kind,
-    fragmentIri,
-    domainIri,
-    knownSlugsKey,
-  ]);
-
-  const polling = !!job && !result && !failed;
-
-  const { data, error, isError } = useQuery({
-    queryKey: ['conceptSuggestionJob', job?.kind, job?.jobId],
+  const { data, error, errorUpdateCount } = useQuery({
+    queryKey: ['conceptSuggestionJob', request.kind, job?.jobId],
     queryFn: () =>
-      job ? fetchConceptSuggestionJob(job.kind, job.jobId) : null,
-    enabled: polling,
-    refetchInterval: job ? () => pollInterval(job.startedAt) : false,
+      job ? fetchConceptSuggestionJob(request.kind, job.jobId) : null,
+    enabled: !!job,
+    refetchInterval: ({ state }) =>
+      job && !outcomeOf(state.data, state.error, state.errorUpdateCount)
+        ? pollInterval(job.startedAt)
+        : false,
     refetchIntervalInBackground: true,
+    refetchOnWindowFocus: false,
     retry: false,
     gcTime: 0,
   });
 
+  const outcome = job ? outcomeOf(data, error, errorUpdateCount) : null;
+  const failure =
+    startError ?? (outcome?.status === 'failed' ? outcome.failure : null);
+
   useEffect(() => {
-    if (!job || result || failed) {
-      return;
+    if (failure) {
+      toast.error(t(failure));
     }
-    if (axios.isAxiosError(error) && error.response?.status === 404) {
-      setFailed(true);
-      toast.error(tRef.current('NotFound'));
-      return;
-    }
-    if (data === null) {
-      setFailed(true);
-      toast.error(tRef.current('NotFound'));
-      return;
-    }
-    if (data?.status === 'completed') {
-      setResult({ jobId: job.jobId, suggestions: data.suggestions });
-      return;
-    }
-    if (data?.status === 'failed') {
-      setFailed(true);
-      toast.error(tRef.current('Failed'));
-    }
-  }, [job, result, failed, data, error]);
+  }, [failure, t]);
 
-  const state: ConceptSuggestionState = (() => {
-    if (!fragmentIri) {
-      return { status: 'idle' };
-    }
-    if (!legalAct) {
-      return { status: 'unsupported' };
-    }
-    if (needsDomain) {
-      return { status: 'needsDomain' };
-    }
-    if (!isOnline && !job && !result) {
-      return { status: 'offline' };
-    }
-    if (failed) {
-      return { status: 'failed' };
-    }
-    if (result) {
-      return { status: 'done', result };
-    }
-    return { status: 'loading' };
-  })();
-
-  return {
-    state,
-    isReconnecting: polling && isError,
-    retry: () => setAttempt((current) => current + 1),
-  };
+  if (failure) {
+    return { status: 'failed' };
+  }
+  if (outcome?.status === 'done') {
+    return outcome;
+  }
+  if (!isOnline && !job) {
+    return { status: 'offline' };
+  }
+  return { status: 'loading', isReconnecting: !!error };
 };

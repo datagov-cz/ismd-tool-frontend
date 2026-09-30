@@ -7,64 +7,69 @@ import {
   startRelationshipSuggestions,
 } from '@/api/generated';
 import {
-  type ConceptSuggestionJobResult,
+  type ConceptSuggestionJob,
   type ConceptSuggestionKind,
+  type ConceptSuggestionRequest,
   fromAttributeSuggestion,
   fromClassSuggestion,
   fromRelationshipSuggestion,
+  isNamed,
 } from '@/lib/conceptSuggestion/types';
-import type { LegalActRef } from '@/lib/vocabularyDraft/types';
+
+type JobParams = { jobIds: string[] };
 
 export const startConceptSuggestionJob = (
-  kind: ConceptSuggestionKind,
-  { iri, year, number, date }: LegalActRef,
-  knownSlugs: string[],
-  domainIri?: string,
+  request: ConceptSuggestionRequest,
 ) => {
+  const { iri, year, number, date } = request.legalAct;
   const base = {
     structuralElementIds: [iri],
-    knownConceptualModelSlugs: knownSlugs,
+    knownConceptualModelSlugs: request.knownSlugs,
   };
-  if (kind === 'TRIDA') {
+  if (request.kind === 'TRIDA') {
     return startClassSuggestions(year, number, date, base);
   }
-  const body = { ...base, selectedClassId: domainIri ?? '' };
-  if (kind === 'VLASTNOST') {
-    return startPropertySuggestions(year, number, date, body);
-  }
-  return startRelationshipSuggestions(year, number, date, body);
+  const start =
+    request.kind === 'VLASTNOST'
+      ? startPropertySuggestions
+      : startRelationshipSuggestions;
+  return start(year, number, date, {
+    ...base,
+    selectedClassId: request.domainIri,
+  });
+};
+
+const readJobs: Record<
+  ConceptSuggestionKind,
+  (_params: JobParams) => Promise<ConceptSuggestionJob[]>
+> = {
+  TRIDA: async (params) =>
+    (await getClassSuggestions(params)).map((job) => ({
+      jobId: job.jobId,
+      status: job.status,
+      suggestions: job.newSuggestions.map(fromClassSuggestion),
+    })),
+  VLASTNOST: async (params) =>
+    (await getPropertySuggestions(params)).map((job) => ({
+      jobId: job.jobId,
+      status: job.status,
+      suggestions: job.newAttributeSuggestions.map(fromAttributeSuggestion),
+    })),
+  VZTAH: async (params) =>
+    (await getRelationshipSuggestions(params)).map((job) => ({
+      jobId: job.jobId,
+      status: job.status,
+      suggestions: job.newRelationshipSuggestions.map(
+        fromRelationshipSuggestion,
+      ),
+    })),
 };
 
 export const fetchConceptSuggestionJob = async (
   kind: ConceptSuggestionKind,
   jobId: string,
-): Promise<ConceptSuggestionJobResult | null> => {
-  const params = { jobIds: [jobId] };
-  if (kind === 'TRIDA') {
-    const [job] = await getClassSuggestions(params);
-    return job
-      ? {
-          status: job.status,
-          suggestions: job.newSuggestions.map(fromClassSuggestion),
-        }
-      : null;
-  }
-  if (kind === 'VLASTNOST') {
-    const [job] = await getPropertySuggestions(params);
-    return job
-      ? {
-          status: job.status,
-          suggestions: job.newAttributeSuggestions.map(fromAttributeSuggestion),
-        }
-      : null;
-  }
-  const [job] = await getRelationshipSuggestions(params);
-  return job
-    ? {
-        status: job.status,
-        suggestions: job.newRelationshipSuggestions.map(
-          fromRelationshipSuggestion,
-        ),
-      }
-    : null;
+): Promise<ConceptSuggestionJob | null> => {
+  const jobs = await readJobs[kind]({ jobIds: [jobId] });
+  const job = jobs.find((item) => item.jobId === jobId);
+  return job ? { ...job, suggestions: job.suggestions.filter(isNamed) } : null;
 };

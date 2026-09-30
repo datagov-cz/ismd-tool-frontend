@@ -725,14 +725,15 @@
         "LoadingHint": "Může to trvat až několik minut. Můžete mezitím pokračovat ve vyplňování formuláře.",
         "Reconnecting": "Obnovuji spojení…",
         "StartError": "AI návrh se nepodařilo spustit.",
-        "DomainNotInModel": "AI návrh pro vybraný definiční obor není dostupný.",
+        "Rejected": "AI služba požadavek odmítla. Zkuste jiný definiční obor nebo jiné ustanovení.",
+        "PollError": "Stav AI návrhu se nepodařilo načíst.",
         "Failed": "AI návrh selhal.",
         "NotFound": "AI úloha již není dostupná.",
         "Empty": "AI pro toto ustanovení nenašla žádné návrhy.",
         "Retry": "Zkusit znovu",
         "CandidatesLabel": "Navržené pojmy",
         "Applied": "Vybrané návrhy byly převzaty do formuláře.",
-        "TargetNotInDictionary": "Cílová třída {target} není v tomto slovníku. Obor hodnot vyberte ručně.",
+        "TargetNotFound": "Cílovou třídu {target} se nepodařilo dohledat. Obor hodnot vyberte ručně.",
         "FeedbackThanks": "Děkujeme za zpětnou vazbu."
       }
     },

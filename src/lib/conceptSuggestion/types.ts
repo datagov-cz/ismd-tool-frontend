@@ -2,55 +2,66 @@ import type {
   AiAttributeSuggestionDto,
   AiClassSuggestionDto,
   AiClassSuggestionDtoType,
+  AiClassSuggestionsJobResponseDtoStatus,
   AiRelationshipSuggestionDto,
 } from '@/api/generated';
+import type { LegalActRef } from '@/lib/vocabularyDraft/types';
 
 export type ConceptSuggestionKind = 'TRIDA' | 'VLASTNOST' | 'VZTAH';
 
+export type ConceptSuggestionRequest = {
+  legalAct: LegalActRef;
+  knownSlugs: string[];
+} & ({ kind: 'TRIDA' } | { kind: 'VLASTNOST' | 'VZTAH'; domainIri: string });
+
 export type ConceptSuggestion = {
   suggestionId: string;
-  name?: string;
+  name: string;
   definition?: string;
   explanation?: string;
   classType?: AiClassSuggestionDtoType;
   targetIri?: string;
 };
 
-export type ConceptSuggestionJobStatus = 'in_progress' | 'completed' | 'failed';
-
-export type ConceptSuggestionJobResult = {
-  status: ConceptSuggestionJobStatus;
+export type ConceptSuggestionJob = {
+  jobId: string;
+  status: AiClassSuggestionsJobResponseDtoStatus;
   suggestions: ConceptSuggestion[];
 };
+
+type SuggestionTexts = Pick<
+  AiAttributeSuggestionDto,
+  'suggestionId' | 'name' | 'definition' | 'explanation'
+>;
 
 const csText = (value?: Record<string, string>) =>
   value?.cs?.trim() || undefined;
 
+export const fromAttributeSuggestion = ({
+  suggestionId,
+  name,
+  definition,
+  explanation,
+}: SuggestionTexts): ConceptSuggestion => ({
+  suggestionId,
+  name: csText(name) ?? '',
+  definition: csText(definition),
+  explanation: csText(explanation),
+});
+
 export const fromClassSuggestion = (
   suggestion: AiClassSuggestionDto,
 ): ConceptSuggestion => ({
-  suggestionId: suggestion.suggestionId,
-  name: csText(suggestion.name),
-  definition: csText(suggestion.definition),
-  explanation: csText(suggestion.explanation),
+  ...fromAttributeSuggestion(suggestion),
   classType: suggestion.type,
-});
-
-export const fromAttributeSuggestion = (
-  suggestion: AiAttributeSuggestionDto,
-): ConceptSuggestion => ({
-  suggestionId: suggestion.suggestionId,
-  name: csText(suggestion.name),
-  definition: csText(suggestion.definition),
-  explanation: csText(suggestion.explanation),
 });
 
 export const fromRelationshipSuggestion = (
   suggestion: AiRelationshipSuggestionDto,
 ): ConceptSuggestion => ({
-  suggestionId: suggestion.suggestionId,
-  name: csText(suggestion.name),
-  definition: csText(suggestion.definition),
-  explanation: csText(suggestion.explanation),
+  ...fromAttributeSuggestion(suggestion),
   targetIri: suggestion.targetClass?.id,
 });
+
+export const isNamed = (suggestion: ConceptSuggestion) =>
+  suggestion.name !== '';
