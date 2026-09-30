@@ -11,10 +11,12 @@ import {
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
+import { CLASS_TYPE } from './classType';
 import { normalizeFormData } from './ConceptCreate';
 import { ConceptForm } from './ConceptForm';
 import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
@@ -146,9 +148,9 @@ export function mapDetailToFormValues(
     conceptTypeEnum,
     identifier: detail['identifikátor'],
     type: detail.typ?.includes('Typ subjektu práva')
-      ? 'Subjekt'
+      ? CLASS_TYPE.subject
       : detail.typ?.includes('Typ objektu práva')
-        ? 'Objekt'
+        ? CLASS_TYPE.object
         : undefined,
     nameModel: {
       name:
@@ -300,9 +302,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           className="w-fit border bg-surface!"
           iconStart={<GovIcon name="journal-text" type="components" />}
         >
-          <span className="font-bold text-accent">
-            {conceptDetail?.['název']?.cs ?? slug}
-          </span>
+          <SectionTitle label={conceptDetail?.['název']?.cs ?? slug} />
         </GovTag>
       </div>
 

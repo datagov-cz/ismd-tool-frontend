@@ -125,8 +125,8 @@ export interface NkdResource {
 }
 
 export interface ValidationReport {
-  ontologyIri?: string;
   results?: ValidationResult[];
+  ontologyIri?: string;
   id?: number;
   timestamp?: string;
 }
@@ -149,9 +149,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -178,6 +178,135 @@ export interface OntologyCreateModel {
   namespace?: string;
   nameModel: NameModel;
   descriptionModel: DescriptionModel;
+}
+
+/**
+ * Exactly one of ref (an unsaved concept) or iri (an existing concept). Values are preserved from ISMD AI.
+ */
+export interface AiConceptReferenceDto {
+  ref?: string;
+  iri?: string;
+}
+
+export type AttributeDtoName = { [key: string]: string };
+
+export type AttributeDtoDefinition = { [key: string]: string };
+
+export type AttributeDtoExplanation = { [key: string]: string };
+
+export interface AttributeDto {
+  /** @minLength 1 */
+  ref: string;
+  associatedClass: AiConceptReferenceDto;
+  name: AttributeDtoName;
+  definition?: AttributeDtoDefinition;
+  explanation?: AttributeDtoExplanation;
+  legalAct?: string;
+  /** Optional datatype IRI supplied during review. */
+  dataType?: string;
+}
+
+export type ClassDtoName = { [key: string]: string };
+
+export type ClassDtoDefinition = { [key: string]: string };
+
+export type ClassDtoExplanation = { [key: string]: string };
+
+export type ClassDtoType = (typeof ClassDtoType)[keyof typeof ClassDtoType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ClassDtoType = {
+  CLASS: 'CLASS',
+  SUBJECT: 'SUBJECT',
+  OBJECT: 'OBJECT',
+} as const;
+
+export interface ClassDto {
+  /** @minLength 1 */
+  ref: string;
+  name: ClassDtoName;
+  definition?: ClassDtoDefinition;
+  explanation?: ClassDtoExplanation;
+  type: ClassDtoType;
+  specializes?: AiConceptReferenceDto[];
+  legalAct?: string;
+}
+
+/**
+ * New vocabulary and selected terms only. References to deselected classes are rejected. At most 1000 terms in total.
+ */
+export interface OntologyCreateWithConceptsRequestDto {
+  ontology: OntologyCreateModel;
+  /**
+   * @minItems 0
+   * @maxItems 1000
+   */
+  classes: ClassDto[];
+  /**
+   * @minItems 0
+   * @maxItems 1000
+   */
+  attributes: AttributeDto[];
+  /**
+   * @minItems 0
+   * @maxItems 1000
+   */
+  relationships: RelationshipDto[];
+}
+
+export type RelationshipDtoName = { [key: string]: string };
+
+export type RelationshipDtoDefinition = { [key: string]: string };
+
+export type RelationshipDtoExplanation = { [key: string]: string };
+
+export interface RelationshipDto {
+  /** @minLength 1 */
+  ref: string;
+  sourceClass: AiConceptReferenceDto;
+  targetClass: AiConceptReferenceDto;
+  name: RelationshipDtoName;
+  definition?: RelationshipDtoDefinition;
+  explanation?: RelationshipDtoExplanation;
+  legalAct?: string;
+}
+
+export interface ApiResponseDtoOntologyCreateWithConceptsResponseDto {
+  data?: OntologyCreateWithConceptsResponseDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+/**
+ * Mapping of every selected temporary ref to its final concept IRI.
+ */
+export type OntologyCreateWithConceptsResponseDtoConceptIris = {
+  [key: string]: string;
+};
+
+export interface OntologyCreateWithConceptsResponseDto {
+  ontology: OntologyMetadataModel;
+  /** Mapping of every selected temporary ref to its final concept IRI. */
+  conceptIris: OntologyCreateWithConceptsResponseDtoConceptIris;
+}
+
+export interface OntologyIriCheckRequestDto {
+  namespace?: string;
+  nameModel: NameModel;
+}
+
+export interface ApiResponseDtoOntologyIriCheckResponseDto {
+  data?: OntologyIriCheckResponseDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: string;
+}
+
+export interface OntologyIriCheckResponseDto {
+  iri: string;
+  valid: boolean;
+  available: boolean;
 }
 
 export type AltNameModelAltName = { [key: string]: string[] };
@@ -699,16 +828,112 @@ export interface AiFeedbackRequestDto {
   suggestionIds: string[];
 }
 
+export interface AiIdReferenceDto {
+  /** Identifier of the referenced conceptual-model term. */
+  id: string;
+}
+
 /**
- * Input for generating suggestions for a selected class. The backend adds only the configured suggestion count.
+ * Known terms that AI suggestions should take into account.
  */
-export interface AiSelectedClassSuggestionRequestDto {
-  /** @minLength 1 */
-  selectedClassId: string;
+export interface AiKnownConceptualModelDto {
+  classes?: KnownClassTermDto[];
+  attributes?: KnownAttributeTermDto[];
+  relationships?: KnownRelationshipTermDto[];
+}
+
+/**
+ * Parameters forwarded to the aggregated ISMD AI job. Omitted counts use AI defaults; no vocabulary is created.
+ */
+export interface AiVocabularySuggestionRequestDto {
+  /**
+   * Maximum new classes; AI default is 5.
+   * @minimum 1
+   * @maximum 10
+   */
+  classCount?: number;
+  /**
+   * Maximum properties per new class; AI default is 3, 0 skips properties.
+   * @minimum 0
+   * @maximum 10
+   */
+  propertiesPerClass?: number;
+  /**
+   * Maximum relationships per new class; AI default is 3, 0 skips relationships.
+   * @minimum 0
+   * @maximum 10
+   */
+  relationshipsPerClass?: number;
+  /**
+   * Optional ELI elements of the act version in the URL; omitted or empty uses the whole act.
+   * @minItems 0
+   * @maxItems 100
+   */
   structuralElementIds?: string[];
+  /**
+   * @minLength 0
+   * @maxLength 10000
+   */
   contextText?: string;
-  /** Slugs of ontologies merged into the known conceptual model. */
-  knownConceptualModelSlugs?: string[];
+  /** Optional known terms supplied directly, including unsaved terms with temporary termID values. */
+  knownConceptualModel?: AiKnownConceptualModelDto;
+}
+
+export type KnownAttributeTermDtoName = { [key: string]: string };
+
+export type KnownAttributeTermDtoDefinition = { [key: string]: string };
+
+export type KnownAttributeTermDtoExplanation = { [key: string]: string };
+
+export interface KnownAttributeTermDto {
+  termID?: string;
+  associatedClass?: AiIdReferenceDto;
+  name?: KnownAttributeTermDtoName;
+  definition?: KnownAttributeTermDtoDefinition;
+  explanation?: KnownAttributeTermDtoExplanation;
+  legalAct?: string;
+}
+
+export type KnownClassTermDtoName = { [key: string]: string };
+
+export type KnownClassTermDtoDefinition = { [key: string]: string };
+
+export type KnownClassTermDtoExplanation = { [key: string]: string };
+
+export type KnownClassTermDtoType =
+  (typeof KnownClassTermDtoType)[keyof typeof KnownClassTermDtoType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const KnownClassTermDtoType = {
+  CLASS: 'CLASS',
+  SUBJECT: 'SUBJECT',
+  OBJECT: 'OBJECT',
+} as const;
+
+export interface KnownClassTermDto {
+  termID?: string;
+  name?: KnownClassTermDtoName;
+  definition?: KnownClassTermDtoDefinition;
+  explanation?: KnownClassTermDtoExplanation;
+  type?: KnownClassTermDtoType;
+  specializes?: AiIdReferenceDto[];
+  legalAct?: string;
+}
+
+export type KnownRelationshipTermDtoName = { [key: string]: string };
+
+export type KnownRelationshipTermDtoDefinition = { [key: string]: string };
+
+export type KnownRelationshipTermDtoExplanation = { [key: string]: string };
+
+export interface KnownRelationshipTermDto {
+  termID?: string;
+  sourceClass?: AiIdReferenceDto;
+  targetClass?: AiIdReferenceDto;
+  name?: KnownRelationshipTermDtoName;
+  definition?: KnownRelationshipTermDtoDefinition;
+  explanation?: KnownRelationshipTermDtoExplanation;
+  legalAct?: string;
 }
 
 /**
@@ -729,6 +954,65 @@ export interface AiJobStartResponseDto {
   jobId: string;
   /** Initial processing status of the job. */
   status: AiJobStartResponseDtoStatus;
+}
+
+export interface AiVocabularyRegenerationRequestDto {
+  /** @minLength 1 */
+  conceptRef: string;
+  /**
+   * @minItems 0
+   * @maxItems 100
+   */
+  structuralElementIds?: string[];
+  /**
+   * @minLength 0
+   * @maxLength 10000
+   */
+  contextText?: string;
+  knownConceptualModel: AiKnownConceptualModelDto;
+}
+
+export type AiVocabularyExpansionRequestDtoKind =
+  (typeof AiVocabularyExpansionRequestDtoKind)[keyof typeof AiVocabularyExpansionRequestDtoKind];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiVocabularyExpansionRequestDtoKind = {
+  classes: 'classes',
+  properties: 'properties',
+  relationships: 'relationships',
+} as const;
+
+export interface AiVocabularyExpansionRequestDto {
+  kind: AiVocabularyExpansionRequestDtoKind;
+  /**
+   * @minimum 1
+   * @maximum 10
+   */
+  count?: number;
+  selectedClassId?: string;
+  /**
+   * @minItems 0
+   * @maxItems 100
+   */
+  structuralElementIds?: string[];
+  /**
+   * @minLength 0
+   * @maxLength 10000
+   */
+  contextText?: string;
+  knownConceptualModel: AiKnownConceptualModelDto;
+}
+
+/**
+ * Input for generating suggestions for a selected class. The backend adds only the configured suggestion count.
+ */
+export interface AiSelectedClassSuggestionRequestDto {
+  /** @minLength 1 */
+  selectedClassId: string;
+  structuralElementIds?: string[];
+  contextText?: string;
+  /** Slugs of ontologies merged into the known conceptual model. */
+  knownConceptualModelSlugs?: string[];
 }
 
 /**
@@ -1264,9 +1548,96 @@ export interface ApiResponseDtoListDataTypeDto {
   errorCode?: string;
 }
 
-export interface AiIdReferenceDto {
-  /** Identifier of the referenced conceptual-model term. */
-  id: string;
+export type AiDraftAttributeDtoName = { [key: string]: string };
+
+export type AiDraftAttributeDtoDefinition = { [key: string]: string };
+
+export type AiDraftAttributeDtoExplanation = { [key: string]: string };
+
+export interface AiDraftAttributeDto {
+  ref?: string;
+  associatedClass?: AiConceptReferenceDto;
+  name?: AiDraftAttributeDtoName;
+  definition?: AiDraftAttributeDtoDefinition;
+  explanation?: AiDraftAttributeDtoExplanation;
+  legalAct?: string;
+}
+
+export type AiDraftClassDtoName = { [key: string]: string };
+
+export type AiDraftClassDtoDefinition = { [key: string]: string };
+
+export type AiDraftClassDtoExplanation = { [key: string]: string };
+
+export type AiDraftClassDtoType =
+  (typeof AiDraftClassDtoType)[keyof typeof AiDraftClassDtoType];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiDraftClassDtoType = {
+  CLASS: 'CLASS',
+  SUBJECT: 'SUBJECT',
+  OBJECT: 'OBJECT',
+} as const;
+
+export interface AiDraftClassDto {
+  ref?: string;
+  name?: AiDraftClassDtoName;
+  definition?: AiDraftClassDtoDefinition;
+  explanation?: AiDraftClassDtoExplanation;
+  type?: AiDraftClassDtoType;
+  specializes?: AiConceptReferenceDto[];
+  legalAct?: string;
+}
+
+export type AiDraftRelationshipDtoName = { [key: string]: string };
+
+export type AiDraftRelationshipDtoDefinition = { [key: string]: string };
+
+export type AiDraftRelationshipDtoExplanation = { [key: string]: string };
+
+export interface AiDraftRelationshipDto {
+  ref?: string;
+  sourceClass?: AiConceptReferenceDto;
+  targetClass?: AiConceptReferenceDto;
+  name?: AiDraftRelationshipDtoName;
+  definition?: AiDraftRelationshipDtoDefinition;
+  explanation?: AiDraftRelationshipDtoExplanation;
+  legalAct?: string;
+}
+
+export type AiVocabularyDraftDtoPhase =
+  (typeof AiVocabularyDraftDtoPhase)[keyof typeof AiVocabularyDraftDtoPhase];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiVocabularyDraftDtoPhase = {
+  CLASSES: 'CLASSES',
+  PROPERTIES: 'PROPERTIES',
+  RELATIONSHIPS: 'RELATIONSHIPS',
+  DONE: 'DONE',
+} as const;
+
+export interface AiVocabularyDraftDto {
+  phase?: AiVocabularyDraftDtoPhase;
+  classes?: AiDraftClassDto[];
+  attributes?: AiDraftAttributeDto[];
+  relationships?: AiDraftRelationshipDto[];
+}
+
+export type AiVocabularySuggestionsJobResponseDtoStatus =
+  (typeof AiVocabularySuggestionsJobResponseDtoStatus)[keyof typeof AiVocabularySuggestionsJobResponseDtoStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AiVocabularySuggestionsJobResponseDtoStatus = {
+  in_progress: 'in_progress',
+  completed: 'completed',
+  failed: 'failed',
+} as const;
+
+export interface AiVocabularySuggestionsJobResponseDto {
+  jobId: string;
+  status: AiVocabularySuggestionsJobResponseDtoStatus;
+  /** Validated proposal so far. Failed jobs retain completed batches; only completed status denotes a complete result. */
+  draft: AiVocabularyDraftDto;
 }
 
 export type AiRelationshipSuggestionDtoName = { [key: string]: string };
@@ -1628,6 +1999,10 @@ export type GetConceptListParams = {
   isPublished?: boolean;
 };
 
+export type GetVocabularySuggestionsParams = {
+  jobIds: string[];
+};
+
 export type GetRelationshipSuggestionsParams = {
   jobIds: string[];
 };
@@ -1916,6 +2291,187 @@ export const useCreateOntology = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateOntologyMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Přijme nový slovník a vybrané pojmy. Sestaví finální IRI a převede refs na vazby. Používá stejné validace a RDF tvorbu jako běžné vytvoření. Obsazené IRI slovníku vrací 409. Nic nepřidává do existujícího slovníku. Vyžaduje autentizaci.
+ * @summary Vytvoření slovníku s vybranými pojmy
+ */
+export const createWithConcepts = (
+  ontologyCreateWithConceptsRequestDto: OntologyCreateWithConceptsRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoOntologyCreateWithConceptsResponseDto>(
+    {
+      url: `/api/ontology/create-with-concepts`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: ontologyCreateWithConceptsRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getCreateWithConceptsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createWithConcepts>>,
+    TError,
+    { data: OntologyCreateWithConceptsRequestDto },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createWithConcepts>>,
+  TError,
+  { data: OntologyCreateWithConceptsRequestDto },
+  TContext
+> => {
+  const mutationKey = ['createWithConcepts'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createWithConcepts>>,
+    { data: OntologyCreateWithConceptsRequestDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createWithConcepts(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateWithConceptsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createWithConcepts>>
+>;
+export type CreateWithConceptsMutationBody =
+  OntologyCreateWithConceptsRequestDto;
+export type CreateWithConceptsMutationError = unknown;
+
+/**
+ * @summary Vytvoření slovníku s vybranými pojmy
+ */
+export const useCreateWithConcepts = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createWithConcepts>>,
+      TError,
+      { data: OntologyCreateWithConceptsRequestDto },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createWithConcepts>>,
+  TError,
+  { data: OntologyCreateWithConceptsRequestDto },
+  TContext
+> => {
+  const mutationOptions = getCreateWithConceptsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Sestaví IRI z názvu a namespace stejným způsobem jako vytvoření slovníku. Vrací valid a available; dostupnost ověřuje pouze v lokální databázi. Neplatné IRI má oba příznaky false. Nic neukládá ani nerezervuje. Vyžaduje autentizaci.
+ * @summary Ověření IRI nového slovníku
+ */
+export const checkIri = (
+  ontologyIriCheckRequestDto: OntologyIriCheckRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<ApiResponseDtoOntologyIriCheckResponseDto>(
+    {
+      url: `/api/ontology/check-iri`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: ontologyIriCheckRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getCheckIriMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof checkIri>>,
+    TError,
+    { data: OntologyIriCheckRequestDto },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof checkIri>>,
+  TError,
+  { data: OntologyIriCheckRequestDto },
+  TContext
+> => {
+  const mutationKey = ['checkIri'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof checkIri>>,
+    { data: OntologyIriCheckRequestDto }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return checkIri(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CheckIriMutationResult = NonNullable<
+  Awaited<ReturnType<typeof checkIri>>
+>;
+export type CheckIriMutationBody = OntologyIriCheckRequestDto;
+export type CheckIriMutationError = unknown;
+
+/**
+ * @summary Ověření IRI nového slovníku
+ */
+export const useCheckIri = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof checkIri>>,
+      TError,
+      { data: OntologyIriCheckRequestDto },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof checkIri>>,
+  TError,
+  { data: OntologyIriCheckRequestDto },
+  TContext
+> => {
+  const mutationOptions = getCheckIriMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -2369,6 +2925,379 @@ export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getLikeSuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Předá jeden požadavek agregovanému endpointu ISMD AI a vrátí jobId pro polling.
+Volitelně lze zadat počty tříd, vlastností a vztahů, části předpisu, kontext a přímo
+známý konceptuální model. Vynechané počty použijí výchozí hodnoty AI služby.
+Nevytváří slovník ani finální IRI nových pojmů. Vyžaduje autentizaci.
+
+ * @summary Spustí propojený návrh celého slovníku z právního aktu
+ */
+export const startVocabularySuggestions = (
+  year: number,
+  number: number,
+  date: string,
+  aiVocabularySuggestionRequestDto: AiVocabularySuggestionRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiJobStartResponseDto>(
+    {
+      url: `/api/ai/legal-acts/${year}/${number}/${date}/vocabulary-suggestions`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiVocabularySuggestionRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getStartVocabularySuggestionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof startVocabularySuggestions>>,
+    TError,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiVocabularySuggestionRequestDto;
+    },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof startVocabularySuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiVocabularySuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationKey = ['startVocabularySuggestions'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof startVocabularySuggestions>>,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiVocabularySuggestionRequestDto;
+    }
+  > = (props) => {
+    const { year, number, date, data } = props ?? {};
+
+    return startVocabularySuggestions(year, number, date, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type StartVocabularySuggestionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof startVocabularySuggestions>>
+>;
+export type StartVocabularySuggestionsMutationBody =
+  AiVocabularySuggestionRequestDto;
+export type StartVocabularySuggestionsMutationError = unknown;
+
+/**
+ * @summary Spustí propojený návrh celého slovníku z právního aktu
+ */
+export const useStartVocabularySuggestions = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof startVocabularySuggestions>>,
+      TError,
+      {
+        year: number;
+        number: number;
+        date: string;
+        data: AiVocabularySuggestionRequestDto;
+      },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof startVocabularySuggestions>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiVocabularySuggestionRequestDto;
+  },
+  TContext
+> => {
+  const mutationOptions = getStartVocabularySuggestionsMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Pošlete aktuální knownConceptualModel a conceptRef. Ref, typ pojmu a všechny vazby zůstávají zachovány. Výsledek obsahuje nanejvýš jednu náhradu. Použijte existující vocabulary GET.
+ * @summary Přegeneruje texty konkrétního neuloženého pojmu
+ */
+export const regenerateVocabularyConcept = (
+  year: number,
+  number: number,
+  date: string,
+  aiVocabularyRegenerationRequestDto: AiVocabularyRegenerationRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiJobStartResponseDto>(
+    {
+      url: `/api/ai/legal-acts/${year}/${number}/${date}/vocabulary-suggestions/regenerate`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiVocabularyRegenerationRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getRegenerateVocabularyConceptMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof regenerateVocabularyConcept>>,
+    TError,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiVocabularyRegenerationRequestDto;
+    },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof regenerateVocabularyConcept>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiVocabularyRegenerationRequestDto;
+  },
+  TContext
+> => {
+  const mutationKey = ['regenerateVocabularyConcept'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof regenerateVocabularyConcept>>,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiVocabularyRegenerationRequestDto;
+    }
+  > = (props) => {
+    const { year, number, date, data } = props ?? {};
+
+    return regenerateVocabularyConcept(
+      year,
+      number,
+      date,
+      data,
+      requestOptions,
+    );
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RegenerateVocabularyConceptMutationResult = NonNullable<
+  Awaited<ReturnType<typeof regenerateVocabularyConcept>>
+>;
+export type RegenerateVocabularyConceptMutationBody =
+  AiVocabularyRegenerationRequestDto;
+export type RegenerateVocabularyConceptMutationError = unknown;
+
+/**
+ * @summary Přegeneruje texty konkrétního neuloženého pojmu
+ */
+export const useRegenerateVocabularyConcept = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof regenerateVocabularyConcept>>,
+      TError,
+      {
+        year: number;
+        number: number;
+        date: string;
+        data: AiVocabularyRegenerationRequestDto;
+      },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof regenerateVocabularyConcept>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiVocabularyRegenerationRequestDto;
+  },
+  TContext
+> => {
+  const mutationOptions =
+    getRegenerateVocabularyConceptMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Pošlete aktuální knownConceptualModel, kind a u vlastností/vztahů selectedClassId. Výsledek obsahuje jen přírůstek s novými refs. Použijte existující vocabulary GET.
+ * @summary Vygeneruje další třídy, vlastnosti nebo vztahy pro rozpracovaný návrh
+ */
+export const expandVocabulary = (
+  year: number,
+  number: number,
+  date: string,
+  aiVocabularyExpansionRequestDto: AiVocabularyExpansionRequestDto,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiJobStartResponseDto>(
+    {
+      url: `/api/ai/legal-acts/${year}/${number}/${date}/vocabulary-suggestions/expand`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: aiVocabularyExpansionRequestDto,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getExpandVocabularyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof expandVocabulary>>,
+    TError,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiVocabularyExpansionRequestDto;
+    },
+    TContext
+  >;
+  request?: SecondParameter<typeof axiosInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof expandVocabulary>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiVocabularyExpansionRequestDto;
+  },
+  TContext
+> => {
+  const mutationKey = ['expandVocabulary'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof expandVocabulary>>,
+    {
+      year: number;
+      number: number;
+      date: string;
+      data: AiVocabularyExpansionRequestDto;
+    }
+  > = (props) => {
+    const { year, number, date, data } = props ?? {};
+
+    return expandVocabulary(year, number, date, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ExpandVocabularyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof expandVocabulary>>
+>;
+export type ExpandVocabularyMutationBody = AiVocabularyExpansionRequestDto;
+export type ExpandVocabularyMutationError = unknown;
+
+/**
+ * @summary Vygeneruje další třídy, vlastnosti nebo vztahy pro rozpracovaný návrh
+ */
+export const useExpandVocabulary = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof expandVocabulary>>,
+      TError,
+      {
+        year: number;
+        number: number;
+        date: string;
+        data: AiVocabularyExpansionRequestDto;
+      },
+      TContext
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof expandVocabulary>>,
+  TError,
+  {
+    year: number;
+    number: number;
+    date: string;
+    data: AiVocabularyExpansionRequestDto;
+  },
+  TContext
+> => {
+  const mutationOptions = getExpandVocabularyMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -6784,6 +7713,184 @@ export function usePropertyDatatypes<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getPropertyDatatypesQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * Jedním voláním načte stav úloh z ISMD AI. Použijte opakovaný query parametr jobIds.
+Vrací třídy, vlastnosti, vztahy a jejich ref/iri reference beze změny hodnot.
+Při selhání zachovává částečný návrh; úplný výsledek má status completed.
+Backend neprovádí interní polling. Vyžaduje autentizaci.
+
+ * @summary Vrátí průběh a propojený návrh slovníku
+ */
+export const getVocabularySuggestions = (
+  params: GetVocabularySuggestionsParams,
+  options?: SecondParameter<typeof axiosInstance>,
+  signal?: AbortSignal,
+) => {
+  return axiosInstance<AiVocabularySuggestionsJobResponseDto[]>(
+    {
+      url: `/api/ai/legal-acts/vocabulary-suggestions-jobs`,
+      method: 'GET',
+      params,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getGetVocabularySuggestionsQueryKey = (
+  params?: GetVocabularySuggestionsParams,
+) => {
+  return [
+    `/api/ai/legal-acts/vocabulary-suggestions-jobs`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetVocabularySuggestionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
+  TError = unknown,
+>(
+  params: GetVocabularySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVocabularySuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetVocabularySuggestionsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getVocabularySuggestions>>
+  > = ({ signal }) => getVocabularySuggestions(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVocabularySuggestions>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVocabularySuggestionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVocabularySuggestions>>
+>;
+export type GetVocabularySuggestionsQueryError = unknown;
+
+export function useGetVocabularySuggestions<
+  TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
+  TError = unknown,
+>(
+  params: GetVocabularySuggestionsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVocabularySuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVocabularySuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getVocabularySuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVocabularySuggestions<
+  TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
+  TError = unknown,
+>(
+  params: GetVocabularySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVocabularySuggestions>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVocabularySuggestions>>,
+          TError,
+          Awaited<ReturnType<typeof getVocabularySuggestions>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVocabularySuggestions<
+  TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
+  TError = unknown,
+>(
+  params: GetVocabularySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVocabularySuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Vrátí průběh a propojený návrh slovníku
+ */
+
+export function useGetVocabularySuggestions<
+  TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
+  TError = unknown,
+>(
+  params: GetVocabularySuggestionsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVocabularySuggestions>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof axiosInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetVocabularySuggestionsQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

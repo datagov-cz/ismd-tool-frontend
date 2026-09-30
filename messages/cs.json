@@ -505,6 +505,77 @@
       "CSNameRequired": "Název (CS) je povinný",
       "DescriptionRequired": "Popis je povinný",
       "LanguageTagRequired": "Jazykový tag je povinný"
+    },
+    "IriCheck": {
+      "Idle": "Pro AI návrh nejprve vyplňte prostor názvů a název slovníku.",
+      "Checking": "Ověřuji IRI slovníku…",
+      "Ok": "IRI slovníku: {iri}",
+      "Invalid": "IRI slovníku není platné. Upravte název nebo prostor názvů.",
+      "Taken": "Slovník s IRI {iri} již existuje. Zvolte jiný název nebo prostor názvů.",
+      "Error": "IRI slovníku se nepodařilo ověřit.",
+      "BlockedSave": "Před uložením musí být IRI slovníku platné a volné."
+    },
+    "AiSuggestion": {
+      "SectionLabel": "AI návrh slovníku z e-Sbírky",
+      "Optional": "volitelné",
+      "SectionDescription": "Vyberte zdroj ze Sbírky zákonů a AI vám navrhne pojmy, vazby, vlastnosti a další strukturu slovníku. Vše zkontrolujete a rozhodnete, co do slovníku převezmete.",
+      "OfflineHint": "AI návrh není dostupný offline.",
+      "AIAssistDetail": "AI návrhy jsou připravené. Zkontrolujte je a vyberte, co se uloží se slovníkem.",
+      "IncompleteDraft": "Návrh není kompletní, AI generování selhalo. Můžete použít částečný výsledek nebo to zkusit znovu.",
+      "Retry": "Zkusit znovu",
+      "SelectAll": "Vybrat vše",
+      "SelectedCount": "Vybráno: {selected} ze {total} návrhů",
+      "Properties": "Vlastnosti",
+      "Relations": "Vztahy",
+      "MoreClasses": "Vygenerovat další třídy",
+      "GenerateMore": "Vygenerovat další",
+      "More": "více",
+      "Less": "méně",
+      "Explanation": "Popis",
+      "RegenerateItem": "Přegenerovat pomocí AI",
+      "EditItem": "Upravit",
+      "SuggestionUseful": "Je tento návrh použitelný?",
+      "SuggestionUsefulYes": "Návrh je použitelný",
+      "SuggestionUsefulNo": "Návrh není použitelný",
+      "FeedbackThanks": "Děkujeme za zpětnou vazbu.",
+      "NamingIssues": "Některé vybrané pojmy nemají název nebo mají stejný název. Opravte je před uložením.",
+      "NamingIssue": {
+        "MissingName": "Pojem musí mít český název.",
+        "DuplicateName": "Stejný název má i jiný vybraný pojem. Pojmenujte pojmy odlišně."
+      },
+      "ConceptType": {
+        "CLASS": "Třída",
+        "SUBJECT": "Subjekt",
+        "OBJECT": "Objekt"
+      },
+      "LegalAct": {
+        "Unsupported": "Vybraný zdroj nelze pro AI návrh použít. Vyberte část předpisu ze Sbírky zákonů."
+      },
+      "RetryHint": "AI návrh se nepodařilo spustit.",
+      "Progress": {
+        "Reconnecting": "Obnovuji spojení…",
+        "Title": "AI připravuje návrh slovníku…",
+        "Hint": "Může to trvat až několik minut. Můžete mezitím pokračovat ve vyplňování formuláře."
+      },
+      "Action": {
+        "ContextText": "Doplňující pokyny (volitelné)",
+        "Confirm": "Vygenerovat",
+        "Cancel": "Zrušit"
+      },
+      "Edit": {
+        "Name": "Název",
+        "Definition": "Definice",
+        "Explanation": "Popis",
+        "Type": "Typ",
+        "Save": "Uložit",
+        "Cancel": "Zrušit"
+      },
+      "Job": {
+        "StartError": "AI generování se nepodařilo spustit.",
+        "Failed": "AI generování selhalo.",
+        "NotFound": "AI úloha již není dostupná.",
+        "NoChange": "AI nenavrhla žádnou změnu."
+      }
     }
   },
   "CreateConcept": {
@@ -634,9 +705,37 @@
       "SectionDescription": "Vyhledejte právní předpis a vyberte ustanovení, ze kterého se mohou předvyplnit některé údaje pojmu.",
       "Optional": "volitelné",
       "PrefilledSummary": "Ze zdroje byly předvyplněny základní údaje:",
+      "PrefilledDetail": "Zkontrolujte je ve formuláři níže nebo využijte AI návrhy pro doplnění dalších údajů.",
+      "AIAssistTitle": "AI asistence ze zdroje",
+      "AIAssistDetail": "AI návrhy jsou připravené. Teď je zkontrolujte a rozhodněte, co převzít.",
+      "SelectAll": "Vybrat vše",
+      "SelectedCount": "Vybráno: {selected} ze {total} návrhů",
+      "SuggestionUseful": "Je tento návrh použitelný?",
+      "SuggestionUsefulYes": "Návrh je použitelný",
+      "SuggestionUsefulNo": "Návrh není použitelný",
+      "ApplySelected": "Převzít vybrané návrhy",
       "LoadError": "Nepodařilo se načíst údaje z e-Sbírky.",
       "NotFound": "Pro vybrané ustanovení nebyly nalezeny žádné údaje.",
-      "Success": "Údaje z e-Sbírky byly předvyplněny."
+      "Success": "Údaje z e-Sbírky byly předvyplněny.",
+      "Ai": {
+        "NeedsDomain": "Pro AI návrh vyberte Typ pojmu → Definiční obor.",
+        "Unsupported": "Pro vybrané ustanovení nelze AI návrh připravit.",
+        "Offline": "AI návrh není dostupný offline.",
+        "LoadingTitle": "AI připravuje návrhy pojmu…",
+        "LoadingHint": "Může to trvat až několik minut. Můžete mezitím pokračovat ve vyplňování formuláře.",
+        "Reconnecting": "Obnovuji spojení…",
+        "StartError": "AI návrh se nepodařilo spustit.",
+        "Rejected": "AI služba požadavek odmítla. Zkuste jiný definiční obor nebo jiné ustanovení.",
+        "PollError": "Stav AI návrhu se nepodařilo načíst.",
+        "Failed": "AI návrh selhal.",
+        "NotFound": "AI úloha již není dostupná.",
+        "Empty": "AI pro toto ustanovení nenašla žádné návrhy.",
+        "Retry": "Zkusit znovu",
+        "CandidatesLabel": "Navržené pojmy",
+        "Applied": "Vybrané návrhy byly převzaty do formuláře.",
+        "TargetNotFound": "Cílovou třídu {target} se nepodařilo dohledat. Obor hodnot vyberte ručně.",
+        "FeedbackThanks": "Děkujeme za zpětnou vazbu."
+      }
     },
     "ConceptMeaningSection": {
       "Label": "Význam pojmu",

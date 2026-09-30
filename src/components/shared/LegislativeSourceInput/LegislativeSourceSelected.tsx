@@ -31,7 +31,7 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
             <LegislativeSourceSelectedSkeleton />
           ) : (
             <>
-              <span className="block h-4 w-full truncate text-xs leading-4 text-(--text-subtle)">
+              <span className="block h-4 w-full truncate text-xs leading-4 text-subtle">
                 {data?.data?.displayLabel}
               </span>
               <span
