@@ -61,6 +61,18 @@ export const ConceptPickerSearch = ({
     () => data?.pages.flatMap((page) => page.data?.results ?? []) ?? [],
     [data],
   );
+  const searchConcepts = useMemo(
+    () =>
+      searchResults.map(
+        (item): Concept => ({
+          iri: item.iri,
+          slug: item.slug,
+          název: item.label ? { cs: item.label } : undefined,
+          metadata: item,
+        }),
+      ),
+    [searchResults],
+  );
 
   const sentinelRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -81,14 +93,6 @@ export const ConceptPickerSearch = ({
   );
 
   const resultConcepts = useMemo(() => {
-    const searchConcepts = searchResults.map(
-      (item): Concept => ({
-        iri: item.iri,
-        slug: item.slug,
-        název: item.label ? { cs: item.label } : undefined,
-        metadata: item,
-      }),
-    );
     const conceptsById = new Map(
       [...conceptsInDiagram, ...searchConcepts].map((concept) => [
         getConceptId(concept),
@@ -107,7 +111,7 @@ export const ConceptPickerSearch = ({
         Number(selectedConceptIds.has(getConceptId(a)))
       );
     });
-  }, [activeConceptIds, conceptsInDiagram, searchResults, selectedConceptIds]);
+  }, [activeConceptIds, conceptsInDiagram, searchConcepts, selectedConceptIds]);
 
   return (
     <div>

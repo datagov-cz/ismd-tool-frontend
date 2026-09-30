@@ -1,9 +1,15 @@
-import { useMemo, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   GovFormGroup,
   GovFormInput,
   GovIcon,
-  GovTabs,
 } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -21,6 +27,103 @@ import { onConceptDragStart } from '../../model/conceptDrag';
 import { ConceptPickerSearch } from './ConceptPickerSearch';
 import { FilterCheckbox } from './FilterCheckbox';
 import { PendingEditsPanel } from './PendingEditsPanel';
+
+const PickerTabs = ({
+  items,
+}: {
+  items: { label: string; children: ReactNode }[];
+}) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const baseId = useId().replaceAll(':', '');
+
+  const selectTab = (index: number, focus = false) => {
+    setActiveTab(index);
+    if (focus) requestAnimationFrame(() => buttonRefs.current[index]?.focus());
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).getAttribute('role') !== 'tab') return;
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+      return;
+    }
+
+    event.preventDefault();
+    const nextIndex =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? items.length - 1
+          : event.key === 'ArrowRight'
+            ? (activeTab + 1) % items.length
+            : (activeTab - 1 + items.length) % items.length;
+    selectTab(nextIndex, true);
+  };
+
+  return (
+    <div
+      className="gov-tabs hydrated"
+      data-size="m"
+      {...({ color: 'primary', type: 'text' } as Record<string, string>)}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="gov-tabs__tabs" role="tablist">
+        <ul className="gov-tabs__list" role="presentation">
+          {items.map((item, index) => {
+            const selected = activeTab === index;
+            const triggerId = `${baseId}-trigger-${index}`;
+            const contentId = `${baseId}-content-${index}`;
+
+            return (
+              <li
+                className="gov-tabs__item"
+                role="presentation"
+                key={triggerId}
+              >
+                <button
+                  ref={(button) => {
+                    buttonRefs.current[index] = button;
+                  }}
+                  className="gov-tabs__btn"
+                  id={triggerId}
+                  role="tab"
+                  type="button"
+                  aria-selected={selected}
+                  aria-controls={contentId}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => selectTab(index)}
+                >
+                  {item.label}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {items.map((item, index) => {
+        const selected = activeTab === index;
+        const triggerId = `${baseId}-trigger-${index}`;
+        const contentId = `${baseId}-content-${index}`;
+
+        return (
+          <div className="gov-tabs-item hydrated" key={contentId}>
+            <div
+              className="gov-tabs-item__inner"
+              role="tabpanel"
+              id={contentId}
+              hidden={!selected}
+              aria-labelledby={triggerId}
+              aria-hidden={!selected}
+            >
+              {item.children}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export const DiagramConceptPicker = ({
   concepts,
@@ -133,7 +236,7 @@ export const DiagramConceptPicker = ({
         onOpenChange={onPendingEditsOpenChange}
       />
       <div className="min-h-0 bg-white shadow-subtle rounded-md py-2 px-4">
-        <GovTabs
+        <PickerTabs
           items={[
             {
               label: t('ThisDictionary'),
@@ -230,7 +333,7 @@ export const DiagramConceptPicker = ({
               ),
             },
           ]}
-        ></GovTabs>
+        />
       </div>
     </aside>
   );

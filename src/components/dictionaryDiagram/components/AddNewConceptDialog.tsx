@@ -11,7 +11,6 @@ import {
   useGetOntologyDetail,
 } from '@/api/generated';
 import { normalizeFormData } from '@/components/conceptForm/ConceptCreate';
-import { ConceptForm } from '@/components/conceptForm/schema/conceptFormSchema';
 import { type ConceptForm as ConceptFormValues } from '@/components/conceptForm/schema/conceptFormSchema';
 import { RequiredNameModelSchema } from '@/components/conceptForm/schema/sharedConceptSchemas';
 import { LanguageInput } from '@/components/shared/LanguageInput';
@@ -154,7 +153,7 @@ export const AddNewConceptDialog = ({
           }
         >
           <div className="space-y-2.5">
-            <LanguageInput<ConceptForm>
+            <LanguageInput<AddNewConceptValues>
               name="nameModel.name"
               label={t('NamingSection.NameLabel')}
               placeholder={t('NamingSection.NamePlaceholder')}

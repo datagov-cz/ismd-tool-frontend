@@ -17,6 +17,7 @@ export type DiagramBuilderProps = {
   autoLayout: boolean;
   dispatch: Dispatch<HistoryAction>;
   ontology: string;
+  ontologyName?: string;
   canUndo: boolean;
   canRedo: boolean;
   focusRequest: { conceptId: string; requestId: number } | null;

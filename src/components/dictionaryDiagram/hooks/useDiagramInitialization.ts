@@ -10,11 +10,13 @@ export function useDiagramInitialization(
     diagram,
     isReady,
     sourceKey,
+    foreignOntologyNames,
   }: {
     concepts: ConceptDetailModel[];
     diagram: DiagramDto | undefined;
     isReady: boolean;
     sourceKey: string;
+    foreignOntologyNames: Record<string, string>;
   },
   dispatch: ActionDispatch<[action: HistoryAction]>,
 ) {
@@ -36,6 +38,7 @@ export function useDiagramInitialization(
       type: 'init',
       concepts,
       diagram: hasStoredLayout ? diagram : undefined,
+      foreignOntologyNames,
     });
-  }, [concepts, diagram, dispatch, isReady, sourceKey]);
+  }, [concepts, diagram, dispatch, foreignOntologyNames, isReady, sourceKey]);
 }

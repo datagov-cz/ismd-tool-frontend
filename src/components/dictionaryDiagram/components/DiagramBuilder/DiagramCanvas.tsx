@@ -177,6 +177,7 @@ export const DiagramCanvas = ({
   autoLayout,
   dispatch,
   ontology,
+  ontologyName,
   canRedo,
   canUndo,
   focusRequest,
@@ -417,6 +418,7 @@ export const DiagramCanvas = ({
         selected: focusedNodeIds.has(node.id),
         data: {
           ...node.data,
+          currentOntologyName: node.data.readOnly ? undefined : ontologyName,
           onFocus: () =>
             setFocusedNodeIds((current) => new Set(current).add(node.id)),
           onBlur: () =>
@@ -431,6 +433,12 @@ export const DiagramCanvas = ({
               next.delete(node.id);
               return next;
             }),
+          onPropertiesCollapsedChange: (collapsed: boolean) =>
+            dispatch({
+              type: 'setPropertiesCollapsed',
+              nodeId: node.id,
+              collapsed,
+            }),
         },
         style: {
           ...node.style,
@@ -438,7 +446,7 @@ export const DiagramCanvas = ({
           transition: 'opacity 160ms ease',
         },
       })),
-    [nodes, visibleNodeIds, focusedNodeIds],
+    [dispatch, nodes, visibleNodeIds, focusedNodeIds, ontologyName],
   );
 
   const showMinimumZoomWarning = useMemo(() => {

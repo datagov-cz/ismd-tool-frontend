@@ -42,6 +42,9 @@ function decide(action: HistoryAction, inDrag: boolean): Decision {
         inDrag,
       };
 
+    case 'setForeignOntologyName':
+      return { commit: false, inDrag };
+
     default:
       return { commit: true, inDrag };
   }

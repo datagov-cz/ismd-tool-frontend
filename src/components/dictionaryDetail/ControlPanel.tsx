@@ -158,21 +158,15 @@ export const ControlPanel = ({
             id={`diagrams-${ontologyID}`}
             position="right"
             className="w-full [&_.gov-dropdown__list]:w-full"
+            iconStart={<GovIcon name="diagram-3" size="l" type="components" />}
+            iconEnd={<GovIcon name="chevron-down" size="s" />}
+            label={` Diagramy [${diagramItems.length}]`}
+            color="neutral"
+            type="outlined"
+            size="s"
+            expanded
           >
-            <GovButton
-              nativeType="button"
-              color="neutral"
-              type="outlined"
-              size="s"
-              expanded
-              iconStart={
-                <GovIcon name="diagram-3" size="l" type="components" />
-              }
-              iconEnd={<GovIcon name="chevron-down" size="s" />}
-            >
-              Diagramy [{diagramItems.length}]
-            </GovButton>
-
+            Diagramy [{diagramItems.length}]
             <ul slot="list" className="min-w-72 p-0!">
               <li className="border-b border-gray-border/50">
                 <GovButton
@@ -234,10 +228,12 @@ export const ControlPanel = ({
             type="outlined"
             size="s"
             expanded
-            disabled
+            onClick={handleCreateDiagram}
             iconStart={<GovIcon name="diagram-3" size="l" type="components" />}
           >
-            {t('CreateDiagram')}
+            {createDiagram.isPending
+              ? 'Vytvářím diagram…'
+              : 'Přidat nový diagram'}
           </GovButton>
         )}
       </div>

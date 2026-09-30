@@ -3,7 +3,13 @@ import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { type Concept, getConceptKind } from '../model/concept';
+import { resolveConceptReferences } from '@/api/generated';
+import {
+  type Concept,
+  getConceptId,
+  getConceptIri,
+  getConceptKind,
+} from '../model/concept';
 import { parseConceptDrag } from '../model/conceptDrag';
 import {
   type ConceptFlowEdge,
@@ -51,12 +57,36 @@ export const useConceptDrop = (
           x: event.clientX,
           y: event.clientY,
         });
+        const conceptId = getConceptId(concept);
+        const isForeign = !concepts.some(
+          (localConcept) => getConceptId(localConcept) === conceptId,
+        );
         dispatch({
           type: 'placeTrida',
           concept,
           position,
           allConcepts: concepts,
         });
+
+        const conceptIri = getConceptIri(concept);
+        if (isForeign && conceptIri) {
+          void resolveConceptReferences({ iris: [conceptIri] })
+            .then((response) => {
+              const names = response.data?.resolved?.[conceptIri]?.ontologyName;
+              const ontologyName =
+                names?.cs ?? (names ? Object.values(names)[0] : undefined);
+              if (!ontologyName) return;
+
+              dispatch({
+                type: 'setForeignOntologyName',
+                conceptId,
+                ontologyName,
+              });
+            })
+            .catch(() => {
+              // Keep the generic foreign-dictionary label when resolution fails.
+            });
+        }
         return;
       }
 

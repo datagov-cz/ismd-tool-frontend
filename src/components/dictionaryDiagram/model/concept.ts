@@ -37,6 +37,16 @@ export const getDefinicniObor = (concept: Concept): string | undefined =>
 export const getConceptSlug = (concept: Concept): string | undefined =>
   concept.slug;
 
+export const getConceptOntologyName = (
+  concept: Concept,
+): string | undefined => {
+  const metadata = concept.metadata;
+  if (!metadata || !('ontologyLabel' in metadata)) return undefined;
+
+  const names = metadata.ontologyLabel;
+  return names?.cs ?? (names ? Object.values(names)[0] : undefined);
+};
+
 export const getLabelFromConceptIri = (iri?: string): string | undefined => {
   if (!iri) return undefined;
 

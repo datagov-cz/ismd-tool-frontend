@@ -46,6 +46,7 @@ export const ConceptNode = ({
   const t = useTranslations('DictionaryDiagram.Node');
   const conceptHasPendingChange = pendingConceptIds.has(getConceptId(concept));
   const [openDetail, setOpenDetail] = useState(false);
+  const propertiesCollapsed = data.propertiesCollapsed !== false;
 
   return (
     <div
@@ -91,7 +92,7 @@ export const ConceptNode = ({
                 className="min-h-4! px-1! py-0!"
               >
                 <span className="text-2xs font-bold leading-none">
-                  {t('ForeignDictionary')}
+                  {data.foreignOntologyName ?? t('ForeignDictionary')}
                 </span>
               </GovTag>
             )}
@@ -113,43 +114,58 @@ export const ConceptNode = ({
 
       {vlastnosti.length !== 0 && (
         <div className="flex flex-col gap-1.5 px-2.5 pb-2">
-          <details className="flex flex-col open:gap-1.5 open:pt-2">
-            <summary className="order-last [&::-webkit-details-marker]:hidden list-none cursor-pointer text-xs font-medium flex items-center justify-between border-t border-gray-border/50 pt-2">
-              <span>
-                {t('Properties')}{' '}
-                <span className="px-1 py-0.5 rounded-xs bg-border-grey">
-                  {vlastnosti.length}
-                </span>
-              </span>
-              <GovIcon
-                name="chevron-down"
-                size="xs"
-                className="[&_svg]:transition-transform! [[open]_&_svg]:rotate-180! [&_svg]:duration-300"
-              />
-            </summary>
-
-            {vlastnosti.map((v, i) => (
-              <div
-                key={`${getConceptId(v)}-${i}`}
-                className={clsx(
-                  'flex items-center gap-0.5 relative pb-0.5 font-medium rounded-sm',
-                  pendingConceptIds.has(getConceptId(v)) &&
-                    'bg-status-warning-100 ring-1 ring-status-warning-200',
-                )}
-              >
-                <span className="size-1.5 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
-                <span
+          {!propertiesCollapsed && (
+            <div className="flex flex-col gap-1.5 pt-2">
+              {vlastnosti.map((v, i) => (
+                <div
+                  key={`${getConceptId(v)}-${i}`}
                   className={clsx(
-                    'text-xs leading-none',
-                    v.stale ? 'text-status-error-700' : 'text-card-description',
+                    'flex items-center gap-0.5 relative pb-0.5 font-medium rounded-sm',
+                    pendingConceptIds.has(getConceptId(v)) &&
+                      'bg-status-warning-100 ring-1 ring-status-warning-200',
                   )}
                 >
-                  {getConceptLabel(v)}
-                  {v.stale && t('RemovedSuffix')}
-                </span>
-              </div>
-            ))}
-          </details>
+                  <span className="size-1.5 border-b border-l border-[#DDDDDD] rounded-bl-xs" />
+                  <span
+                    className={clsx(
+                      'text-xs leading-none',
+                      v.stale
+                        ? 'text-status-error-700'
+                        : 'text-card-description',
+                    )}
+                  >
+                    {getConceptLabel(v)}
+                    {v.stale && t('RemovedSuffix')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            aria-expanded={!propertiesCollapsed}
+            className="cursor-pointer text-xs font-medium flex items-center justify-between border-t border-gray-border/50 pt-2"
+            onClick={(event) => {
+              event.stopPropagation();
+              data.onPropertiesCollapsedChange?.(!propertiesCollapsed);
+            }}
+          >
+            <span>
+              {t('Properties')}{' '}
+              <span className="px-1 py-0.5 rounded-xs bg-border-grey">
+                {vlastnosti.length}
+              </span>
+            </span>
+            <GovIcon
+              name="chevron-down"
+              size="xs"
+              className={clsx(
+                '[&_svg]:transition-transform! [&_svg]:duration-300',
+                !propertiesCollapsed && '[&_svg]:rotate-180!',
+              )}
+            />
+          </button>
         </div>
       )}
 
@@ -213,6 +229,9 @@ const ConceptNodeDetail = ({
   const visibleRelations = showAllRelations ? vztahy : vztahy.slice(0, 3);
   const hiddenPropertiesCount = data.vlastnosti.length - 3;
   const hiddenRelationsCount = vztahy.length - 3;
+  const displayedOntologyName = data.readOnly
+    ? (data.foreignOntologyName ?? t('ForeignDictionary'))
+    : data.currentOntologyName;
 
   useEffect(() => {
     if (!open) return;
@@ -258,15 +277,26 @@ const ConceptNodeDetail = ({
                 <GovIcon name="box-arrow-up-right" size="xs" />
               </Link>
             )}
-            <GovTag type="subtle" size="xs" color="primary" className="mt-1!">
-              <span className="font-bold">
-                {data.concept.typ?.includes('Vlastnost')
-                  ? t('Property')
-                  : data.concept.typ?.includes('Vztah')
-                    ? t('Relationship')
-                    : t('Class')}
-              </span>
-            </GovTag>
+            <div className="mt-1 flex flex-wrap gap-1">
+              <GovTag type="subtle" size="xs" color="primary">
+                <span className="font-bold">
+                  {data.concept.typ?.includes('Vlastnost')
+                    ? t('Property')
+                    : data.concept.typ?.includes('Vztah')
+                      ? t('Relationship')
+                      : t('Class')}
+                </span>
+              </GovTag>
+              {displayedOntologyName && (
+                <GovTag
+                  type="subtle"
+                  size="xs"
+                  color={data.readOnly ? 'warning' : 'success'}
+                >
+                  <span className="font-bold">{displayedOntologyName}</span>
+                </GovTag>
+              )}
+            </div>
           </div>
 
           <button onClick={() => onClose()} className="flex items-center">

@@ -22,6 +22,7 @@ import {
   getConceptId,
   getConceptIri,
   getConceptKind,
+  getConceptOntologyName,
   getDefinicniObor,
   getLabelFromConceptIri,
 } from './concept';
@@ -30,9 +31,13 @@ export type ConceptNodeData = {
   concept: Concept;
   vlastnosti: Concept[];
   readOnly?: boolean;
+  foreignOntologyName?: string;
+  currentOntologyName?: string;
+  propertiesCollapsed?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
   onRemove?: () => void;
+  onPropertiesCollapsedChange?: (_collapsed: boolean) => void;
 };
 
 export type RelationshipKind = 'obecny' | 'hierarchie' | 'ekvivalence';
@@ -96,13 +101,28 @@ export type DiagramAction =
       expected: DiagramContent;
       saved: DiagramContent;
     }
-  | { type: 'init'; concepts: Concept[]; diagram?: DiagramDto }
+  | {
+      type: 'init';
+      concepts: Concept[];
+      diagram?: DiagramDto;
+      foreignOntologyNames?: Record<string, string>;
+    }
   | { type: 'applyLayout'; positions: Record<string, XYPosition> }
   | {
       type: 'placeTrida';
       concept: Concept;
       position: XYPosition;
       allConcepts: Concept[];
+    }
+  | {
+      type: 'setForeignOntologyName';
+      conceptId: string;
+      ontologyName: string;
+    }
+  | {
+      type: 'setPropertiesCollapsed';
+      nodeId: string;
+      collapsed: boolean;
     }
   | { type: 'assignVlastnost'; targetNodeId: string; vlastnost: Concept }
   | {
@@ -139,7 +159,7 @@ export const buildDefaultDiagram = (concepts: Concept[]): DiagramState => {
       id: crypto.randomUUID(),
       type: 'concept' as const,
       position: { x: i, y: i },
-      data: { concept, vlastnosti },
+      data: { concept, vlastnosti, propertiesCollapsed: true },
     };
   });
 
@@ -290,6 +310,7 @@ export const buildDiagramLayoutDto = (
       parentId: node.parentId
         ? persistedIdByNodeId.get(node.parentId)
         : undefined,
+      collapsed: node.data.propertiesCollapsed ?? true,
       visibleProperties: node.data.vlastnosti.map(getConceptId),
     })),
     edges: layoutEdges,
@@ -301,6 +322,7 @@ export const buildDiagramLayoutDto = (
 export const buildPersistedDiagram = (
   concepts: Concept[],
   diagram: DiagramDto,
+  foreignOntologyNames: Record<string, string> = {},
 ): DiagramState => {
   const conceptsById = new Map<string, Concept>();
 
@@ -421,6 +443,10 @@ export const buildPersistedDiagram = (
             concept,
             vlastnosti,
             readOnly: savedNode.data?.readOnly,
+            propertiesCollapsed: savedNode.collapsed ?? true,
+            foreignOntologyName: savedConceptIri
+              ? foreignOntologyNames[savedConceptIri]
+              : undefined,
           },
         },
       ];
@@ -920,7 +946,11 @@ export const diagramReducer = (
 
     case 'init':
       return action.diagram
-        ? buildPersistedDiagram(action.concepts, action.diagram)
+        ? buildPersistedDiagram(
+            action.concepts,
+            action.diagram,
+            action.foreignOntologyNames,
+          )
         : buildDefaultDiagram(action.concepts);
 
     case 'applyLayout':
@@ -967,10 +997,64 @@ export const diagramReducer = (
           concept: action.concept,
           vlastnosti,
           readOnly,
+          propertiesCollapsed: true,
+          foreignOntologyName: readOnly
+            ? getConceptOntologyName(action.concept)
+            : undefined,
         },
       };
 
       return { ...state, nodes: [...state.nodes, node] };
+    }
+
+    case 'setForeignOntologyName': {
+      const node = state.nodes.find(
+        (candidate) =>
+          candidate.data.readOnly &&
+          getConceptId(candidate.data.concept) === action.conceptId,
+      );
+      if (!node || node.data.foreignOntologyName === action.ontologyName) {
+        return state;
+      }
+
+      return {
+        ...state,
+        nodes: state.nodes.map((candidate) =>
+          candidate === node
+            ? {
+                ...candidate,
+                data: {
+                  ...candidate.data,
+                  foreignOntologyName: action.ontologyName,
+                },
+              }
+            : candidate,
+        ),
+      };
+    }
+
+    case 'setPropertiesCollapsed': {
+      const node = state.nodes.find(
+        (candidate) => candidate.id === action.nodeId,
+      );
+      if (!node || node.data.propertiesCollapsed === action.collapsed) {
+        return state;
+      }
+
+      return {
+        ...state,
+        nodes: state.nodes.map((candidate) =>
+          candidate === node
+            ? {
+                ...candidate,
+                data: {
+                  ...candidate.data,
+                  propertiesCollapsed: action.collapsed,
+                },
+              }
+            : candidate,
+        ),
+      };
     }
 
     case 'assignVlastnost': {

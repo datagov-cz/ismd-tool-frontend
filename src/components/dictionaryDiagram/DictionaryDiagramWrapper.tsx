@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { GovButton } from '@gov-design-system-ce/react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import {
+  resolveConceptReferences,
   useGetDiagram,
   useGetOntologyDetail,
   useRenameDiagram,
@@ -40,14 +42,45 @@ export const DictionaryDiagramWrapper = ({
 
   const { ontologyName, concepts } = useDiagramConcepts(ontology.data);
   const hydratedDiagram = diagram.data?.data;
+  const foreignConceptIris = useMemo(() => {
+    const iris = (hydratedDiagram?.nodes ?? []).flatMap((node) => {
+      if (!node.data?.readOnly) return [];
+
+      const iri = node.data.iri ?? node.id?.replace(/^iri:/, '');
+      return iri ? [iri] : [];
+    });
+
+    return Array.from(new Set(iris)).sort();
+  }, [hydratedDiagram?.nodes]);
+  const foreignConceptMetadata = useQuery({
+    queryKey: ['diagram-foreign-concepts', foreignConceptIris],
+    queryFn: () => resolveConceptReferences({ iris: foreignConceptIris }),
+    enabled: foreignConceptIris.length > 0,
+  });
+  const foreignOntologyNames = useMemo(() => {
+    const resolved = foreignConceptMetadata.data?.data?.resolved;
+
+    return Object.fromEntries(
+      foreignConceptIris.flatMap((iri) => {
+        const names = resolved?.[iri]?.ontologyName;
+        const name = names?.cs ?? (names ? Object.values(names)[0] : undefined);
+        return name ? [[iri, name]] : [];
+      }),
+    );
+  }, [foreignConceptIris, foreignConceptMetadata.data]);
   const hasDiagramPayload =
     diagram.data?.success !== false && hydratedDiagram !== undefined;
   const hasOntologyPayload =
     ontology.data?.success !== false &&
     ontology.data?.data?.ontologyDetail !== undefined;
+  const isForeignConceptMetadataPending =
+    foreignConceptIris.length > 0 && foreignConceptMetadata.isPending;
   const isInitialLoadPending =
-    isQueryLoading(diagram) || isQueryLoading(ontology);
-  const isReady = hasDiagramPayload && hasOntologyPayload;
+    isQueryLoading(diagram) ||
+    isQueryLoading(ontology) ||
+    isForeignConceptMetadataPending;
+  const isReady =
+    hasDiagramPayload && hasOntologyPayload && !isForeignConceptMetadataPending;
 
   const [history, dispatch] = useReducer(withHistory(diagramReducer), {
     past: [],
@@ -62,6 +95,7 @@ export const DictionaryDiagramWrapper = ({
       diagram: hydratedDiagram,
       isReady,
       sourceKey: `${slug}:${id}`,
+      foreignOntologyNames,
     },
     dispatch,
   );
@@ -317,6 +351,7 @@ export const DictionaryDiagramWrapper = ({
           autoLayout={shouldGenerateInitialLayout}
           dispatch={dispatch}
           ontology={slug}
+          ontologyName={ontologyName}
           canUndo={history.past.length > 0}
           canRedo={history.future.length > 0}
           focusRequest={focusRequest}
