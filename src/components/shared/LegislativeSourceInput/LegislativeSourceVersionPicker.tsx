@@ -39,9 +39,10 @@ export const LegislativeSourceVersionPicker = ({
     <label className="flex items-center gap-2 text-sm">
       <span className="shrink-0 font-bold">{t('Version')}</span>
       <GovFormSelect
+        size="m"
         value={selectedIri ?? ''}
         disabled={disabled}
-        onGovChange={(e) => onSelect(e.target.value)}
+        onChange={(e) => onSelect(e.target.value)}
       >
         {versions.map((v) => (
           <option
