@@ -11,6 +11,7 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
@@ -106,6 +107,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
   const submitForm = useSubmitForm();
+  const queryInvalidate = useQueryInvalidator();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
   const storageKey = draftKeys.conceptCreate(ontology);
@@ -117,7 +119,10 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
     submitForm({
       mutate: createConcept,
       variables: { slug: ontology, data: normalizeFormData(formData) },
-      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      onSuccess: (response) => {
+        queryInvalidate.invalidateDiagram(ontology);
+        router.push(`/concept/${response.data?.slug}`);
+      },
       draftKey: storageKey,
       reset: () => form.reset(),
       offlineMessage: t('SavedOffline'),

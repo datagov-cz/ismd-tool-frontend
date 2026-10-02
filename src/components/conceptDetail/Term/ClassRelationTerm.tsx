@@ -25,7 +25,7 @@ export const ClassRelationTerm = ({
   return (
     <div
       className={clsx(
-        'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-accent font-bold',
+        'border border-border-primary bg-blue-border/20 w-full flex flex-col rounded-md text-accent font-bold',
         relation.ontologyName ? 'px-2 py-1' : 'p-2',
       )}
     >

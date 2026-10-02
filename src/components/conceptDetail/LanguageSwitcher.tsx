@@ -29,7 +29,7 @@ export const LanguageSwitcher = ({
               key={lang}
               className="flex gap-2 border-b last:border-0 w-full pb-2 pt-2 last:pb-0 first:pt-0 border-border-default relative"
             >
-              {(showCsTag ?? lang !== 'cs') && (
+              {(showCsTag || lang !== 'cs') && (
                 <GovChip
                   color="primary"
                   size="xs"
