@@ -38,12 +38,9 @@ export const PrefilledSummary = ({ prefilled }: Props) => {
           <span className="block w-full truncate text-sm leading-4 text-muted">
             {prefilled.legalSourceLabel}
           </span>
-          <span
-            className="text-sm font-semibold block w-full truncate leading-5"
-            dangerouslySetInnerHTML={{
-              __html: prefilled.legalSourceBodyHtml ?? '',
-            }}
-          />
+          <span className="block w-full truncate text-sm font-semibold leading-5">
+            {prefilled.legalSourceBody}
+          </span>
         </span>
       ),
     },

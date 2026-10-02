@@ -10,7 +10,7 @@ import { withCsEntry } from '@/lib/languageEntries';
 export type PrefilledLegalSource = {
   definition?: string;
   legalSourceLabel?: string;
-  legalSourceBodyHtml?: string;
+  legalSourceBody?: string;
 };
 
 export const useLegalSourcePrefill = () => {
@@ -67,7 +67,7 @@ export const useLegalSourcePrefill = () => {
     setPrefilled({
       definition,
       legalSourceLabel: resolved.displayLabel,
-      legalSourceBodyHtml: resolved.fragmentBodyHtml,
+      legalSourceBody: definition,
     });
     toast.success(t('Success'));
   };
