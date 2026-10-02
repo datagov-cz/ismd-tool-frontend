@@ -3,7 +3,6 @@ import { useTranslations } from 'next-intl';
 
 import { getGetOntologyDetailQueryOptions } from '@/api/generated';
 import { CLASS_TYPE } from '@/components/conceptForm/classType';
-import { isSameIri } from '@/lib/conceptSuggestion/domainDictionary';
 import type {
   ConceptSuggestion,
   ConceptSuggestionKind,
@@ -53,10 +52,7 @@ export const useSuggestionFieldCards = ({
 
   const targetIri = kind === 'VZTAH' ? suggestion.targetIri : undefined;
   const rangeConcept = targetIri
-    ? known.concepts.find(
-        (concept) =>
-          !!concept.conceptIri && isSameIri(concept.conceptIri, targetIri),
-      )
+    ? known.concepts.find((concept) => concept.conceptIri === targetIri)
     : undefined;
 
   const cards: FieldCard[] = [

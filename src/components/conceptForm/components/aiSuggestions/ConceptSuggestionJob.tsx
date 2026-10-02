@@ -1,9 +1,9 @@
 import { useTranslations } from 'next-intl';
 
+import { AiProgress } from '@/components/shared/AiProgress';
 import { useConceptSuggestions } from '@/hooks/useConceptSuggestions';
 import type { ConceptSuggestionRequest } from '@/lib/conceptSuggestion/types';
 
-import { AiLoadingMessage } from './AiLoadingMessage';
 import { AiStatusMessage } from './AiStatusMessage';
 import { SuggestionsList } from './SuggestionsList';
 
@@ -26,7 +26,13 @@ export const ConceptSuggestionJob = ({
   }
 
   if (state.status === 'loading') {
-    return <AiLoadingMessage isReconnecting={state.isReconnecting} />;
+    return (
+      <AiProgress
+        title={t('LoadingTitle')}
+        hint={t('LoadingHint')}
+        reconnecting={state.isReconnecting ? t('Reconnecting') : undefined}
+      />
+    );
   }
 
   if (state.status === 'failed') {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
@@ -8,25 +9,19 @@ type Vote = 'like' | 'dislike';
 type Props = {
   jobId: string;
   suggestionId: string;
-  hasVoted: boolean;
-  onVoted: (_suggestionId: string) => void;
 };
 
-export const SuggestionFeedback = ({
-  jobId,
-  suggestionId,
-  hasVoted,
-  onVoted,
-}: Props) => {
+export const SuggestionFeedback = ({ jobId, suggestionId }: Props) => {
   const t = useTranslations('CreateConcept.LegalSourceAutofill');
+  const [votedIds, setVotedIds] = useState<string[]>([]);
 
   const sendVote = (vote: Vote) => {
-    onVoted(suggestionId);
+    setVotedIds((current) => [...current, suggestionId]);
     const send = vote === 'like' ? likeSuggestions : dislikeSuggestions;
     send([{ jobId, suggestionIds: [suggestionId] }]).catch(() => undefined);
   };
 
-  if (hasVoted) {
+  if (votedIds.includes(suggestionId)) {
     return (
       <div className="text-center text-sm text-muted">
         {t('Ai.FeedbackThanks')}

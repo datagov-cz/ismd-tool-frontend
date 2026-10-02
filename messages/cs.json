@@ -726,7 +726,6 @@
         "Reconnecting": "Obnovuji spojení…",
         "StartError": "AI návrh se nepodařilo spustit.",
         "Rejected": "AI služba požadavek odmítla. Zkuste jiný definiční obor nebo jiné ustanovení.",
-        "PollError": "Stav AI návrhu se nepodařilo načíst.",
         "Failed": "AI návrh selhal.",
         "NotFound": "AI úloha již není dostupná.",
         "Empty": "AI pro toto ustanovení nenašla žádné návrhy.",

@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -14,7 +13,6 @@ export const useApplySuggestion = (
 ) => {
   const t = useTranslations('CreateConcept.LegalSourceAutofill.Ai');
   const { getValues, setValue, trigger } = useFormContext<ConceptForm>();
-  const accepted = useRef(new Set<string>());
 
   return (suggestionId: string, cards: FieldCard[]) => {
     cards.forEach((card) => {
@@ -35,10 +33,6 @@ export const useApplySuggestion = (
       onDefinitionApplied();
     }
     toast.success(t('Applied'));
-    if (accepted.current.has(suggestionId)) {
-      return;
-    }
-    accepted.current.add(suggestionId);
     acceptSuggestions([{ jobId, suggestionIds: [suggestionId] }]).catch(
       () => undefined,
     );

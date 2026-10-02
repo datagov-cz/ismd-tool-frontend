@@ -1,4 +1,4 @@
-import { type ReactNode, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { GovButton, GovFormCheckbox } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
@@ -19,7 +19,6 @@ type Props = {
   suggestion: ConceptSuggestion;
   knownSlugs: string[];
   onDefinitionApplied: () => void;
-  children: ReactNode;
 };
 
 const lastIriSegment = (iri: string) =>
@@ -31,7 +30,6 @@ export const SuggestionFields = ({
   suggestion,
   knownSlugs,
   onDefinitionApplied,
-  children,
 }: Props) => {
   const id = useId();
   const t = useTranslations('CreateConcept.LegalSourceAutofill');
@@ -101,7 +99,6 @@ export const SuggestionFields = ({
           {t('Ai.TargetNotFound', { target: lastIriSegment(missingTargetIri) })}
         </div>
       ) : null}
-      {children}
       <div className="flex justify-center">
         <GovButton
           type="solid"

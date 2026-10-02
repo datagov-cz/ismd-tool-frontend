@@ -12,9 +12,9 @@ import { toast } from 'react-toastify';
 
 import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { AiFeedback } from '@/components/dictionaryCreate/AiFeedback';
-import { AiProgress } from '@/components/dictionaryCreate/AiProgress';
 import { DictionarySuggestionCard } from '@/components/dictionaryCreate/DictionarySuggestionCard';
 import { IriStatus } from '@/components/dictionaryCreate/IriStatus';
+import { AiProgress } from '@/components/shared/AiProgress';
 import { LegislativeSourcePicker } from '@/components/shared/LegislativeSourceInput/LegislativeSourcePicker';
 import type { IriStatus as IriStatusType } from '@/hooks/useIriCheck';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -143,7 +143,15 @@ export const AiSuggestionSection = ({ iriStatus, iri }: Props) => {
 
           {isInitialRunning || (isStarting && !hasDraft) ? (
             <div className="px-2.5">
-              <AiProgress isReconnecting={isInitialRunning && isReconnecting} />
+              <AiProgress
+                title={t('Progress.Title')}
+                hint={t('Progress.Hint')}
+                reconnecting={
+                  isInitialRunning && isReconnecting
+                    ? t('Progress.Reconnecting')
+                    : undefined
+                }
+              />
             </div>
           ) : null}
 

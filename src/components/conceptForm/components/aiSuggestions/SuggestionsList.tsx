@@ -28,7 +28,6 @@ export const SuggestionsList = ({
 }: Props) => {
   const t = useTranslations('CreateConcept.LegalSourceAutofill');
   const [pickedId, setPickedId] = useState(suggestions[0].suggestionId);
-  const [votedIds, setVotedIds] = useState<string[]>([]);
 
   const picked =
     suggestions.find((suggestion) => suggestion.suggestionId === pickedId) ??
@@ -50,16 +49,8 @@ export const SuggestionsList = ({
         suggestion={picked}
         knownSlugs={knownSlugs}
         onDefinitionApplied={onDefinitionApplied}
-      >
-        <SuggestionFeedback
-          jobId={jobId}
-          suggestionId={picked.suggestionId}
-          hasVoted={votedIds.includes(picked.suggestionId)}
-          onVoted={(suggestionId) =>
-            setVotedIds((current) => [...current, suggestionId])
-          }
-        />
-      </SuggestionFields>
+      />
+      <SuggestionFeedback jobId={jobId} suggestionId={picked.suggestionId} />
     </div>
   );
 };

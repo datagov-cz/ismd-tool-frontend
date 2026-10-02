@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import { AiProgress } from '@/components/shared/AiProgress';
 import { useConceptSuggestionRequest } from '@/hooks/useConceptSuggestionRequest';
 
-import { AiLoadingMessage } from './AiLoadingMessage';
 import { AiStatusMessage } from './AiStatusMessage';
 import { ConceptSuggestionJob } from './ConceptSuggestionJob';
 
@@ -33,7 +33,7 @@ export const ConceptAiSuggestions = ({
   }
 
   if (state.status === 'resolving') {
-    return <AiLoadingMessage />;
+    return <AiProgress title={t('LoadingTitle')} hint={t('LoadingHint')} />;
   }
 
   return (

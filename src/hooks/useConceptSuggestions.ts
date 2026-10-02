@@ -17,9 +17,8 @@ import type {
 } from '@/lib/conceptSuggestion/types';
 
 const START_DELAY_MS = 600;
-const MAX_POLL_ERRORS = 10;
 
-type Failure = 'Rejected' | 'StartError' | 'NotFound' | 'Failed' | 'PollError';
+type Failure = 'Rejected' | 'StartError' | 'NotFound' | 'Failed';
 
 type Job = {
   jobId: string;
@@ -46,24 +45,9 @@ const startFailure = (
     ? 'Rejected'
     : 'StartError';
 
-const pollFailure = (error: unknown, errorCount: number): Failure | null => {
-  if (!error) {
-    return null;
-  }
-  const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-  if (status === 404) {
-    return 'NotFound';
-  }
-  if (status !== undefined && status < 500) {
-    return 'PollError';
-  }
-  return errorCount >= MAX_POLL_ERRORS ? 'PollError' : null;
-};
-
 const outcomeOf = (
   data: ConceptSuggestionJob | null | undefined,
   error: unknown,
-  errorCount: number,
 ): Outcome | null => {
   if (data?.status === 'completed') {
     return { status: 'done', jobId: data.jobId, suggestions: data.suggestions };
@@ -71,17 +55,17 @@ const outcomeOf = (
   if (data?.status === 'failed') {
     return { status: 'failed', failure: 'Failed' };
   }
-  if (data === null) {
-    return { status: 'failed', failure: 'NotFound' };
-  }
-  const failure = pollFailure(error, errorCount);
-  return failure ? { status: 'failed', failure } : null;
+  const isMissing =
+    data === null ||
+    (axios.isAxiosError(error) && error.response?.status === 404);
+  return isMissing ? { status: 'failed', failure: 'NotFound' } : null;
 };
 
 export const useConceptSuggestions = (
-  request: ConceptSuggestionRequest,
+  initialRequest: ConceptSuggestionRequest,
 ): ConceptSuggestionState => {
   const t = useTranslations('CreateConcept.LegalSourceAutofill.Ai');
+  const [request] = useState(initialRequest);
   const isOnline = useIsOnline();
   const started = useRef(false);
   const [job, setJob] = useState<Job | null>(null);
@@ -102,13 +86,13 @@ export const useConceptSuggestions = (
     return () => clearTimeout(timer);
   }, [isOnline, request]);
 
-  const { data, error, errorUpdateCount } = useQuery({
+  const { data, error } = useQuery({
     queryKey: ['conceptSuggestionJob', request.kind, job?.jobId],
     queryFn: () =>
       job ? fetchConceptSuggestionJob(request.kind, job.jobId) : null,
     enabled: !!job,
     refetchInterval: ({ state }) =>
-      job && !outcomeOf(state.data, state.error, state.errorUpdateCount)
+      job && !outcomeOf(state.data, state.error)
         ? pollInterval(job.startedAt)
         : false,
     refetchIntervalInBackground: true,
@@ -117,7 +101,7 @@ export const useConceptSuggestions = (
     gcTime: 0,
   });
 
-  const outcome = job ? outcomeOf(data, error, errorUpdateCount) : null;
+  const outcome = job ? outcomeOf(data, error) : null;
   const failure =
     startError ?? (outcome?.status === 'failed' ? outcome.failure : null);
 
