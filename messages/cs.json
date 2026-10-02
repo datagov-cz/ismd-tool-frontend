@@ -359,6 +359,7 @@
         "GetLink": "Získání odkazu",
         "CopyLink": "Kopírovat odkaz",
         "LinkCopied": "Odkaz zkopírován",
+        "LinkCopyFailed": "Odkaz se nepodařilo zkopírovat",
         "Comments": "Komentáře",
         "ValidationPassed": "Validace proběhla úspěšně",
         "ValidationFailed": "Validace neprošla",
@@ -369,7 +370,9 @@
         "Updated": "aktualizováno",
         "CreateDiagram": "Vytvořit diagram",
         "CopyIRI": "Zkopírovat IRI",
-        "CopyURL": "Zkopírovat URL"
+        "CopyURL": "Zkopírovat URL",
+        "Distribution": "Distribuce",
+        "Distributions": "Distribuce datové sady"
       },
       "BackToHome": "Zpět",
       "AddConcept": "Přidat pojem",
@@ -391,6 +394,11 @@
     "SearchOntologies": "Hledat slovníky",
     "NoMoreResults": "Žádné další výsledky"
   },
+  "DatasetList": {
+    "AllTitle": "Datové sady",
+    "SearchOntologies": "Hledat datové sady",
+    "NoMoreResults": "Žádné další výsledky"
+  },
   "Shared": {
     "CloseAria": "Zavřít",
     "Yes": "Ano",
@@ -407,7 +415,9 @@
     "EnterManually": "Zadat IRI zákona ručně",
     "ManualPlaceholder": "Zadejte IRI zákona",
     "SelectFromList": "Vyhledat IRI zákona",
-    "RemoveManualEntry": "Odebrat IRI zákona"
+    "RemoveManualEntry": "Odebrat IRI zákona",
+    "Version": "Znění",
+    "CurrentVersion": "(aktuální)"
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
