@@ -27,12 +27,19 @@ export const FileController = ({
   translationNamespace,
 }: FileControllerProps<UploadFromFileBody>) => {
   const {
-    field: { onChange },
+    field: { onChange, value },
     fieldState: { error },
   } = useController({ control: form.control, name });
 
   const t = useTranslations(translationNamespace);
   const acceptedTypes = accept || DEFAULT_ACCEPTED_FILE_TYPES;
+  const selectedFileName =
+    typeof value === 'object' &&
+    value !== null &&
+    'name' in value &&
+    typeof value.name === 'string'
+      ? value.name
+      : undefined;
 
   const applyNativeAttributes = useCallback(
     (input: HTMLInputElement | null) => {
@@ -71,6 +78,11 @@ export const FileController = ({
           >
             {t('FileUpload.Upload')}
           </GovButton>
+          {selectedFileName && (
+            <p className="break-all text-sm pt-2" aria-live="polite">
+              {selectedFileName}
+            </p>
+          )}
           <p className="opacity-60 text-sm pt-2">{t('FileUpload.Supported')}</p>
         </div>
       </GovFormFile>
