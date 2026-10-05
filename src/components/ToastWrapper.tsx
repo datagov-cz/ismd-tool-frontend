@@ -1,18 +1,17 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { ToastContainer } from 'react-toastify';
 
-import { useTheme } from './contexts/ThemeProvider';
-
 export function ToastWrapper() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <ToastContainer
       position="bottom-left"
       autoClose={3000}
       hideProgressBar
-      theme={theme}
+      theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
     />
   );
 }
