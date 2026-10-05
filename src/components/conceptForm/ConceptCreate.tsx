@@ -11,6 +11,7 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
@@ -106,6 +107,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const t = useTranslations('ConceptCreateWrapper');
   const router = useRouter();
   const submitForm = useSubmitForm();
+  const queryInvalidate = useQueryInvalidator();
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
   const storageKey = draftKeys.conceptCreate(ontology);
@@ -117,7 +119,10 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
     submitForm({
       mutate: createConcept,
       variables: { slug: ontology, data: normalizeFormData(formData) },
-      onSuccess: (response) => router.push(`/concept/${response.data?.slug}`),
+      onSuccess: (response) => {
+        queryInvalidate.invalidateDiagram(ontology);
+        router.push(`/concept/${response.data?.slug}`);
+      },
       draftKey: storageKey,
       reset: () => form.reset(),
       offlineMessage: t('SavedOffline'),
@@ -129,7 +134,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => router.back()}
-          className="flex gap-1 text-blue-primary font-bold items-center text-sm"
+          className="flex gap-1 text-accent font-bold items-center text-sm"
         >
           <GovIcon name="chevron-compact-left" size="s" color="primary" />
           {tNav('Back')}
@@ -141,10 +146,10 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           color="success"
           type="subtle"
           size="xs"
-          className="w-fit border bg-white!"
+          className="w-fit border bg-surface!"
+          iconStart={<GovIcon name="journal-text" type="components" />}
         >
-          <GovIcon name="journal-text" slot="icon-start" type="components" />
-          <span className="font-bold text-blue-primary">
+          <span className="font-bold text-accent">
             {data?.data?.ontologyDetail?.název?.cs}
           </span>
         </GovTag>

@@ -28,7 +28,9 @@ export function HintboxHeader({
     <>
       <div className="flex items-center gap-3 px-4 py-3 shrink-0">
         <GovIcon name="question-square" type="components" />
-        <span className="font-semibold text-gray-800 text-xl">{t('ISMD')}</span>
+        <span className="font-semibold text-foreground text-xl">
+          {t('ISMD')}
+        </span>
 
         <Searchbar
           placeholder={t('SearchPlaceholder')}
@@ -40,7 +42,7 @@ export function HintboxHeader({
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-700 transition-colors"
+            className="text-foreground-subtle hover:text-foreground-muted transition-colors"
             aria-label="Zavřít"
           >
             <GovIcon name="x-lg" type="components" />
@@ -49,11 +51,11 @@ export function HintboxHeader({
       </div>
 
       {panel !== 'home' && (
-        <div className="flex items-center gap-1 px-4 py-1.5 shrink-0 text-xs text-gray-400">
+        <div className="flex items-center gap-1 px-4 py-1.5 shrink-0 text-xs text-foreground-subtle">
           <button
             onClick={onGoHome}
             className={clsx(
-              'text-blue-primary hover:no-underline transition-colors underline',
+              'text-accent hover:no-underline transition-colors underline',
             )}
           >
             {t('Title')}
@@ -65,7 +67,7 @@ export function HintboxHeader({
               <button
                 onClick={() => onSearchChange(searchQuery)}
                 className={clsx(
-                  'font-bold text-dark-secondary transition-colors',
+                  'font-bold text-foreground-muted transition-colors',
                 )}
               >
                 {t('Search')}
@@ -78,7 +80,7 @@ export function HintboxHeader({
               <GovIcon name="chevron-right" type="components" size="xs" />
               <span
                 className={clsx(
-                  'font-bold text-dark-secondary transition-colors',
+                  'font-bold text-foreground-muted transition-colors',
                 )}
               >
                 {selectedFileTitle}

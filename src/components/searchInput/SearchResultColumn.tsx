@@ -42,7 +42,19 @@ const TYPE_CONFIG = {
     emptyKey: 'NoConcepts' as const,
     hrefPrefix: '/concept',
   },
-};
+  [SearchType.DIAGRAM]: {
+    titleKey: 'Diagrams' as const,
+    emptyKey: 'NoDiagrams' as const,
+    hrefPrefix: '/dictionary',
+  },
+} satisfies Record<
+  SearchType,
+  {
+    titleKey: 'Ontologies' | 'Concepts' | 'Diagrams';
+    emptyKey: 'NoOntologies' | 'NoConcepts' | 'NoDiagrams';
+    hrefPrefix: string;
+  }
+>;
 
 export const SearchResultColumn = ({
   type,
@@ -57,6 +69,9 @@ export const SearchResultColumn = ({
   const hasItems = items.length > 0;
 
   const getItemHref = (item: SearchResultDto) => {
+    if (type === SearchType.DIAGRAM) {
+      return `/dictionary/${item.slug}/diagram/${item.diagramId}`;
+    }
     if (item.source === 'ISMD') return `${config.hrefPrefix}/${item.slug}`;
     if (item.source === 'NKD') {
       return `${config.hrefPrefix}/nkd?iri=${encodeURIComponent(item.iri || '')}`;
@@ -66,7 +81,7 @@ export const SearchResultColumn = ({
 
   return (
     <div className="p-4">
-      <p className="text-sm font-semibold text-gray-700 mb-3">
+      <p className="text-sm font-semibold text-foreground-muted mb-3">
         {t(config.titleKey)}
       </p>
 
@@ -103,7 +118,9 @@ export const SearchResultColumn = ({
           )}
         </>
       ) : (
-        <p className="text-xs text-gray-400 italic">{t(config.emptyKey)}</p>
+        <p className="text-xs text-foreground-subtle italic">
+          {t(config.emptyKey)}
+        </p>
       )}
     </div>
   );

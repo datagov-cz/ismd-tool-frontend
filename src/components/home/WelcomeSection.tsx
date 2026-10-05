@@ -13,7 +13,7 @@ export const WelcomeSection = () => {
       <SearchInput className="max-w-150" />
       <Link
         href="/dictionary/nkd/list"
-        className="underline text-sm text-dark-primary"
+        className="underline text-sm text-foreground"
       >
         {t('WelcomeSection.BrowseDictionaries')}
       </Link>

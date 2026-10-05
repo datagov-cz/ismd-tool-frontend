@@ -15,6 +15,7 @@ import {
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
+import { DiagramCard } from '@/components/shared/DiagramCard/DiagramCard';
 import { DictionaryCard } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { PageLoader } from '@/components/shared/PageLoader';
 
@@ -116,20 +117,20 @@ const Search = () => {
   };
 
   return (
-    <div className="w-full py-10 px-5">
+    <div className="w-full flex-1 py-10 px-5 bg-surface-form">
       <div className="max-w-250 mx-auto space-y-3">
         <div className="flex flex-col items-center justify-center gap-4">
           <h1 className="text-center text-xl font-medium">
             {t('SearchesFor')} &#39;{q}&#39;
           </h1>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             <span className="font-bold text-sm">{t('FilterLabel')} </span>
             <GovButton
               type={
                 activeType === ApiSearchType.ONTOLOGY ? 'solid' : 'outlined'
               }
-              onGovClick={() => toggleType(ApiSearchType.ONTOLOGY)}
+              onClick={() => toggleType(ApiSearchType.ONTOLOGY)}
               color="success"
               size="xs"
             >
@@ -139,13 +140,29 @@ const Search = () => {
             </GovButton>
             <GovButton
               type={activeType === ApiSearchType.CONCEPT ? 'solid' : 'outlined'}
-              onGovClick={() => toggleType(ApiSearchType.CONCEPT)}
+              onClick={() => toggleType(ApiSearchType.CONCEPT)}
               color="primary"
               size="xs"
             >
               {tTypes('Types.Pojem')}{' '}
               {activeType !== 'ONTOLOGY' &&
                 `[${firstPage?.totalConcepts ?? 0}]`}
+            </GovButton>
+            <GovButton
+              type={activeType === ApiSearchType.DIAGRAM ? 'solid' : 'outlined'}
+              onClick={() => toggleType(ApiSearchType.DIAGRAM)}
+              color="neutral"
+              size="xs"
+              className={
+                activeType === ApiSearchType.DIAGRAM
+                  ? '[&_button]:border-purple! [&_button]:bg-purple! [&_button]:text-white!'
+                  : '[&_button]:border-purple! [&_button]:text-purple!'
+              }
+            >
+              {tTypes('Types.Diagram')}{' '}
+              {activeType !== ApiSearchType.ONTOLOGY &&
+                activeType !== ApiSearchType.CONCEPT &&
+                `[${firstPage?.totalDiagrams ?? 0}]`}
             </GovButton>
             {user?.userId && (
               <GovButton
@@ -154,7 +171,7 @@ const Search = () => {
                     ? 'solid'
                     : 'outlined'
                 }
-                onGovClick={() => toggleSource(SearchSource.UNPUBLISHED)}
+                onClick={() => toggleSource(SearchSource.UNPUBLISHED)}
                 color="warning"
                 size="xs"
               >
@@ -206,6 +223,24 @@ const Search = () => {
                   item.source === 'ISMD'
                     ? `/concept/${item.slug}`
                     : `/concept/nkd?iri=${item.iri}`
+                }
+              />
+            );
+          }
+          if (item.type === 'DIAGRAM') {
+            return (
+              <DiagramCard
+                key={item.iri ?? item.label}
+                title={item.label || ''}
+                modified={
+                  item.lastModified ? new Date(item.lastModified) : undefined
+                }
+                link={`/dictionary/${item.slug}/diagram/${item.diagramId}`}
+                ontologySlug={item.slug}
+                ontologyName={
+                  item.ontologyLabel?.cs ??
+                  item.ontologyLabel?.sk ??
+                  item.ontologyLabel?.en
                 }
               />
             );

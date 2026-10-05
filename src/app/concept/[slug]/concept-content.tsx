@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useGetConceptDetail } from '@/api/generated';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
+import { ConceptUsageDiagrams } from '@/components/conceptDetail/ConceptUsageDiagrams';
 import { buildRelation } from '@/components/conceptDetail/lib/buildRelation';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
@@ -34,6 +35,12 @@ export const ConceptContent = ({ slug }: Props) => {
   const conceptDetail = concept.data.data?.conceptDetail;
   const conceptMetadata = concept.data.data?.conceptMetadata;
   if (!conceptDetail || !conceptMetadata) return null;
+
+  const conceptName = [
+    conceptDetail.název?.cs,
+    conceptDetail.název?.sk,
+    conceptDetail.název?.en,
+  ].find((name) => name?.trim());
 
   const ontology = extractOntologyFromUrl(conceptMetadata.graphName || '');
   const conceptType = conceptMetadata.conceptType as
@@ -79,6 +86,7 @@ export const ConceptContent = ({ slug }: Props) => {
           (item) => item.owningConceptId === conceptMetadata.id,
         )}
       >
+        <ConceptUsageDiagrams conceptSlug={slug} conceptName={conceptName} />
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}
           source="ISMD"

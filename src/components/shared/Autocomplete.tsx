@@ -33,7 +33,7 @@ export const Autocomplete = <T,>({
   id,
 }: Props<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLGovFormInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const showDropdown = query.length > 0;
 
@@ -70,23 +70,23 @@ export const Autocomplete = <T,>({
         ref={inputRef}
         placeholder={placeholder}
         value={query}
-        onGovInput={(e) => onQueryChange(e.detail.value)}
+        onChange={(e) => onQueryChange(e.currentTarget.value)}
         className="border-0! flex-1"
-        inputType="text"
+        type="text"
         id={id}
-      >
-        {startAdornment ? (
-          <span slot="icon-start" className="flex items-center">
-            {startAdornment}
-          </span>
-        ) : null}
-        <GovIcon name="search" slot="icon-end" type="components" size="s" />
-      </GovFormInput>
+        iconStart={
+          startAdornment ? (
+            <span className="flex items-center">{startAdornment}</span>
+          ) : (
+            <GovIcon name="search" type="components" size="s" />
+          )
+        }
+      />
 
       {showDropdown && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-1 bg-surface border border-border-default rounded-md shadow-lg max-h-60 overflow-y-auto">
           {isFetching && results.length === 0 ? (
-            <div className="flex items-center justify-center gap-2 p-4 text-sm text-gray-500">
+            <div className="flex items-center justify-center gap-2 p-4 text-sm text-foreground-muted">
               <GovIcon
                 name="loader"
                 type="components"
@@ -96,7 +96,7 @@ export const Autocomplete = <T,>({
               {loadingMessage}
             </div>
           ) : results.length === 0 ? (
-            <div className="p-4 text-center text-sm text-gray-500">
+            <div className="p-4 text-center text-sm text-foreground-muted">
               {emptyMessage}
             </div>
           ) : (
@@ -105,7 +105,7 @@ export const Autocomplete = <T,>({
                 key={getItemKey(item)}
                 type="button"
                 onClick={() => handleSelect(item)}
-                className="flex w-full items-center gap-1.5 border-b border-border-subtlest p-2 text-left font-bold text-blue-primary hover:bg-primary-subtlest"
+                className="flex w-full items-center gap-1.5 border-b border-border-default p-2 text-left font-bold text-accent hover:bg-surface-page"
               >
                 {renderItem(item)}
               </button>

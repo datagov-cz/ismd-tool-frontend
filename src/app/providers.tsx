@@ -12,15 +12,18 @@ import { SessionGuard } from '@/components/contexts/SessionGuard';
 import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 import { normalizeBasePath } from '@/lib/basePath';
+import type { Theme } from '@/lib/theme';
 
 export default function Providers({
   children,
   environmentVariables,
   session,
+  initialTheme,
 }: {
   children: ReactNode;
   environmentVariables: EnvironmentVariables;
   session: Session | null;
+  initialTheme: Theme;
 }) {
   const normalizedBasePath = normalizeBasePath(
     environmentVariables.NEXT_PUBLIC_BASE_PATH,
@@ -43,11 +46,25 @@ export default function Providers({
         })
         .then(() => {})
         .catch(() => {});
+    } else {
+      // In dev, tear down any SW + caches left by a prior prod-like run:
+      // its cache-first /_next/static/ handler serves stale chunks and forces
+      // a hard refresh to see code changes.
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) =>
+          registrations.forEach((registration) => registration.unregister()),
+        )
+        .catch(() => {});
+      caches
+        .keys()
+        .then((keys) => keys.forEach((key) => caches.delete(key)))
+        .catch(() => {});
     }
   }, [normalizedBasePath]);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider initialTheme={initialTheme}>
       <Environment variables={environmentVariables}>
         <QueryProvider>
           <SessionProvider session={session} basePath={nextAuthBasePath}>

@@ -34,55 +34,50 @@ export const ControlPanelNKD = ({ ontologyIRI }: Props) => {
           color="primary"
           type="base"
           size="s"
-          onGovClick={() => setOpenDownload(true)}
+          onClick={() => setOpenDownload(true)}
+          iconStart={<GovIcon name="download" size="l" type="components" />}
         >
-          <GovIcon
-            name="download"
-            size="l"
-            slot="icon-start"
-            type="components"
-          />
           {t('Download')}
         </GovButton>
 
-        <GovDropdown id="copy-link-ismd" position="left">
-          <GovButton
-            color="primary"
-            type="base"
-            size="m"
-            className="h-8! [&_button]:h-8!"
-          >
-            <GovIcon
-              name="link"
-              size="m"
-              aria-label={t('GetLink')}
-              className="text-white"
-            />
-            {t('CopyLink')}
-          </GovButton>
-
-          <ul slot="list">
-            {ontologyIRI && (
-              <GovButton
-                color="primary"
-                type="base"
-                size="s"
-                onGovClick={() => copyToClipboard(ontologyIRI)}
-                className="w-full! [&_button]:w-full! max-w-none!"
-              >
-                {t('CopyIRI')}
-              </GovButton>
-            )}
+        <GovDropdown
+          id="copy-link-ismd"
+          position="left"
+          color="primary"
+          type="base"
+          size="s"
+          label={
+            <>
+              <GovIcon
+                name="link"
+                size="m"
+                aria-label={t('GetLink')}
+                className="text-white"
+              />
+              {t('CopyLink')}
+            </>
+          }
+        >
+          {ontologyIRI && (
             <GovButton
               color="primary"
               type="base"
               size="s"
-              onGovClick={() => copyToClipboard(window.location.href)}
+              onClick={() => copyToClipboard(ontologyIRI)}
               className="w-full! [&_button]:w-full! max-w-none!"
             >
-              {t('CopyURL')}
+              {t('CopyIRI')}
             </GovButton>
-          </ul>
+          )}
+          <GovButton
+            color="primary"
+            type="base"
+            size="s"
+            onClick={() => copyToClipboard(window.location.href)}
+            className="w-full! [&_button]:w-full! max-w-none!"
+          >
+            {t('CopyURL')}
+          </GovButton>
         </GovDropdown>
       </div>
 
