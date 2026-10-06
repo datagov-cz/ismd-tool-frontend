@@ -8,7 +8,6 @@ import { IdpAlias, useNiaEnabled } from '@/hooks/useLogin';
 import { SearchInput } from '../searchInput/SearchInput';
 
 import { LoginButton } from './LoginButton';
-import { useHeaderButtonType } from './useHeaderButtonType';
 
 interface Props {
   isAuthenticated: boolean;
@@ -28,16 +27,15 @@ export const HeaderActions = ({
   const t = useTranslations('Header');
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
   const niaEnabled = useNiaEnabled();
-  const buttonType = useHeaderButtonType();
 
   return (
     <div className="flex-none desktop:flex-auto 2xl:flex-2 flex justify-center items-center gap-2 desktop:gap-4">
       {!isHomepage && (
         <GovButton
           size="m"
-          type={buttonType}
+          type="solid"
           color="primary"
-          className="max-desktop:hidden!"
+          className="header-button max-desktop:hidden!"
           href={`${basePath}/`}
           iconStart={<GovIcon name="home" />}
         ></GovButton>
@@ -46,9 +44,9 @@ export const HeaderActions = ({
       <GovButton
         ref={searchToggleRef}
         size="m"
-        type={buttonType}
+        type="solid"
         color="primary"
-        className="desktop:hidden!"
+        className="header-button desktop:hidden!"
         onClick={onOpenSearch}
         iconStart={<GovIcon type="components" name="search" size="s" />}
       >
@@ -75,9 +73,9 @@ export const HeaderActions = ({
       {isAuthenticated && (
         <GovButton
           size="m"
-          type={buttonType}
+          type="solid"
           color="primary"
-          className="max-desktop:hidden!"
+          className="header-button max-desktop:hidden!"
           href={`${basePath}/dictionary/create`}
           iconStart={<GovIcon name="plus" />}
         >

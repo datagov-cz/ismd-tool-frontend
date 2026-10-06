@@ -3,27 +3,24 @@
 import { ReactNode, useEffect } from 'react';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
 
 import { CurrentUserProvider } from '@/components/contexts/CurrentUserProvider';
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
 import { QueryProvider } from '@/components/contexts/QueryProvider';
 import { SessionGuard } from '@/components/contexts/SessionGuard';
-import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 import { normalizeBasePath } from '@/lib/basePath';
-import type { Theme } from '@/lib/theme';
 
 export default function Providers({
   children,
   environmentVariables,
   session,
-  initialTheme,
 }: {
   children: ReactNode;
   environmentVariables: EnvironmentVariables;
   session: Session | null;
-  initialTheme: Theme;
 }) {
   const normalizedBasePath = normalizeBasePath(
     environmentVariables.NEXT_PUBLIC_BASE_PATH,
@@ -64,7 +61,7 @@ export default function Providers({
   }, [normalizedBasePath]);
 
   return (
-    <ThemeProvider initialTheme={initialTheme}>
+    <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
       <Environment variables={environmentVariables}>
         <QueryProvider>
           <SessionProvider session={session} basePath={nextAuthBasePath}>

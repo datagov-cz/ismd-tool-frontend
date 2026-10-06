@@ -154,6 +154,15 @@ body {
   --color-border-primary-subtle: var(--color-primary-500);
 }
 
+[data-theme='dark'] .header-button {
+  --background: transparent;
+  --hover-background: var(--button-outlined-primary-hover);
+  --active-background: var(--button-outlined-primary-active);
+  --color: var(--text-primary-color);
+  --hover-color: var(--text-primary-color);
+  --active-color: var(--text-primary-color);
+}
+
 html[data-theme='dark'] {
   color-scheme: dark;
 }
