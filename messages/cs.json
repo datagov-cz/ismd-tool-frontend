@@ -1,8 +1,9 @@
 {
   "Header": {
     "ThemeSwitchAria": {
-      "ToLight": "Přepnout na světlý režim",
-      "ToDark": "Přepnout na tmavý režim"
+      "Light": "Světlý režim",
+      "System": "Podle systému",
+      "Dark": "Tmavý režim"
     },
     "Ontology": "Slovník",
     "ApiDocs": "Dokumentace API",
@@ -40,7 +41,7 @@
     },
     "MenuButtonAria": "Otevřít navigaci",
     "MenuCloseAria": "Zavřít navigaci",
-    "ThemeSwitchLabel": "Tmavý režim",
+    "ThemeSwitchLabel": "Barevný režim",
     "Hintbox": {
       "Title": "Nápověda",
       "ISMD": "Nápověda ISMD",
