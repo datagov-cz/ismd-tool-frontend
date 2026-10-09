@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
 
-import { useLogin } from '@/hooks/useLogin';
 import { isGatedPath } from '@/lib/site-status';
 import { SearchInput } from '../searchInput/SearchInput';
 
@@ -35,8 +34,6 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
   const showHeaderContent = isAuthenticated || !isHomepage;
   const isGated = isGatedProp ?? isGatedPath(pathname);
 
-  const login = useLogin();
-
   if (isGated) {
     return <GatedHeader />;
   }
@@ -63,7 +60,6 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
                 isHomepage={isHomepage}
                 searchToggleRef={search.toggleRef}
                 onOpenSearch={search.open}
-                onLogin={login}
               />
             </>
           )}
@@ -75,7 +71,7 @@ export const Header = ({ session, isGated: isGatedProp }: Props) => {
           />
         </section>
 
-        {showHero && <HeaderHero onLogin={login} />}
+        {showHero && <HeaderHero />}
       </header>
 
       {menu.isOpen && (
