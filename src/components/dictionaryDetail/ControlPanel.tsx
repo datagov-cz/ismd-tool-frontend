@@ -2,10 +2,19 @@
 
 import { useState } from 'react';
 import { GovButton, GovDropdown, GovIcon } from '@gov-design-system-ce/react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { UserModel } from '@/api/generated';
+import {
+  getListForOntologyQueryKey,
+  useCreateDiagram,
+  useDeleteDiagram,
+  useListForOntology,
+  UserModel,
+} from '@/api/generated';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useCommentBoxStore } from '@/store/commentBoxStore';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
@@ -30,11 +39,15 @@ export const ControlPanel = ({
   slug,
   iri,
 }: Props) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
   const tEdit = useTranslations('DictionaryDetail.EditOntology');
+  const td = useTranslations('DictionaryDiagram.Header');
   const { user: currentUser, isAdmin } = useCurrentUser();
+  const { invalidateOntologyDiagramsList } = useQueryInvalidator();
 
   const setIsCommentBoxOpen = useCommentBoxStore((state) => state.setIsOpen);
 
@@ -49,9 +62,56 @@ export const ControlPanel = ({
     }
   };
 
+  const deleteDiagram = useDeleteDiagram({
+    mutation: {
+      onSuccess: async () => {
+        await invalidateOntologyDiagramsList(slug);
+        router;
+        toast.success(td('Deleted'));
+        router.push(`/dictionary/${slug}`);
+      },
+      onError: () => toast.error(td('SaveError')),
+    },
+  });
+
+  const handleDeleteDiagram = (diagramId: number) => {
+    deleteDiagram.mutate({
+      ontologySlug: encodeURIComponent(slug),
+      diagramId,
+    });
+  };
+
   const isOwner = user?.userId === currentUser?.userId;
   const isEditAllowed = isOwner || isAdmin;
   const isLoggedIn = !!currentUser?.userId;
+  const encodedSlug = encodeURIComponent(slug);
+  const diagrams = useListForOntology(encodedSlug, {
+    query: { enabled: isEditAllowed },
+  });
+  const diagramItems = diagrams.data?.data ?? [];
+  const createDiagram = useCreateDiagram({
+    mutation: {
+      onSuccess: async (response) => {
+        const diagramId = response.data?.diagramId;
+
+        await queryClient.invalidateQueries({
+          queryKey: getListForOntologyQueryKey(encodedSlug),
+        });
+
+        if (diagramId === undefined) {
+          toast.error('Diagram byl vytvořen, ale nepodařilo se jej otevřít.');
+          return;
+        }
+
+        router.push(`/dictionary/${slug}/diagram/${diagramId}`);
+      },
+      onError: () => toast.error('Diagram se nepodařilo vytvořit.'),
+    },
+  });
+
+  const handleCreateDiagram = () => {
+    createDiagram.mutate({ ontologySlug: encodedSlug, data: {} });
+  };
 
   return (
     <div className="flex flex-col gap-2 h-full justify-between w-full relative">
@@ -65,13 +125,10 @@ export const ControlPanel = ({
               size="s"
               aria-label={tEdit('Title')}
               href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/edit`}
+              iconStart={
+                <GovIcon name="pencil-square" size="l" type="components" />
+              }
             >
-              <GovIcon
-                name="pencil-square"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">{tEdit('Title')}</span>
             </GovButton>
           )}
@@ -83,14 +140,11 @@ export const ControlPanel = ({
               type="outlined"
               size="s"
               aria-label={tEdit('Comments')}
-              onGovClick={() => setIsCommentBoxOpen(true)}
+              onClick={() => setIsCommentBoxOpen(true)}
+              iconStart={
+                <GovIcon name="chat-square-text" size="l" type="components" />
+              }
             >
-              <GovIcon
-                name="chat-square-text"
-                size="l"
-                slot="icon-start"
-                type="components"
-              />
               <span className="hidden desktop:inline">{tEdit('Comments')}</span>
               {(commentsCount ?? 0) > 0 && (
                 <span className="font-normal">[{commentsCount}]</span>
@@ -99,25 +153,89 @@ export const ControlPanel = ({
           )}
         </div>
 
-        {/* TODO: ADD ONCE DIAGRAM CREATION IS IMPLEMENTED */}
-        {/* {isEditAllowed && (
-          <GovButton
-            nativeType="button"
-            color="primary"
+        {isEditAllowed && diagramItems.length > 0 && (
+          <GovDropdown
+            id={`diagrams-${ontologyID}`}
+            position="right"
+            className="w-full [&_.gov-dropdown__list]:w-full"
+            iconStart={<GovIcon name="diagram-3" size="l" type="components" />}
+            iconEnd={<GovIcon name="chevron-down" size="s" />}
+            label={` Diagramy [${diagramItems.length}]`}
+            color="neutral"
             type="outlined"
             size="s"
             expanded
-            disabled
           >
-            <GovIcon
-              name="diagram-3"
-              size="l"
-              slot="icon-start"
-              type="components"
-            />
-            {t('CreateDiagram')}
+            Diagramy [{diagramItems.length}]
+            <ul slot="list" className="min-w-72 p-0!">
+              <li className="border-b border-gray-border/50">
+                <GovButton
+                  nativeType="button"
+                  color="neutral"
+                  type="base"
+                  size="s"
+                  expanded
+                  disabled={createDiagram.isPending}
+                  onClick={handleCreateDiagram}
+                  iconStart={<GovIcon name="plus" size="l" />}
+                >
+                  {createDiagram.isPending
+                    ? 'Vytvářím diagram…'
+                    : 'Přidat nový diagram'}
+                </GovButton>
+              </li>
+              {diagramItems.map((diagram) => {
+                const { diagramId } = diagram;
+
+                if (diagramId === undefined) return null;
+
+                return (
+                  <li key={diagramId} className="flex items-center">
+                    <GovButton
+                      className="min-w-0 flex-1"
+                      color="neutral"
+                      type="base"
+                      size="s"
+                      expanded
+                      href={`${process.env.NEXT_PUBLIC_BASE_PATH}/dictionary/${slug}/diagram/${diagramId}`}
+                      iconStart={
+                        <GovIcon name="diagram-3" size="l" type="components" />
+                      }
+                    >
+                      {diagram.name?.trim() || '-- bez názvu --'}
+                    </GovButton>
+
+                    <GovButton
+                      color="error"
+                      type="base"
+                      size="s"
+                      onClick={() => handleDeleteDiagram(diagramId)}
+                      iconStart={
+                        <GovIcon name="trash" size="l" type="components" />
+                      }
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          </GovDropdown>
+        )}
+
+        {isEditAllowed && !diagrams.isPending && diagramItems.length === 0 && (
+          <GovButton
+            nativeType="button"
+            color="neutral"
+            type="outlined"
+            size="s"
+            expanded
+            onClick={handleCreateDiagram}
+            iconStart={<GovIcon name="diagram-3" size="l" type="components" />}
+          >
+            {createDiagram.isPending
+              ? 'Vytvářím diagram…'
+              : 'Přidat nový diagram'}
           </GovButton>
-        )} */}
+        )}
       </div>
       <div className="flex justify-end">
         <ControlPanelButton
@@ -125,42 +243,43 @@ export const ControlPanel = ({
           ariaLabel={t('Download')}
           onClick={() => setOpenDownload(true)}
         />
-        <GovDropdown id="copy-link-ismd" position="left">
-          <GovButton
-            color={'primary'}
-            type="base"
-            size="m"
-            className="h-8! [&_button]:h-8!"
-          >
-            <GovIcon
-              name="link"
-              size="m"
-              aria-label={t('GetLink')}
-              className="text-white"
-            />
-          </GovButton>
-          <ul slot="list">
-            {iri && (
-              <GovButton
-                color="primary"
-                type="base"
-                size="s"
-                onGovClick={() => copyToClipboard(iri)}
-                className="w-full! [&_button]:w-full! max-w-none!"
-              >
-                {t('CopyIRI')}
-              </GovButton>
-            )}
+        <GovDropdown
+          id="copy-link-ismd"
+          position="left"
+          color="primary"
+          type="base"
+          size="s"
+          label={
+            <>
+              <GovIcon
+                name="link"
+                size="m"
+                aria-label={t('GetLink')}
+                className="text-white"
+              />
+            </>
+          }
+        >
+          {iri && (
             <GovButton
               color="primary"
               type="base"
               size="s"
-              onGovClick={() => copyToClipboard(window.location.href)}
+              onClick={() => copyToClipboard(iri)}
               className="w-full! [&_button]:w-full! max-w-none!"
             >
-              {t('CopyURL')}
+              {t('CopyIRI')}
             </GovButton>
-          </ul>
+          )}
+          <GovButton
+            color="primary"
+            type="base"
+            size="s"
+            onClick={() => copyToClipboard(window.location.href)}
+            className="w-full! [&_button]:w-full! max-w-none!"
+          >
+            {t('CopyURL')}
+          </GovButton>
         </GovDropdown>
 
         {isEditAllowed && (

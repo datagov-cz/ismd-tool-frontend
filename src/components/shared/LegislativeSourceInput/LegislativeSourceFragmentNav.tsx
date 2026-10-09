@@ -23,7 +23,11 @@ export const LegislativeSourceFragmentNav = ({
 }: Props) => (
   <ul>
     {fragments
-      ?.filter((fragment) => fragment.kind !== 'ppc')
+      // `navigable` is false for unnumbered text blocks: they carry body text but no citation,
+      // so they belong in the rendered body, not in the navigation. Compared against false —
+      // the field is optional, and an absent one means navigable. A hidden node never strands a
+      // visible one: the backend only clears the flag when nothing below it is navigable either.
+      ?.filter((fragment) => fragment.navigable !== false)
       .map((fragment) => (
         <FragmentItem
           key={fragment.iri}
@@ -51,17 +55,20 @@ const FragmentItem = ({
   const [open, setOpen] = useState(false);
   const hasChildren = (fragment.children?.length ?? 0) > 0;
   const isSelected = fragment.iri === selectedIri;
+  const hasGrandChildren =
+    fragment.children?.some((child) => (child.children?.length ?? 0) > 0) ??
+    false;
 
   return (
     <li>
       <div
-        className={`flex items-start gap-2 py-1.5 pr-2 border-b border-(--border-subtle) cursor-pointer hover:bg-blue-100 ${
-          isSelected ? 'bg-blue-200' : ''
+        className={`flex items-start gap-2 py-1.5 pr-2 border-b border-(--border-subtle) cursor-pointer hover:bg-surface-muted ${
+          isSelected ? 'bg-blue-subtle' : ''
         }`}
         style={{ paddingLeft: 8 + depth * 12 }}
         onClick={() => onSelect(fragment.iri ?? '')}
       >
-        {hasChildren ? (
+        {hasGrandChildren ? (
           <button
             type="button"
             onClick={(e) => {
@@ -77,7 +84,7 @@ const FragmentItem = ({
               type="components"
               size="xs"
               color="primary"
-              className="text-[0.625rem]"
+              className="text-2xs"
             />
           </button>
         ) : (

@@ -3,13 +3,13 @@
 import { ReactNode, useEffect } from 'react';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
 
 import { CurrentUserProvider } from '@/components/contexts/CurrentUserProvider';
 import type { EnvironmentVariables } from '@/components/contexts/Environment';
 import Environment from '@/components/contexts/Environment';
 import { QueryProvider } from '@/components/contexts/QueryProvider';
 import { SessionGuard } from '@/components/contexts/SessionGuard';
-import { ThemeProvider } from '@/components/contexts/ThemeProvider';
 import { ToastWrapper } from '@/components/ToastWrapper';
 import { normalizeBasePath } from '@/lib/basePath';
 
@@ -43,11 +43,25 @@ export default function Providers({
         })
         .then(() => {})
         .catch(() => {});
+    } else {
+      // In dev, tear down any SW + caches left by a prior prod-like run:
+      // its cache-first /_next/static/ handler serves stale chunks and forces
+      // a hard refresh to see code changes.
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) =>
+          registrations.forEach((registration) => registration.unregister()),
+        )
+        .catch(() => {});
+      caches
+        .keys()
+        .then((keys) => keys.forEach((key) => caches.delete(key)))
+        .catch(() => {});
     }
   }, [normalizedBasePath]);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
       <Environment variables={environmentVariables}>
         <QueryProvider>
           <SessionProvider session={session} basePath={nextAuthBasePath}>

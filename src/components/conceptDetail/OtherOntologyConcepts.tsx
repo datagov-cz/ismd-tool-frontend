@@ -34,15 +34,15 @@ export const OtherOntologyConcepts = ({
         <span className="font-bold mb-4 block">
           {t('Groups.AnotherConcepts')}
         </span>
-        <GovFormControl>
+        <GovFormControl size="m">
           <GovFormInput
+            identifier="other-ontology-concepts-filter"
             placeholder={t('Groups.Search')}
             size="s"
             value={search}
-            onGovInput={(e) => setSearch(e.target.value ?? '')}
-          >
-            <GovIcon slot="icon-start" name="funnel" />
-          </GovFormInput>
+            onChange={(e) => setSearch(e.currentTarget.value ?? '')}
+            iconStart={<GovIcon name="funnel" />}
+          />
         </GovFormControl>
       </div>
       {isLoading ? (
@@ -60,7 +60,6 @@ export const OtherOntologyConcepts = ({
               className="flex gap-3 items-center px-2 py-3 border-b border-gray-border hover:bg-border-primary-subtle/20"
             >
               <GovIcon
-                slot="icon-start"
                 name={
                   item.conceptType === 'VZTAH'
                     ? 'bezier2'

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { getServerSession } from 'next-auth';
 
+import { DiagramsSection } from '@/components/diagramsSection/DiagramsSection';
 import { DraftDictionariesSection } from '@/components/draftDictionaries/DraftDictionariesSection';
 import { MainControls } from '@/components/home/MainControls';
 import { NewsSlider } from '@/components/home/NewsSlider';
@@ -22,8 +23,9 @@ export default async function Home() {
         {session && <MainControls />}
         {session && <DraftDictionariesSection />}
         {!session && <WelcomeSection />}
+        {session && <DiagramsSection />}
         {session && <VisitedOntologies />}
-        <hr className="text-dark-primary/20" />
+        <hr className="text-foreground/20" />
         <NewsSlider />
       </div>
     </div>

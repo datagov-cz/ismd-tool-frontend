@@ -24,7 +24,6 @@ export function NewsArticle({
               type="components"
               color="neutral"
               name="calendar-event"
-              slot="icon-start"
               size="s"
               className="transition-transform duration-200"
             />
