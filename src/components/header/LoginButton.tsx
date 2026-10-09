@@ -1,38 +1,73 @@
-import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import {
+  GovButton,
+  GovControlGroup,
+  GovDropdown,
+  GovIcon,
+} from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 
-import { IdpAlias } from '@/hooks/useLogin';
+import { useLogin } from '@/hooks/useLogin';
 
 export const LoginButton = ({
   size,
   className,
-  idp = 'caais',
   short = false,
-  onLogin,
+  niaEnabled,
 }: {
   size: 's' | 'l' | 'm';
   className?: string;
-  /** Identity provider this button logs in through. */
-  idp?: IdpAlias;
-  /** Bare provider name ("CAAIS") for the header bar, rather than the full sentence. */
   short?: boolean;
-  onLogin: (_idp: IdpAlias) => void;
+  niaEnabled: boolean;
 }) => {
   const t = useTranslations('Header');
   const labelKey = short ? 'LoginButtonShort' : 'LoginButton';
 
+  const login = useLogin();
+
   return (
-    <GovButton
-      type="solid"
-      color="secondary"
-      size={size}
-      className={className}
-      onClick={() => onLogin(idp)}
-      iconEnd={
-        <GovIcon type="components" name="box-arrow-in-left" size={size} />
-      }
-    >
-      {t(`${labelKey}.${idp}`)}
-    </GovButton>
+    <GovControlGroup>
+      <GovButton
+        type="solid"
+        color="secondary"
+        size={size}
+        className={className}
+        onClick={() => login('caais')}
+        iconEnd={
+          <GovIcon type="components" name="box-arrow-in-left" size={size} />
+        }
+      >
+        {t(`${labelKey}.caais`)}
+      </GovButton>
+      <GovDropdown
+        type="solid"
+        size={size}
+        color="secondary"
+        position="right"
+        iconStart={<GovIcon name="chevron-down" />}
+      >
+        {niaEnabled && (
+          <GovButton
+            size={size}
+            color="neutral"
+            type="base"
+            expanded
+            className={className}
+            onClick={() => login('nia')}
+          >
+            {t(`${labelKey}.nia`)}
+          </GovButton>
+        )}
+        <GovButton
+          size={size}
+          color="neutral"
+          type="base"
+          className={className}
+          expanded
+          onClick={() => login()}
+        >
+          {t(`${labelKey}.keycloak`)}
+        </GovButton>
+      </GovDropdown>
+    </GovControlGroup>
   );
 };

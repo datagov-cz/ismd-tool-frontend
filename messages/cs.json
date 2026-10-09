@@ -11,12 +11,15 @@
     "Search": "Vyhledávání",
     "LoginButton": {
       "caais": "Přihlásit se přes CAAIS",
-      "nia": "Přihlásit se přes NIA"
+      "nia": "Přihlásit se přes NIA",
+      "keycloak": "Přihlásit se přes KeyCloak"
     },
     "LoginButtonShort": {
       "caais": "CAAIS",
-      "nia": "NIA"
+      "nia": "NIA",
+      "keycloak": "KeyCloak"
     },
+    "LoginDropdownAria": "Další možnosti přihlášení",
     "Nav": {
       "Link1": "Nápověda",
       "Dropdown": {
