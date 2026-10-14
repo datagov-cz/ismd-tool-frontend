@@ -3,5 +3,5 @@ interface Props {
 }
 
 export const ErrorText = ({ text }: Props) => {
-  return <p className="text-sm text-status-error-700">{text}</p>;
+  return <p className="text-sm text-status-error-700 w-2/3 mx-auto">{text}</p>;
 };

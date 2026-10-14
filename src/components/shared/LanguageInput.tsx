@@ -202,7 +202,7 @@ export const LanguageDropDownSelect = ({
           iconEnd={<GovIcon type="components" name="plus" />}
         ></GovButton>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0 bg-surface" align="end">
+      <PopoverContent className="z-1000 w-fit p-0 bg-surface" align="end">
         <ul className="p-0 m-0 list-none">
           {availableLanguages.map((item) => (
             <li key={item}>

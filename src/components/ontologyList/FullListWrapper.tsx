@@ -60,9 +60,7 @@ const nkdToCardItem = (
 
 export const FullListWrapper = () => {
   const [filterQuery, setFilterQuery] = useState('');
-  const { data: ismdData, isFetching: isFetchingISMD } = useGetOntologyList({
-    isPublished: true,
-  });
+  const { data: ismdData, isFetching: isFetchingISMD } = useGetOntologyList();
   const {
     data: nkdData,
     isLoading: isLoadingNKD,

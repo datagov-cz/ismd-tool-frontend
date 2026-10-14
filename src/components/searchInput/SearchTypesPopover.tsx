@@ -13,13 +13,14 @@ import { useTranslations } from 'next-intl';
 import { SearchSource, SearchType as ApiSearchType } from '@/api/generated';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 
-export type SearchFilter = 'Pojem' | 'Slovník' | 'Rozpracovaný';
+export type SearchFilter = 'Pojem' | 'Slovník' | 'Diagram' | 'Rozpracovaný';
 
 type SearchFilterConfig = {
   key: SearchFilter;
   icon: string;
   iconType: string;
-  color: 'primary' | 'secondary' | 'success' | 'neutral';
+  color: 'primary' | 'secondary' | 'success' | 'neutral' | undefined;
+  iconClassName?: string;
 };
 
 export const SEARCH_FILTERS: SearchFilterConfig[] = [
@@ -36,6 +37,13 @@ export const SEARCH_FILTERS: SearchFilterConfig[] = [
     color: 'success',
   },
   {
+    key: 'Diagram',
+    icon: 'diagram-3',
+    iconType: 'components',
+    color: undefined,
+    iconClassName: 'text-purple!',
+  },
+  {
     key: 'Rozpracovaný',
     icon: 'journals',
     iconType: 'components',
@@ -43,24 +51,27 @@ export const SEARCH_FILTERS: SearchFilterConfig[] = [
   },
 ];
 
+const SEARCH_TYPE_FILTERS: SearchFilter[] = ['Pojem', 'Slovník', 'Diagram'];
+
 export function filterToApiParams(filters: SearchFilter[]): {
   type?: ApiSearchType;
   source?: SearchSource;
 } {
   const hasConcept = filters.includes('Pojem');
   const hasOntology = filters.includes('Slovník');
+  const hasDiagram = filters.includes('Diagram');
   const hasUnpublished = filters.includes('Rozpracovaný');
-  const allOrNone =
-    filters.length === 0 || filters.length === SEARCH_FILTERS.length;
+  const selectedTypes = [hasConcept, hasOntology, hasDiagram].filter(Boolean);
 
   return {
-    type: allOrNone
-      ? undefined
-      : hasConcept && !hasOntology
-        ? ApiSearchType.CONCEPT
-        : !hasConcept && hasOntology
-          ? ApiSearchType.ONTOLOGY
-          : undefined,
+    type:
+      selectedTypes.length !== 1
+        ? undefined
+        : hasConcept
+          ? ApiSearchType.CONCEPT
+          : hasOntology
+            ? ApiSearchType.ONTOLOGY
+            : ApiSearchType.DIAGRAM,
     source: hasUnpublished ? SearchSource.UNPUBLISHED : undefined,
   };
 }
@@ -85,15 +96,28 @@ export const SearchTypesPopover = ({
     (f) => f.key !== 'Rozpracovaný' || isLoggedIn,
   );
 
-  const toggle = (filter: SearchFilter) =>
-    onChange(
-      value.includes(filter)
-        ? value.filter((f) => f !== filter)
-        : [...value, filter],
-    );
+  const toggle = (filter: SearchFilter) => {
+    if (filter === 'Rozpracovaný') {
+      onChange(
+        value.includes(filter)
+          ? value.filter((item) => item !== filter)
+          : [...value, filter],
+      );
+      return;
+    }
 
-  const allOrNone =
-    value.length === 0 || value.length === SEARCH_FILTERS.length;
+    const sourceFilters = value.filter(
+      (item) => !SEARCH_TYPE_FILTERS.includes(item),
+    );
+    onChange(
+      value.includes(filter) ? sourceFilters : [...sourceFilters, filter],
+    );
+  };
+
+  const selectedTypeCount = value.filter((filter) =>
+    SEARCH_TYPE_FILTERS.includes(filter),
+  ).length;
+  const allOrNone = selectedTypeCount === 0 && !value.includes('Rozpracovaný');
 
   return (
     <GovDropdown

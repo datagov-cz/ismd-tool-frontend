@@ -4,7 +4,7 @@ import '../styles/globals.css';
 
 import { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { cookies, headers } from 'next/headers';
+import { headers } from 'next/headers';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
@@ -14,7 +14,6 @@ import { Footer } from '@/components/footer/Footer';
 import { Header } from '@/components/header/Header';
 import { authOptions } from '@/lib/auth';
 import { GATED_REQUEST_HEADER } from '@/lib/site-status';
-import { parseTheme, THEME_COOKIE } from '@/lib/theme';
 
 import Providers from './providers';
 
@@ -41,21 +40,16 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   const requestHeaders = await headers();
   const isGated = requestHeaders.get(GATED_REQUEST_HEADER) === '1';
-  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   const variables: EnvironmentVariables = {
     ...loadEnvVariables(),
   };
 
   return (
-    <html lang={locale} data-theme={theme}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Providers
-            environmentVariables={variables}
-            session={session}
-            initialTheme={theme}
-          >
+          <Providers environmentVariables={variables} session={session}>
             <Header session={session} isGated={isGated} />
             {children}
           </Providers>

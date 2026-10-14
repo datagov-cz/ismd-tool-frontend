@@ -9,6 +9,7 @@ const PROTECTED_PATTERNS = [
   /^\/concept\/[^/]+\/edit$/,
   /^\/dictionary\/[^/]+$/,
   /^\/dictionary\/[^/]+\/edit$/,
+  /^\/dictionary\/[^/]+\/diagram$/,
 ];
 
 const EXCLUDED_PATTERNS = [

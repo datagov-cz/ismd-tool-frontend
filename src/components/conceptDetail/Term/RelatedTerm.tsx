@@ -23,7 +23,7 @@ export const RelatedTerm = ({
   warning?: boolean;
 }) => {
   const className = clsx(
-    'border border-border-primary bg-surface-page w-full flex flex-col rounded-md text-accent',
+    'border border-border-primary bg-blue-border/20 w-full flex flex-col rounded-md text-accent',
     noIcon ? 'grayscale' : 'font-bold',
     ontologyLabel || warning ? 'px-2 py-1' : 'p-2',
   );

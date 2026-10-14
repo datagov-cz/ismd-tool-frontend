@@ -154,6 +154,7 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
           data={data?.data}
           query={debouncedQuery}
           type={type}
+          source={source}
           onClose={() => {
             setDebouncedQuery('');
             onClose?.();
