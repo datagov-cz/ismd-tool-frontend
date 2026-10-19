@@ -10,8 +10,7 @@ import {
 import { LegalSourceListSchema } from './legalSourceSchema';
 import {
   AgendaRef,
-  CodeListDatasetSchema,
-  CodeListIriSchema,
+  CodeListRef,
   ConceptRef,
   createRequiredNameModelSchema,
 } from './sharedConceptSchemas';
@@ -44,8 +43,7 @@ const ConceptFormSchema = z.object({
   isPublic: z.boolean().optional(),
   privacyProvisions: LegalSourceListSchema,
   domain: ConceptRef.optional(),
-  codeListIri: CodeListIriSchema.optional(),
-  codeListDataset: CodeListDatasetSchema.optional(),
+  codeList: CodeListRef.optional(),
 });
 
 export const createConceptFormSchema = (t: (_key: 'NameRequired') => string) =>

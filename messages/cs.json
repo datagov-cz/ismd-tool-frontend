@@ -201,6 +201,12 @@
     "UdajeKDoplneni": {
       "Title": "Údaje k doplnění"
     },
+    "CodeList": {
+      "CodeListIri": "IRI číselníku",
+      "DatasetIri": "Datová sada v NKOD",
+      "NewVersion": "V NKOD je novější verze číselníku",
+      "Missing": "Číselník již není v NKOD dostupný"
+    },
     "Registry": {
       "Title": "Registr práv a povinností",
       "PPDF": "údaj je sdílen v PPDF",
@@ -584,8 +590,9 @@
         "ClassType": "Typ třídy",
         "BroaderConcept": "Nadřazená třída",
         "ConceptType": "Typ pojmu",
-        "CodeListIri": "IRI číselníku",
-        "CodeListDataset": "Dataset číselníku"
+        "CodeList": "Číselník",
+        "CodeListPlaceholder": "Hledat číselník v NKOD",
+        "CodeListNoResults": "Žádný číselník nenalezen"
       },
       "Options": {
         "ClassType": {
