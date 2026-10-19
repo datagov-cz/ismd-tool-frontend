@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GovFormLabel } from '@gov-design-system-ce/react';
+import { GovFormLabel, GovTag } from '@gov-design-system-ce/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -68,11 +68,23 @@ export const CodeListInput = ({
             getItemKey={(item) => item.codeListIri}
             onSelect={handleSelect}
             renderItem={(item) => (
-              <span className="flex flex-col items-start gap-0.5">
-                <span>{formatCodeList(item)}</span>
-                <span className="text-xs font-normal text-foreground-muted">
-                  {item.publisher}
+              <span className="flex w-full flex-col items-start gap-1">
+                <span className="flex w-full items-start justify-between gap-2">
+                  <span className="min-w-0">{formatCodeList(item)}</span>
+                  <GovTag
+                    color="neutral"
+                    type="subtle"
+                    size="xs"
+                    className="shrink-0 font-normal"
+                  >
+                    {item.publisher}
+                  </GovTag>
                 </span>
+                {item.description && (
+                  <span className="line-clamp-2 text-xs font-normal text-foreground-muted">
+                    {item.description}
+                  </span>
+                )}
               </span>
             )}
           />
