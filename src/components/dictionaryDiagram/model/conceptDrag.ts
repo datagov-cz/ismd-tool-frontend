@@ -3,6 +3,13 @@ import type { DragEvent } from 'react';
 import type { Concept } from './concept';
 
 export const CONCEPT_DRAG_MIME = 'application/x-concept';
+export const CONCEPT_POINTER_DROP_EVENT = 'diagram-concept-pointer-drop';
+
+export type ConceptPointerDropDetail = {
+  concept: Concept;
+  clientX: number;
+  clientY: number;
+};
 
 export const onConceptDragStart = (
   event: DragEvent<HTMLElement>,
@@ -28,3 +35,13 @@ export const parseConceptDrag = (
 export const getConceptFromDragEvent = (
   event: React.DragEvent,
 ): Concept | null => parseConceptDrag(event.dataTransfer);
+
+export const dispatchConceptPointerDrop = (
+  detail: ConceptPointerDropDetail,
+) => {
+  window.dispatchEvent(
+    new CustomEvent<ConceptPointerDropDetail>(CONCEPT_POINTER_DROP_EVENT, {
+      detail,
+    }),
+  );
+};
