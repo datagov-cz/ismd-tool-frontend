@@ -6,8 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import {
+  CodeListDto,
   ConceptDetailModel,
   ConceptDetailModelReferencovanéPojmyResolved,
+  NkodCodelistCheckDto,
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
@@ -107,6 +109,23 @@ function toConceptRefs(
       ?.map((iri) => toConceptRef(iri, resolved))
       .filter((ref) => ref !== undefined) ?? []
   );
+}
+
+function toCodeListRef(
+  codeList?: CodeListDto,
+  resolved?: NkodCodelistCheckDto,
+): ConceptFormValues['codeList'] {
+  if (resolved?.codelist) {
+    return resolved.codelist;
+  }
+  if (!codeList?.iri || !codeList['datová-sada-v-nkod']) {
+    return undefined;
+  }
+  return {
+    codeListIri: codeList.iri,
+    datasetIri: codeList['datová-sada-v-nkod'],
+    title: codeList.iri,
+  };
 }
 
 function detectConceptType(typ?: string[]): 'TRIDA' | 'VLASTNOST' | 'VZTAH' {
@@ -227,9 +246,10 @@ export function mapDetailToFormValues(
         ? false
         : undefined,
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
-    codeListIri: detail['instance-definovány-číselníkem']?.iri ?? '',
-    codeListDataset:
-      detail['instance-definovány-číselníkem']?.['datová-sada-v-nkod'] ?? '',
+    codeList: toCodeListRef(
+      detail['instance-definovány-číselníkem'],
+      detail['instance-definovány-číselníkem-resolved'],
+    ),
   };
 }
 
