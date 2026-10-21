@@ -6,7 +6,6 @@ export type Hint = { title: string; body: string; recommendation?: string };
 export const conceptHintKeys = [
   'nameModel.name',
   'altNameModel.altName',
-  'conceptType',
   'type',
   'definitionModel.definition',
   'descriptionModel.description',

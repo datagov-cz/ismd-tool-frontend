@@ -43,7 +43,7 @@ export const LegislativeSourceSelected = ({ iri, onClear, onClick }: Props) => {
               <span className="block h-5 w-full truncate text-xs font-semibold leading-5">
                 {citation}
               </span>
-              <span className="block h-4 w-full truncate text-xs leading-4 text-(--text-subtle)">
+              <span className="block h-4 w-full truncate text-xs leading-4 text-subtle">
                 {resolvedIri}
               </span>
             </>
