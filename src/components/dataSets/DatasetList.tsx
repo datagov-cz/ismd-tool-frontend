@@ -61,16 +61,16 @@ export const DatasetList = ({
             placeholder={t('SearchOntologies')}
             value={filterQuery}
             onChange={(e) => onFilterChange(e.target.value ?? '')}
-          >
-            <GovIcon
-              type="components"
-              color="neutral"
-              name="funnel"
-              slot="icon-start"
-              size="s"
-              className="transition-transform duration-200"
-            />
-          </GovFormInput>
+            iconStart={
+              <GovIcon
+                type="components"
+                color="neutral"
+                name="funnel"
+                size="s"
+                className="transition-transform duration-200"
+              />
+            }
+          />
         </GovFormGroup>
       </div>
 
