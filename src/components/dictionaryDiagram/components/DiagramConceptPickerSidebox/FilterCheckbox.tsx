@@ -1,9 +1,4 @@
-import { ComponentRef, useEffect, useRef } from 'react';
 import { GovFormCheckbox, GovFormLabel } from '@gov-design-system-ce/react';
-
-type GovCheckboxElement = ComponentRef<typeof GovFormCheckbox> & {
-  checked?: boolean;
-};
 
 export const FilterCheckbox = ({
   label,
@@ -14,23 +9,17 @@ export const FilterCheckbox = ({
   checked: boolean;
   onToggle: (_checked: boolean) => void;
 }) => {
-  const ref = useRef<GovCheckboxElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const handler = () => onToggle(Boolean(el.checked));
-    el.addEventListener('gov-change', handler);
-    el.addEventListener('change', handler);
-    return () => {
-      el.removeEventListener('gov-change', handler);
-      el.removeEventListener('change', handler);
-    };
-  }, [onToggle]);
-
   return (
-    <GovFormCheckbox ref={ref} size="s" checked={checked}>
+    <GovFormCheckbox
+      size="s"
+      checked={checked}
+      readOnly
+      onClick={() => onToggle(!checked)}
+      onTouchEnd={(event) => {
+        event.preventDefault();
+        onToggle(!checked);
+      }}
+    >
       <GovFormLabel slot="label">{label}</GovFormLabel>
     </GovFormCheckbox>
   );

@@ -1,5 +1,6 @@
 import {
   type KeyboardEvent,
+  type PointerEvent,
   type ReactNode,
   useId,
   useMemo,
@@ -22,7 +23,10 @@ import {
   getConceptKind,
   KIND_ICON,
 } from '../../model/concept';
-import { onConceptDragStart } from '../../model/conceptDrag';
+import {
+  dispatchConceptPointerDrop,
+  onConceptDragStart,
+} from '../../model/conceptDrag';
 
 import { ConceptPickerSearch } from './ConceptPickerSearch';
 import { FilterCheckbox } from './FilterCheckbox';
@@ -352,8 +356,83 @@ export const DiagramPickerConcept = ({
 }) => {
   const kind = getConceptKind(concept);
   const t = useTranslations('DictionaryDiagram.Node');
+  type PointerDrag = {
+    pointerId: number;
+    startX: number;
+    startY: number;
+    clientX: number;
+    clientY: number;
+    moved: boolean;
+  };
+  const pointerDragRef = useRef<PointerDrag | null>(null);
+  const [pointerDrag, setPointerDrag] = useState<PointerDrag | null>(null);
 
   const draggable = !active;
+  const label =
+    concept.název?.cs ??
+    (concept.metadata &&
+      'label' in concept.metadata &&
+      concept.metadata?.label);
+
+  const startPointerDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (!draggable || event.pointerType === 'mouse') return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const drag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      moved: false,
+    };
+    pointerDragRef.current = drag;
+    setPointerDrag(drag);
+  };
+
+  const movePointerDrag = (event: PointerEvent<HTMLDivElement>) => {
+    const current = pointerDragRef.current;
+    if (current?.pointerId !== event.pointerId) return;
+    event.preventDefault();
+
+    const moved =
+      current.moved ||
+      Math.hypot(
+        event.clientX - current.startX,
+        event.clientY - current.startY,
+      ) >= 6;
+    const drag = {
+      ...current,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      moved,
+    };
+    pointerDragRef.current = drag;
+    setPointerDrag(drag);
+  };
+
+  const finishPointerDrag = (event: PointerEvent<HTMLDivElement>) => {
+    const current = pointerDragRef.current;
+    if (current?.pointerId !== event.pointerId) return;
+    event.preventDefault();
+
+    if (current.moved) {
+      dispatchConceptPointerDrop({
+        concept,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      });
+    }
+    pointerDragRef.current = null;
+    setPointerDrag(null);
+  };
+
+  const cancelPointerDrag = () => {
+    pointerDragRef.current = null;
+    setPointerDrag(null);
+  };
 
   return (
     <div
@@ -391,10 +470,7 @@ export const DiagramPickerConcept = ({
         <GovIcon name={KIND_ICON[kind]} size="m" color="primary" />
         <div className="flex flex-col gap-0.5">
           <span className="text-dark-blue-subtle font-medium text-sm leading-none">
-            {concept.název?.cs ??
-              (concept.metadata &&
-                'label' in concept.metadata &&
-                concept.metadata?.label)}
+            {label}
           </span>
           <span className="text-xs font-medium text-card-description leading-none">
             {t(
@@ -412,8 +488,27 @@ export const DiagramPickerConcept = ({
       ) : active ? (
         <GovIcon name="check2-circle" size="l" color="success" />
       ) : draggable ? (
-        <GovIcon name="arrows-move" size="l" color="primary" />
+        <div
+          className="-m-1 flex touch-none p-1"
+          onPointerDown={startPointerDrag}
+          onPointerMove={movePointerDrag}
+          onPointerUp={finishPointerDrag}
+          onPointerCancel={cancelPointerDrag}
+        >
+          <GovIcon name="arrows-move" size="l" color="primary" />
+        </div>
       ) : null}
+      {pointerDrag?.moved && (
+        <div
+          className="pointer-events-none fixed z-3000 max-w-72 rounded-sm border border-blue-primary bg-white px-3 py-2 text-sm font-medium text-dark-blue-subtle shadow-subtle"
+          style={{
+            left: pointerDrag.clientX + 12,
+            top: pointerDrag.clientY + 12,
+          }}
+        >
+          {label}
+        </div>
+      )}
     </div>
   );
 };
