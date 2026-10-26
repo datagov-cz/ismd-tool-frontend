@@ -86,7 +86,7 @@ export const LabeledEdge = ({
     e.preventDefault();
     dragIndex.current = index;
     setDraftBends(bends);
-    (e.target as Element).setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const startInsertDrag = (insertAt: number) => (e: React.PointerEvent) => {
@@ -95,7 +95,7 @@ export const LabeledEdge = ({
     const p = screenToFlowPosition({ x: e.clientX, y: e.clientY });
     dragIndex.current = insertAt;
     setDraftBends([...bends.slice(0, insertAt), p, ...bends.slice(insertAt)]);
-    (e.target as Element).setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onDragMove = (e: React.PointerEvent) => {
@@ -109,11 +109,16 @@ export const LabeledEdge = ({
   const onDragEnd = (e: React.PointerEvent) => {
     if (dragIndex.current === null) return;
     dragIndex.current = null;
-    (e.target as Element).releasePointerCapture(e.pointerId);
+    e.currentTarget.releasePointerCapture(e.pointerId);
     setDraftBends((final) => {
       if (final) data?.onBendsChange?.(final);
       return null;
     });
+  };
+
+  const onDragCancel = () => {
+    dragIndex.current = null;
+    setDraftBends(null);
   };
 
   const removeBend = (index: number) => {
@@ -250,7 +255,7 @@ export const LabeledEdge = ({
           bends.map((b, i) => (
             <div
               key={`bend-${i}`}
-              className="nodrag nopan absolute w-3 h-3 rounded-full border-2 border-blue-primary bg-white"
+              className="nodrag nopan absolute flex size-9 touch-none items-center justify-center"
               style={{
                 transform: `translate(-50%, -50%) translate(${b.x}px, ${b.y}px)`,
                 pointerEvents: 'all',
@@ -259,13 +264,16 @@ export const LabeledEdge = ({
               onPointerDown={startDrag(i)}
               onPointerMove={onDragMove}
               onPointerUp={onDragEnd}
+              onPointerCancel={onDragCancel}
               onClick={(e) => e.stopPropagation()}
               onDoubleClick={(e) => {
                 e.stopPropagation();
                 removeBend(i);
               }}
               title={t('BendHint')}
-            />
+            >
+              <span className="size-3 rounded-full border-2 border-blue-primary bg-white" />
+            </div>
           ))}
 
         {!dimmed &&
@@ -273,7 +281,7 @@ export const LabeledEdge = ({
           segmentMids.map((m) => (
             <div
               key={`ghost-${m.insertAt}-${m.x}-${m.y}`}
-              className="nodrag nopan absolute w-2.5 h-2.5 rounded-full border border-blue-primary bg-white opacity-0 hover:opacity-60 transition-opacity"
+              className="nodrag nopan absolute flex size-9 touch-none items-center justify-center opacity-0 transition-opacity hover:opacity-60 [@media(pointer:coarse)]:opacity-60"
               style={{
                 transform: `translate(-50%, -50%) translate(${m.x}px, ${m.y}px)`,
                 pointerEvents: 'all',
@@ -282,8 +290,11 @@ export const LabeledEdge = ({
               onPointerDown={startInsertDrag(m.insertAt)}
               onPointerMove={onDragMove}
               onPointerUp={onDragEnd}
+              onPointerCancel={onDragCancel}
               onClick={(e) => e.stopPropagation()}
-            />
+            >
+              <span className="size-2.5 rounded-full border border-blue-primary bg-white" />
+            </div>
           ))}
 
         {(label || incomplete) && (

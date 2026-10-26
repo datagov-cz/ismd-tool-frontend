@@ -641,7 +641,12 @@ export const DiagramCanvas = ({
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onEdgeClick={onEdgeClick}
-              onNodeClick={(_, node) => toggleFocusedNode(node.id)}
+              onNodeClick={(event, node) => {
+                if ((event.target as Element).closest('.react-flow__handle')) {
+                  return;
+                }
+                toggleFocusedNode(node.id);
+              }}
               onPaneClick={() => setFocusedNodeIds(new Set())}
               onConnect={onConnect}
               onReconnect={onReconnect}

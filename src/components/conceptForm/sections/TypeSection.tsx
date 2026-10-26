@@ -6,6 +6,7 @@ import { ConceptInput } from '@/components/shared/ConceptInput';
 import { DataTypeInput } from '@/components/shared/DataTypeInput';
 import { Input } from '@/components/shared/Input';
 import { Select } from '@/components/shared/Select';
+import { CLASS_TYPE } from '../classType';
 import { FormSection } from '../components/FormSection';
 import { type ConceptForm } from '../schema/conceptFormSchema';
 
@@ -32,11 +33,11 @@ export const TypesSection = ({ editing }: { editing?: boolean }) => {
   const TYPE_OPTIONS = [
     { value: '', label: '' },
     {
-      value: 'Objekt',
+      value: CLASS_TYPE.object,
       label: t('ClassCreateFields.Options.ClassType.ObjectOfLawType'),
     },
     {
-      value: 'Subjekt',
+      value: CLASS_TYPE.subject,
       label: t('ClassCreateFields.Options.ClassType.SubjectOfLawType'),
     },
   ];
