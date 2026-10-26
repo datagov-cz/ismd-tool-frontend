@@ -31,7 +31,7 @@ export const NavItems = ({ session }: Props) => {
           label={
             <>
               <GovIcon type="components" name="person" size="xl" />
-              {session.user?.name}
+              {session.user?.name ?? ''}
             </>
           }
         >
