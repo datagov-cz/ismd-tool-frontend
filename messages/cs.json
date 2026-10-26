@@ -196,7 +196,9 @@
       "AgendaAndInfoSystems": "Agenda a informační systémy",
       "PublicityAndPublication": "Veřejnost a publikace",
       "AnotherConcepts": "Další pojmy ve slovníku",
-      "Search": "Hledat vyraz"
+      "Search": "Hledat vyraz",
+      "Dataset": "Datové sady",
+      "ShowDatasetDetail": "Zobrazit detail"
     },
     "UdajeKDoplneni": {
       "Title": "Údaje k doplnění"
