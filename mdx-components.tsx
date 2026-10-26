@@ -30,6 +30,12 @@ const components = {
   p: (props: ParagraphProps) => (
     <p className="text-gray-800 dark:text-zinc-300 leading-snug" {...props} />
   ),
+  table: (props: ComponentPropsWithoutRef<'table'>) => (
+    <table
+      className="w-full border-collapse [&_th+th]:border-l [&_th+th]:border-gray-300 [&_td+td]:border-l [&_td+td]:border-gray-300 dark:[&_th+th]:border-zinc-600 dark:[&_td+td]:border-zinc-600"
+      {...props}
+    />
+  ),
   ol: (props: ListProps) => (
     <ol
       className="text-gray-800 dark:text-zinc-300 list-decimal pl-5 space-y-2"

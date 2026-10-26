@@ -54,6 +54,7 @@
     "react-hook-form": "^7.67.0",
     "react-markdown": "^10.1.0",
     "react-toastify": "^11.0.5",
+    "remark-gfm": "^4.0.1",
     "sugar-high": "^0.9.5",
     "tailwindcss": "^4.1.17",
     "usehooks-ts": "^3.1.1",
