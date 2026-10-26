@@ -1,6 +1,13 @@
 import '@xyflow/react/dist/style.css';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { GovIcon } from '@gov-design-system-ce/react';
 import {
   Background,
@@ -16,6 +23,7 @@ import {
 } from '@xyflow/react';
 import { toPng, toSvg } from 'html-to-image';
 import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 import { toast } from 'react-toastify';
 
 import { AddNewConceptDialog } from '@/components/dictionaryDiagram/components/AddNewConceptDialog';
@@ -190,6 +198,8 @@ export const DiagramCanvas = ({
   onRenameDiagram,
 }: DiagramBuilderProps) => {
   const t = useTranslations('DictionaryDiagram.Canvas');
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { getNode, getNodesBounds, getZoom, setCenter } = useReactFlow<
     ConceptFlowNode,
@@ -627,7 +637,7 @@ export const DiagramCanvas = ({
 
   return (
     <div
-      className="flex-1084 bg-white shadow-subtle rounded-md relative"
+      className="flex-1084 bg-white dark:bg-diagram-canvas shadow-subtle rounded-md relative"
       ref={wrapperRef}
     >
       <DiagramDispatchContext.Provider value={dispatch}>
@@ -655,7 +665,16 @@ export const DiagramCanvas = ({
               onDragOver={onDragOver}
               fitView
               minZoom={MIN_ZOOM}
-              colorMode="system"
+              colorMode={isDarkMode ? 'dark' : 'light'}
+              style={
+                isDarkMode
+                  ? ({
+                      '--xy-edge-stroke-default': 'var(--color-diagram-edge)',
+                      '--xy-edge-stroke-selected-default':
+                        'var(--color-diagram-edge-selected)',
+                    } as CSSProperties)
+                  : undefined
+              }
             >
               <DiagramToolbar
                 canUndo={canUndo}
@@ -701,8 +720,21 @@ export const DiagramCanvas = ({
                   />
                 </ControlButton>
               </Controls>
-              <MiniMap />
-              <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+              <MiniMap
+                bgColor={
+                  isDarkMode ? 'var(--color-diagram-surface)' : undefined
+                }
+                maskColor={isDarkMode ? 'rgba(0, 0, 0, 0.55)' : undefined}
+                nodeColor={
+                  isDarkMode ? 'var(--color-diagram-minimap-node)' : undefined
+                }
+              />
+              <Background
+                variant={BackgroundVariant.Dots}
+                gap={12}
+                size={1}
+                color={isDarkMode ? 'var(--color-diagram-grid)' : undefined}
+              />
             </ReactFlow>
           </LabelDisplayContext.Provider>
         </PendingChangesContext.Provider>

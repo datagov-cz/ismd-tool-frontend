@@ -272,7 +272,7 @@ export const LabeledEdge = ({
               }}
               title={t('BendHint')}
             >
-              <span className="size-3 rounded-full border-2 border-blue-primary bg-white" />
+              <span className="size-3 rounded-full border-2 border-blue-primary bg-white dark:bg-diagram-surface" />
             </div>
           ))}
 
@@ -293,7 +293,7 @@ export const LabeledEdge = ({
               onPointerCancel={onDragCancel}
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="size-2.5 rounded-full border border-blue-primary bg-white" />
+              <span className="size-2.5 rounded-full border border-blue-primary bg-white dark:bg-diagram-surface" />
             </div>
           ))}
 
@@ -305,8 +305,8 @@ export const LabeledEdge = ({
                 ? 'whitespace-normal wrap-break-word'
                 : 'overflow-hidden text-ellipsis whitespace-nowrap',
               incomplete
-                ? 'border-dashed text-card-description bg-white'
-                : 'border-gray-border/50 text-dark-blue-subtle bg-white',
+                ? 'border-dashed text-card-description bg-white dark:bg-diagram-surface dark:text-gray-300'
+                : 'border-gray-border/50 text-dark-blue-subtle bg-white dark:bg-diagram-surface dark:text-gray-100',
               dragOver && 'border-blue-primary bg-blue-subtle',
               dimmed && 'opacity-0 pointer-events-none',
               emphasized && 'shadow-sm border-blue-primary',
