@@ -268,10 +268,10 @@ export const DictionaryDiagramHeader = ({
                 color="success"
                 type="subtle"
                 size="xs"
-                className="w-fit border bg-white! cursor-pointer"
+                className="w-fit border bg-white! dark:bg-diagram-green-selected! dark:border-diagram-green-border! cursor-pointer"
                 iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <span className="font-bold text-blue-primary cursor-pointer">
+                <span className="font-bold text-blue-primary dark:text-green-300 cursor-pointer">
                   {capitalizeFirst(ontologyName ?? '')}
                 </span>
               </GovTag>

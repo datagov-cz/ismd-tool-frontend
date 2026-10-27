@@ -147,7 +147,7 @@ export const ConceptPickerSearch = ({
       {resultConcepts.some((concept) =>
         selectedConceptIds.has(getConceptId(concept)),
       ) && (
-        <div className="z-10 flex flex-col gap-1.5 border-b mt-2 border-gray-border/50 bg-white pb-1.5">
+        <div className="z-10 flex flex-col gap-1.5 border-b mt-2 border-gray-border/50 bg-white dark:bg-diagram-surface-raised pb-1.5">
           {resultConcepts
             .filter((concept) => selectedConceptIds.has(getConceptId(concept)))
             .map((concept, index) => (
@@ -163,7 +163,7 @@ export const ConceptPickerSearch = ({
       )}
       <div
         ref={scrollContainerRef}
-        className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1 bg-white"
+        className="flex flex-col gap-1.5 pt-2 overflow-y-auto max-h-[calc(100vh-300px)] pr-1 bg-white dark:bg-diagram-surface-raised"
       >
         {resultConcepts
           .filter((concept) => !selectedConceptIds.has(getConceptId(concept)))

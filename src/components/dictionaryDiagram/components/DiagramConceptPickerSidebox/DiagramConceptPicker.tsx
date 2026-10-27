@@ -239,7 +239,7 @@ export const DiagramConceptPicker = ({
         open={pendingEditsOpen}
         onOpenChange={onPendingEditsOpenChange}
       />
-      <div className="min-h-0 bg-white shadow-subtle rounded-md py-2 px-4">
+      <div className="min-h-0 bg-white dark:bg-diagram-surface shadow-subtle rounded-md py-2 px-4">
         <PickerTabs
           items={[
             {
@@ -460,19 +460,24 @@ export const DiagramPickerConcept = ({
         draggable && 'cursor-grab active:cursor-grabbing',
         !active && !draggable && 'opacity-60',
         selected
-          ? 'cursor-pointer border-blue-primary bg-primary-subtlest ring-1 ring-blue-primary'
+          ? 'cursor-pointer border-blue-primary bg-primary-subtlest ring-1 ring-blue-primary dark:border-diagram-blue-border dark:bg-diagram-blue-selected dark:ring-diagram-blue-border'
           : active
-            ? 'cursor-pointer bg-status-success-100 border-status-success-200'
-            : 'border-gray-border/50 bg-white',
+            ? 'cursor-pointer bg-status-success-100 border-status-success-200 dark:border-diagram-green-border dark:bg-diagram-green-selected'
+            : 'border-gray-border/50 bg-white dark:bg-diagram-surface-muted',
       )}
     >
       <div className="flex items-center gap-1.5">
-        <GovIcon name={KIND_ICON[kind]} size="m" color="primary" />
+        <GovIcon
+          name={KIND_ICON[kind]}
+          size="m"
+          color="primary"
+          className="dark:brightness-150"
+        />
         <div className="flex flex-col gap-0.5">
-          <span className="text-dark-blue-subtle font-medium text-sm leading-none">
+          <span className="text-dark-blue-subtle dark:text-white font-medium text-sm leading-none">
             {label}
           </span>
-          <span className="text-xs font-medium text-card-description leading-none">
+          <span className="text-xs font-medium text-card-description dark:text-gray-300 leading-none">
             {t(
               kind === 'trida'
                 ? 'Class'
