@@ -73,7 +73,7 @@ export const MobileMenu = ({ isOpen, session, onClose }: Props) => {
         {session && (
           <span className="flex items-center gap-2 font-medium">
             <GovIcon type="components" name="person" size="l" />
-            {session.user?.name}
+            {session.user?.name ?? ''}
           </span>
         )}
         <GovButton
