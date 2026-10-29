@@ -32,7 +32,7 @@ export const conceptHintKeys = [
   'range',
   'superProperty',
   'superRelation',
-  'codeListDataset',
+  'codeList',
   'inTezaurus',
 ] as const;
 
