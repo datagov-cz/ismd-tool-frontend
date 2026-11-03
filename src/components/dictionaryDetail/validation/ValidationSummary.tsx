@@ -97,7 +97,7 @@ export const ValidationSummary = ({
     }
 
     createValidationReport.mutate(
-      { slug: slug, data: metaData },
+      { slug },
       {
         onSuccess: (data) => setReport(data.data),
         onError: (error) => {
