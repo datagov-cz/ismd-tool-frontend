@@ -7,7 +7,7 @@ import {
 import { useTranslations } from 'next-intl';
 
 import {
-  OntologyMetadataModel,
+  OntologyUploadResultDto,
   UploadFromFileNormalizeMode,
   useUploadFromFile,
 } from '@/api/generated';
@@ -20,7 +20,7 @@ import { InSchemeDecisionData } from '../uploadDialog/inSchemeDecision';
 
 interface InSchemeDecisionDialogProps {
   data: InSchemeDecisionData;
-  onSuccess: (_value: OntologyMetadataModel) => void;
+  onSuccess: (_value: OntologyUploadResultDto) => void;
   onCancel: () => void;
 }
 

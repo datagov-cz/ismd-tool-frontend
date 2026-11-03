@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import {
-  OntologyMetadataModel,
+  OntologyDetailMetadataDto,
   useGetValidationReport,
   useValidateOntology,
   ValidationReport,
@@ -61,7 +61,7 @@ export const ValidationSummary = ({
   metaData,
 }: {
   slug: string;
-  metaData: OntologyMetadataModel;
+  metaData: OntologyDetailMetadataDto;
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
   const tError = useTranslations('Errors');
