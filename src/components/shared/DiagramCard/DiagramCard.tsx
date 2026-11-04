@@ -1,7 +1,9 @@
 import { GovIcon } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
+import { CardIconButton } from '../DictionaryCard/CardIconButton';
 import { CardStat } from '../DictionaryCard/CardStat';
 
 export type DiagramCardProps = {
@@ -20,6 +22,16 @@ export const DiagramCard = ({
   ontologySlug,
 }: DiagramCardProps) => {
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href + link);
+      toast(t('LinkCopied'), { type: 'success' });
+    } catch {
+      toast(t('LinkCopyFailed'), { type: 'error' });
+    }
+  };
+
   return (
     <div className="rounded-xl border border-border-default dark:border-diagram-border overflow-hidden shadow-subtle flex flex-col">
       <div className="grow group px-3 py-2 flex flex-col bg-white dark:bg-diagram-surface text-black dark:text-white">
@@ -59,6 +71,9 @@ export const DiagramCard = ({
               value={modified?.toLocaleDateString('CS')}
             />
           )}
+        </div>
+        <div className="flex gap-2 items-center">
+          <CardIconButton icon="link" onClick={handleCopyLink} />
         </div>
       </div>
     </div>
