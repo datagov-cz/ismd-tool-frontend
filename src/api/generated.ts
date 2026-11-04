@@ -5414,18 +5414,11 @@ export const useSaveLayout = <TError = unknown, TContext = unknown>(
  */
 export const validateOntology = (
   slug: string,
-  ontologyMetadataModel: OntologyMetadataModel,
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
   return axiosInstance<ApiResponseDtoValidationReport>(
-    {
-      url: `/api/ontology/${slug}/validate`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: ontologyMetadataModel,
-      signal,
-    },
+    { url: `/api/ontology/${slug}/validate`, method: 'POST', signal },
     options,
   );
 };
@@ -5437,14 +5430,14 @@ export const getValidateOntologyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof validateOntology>>,
     TError,
-    { slug: string; data: OntologyMetadataModel },
+    { slug: string },
     TContext
   >;
   request?: SecondParameter<typeof axiosInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof validateOntology>>,
   TError,
-  { slug: string; data: OntologyMetadataModel },
+  { slug: string },
   TContext
 > => {
   const mutationKey = ['validateOntology'];
@@ -5458,11 +5451,11 @@ export const getValidateOntologyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof validateOntology>>,
-    { slug: string; data: OntologyMetadataModel }
+    { slug: string }
   > = (props) => {
-    const { slug, data } = props ?? {};
+    const { slug } = props ?? {};
 
-    return validateOntology(slug, data, requestOptions);
+    return validateOntology(slug, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -5471,7 +5464,6 @@ export const getValidateOntologyMutationOptions = <
 export type ValidateOntologyMutationResult = NonNullable<
   Awaited<ReturnType<typeof validateOntology>>
 >;
-export type ValidateOntologyMutationBody = OntologyMetadataModel;
 export type ValidateOntologyMutationError = unknown;
 
 /**
@@ -5482,7 +5474,7 @@ export const useValidateOntology = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof validateOntology>>,
       TError,
-      { slug: string; data: OntologyMetadataModel },
+      { slug: string },
       TContext
     >;
     request?: SecondParameter<typeof axiosInstance>;
@@ -5491,7 +5483,7 @@ export const useValidateOntology = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof validateOntology>>,
   TError,
-  { slug: string; data: OntologyMetadataModel },
+  { slug: string },
   TContext
 > => {
   const mutationOptions = getValidateOntologyMutationOptions(options);
