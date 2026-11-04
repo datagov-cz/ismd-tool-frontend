@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { OntologySummaryDto, useGetOntologyList } from '@/api/generated';
+import { OntologyMetadataModel, useGetOntologyList } from '@/api/generated';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 import {
   DictionaryCardProps,
@@ -11,7 +11,9 @@ import {
 
 import { OntologyList } from './OntologyList';
 
-const toCardItem = (item: OntologySummaryDto): DictionaryCardProps | null => {
+const toCardItem = (
+  item: OntologyMetadataModel,
+): DictionaryCardProps | null => {
   if (!item.id || (!item.name && !item.popis)) return null;
 
   return {

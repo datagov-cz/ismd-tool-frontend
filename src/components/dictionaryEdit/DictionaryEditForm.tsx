@@ -8,8 +8,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import {
   DescriptionModelDescription,
   NameModelName,
-  OntologyDetailMetadataDto,
   OntologyDetailModel,
+  OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
 import { SectionTitle } from '@/components/shared/SectionTitle';
@@ -27,7 +27,7 @@ import { LanguageInput } from '../shared/LanguageInput';
 export type DictionaryEditProps = {
   ontologySlug: string;
   ontologyID: number;
-  metadata: OntologyDetailMetadataDto;
+  metadata: OntologyMetadataModel;
   detail: OntologyDetailModel;
 };
 

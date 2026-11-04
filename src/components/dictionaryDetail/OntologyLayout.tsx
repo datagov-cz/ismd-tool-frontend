@@ -14,8 +14,8 @@ import { useTranslations } from 'next-intl';
 import {
   ConceptDetailModel,
   GetOntologyDtoPublishedConceptDeviations,
-  OntologyDetailMetadataDto,
   OntologyDetailModelNázev,
+  OntologyMetadataModel,
 } from '@/api/generated';
 import { Term } from '@/components/dictionaryDetail/Term';
 import { LanguageSwitcher } from '../conceptDetail/LanguageSwitcher';
@@ -41,7 +41,7 @@ interface Props {
   getRelatedTerms: (_concept: ConceptDetailModel) => TermWithSlug[];
   children?: React.ReactNode;
   conceptCount?: number;
-  metaData?: OntologyDetailMetadataDto;
+  metaData?: OntologyMetadataModel;
   slug?: string;
   deviations?: GetOntologyDtoPublishedConceptDeviations;
   isPublished?: boolean;

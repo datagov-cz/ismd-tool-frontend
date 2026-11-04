@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { OntologyUploadResultDto } from '@/api/generated';
+import { OntologyMetadataModel } from '@/api/generated';
 
 import { SuccessView } from './successDialog/SuccessView';
 import { InSchemeDecisionData } from './uploadDialog/inSchemeDecision';
@@ -8,7 +8,7 @@ import { InSchemeDecisionDialog } from './uploadDialog/InSchemeDecisionDialog';
 import { UploadDialog } from './uploadDialog/UploadDialog';
 
 export const UploadFlow = () => {
-  const [successData, setSuccessData] = useState<OntologyUploadResultDto>();
+  const [successData, setSuccessData] = useState<OntologyMetadataModel>();
   const [decisionData, setDecisionData] = useState<InSchemeDecisionData>();
 
   if (successData) {

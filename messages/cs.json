@@ -433,6 +433,8 @@
   },
   "DownloadDialog": {
     "Title": "Vyberte formát souboru",
+    "OfnBlockedTitle": "Stažení není možné kvůli chybám ve slovníku",
+    "Close": "Zavřít",
     "Success": "Úspěšně stažený sobor",
     "Error": "Soubor se nepodařilo stáhnout"
   },
@@ -449,6 +451,7 @@
     "Yes": "Ano"
   },
   "UploadOntology": {
+    "OfnRejectedTitle": "Slovník se nepodařilo importovat",
     "Dialog": {
       "Title": "Importovat ze souboru",
       "FileInputLabel": "Vyberte soubor",
@@ -471,8 +474,22 @@
       "YesButton": "Ano"
     },
     "SuccessDialog": {
-      "Title": "Úspěšně jste vytvořili slovní ze souboru",
+      "Title": "Úspěšně jste vytvořili slovník ze souboru",
       "GraphName": "Název slovníku",
+      "RejectedConcepts": "Neimportované pojmy: {count}",
+      "RejectedConceptsDescription": "Slovník se podařilo vytvořit, ale některé pojmy se neimportovaly. Rozbalte skupinu a zobrazte dotčené pojmy.",
+      "RejectedConceptCount": "Pojmů: {count}",
+      "RejectedConceptsOverlapNote": "Jeden pojem může být uveden ve více skupinách, pokud má více příčin odmítnutí.",
+      "UnknownConcept": "Pojem bez IRI",
+      "ConceptIri": "IRI pojmu",
+      "TechnicalDetails": "Technické detaily",
+      "RejectionReasons": {
+        "OutsideNamespace": "Pojem je mimo jmenný prostor slovníku",
+        "UndefinedProperty": "Pojem používá vlastnost, která není definovaná v OFN",
+        "SchemaMismatch": "Pojem neodpovídá OFN schématu",
+        "MissingField": "Pojmu chybí povinné pole",
+        "Other": "Jiný důvod"
+      },
       "ViewOntology": "Zobrazit slovník",
       "CloseDialog": "Zavřít"
     },
@@ -499,8 +516,12 @@
   },
   "Errors": {
     "UnknownError": "Neznámý error",
+    "OfnWriteNonconformant": "Změny se nepodařilo uložit. Nahlaste prosím tento problém správci.",
     "NameRequired": "Název je povinný",
     "CSNameRequired": "Název (CS) je povinný"
+  },
+  "OfnConformance": {
+    "VocabularyLevel": "Problém slovníku"
   },
   "CreateOntology": {
     "Form": {
