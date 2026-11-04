@@ -1996,6 +1996,7 @@ export interface ResolvedLegalSourceDto {
   versionValidUntil?: string;
   isLatestVersion?: boolean;
   enrichmentStatus?: ResolvedLegalSourceDtoEnrichmentStatus;
+  lawWebUrl?: string;
 }
 
 export interface RppAgenda {

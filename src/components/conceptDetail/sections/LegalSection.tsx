@@ -125,6 +125,8 @@ export const LegislativeSource = ({
     iri: item.fragmentIri ?? item.originalUrl ?? '',
   });
 
+  const lawWebUrl = data?.data?.lawWebUrl ?? item.lawWebUrl;
+
   return (
     <div
       className={clsx(
@@ -167,15 +169,20 @@ export const LegislativeSource = ({
             }}
           />
 
-          <GovButton
-            color="primary"
-            type="base"
-            size="xs"
-            href={data?.data?.domain}
-            iconStart={<GovIcon name="box-arrow-up-right" type="components" />}
-          >
-            {t('Main.OpenInESbirka')}
-          </GovButton>
+          {lawWebUrl && (
+            <GovButton
+              color="primary"
+              type="base"
+              size="xs"
+              href={lawWebUrl}
+              target="_blank"
+              iconStart={
+                <GovIcon name="box-arrow-up-right" type="components" />
+              }
+            >
+              {t('Main.OpenInESbirka')}
+            </GovButton>
+          )}
         </div>
       )}
     </div>
