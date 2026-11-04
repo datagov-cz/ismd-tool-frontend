@@ -6,7 +6,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   listAllNkdOntologies,
   NkdOntologyListItemDto,
-  OntologySummaryDto,
+  OntologyMetadataModel,
   useGetOntologyList,
 } from '@/api/generated';
 import {
@@ -19,7 +19,7 @@ import { OntologyList } from './OntologyList';
 const LIMIT = 20;
 
 const ismdToCardItem = (
-  item: OntologySummaryDto,
+  item: OntologyMetadataModel,
 ): DictionaryCardProps | null => {
   if (!item.id || (!item.name && !item.popis)) return null;
 

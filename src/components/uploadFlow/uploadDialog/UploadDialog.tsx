@@ -1,23 +1,29 @@
 import { useEffect, useState } from 'react';
-import { GovButton } from '@gov-design-system-ce/react';
+import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import {
-  OntologyUploadResultDto,
+  OntologyMetadataModel,
   UploadFromFileBody,
   useUploadFromFile,
 } from '@/api/generated';
 import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ErrorText } from '@/components/shared/ErrorText';
+import { OfnIssuesList } from '@/components/shared/OfnIssuesList';
 import { useIsOnline } from '@/hooks/useIsOnline';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { db, type UploadFromFileDraft } from '@/lib/db';
 import { uploadOntologySchema } from '@/lib/formSchemas';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import {
+  getOfnConformanceError,
+  isOfnUploadNonconformant,
+  OfnIssuesData,
+} from '@/utils/ofnConformance';
 
 import { FileController } from './FileController';
 import {
@@ -26,7 +32,7 @@ import {
 } from './inSchemeDecision';
 
 interface UploadDialogProps {
-  setSuccess: (_value: OntologyUploadResultDto) => void;
+  setSuccess: (_value: OntologyMetadataModel) => void;
   setDecisionRequired: (_value: InSchemeDecisionData) => void;
 }
 
@@ -35,6 +41,7 @@ export const UploadDialog = ({
   setDecisionRequired,
 }: UploadDialogProps) => {
   const [submitError, setSubmitError] = useState<string>();
+  const [ofnIssues, setOfnIssues] = useState<OfnIssuesData>();
 
   const isOnline = useIsOnline();
 
@@ -55,6 +62,14 @@ export const UploadDialog = ({
       onError: (error) => {
         // The decision case is handled per-call in onSubmit — don't show it as an error.
         if (getMissingInSchemeError(error)) return;
+        if (isOfnUploadNonconformant(error)) {
+          setSubmitError(undefined);
+          void getOfnConformanceError(error).then((result) =>
+            setOfnIssues(result?.data),
+          );
+          return;
+        }
+        setOfnIssues(undefined);
         setSubmitError(getErrorMessage(error, tError));
       },
     },
@@ -89,6 +104,12 @@ export const UploadDialog = ({
             onError: async (e) => {
               // eslint-disable-next-line no-console
               console.error('Failed to sync offline data:', e);
+              if (isOfnUploadNonconformant(e)) {
+                void getOfnConformanceError(e).then((result) =>
+                  setOfnIssues(result?.data),
+                );
+                return;
+              }
               const errorMessage = getErrorMessage(e, tError);
 
               if (errorMessage) {
@@ -114,6 +135,8 @@ export const UploadDialog = ({
   }, [isOnline]);
 
   const onSubmit = async (data: UploadFromFileBody) => {
+    setOfnIssues(undefined);
+    setSubmitError(undefined);
     if (!isOnline) {
       try {
         const filePayload: UploadFromFileDraft = {
@@ -148,6 +171,12 @@ export const UploadDialog = ({
               graphName: decision.data.graphName,
               conceptsMissingInScheme: decision.data.conceptsMissingInScheme,
             });
+            return;
+          }
+          if (isOfnUploadNonconformant(error)) {
+            void getOfnConformanceError(error).then((result) =>
+              setOfnIssues(result?.data),
+            );
           }
         },
       },
@@ -171,6 +200,36 @@ export const UploadDialog = ({
             translationNamespace="UploadOntology"
           />
           {submitError && <ErrorText text={submitError} />}
+          {ofnIssues && (
+            <section
+              role="alert"
+              aria-live="assertive"
+              className="w-full space-y-3 rounded-lg border border-status-error-600 bg-status-error-100 p-4"
+            >
+              <header className="flex items-start gap-2">
+                <GovIcon
+                  type="components"
+                  name="exclamation-triangle"
+                  color="error"
+                  className="mt-0.5 shrink-0"
+                />
+                <div className="space-y-1">
+                  <h3 className="font-bold text-status-error-700">
+                    {t('OfnRejectedTitle')}
+                  </h3>
+                  {ofnIssues.message && (
+                    <p className="text-sm">{ofnIssues.message}</p>
+                  )}
+                </div>
+              </header>
+              <div className="space-y-3 border-t border-status-error-600/30 pt-3">
+                <p className="break-all font-medium">
+                  {ofnIssues.vocabularyIri}
+                </p>
+                <OfnIssuesList issues={ofnIssues.issues} />
+              </div>
+            </section>
+          )}
 
           <GovButton size="m" type="solid" color="primary" nativeType="submit">
             {t('Dialog.SubmitButton')}

@@ -2,6 +2,7 @@ import axios from 'axios';
 
 type ErrorResponse = {
   message?: string;
+  errorCode?: string;
 };
 
 export const getErrorMessage = (
@@ -9,6 +10,9 @@ export const getErrorMessage = (
   t: (_key: string) => string,
 ): string => {
   if (axios.isAxiosError<ErrorResponse>(error)) {
+    if (error.response?.data?.errorCode === 'OFN_WRITE_NONCONFORMANT') {
+      return t('OfnWriteNonconformant');
+    }
     return error.response?.data?.message ?? error.message ?? t('UnknownError');
   }
 

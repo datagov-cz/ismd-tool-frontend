@@ -18,6 +18,7 @@ export type DictionaryCardProps = {
   modified?: Date;
   concepts: number;
   isPublished?: boolean;
+  ontologySlug?: string;
 } & (
   | { type: 'ISMD'; id: number; ontologyIRI?: never }
   | { type: 'NKD'; ontologyIRI: string; id?: never }
@@ -74,6 +75,7 @@ export const DictionaryCard = ({
   type,
   ontologyIRI,
   isPublished,
+  ontologySlug,
 }: DictionaryCardProps) => {
   const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
@@ -130,7 +132,11 @@ export const DictionaryCard = ({
 
       <DownloadDialog
         {...(type === 'ISMD'
-          ? { type, ontologyID: id }
+          ? {
+              type,
+              ontologyID: id,
+              ontologySlug: ontologySlug ?? getOntologySlug(link),
+            }
           : { type, ontologyIRI })}
         open={openDownload}
         onClose={() => setOpenDownload(false)}
@@ -138,4 +144,9 @@ export const DictionaryCard = ({
       />
     </div>
   );
+};
+
+const getOntologySlug = (link: string) => {
+  const match = link.match(/^\/dictionary\/([^/?#]+)/);
+  return match?.[1] ? decodeURIComponent(match[1]) : undefined;
 };
