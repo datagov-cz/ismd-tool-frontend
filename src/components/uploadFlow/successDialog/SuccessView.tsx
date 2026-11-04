@@ -2,15 +2,15 @@ import { GovButton } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { OntologyMetadataModel } from '@/api/generated';
+import { OntologyUploadResultDto } from '@/api/generated';
 
 interface SuccessViewProps {
   onClose: () => void;
-  ontologyData: OntologyMetadataModel;
+  ontologyData: OntologyUploadResultDto;
 }
 
 export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
-  const { id, graphName, slug } = ontologyData;
+  const { id, graphName, slug } = ontologyData.ontology;
   const t = useTranslations('UploadOntology');
 
   return (

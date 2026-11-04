@@ -354,47 +354,89 @@ export interface ConceptMetadataModel {
   updatedAt?: string;
 }
 
-export type OntologyMetadataModelName = { [key: string]: string };
+export type OntologySummaryDtoName = { [key: string]: string };
 
-export type OntologyMetadataModelSourceTag =
-  (typeof OntologyMetadataModelSourceTag)[keyof typeof OntologyMetadataModelSourceTag];
+export type OntologySummaryDtoPopis = { [key: string]: string };
+
+export type OntologySummaryDtoSourceTag =
+  (typeof OntologySummaryDtoSourceTag)[keyof typeof OntologySummaryDtoSourceTag];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const OntologyMetadataModelSourceTag = {
+export const OntologySummaryDtoSourceTag = {
   DRAFT: 'DRAFT',
   WORKING_COPY: 'WORKING_COPY',
 } as const;
 
-export type OntologyMetadataModelPopis = { [key: string]: string };
-
-export type OntologyMetadataModelLastValidationStatus =
-  (typeof OntologyMetadataModelLastValidationStatus)[keyof typeof OntologyMetadataModelLastValidationStatus];
+export type OntologySummaryDtoLastValidationStatus =
+  (typeof OntologySummaryDtoLastValidationStatus)[keyof typeof OntologySummaryDtoLastValidationStatus];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const OntologyMetadataModelLastValidationStatus = {
+export const OntologySummaryDtoLastValidationStatus = {
   VALIDATED: 'VALIDATED',
   SKIPPED_UNAVAILABLE: 'SKIPPED_UNAVAILABLE',
   FAILED: 'FAILED',
 } as const;
 
-export interface OntologyMetadataModel {
+export interface OntologySummaryDto {
   id?: number;
   slug?: string;
   graphName?: string;
-  name?: OntologyMetadataModelName;
-  user?: UserModel;
+  name?: OntologySummaryDtoName;
+  popis?: OntologySummaryDtoPopis;
   isPublished?: boolean;
-  sourceTag?: OntologyMetadataModelSourceTag;
-  comments?: CommentModel[];
-  popis?: OntologyMetadataModelPopis;
-  concepts?: ConceptMetadataModel[];
+  sourceTag?: OntologySummaryDtoSourceTag;
+  conceptCount?: number;
   createdAt?: string;
   updatedAt?: string;
-  conceptCount?: number;
-  lastValidationStatus?: OntologyMetadataModelLastValidationStatus;
+  lastValidationStatus?: OntologySummaryDtoLastValidationStatus;
   lastValidationAt?: string;
-  rejectedConcepts?: RejectedConceptDto[];
-  correctedIris?: string[];
+}
+
+export interface OntologyUploadResultDto {
+  ontology: OntologySummaryDto;
+  rejectedConcepts: RejectedConceptDto[];
+  correctedIris: string[];
+}
+
+export type OntologyDetailMetadataDtoName = { [key: string]: string };
+
+export type OntologyDetailMetadataDtoPopis = { [key: string]: string };
+
+export type OntologyDetailMetadataDtoSourceTag =
+  (typeof OntologyDetailMetadataDtoSourceTag)[keyof typeof OntologyDetailMetadataDtoSourceTag];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OntologyDetailMetadataDtoSourceTag = {
+  DRAFT: 'DRAFT',
+  WORKING_COPY: 'WORKING_COPY',
+} as const;
+
+export type OntologyDetailMetadataDtoLastValidationStatus =
+  (typeof OntologyDetailMetadataDtoLastValidationStatus)[keyof typeof OntologyDetailMetadataDtoLastValidationStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OntologyDetailMetadataDtoLastValidationStatus = {
+  VALIDATED: 'VALIDATED',
+  SKIPPED_UNAVAILABLE: 'SKIPPED_UNAVAILABLE',
+  FAILED: 'FAILED',
+} as const;
+
+export interface OntologyDetailMetadataDto {
+  id?: number;
+  slug?: string;
+  graphName?: string;
+  name?: OntologyDetailMetadataDtoName;
+  popis?: OntologyDetailMetadataDtoPopis;
+  isPublished?: boolean;
+  sourceTag?: OntologyDetailMetadataDtoSourceTag;
+  conceptCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  lastValidationStatus?: OntologyDetailMetadataDtoLastValidationStatus;
+  lastValidationAt?: string;
+  user?: UserModel;
+  comments?: CommentModel[];
+  concepts?: ConceptMetadataModel[];
 }
 
 export interface RejectedConceptDto {
@@ -512,11 +554,11 @@ export interface ValidationResult {
   error?: boolean;
 }
 
-export type ApiResponseDtoOntologyMetadataModelErrorCode =
-  (typeof ApiResponseDtoOntologyMetadataModelErrorCode)[keyof typeof ApiResponseDtoOntologyMetadataModelErrorCode];
+export type ApiResponseDtoOntologySummaryDtoErrorCode =
+  (typeof ApiResponseDtoOntologySummaryDtoErrorCode)[keyof typeof ApiResponseDtoOntologySummaryDtoErrorCode];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ApiResponseDtoOntologyMetadataModelErrorCode = {
+export const ApiResponseDtoOntologySummaryDtoErrorCode = {
   MALFORMED_REQUEST: 'MALFORMED_REQUEST',
   MISSING_PARAMETER: 'MISSING_PARAMETER',
   INVALID_PARAMETER: 'INVALID_PARAMETER',
@@ -575,11 +617,81 @@ export const ApiResponseDtoOntologyMetadataModelErrorCode = {
   RECONCILIATION_IN_PROGRESS: 'RECONCILIATION_IN_PROGRESS',
 } as const;
 
-export interface ApiResponseDtoOntologyMetadataModel {
-  data?: OntologyMetadataModel;
+export interface ApiResponseDtoOntologySummaryDto {
+  data?: OntologySummaryDto;
   message?: string;
   success?: boolean;
-  errorCode?: ApiResponseDtoOntologyMetadataModelErrorCode;
+  errorCode?: ApiResponseDtoOntologySummaryDtoErrorCode;
+}
+
+export type ApiResponseDtoOntologyUploadResultDtoErrorCode =
+  (typeof ApiResponseDtoOntologyUploadResultDtoErrorCode)[keyof typeof ApiResponseDtoOntologyUploadResultDtoErrorCode];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ApiResponseDtoOntologyUploadResultDtoErrorCode = {
+  MALFORMED_REQUEST: 'MALFORMED_REQUEST',
+  MISSING_PARAMETER: 'MISSING_PARAMETER',
+  INVALID_PARAMETER: 'INVALID_PARAMETER',
+  REQUEST_VALIDATION_FAILED: 'REQUEST_VALIDATION_FAILED',
+  INVALID_ARGUMENT: 'INVALID_ARGUMENT',
+  DATA_INTEGRITY_VIOLATION: 'DATA_INTEGRITY_VIOLATION',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  ACCESS_DENIED: 'ACCESS_DENIED',
+  RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  IO_ERROR: 'IO_ERROR',
+  ONTOLOGY_NOT_FOUND: 'ONTOLOGY_NOT_FOUND',
+  ONTOLOGY_ALREADY_EXISTS: 'ONTOLOGY_ALREADY_EXISTS',
+  ONTOLOGY_CREATION_CONFLICT: 'ONTOLOGY_CREATION_CONFLICT',
+  ONTOLOGY_VALIDATION_FAILED: 'ONTOLOGY_VALIDATION_FAILED',
+  ONTOLOGY_PROCESSING_FAILED: 'ONTOLOGY_PROCESSING_FAILED',
+  ONTOLOGY_STORAGE_FAILED: 'ONTOLOGY_STORAGE_FAILED',
+  ONTOLOGY_ANALYSIS_FAILED: 'ONTOLOGY_ANALYSIS_FAILED',
+  ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION:
+    'ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION',
+  EXPORT_FAILED: 'EXPORT_FAILED',
+  UPLOAD_FAILED: 'UPLOAD_FAILED',
+  UPLOAD_FILE_EMPTY: 'UPLOAD_FILE_EMPTY',
+  UPLOAD_FILE_TOO_LARGE: 'UPLOAD_FILE_TOO_LARGE',
+  UPLOAD_RDF_FORMAT_UNSUPPORTED: 'UPLOAD_RDF_FORMAT_UNSUPPORTED',
+  UPLOAD_RDF_PARSE_FAILED: 'UPLOAD_RDF_PARSE_FAILED',
+  UPLOAD_RDF_PARSE_TIMEOUT: 'UPLOAD_RDF_PARSE_TIMEOUT',
+  UPLOAD_DATA_EMPTY: 'UPLOAD_DATA_EMPTY',
+  UPLOAD_ONTOLOGY_IRI_MISSING: 'UPLOAD_ONTOLOGY_IRI_MISSING',
+  UPLOAD_IRI_TRAILING_SLASH_COLLISION: 'UPLOAD_IRI_TRAILING_SLASH_COLLISION',
+  UPLOAD_RDF_STORE_FAILED: 'UPLOAD_RDF_STORE_FAILED',
+  UPLOAD_METADATA_SAVE_FAILED: 'UPLOAD_METADATA_SAVE_FAILED',
+  MISSING_INSCHEME_DECISION_REQUIRED: 'MISSING_INSCHEME_DECISION_REQUIRED',
+  CONCEPT_NOT_FOUND: 'CONCEPT_NOT_FOUND',
+  CONCEPT_VALIDATION_FAILED: 'CONCEPT_VALIDATION_FAILED',
+  CONCEPT_STORAGE_FAILED: 'CONCEPT_STORAGE_FAILED',
+  COMMENT_NOT_FOUND: 'COMMENT_NOT_FOUND',
+  COMMENT_INVALID: 'COMMENT_INVALID',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  VALIDATION_REPORT_FAILED: 'VALIDATION_REPORT_FAILED',
+  VALIDATION_SERVICE_UNAVAILABLE: 'VALIDATION_SERVICE_UNAVAILABLE',
+  DIAGRAM_VERSION_CONFLICT: 'DIAGRAM_VERSION_CONFLICT',
+  DIAGRAM_NAME_CONFLICT: 'DIAGRAM_NAME_CONFLICT',
+  DIAGRAM_EDIT_CONFLICT: 'DIAGRAM_EDIT_CONFLICT',
+  DIAGRAM_CONFLICT_RESOLUTION_INVALID: 'DIAGRAM_CONFLICT_RESOLUTION_INVALID',
+  DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
+  DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
+  RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
+  NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
+  SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
+  EXTERNAL_SERVICE_UNAVAILABLE: 'EXTERNAL_SERVICE_UNAVAILABLE',
+  EXTERNAL_SERVICE_REJECTED: 'EXTERNAL_SERVICE_REJECTED',
+  EXTERNAL_SERVICE_INVALID_RESPONSE: 'EXTERNAL_SERVICE_INVALID_RESPONSE',
+  OUTBOX_ROW_NOT_RETRYABLE: 'OUTBOX_ROW_NOT_RETRYABLE',
+  RECONCILIATION_IN_PROGRESS: 'RECONCILIATION_IN_PROGRESS',
+} as const;
+
+export interface ApiResponseDtoOntologyUploadResultDto {
+  data?: OntologyUploadResultDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: ApiResponseDtoOntologyUploadResultDtoErrorCode;
 }
 
 export type DescriptionModelDescription = { [key: string]: string };
@@ -769,7 +881,7 @@ export type OntologyCreateWithConceptsResponseDtoConceptIris = {
 };
 
 export interface OntologyCreateWithConceptsResponseDto {
-  ontology: OntologyMetadataModel;
+  ontology: OntologySummaryDto;
   /** Mapping of every selected temporary ref to its final concept IRI. */
   conceptIris: OntologyCreateWithConceptsResponseDtoConceptIris;
 }
@@ -3230,7 +3342,7 @@ export type GetOntologyDtoPublishedConceptDeviations = {
 export type GetOntologyDtoLinkSnapshots = { [key: string]: LinkSnapshotDto[] };
 
 export interface GetOntologyDto {
-  ontologyMetadata?: OntologyMetadataModel;
+  ontologyMetadata?: OntologyDetailMetadataDto;
   ontologyDetail?: OntologyDetailModel;
   publishedOntologyDeviationModel?: PublishedOntologyDeviationModel;
   publishedConceptDeviations?: GetOntologyDtoPublishedConceptDeviations;
@@ -3274,11 +3386,11 @@ export interface PublishedOntologyDeviationModel {
   popis?: PropertyDeviationMapStringString;
 }
 
-export type ApiResponseDtoListOntologyMetadataModelErrorCode =
-  (typeof ApiResponseDtoListOntologyMetadataModelErrorCode)[keyof typeof ApiResponseDtoListOntologyMetadataModelErrorCode];
+export type ApiResponseDtoListOntologySummaryDtoErrorCode =
+  (typeof ApiResponseDtoListOntologySummaryDtoErrorCode)[keyof typeof ApiResponseDtoListOntologySummaryDtoErrorCode];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ApiResponseDtoListOntologyMetadataModelErrorCode = {
+export const ApiResponseDtoListOntologySummaryDtoErrorCode = {
   MALFORMED_REQUEST: 'MALFORMED_REQUEST',
   MISSING_PARAMETER: 'MISSING_PARAMETER',
   INVALID_PARAMETER: 'INVALID_PARAMETER',
@@ -3337,11 +3449,11 @@ export const ApiResponseDtoListOntologyMetadataModelErrorCode = {
   RECONCILIATION_IN_PROGRESS: 'RECONCILIATION_IN_PROGRESS',
 } as const;
 
-export interface ApiResponseDtoListOntologyMetadataModel {
-  data?: OntologyMetadataModel[];
+export interface ApiResponseDtoListOntologySummaryDto {
+  data?: OntologySummaryDto[];
   message?: string;
   success?: boolean;
-  errorCode?: ApiResponseDtoListOntologyMetadataModelErrorCode;
+  errorCode?: ApiResponseDtoListOntologySummaryDtoErrorCode;
 }
 
 export type ApiResponseDtoListMinimalConceptDtoErrorCode =
@@ -5506,7 +5618,7 @@ export const uploadFromFile = (
     formData.append(`file`, uploadFromFileBody.file);
   }
 
-  return axiosInstance<ApiResponseDtoOntologyMetadataModel>(
+  return axiosInstance<ApiResponseDtoOntologyUploadResultDto>(
     {
       url: `/api/ontology/upload`,
       method: 'POST',
@@ -5597,7 +5709,7 @@ export const createOntology = (
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<ApiResponseDtoOntologyMetadataModel>(
+  return axiosInstance<ApiResponseDtoOntologySummaryDto>(
     {
       url: `/api/ontology/create`,
       method: 'POST',
@@ -7872,7 +7984,7 @@ export const editOntology = (
   ontologyEditModel: OntologyEditModel,
   options?: SecondParameter<typeof axiosInstance>,
 ) => {
-  return axiosInstance<ApiResponseDtoOntologyMetadataModel>(
+  return axiosInstance<ApiResponseDtoOntologySummaryDto>(
     {
       url: `/api/ontology/${ontologyId}/edit`,
       method: 'PATCH',
@@ -9206,7 +9318,7 @@ export const getOntologyList = (
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<ApiResponseDtoListOntologyMetadataModel>(
+  return axiosInstance<ApiResponseDtoListOntologySummaryDto>(
     { url: `/api/ontology/list`, method: 'GET', params, signal },
     options,
   );
