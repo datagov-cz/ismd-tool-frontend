@@ -61,6 +61,7 @@ export const CreateForm = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const isOnline = useIsOnline();
+  const isGenerating = useVocabularyDraftStore((state) => !!state.activeJob);
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
@@ -106,6 +107,10 @@ export const CreateForm = () => {
   });
 
   const onSubmit = (data: OntologySchemaType) => {
+    if (useVocabularyDraftStore.getState().activeJob) {
+      return;
+    }
+
     if (isOnline && iriCheck.status !== 'ok') {
       toast.error(tIri('BlockedSave'));
       return;
@@ -174,6 +179,7 @@ export const CreateForm = () => {
           <AiSuggestionSection iriStatus={iriCheck.status} iri={iriCheck.iri} />
           <FormToolbar<OntologySchemaType>
             isPending={isPending && !isPaused}
+            isSaveDisabled={isGenerating}
             onCancel={handleCancel}
           />
         </form>

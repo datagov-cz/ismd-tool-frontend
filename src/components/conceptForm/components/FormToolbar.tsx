@@ -8,9 +8,11 @@ import { useFormHistory } from '@/hooks/useFormHistory';
 
 export const FormToolbar = <T extends FieldValues>({
   isPending,
+  isSaveDisabled = false,
   onCancel,
 }: {
   isPending: boolean;
+  isSaveDisabled?: boolean;
   onCancel: () => void;
 }) => {
   const { undo, redo, canUndo, canRedo } = useFormHistory<T>();
@@ -130,7 +132,7 @@ export const FormToolbar = <T extends FieldValues>({
             color="primary"
             size="s"
             nativeType="submit"
-            disabled={isPending}
+            disabled={isPending || isSaveDisabled}
             iconStart={<GovIcon type="components" name="floppy" />}
           >
             {t('Save')}
