@@ -21,6 +21,7 @@ import { useFormHints } from '@/components/conceptForm/components/hint/useFormHi
 import { AiSuggestionSection } from '@/components/dictionaryCreate/AiSuggestionSection';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
+import { useDictionaryCreateHistory } from '@/hooks/useDictionaryCreateHistory';
 import { useFormDraft } from '@/hooks/useFormDraft';
 import { IRI_CHECK_QUERY_KEY, useIriCheck } from '@/hooks/useIriCheck';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -70,6 +71,7 @@ export const CreateForm = () => {
   });
 
   useFormDraft(form, draftKeys.ontologyCreate);
+  const history = useDictionaryCreateHistory(form);
 
   const namespace = useWatch({ control: form.control, name: 'namespace' });
   const nameModel = useWatch({ control: form.control, name: 'nameModel' });
@@ -180,6 +182,8 @@ export const CreateForm = () => {
           <FormToolbar<OntologySchemaType>
             isPending={isPending && !isPaused}
             isSaveDisabled={isGenerating}
+            isHistoryDisabled={isGenerating}
+            history={history}
             onCancel={handleCancel}
           />
         </form>
