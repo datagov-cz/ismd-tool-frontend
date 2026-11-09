@@ -40,7 +40,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
         key: 'instance-definovány-číselníkem',
         labelKey: 'Sections.InstantiatedByCodeList',
         types: ['TRIDA'],
-        anchor: '#codeListIri',
+        anchor: '#codeList',
       },
       {
         key: 'definiční-obor',

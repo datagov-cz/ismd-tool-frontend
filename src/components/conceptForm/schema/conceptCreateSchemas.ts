@@ -3,8 +3,7 @@ import { z } from 'zod';
 import { LegalSourceListSchema } from './legalSourceSchema';
 import {
   AgendaRef,
-  CodeListDatasetSchema,
-  CodeListIriSchema,
+  CodeListRef,
   ConceptRef,
   DigitalObject,
   MultiLanguageModelSchema,
@@ -44,8 +43,7 @@ export const ClassConceptModelSchema = ConceptCreateModelSchema.extend({
   isPublic: z.boolean().optional(),
   privacyProvisions: LegalSourceListSchema,
   broaderConcept: z.array(ConceptRef).optional(),
-  codeListDataset: CodeListDatasetSchema,
-  codeListIri: CodeListIriSchema,
+  codeList: CodeListRef.optional(),
 });
 
 export const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
@@ -63,7 +61,6 @@ export const PropertyConceptModelSchema = ConceptCreateModelSchema.extend({
   sharingMethod: z.array(z.string()).optional(),
   acquisitionMethod: z.string().optional(),
   contentType: z.string().optional(),
-  codeListDataset: z.string().optional(),
 });
 
 export const RelationshipConceptModelSchema = ConceptCreateModelSchema.extend({
@@ -79,7 +76,6 @@ export const RelationshipConceptModelSchema = ConceptCreateModelSchema.extend({
   isInPPDF: z.boolean().optional(),
   isPublic: z.boolean().optional(),
   privacyProvisions: LegalSourceListSchema,
-  codeListDataset: z.string().optional(),
 });
 
 export const CreateConceptBodySchema = z.discriminatedUnion('conceptTypeEnum', [

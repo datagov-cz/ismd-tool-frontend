@@ -29,7 +29,7 @@ export const DiagramToolbar = ({
   return (
     <Panel
       position="top-left"
-      className="border border-gray-border/50 rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-gray-border/50"
+      className="border border-gray-border/50 dark:border-diagram-border rounded-sm bg-white dark:bg-diagram-surface text-blue-hover dark:text-gray-100 font-bold flex text-sm divide-x divide-gray-border/50 dark:divide-diagram-border"
     >
       <ToolbarButton
         icon="trash"
@@ -65,7 +65,13 @@ export const DiagramToolbar = ({
         type="base"
         size="s"
         iconStart={
-          <GovIcon type="components" name="magic" color="primary" size="xs" />
+          <GovIcon
+            type="components"
+            name="magic"
+            color="primary"
+            size="xs"
+            className="dark:brightness-150"
+          />
         }
         iconEnd={
           <GovIcon
@@ -73,6 +79,7 @@ export const DiagramToolbar = ({
             name="chevron-down"
             color="primary"
             size="s"
+            className="dark:brightness-150"
           />
         }
       >

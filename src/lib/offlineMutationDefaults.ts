@@ -103,6 +103,16 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
       },
       onError: (error) => toast.error(getErrorMessage(error, translateError)),
     },
+    createWithConcepts: {
+      onSuccess: () => {
+        clearFormDraft(draftKeys.ontologyCreate);
+        toast(t('CreateOntology.Form.CreateNewDictSuccess'));
+        return queryClient.invalidateQueries({
+          queryKey: getGetOntologyListQueryKey(),
+        });
+      },
+      onError: (error) => toast.error(getErrorMessage(error, translateError)),
+    },
   };
 
   (Object.keys(offlineMutations) as OfflineMutationKey[]).forEach((key) => {

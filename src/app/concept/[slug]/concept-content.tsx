@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 
 import { useGetConceptDetail } from '@/api/generated';
+import { ConceptDatasetsList } from '@/components/conceptDetail/ConceptDatasetsList';
 import { ConceptHeader } from '@/components/conceptDetail/ConceptHeader';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { ConceptUsageDiagrams } from '@/components/conceptDetail/ConceptUsageDiagrams';
@@ -86,6 +87,7 @@ export const ConceptContent = ({ slug }: Props) => {
           (item) => item.owningConceptId === conceptMetadata.id,
         )}
       >
+        <ConceptDatasetsList conceptIri={conceptDetail.iri} />
         <ConceptUsageDiagrams conceptSlug={slug} conceptName={conceptName} />
         <OtherOntologyConcepts
           ontology={conceptMetadata.graphName || ''}

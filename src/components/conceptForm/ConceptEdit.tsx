@@ -6,15 +6,19 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import {
+  CodeListDto,
   ConceptDetailModel,
   ConceptDetailModelReferencovanéPojmyResolved,
+  NkodCodelistCheckDto,
   useEditConcept,
   useGetConceptDetail,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
 
+import { CLASS_TYPE } from './classType';
 import { normalizeFormData } from './ConceptCreate';
 import { ConceptForm } from './ConceptForm';
 import { type ConceptForm as ConceptFormValues } from './schema/conceptFormSchema';
@@ -109,6 +113,23 @@ function toConceptRefs(
   );
 }
 
+function toCodeListRef(
+  codeList?: CodeListDto,
+  resolved?: NkodCodelistCheckDto,
+): ConceptFormValues['codeList'] {
+  if (resolved?.codelist) {
+    return resolved.codelist;
+  }
+  if (!codeList?.iri || !codeList['datová-sada-v-nkod']) {
+    return undefined;
+  }
+  return {
+    codeListIri: codeList.iri,
+    datasetIri: codeList['datová-sada-v-nkod'],
+    title: codeList.iri,
+  };
+}
+
 function detectConceptType(typ?: string[]): 'TRIDA' | 'VLASTNOST' | 'VZTAH' {
   if (!typ) return 'TRIDA';
   const joined = typ.join(' ').toLowerCase();
@@ -146,9 +167,9 @@ export function mapDetailToFormValues(
     conceptTypeEnum,
     identifier: detail['identifikátor'],
     type: detail.typ?.includes('Typ subjektu práva')
-      ? 'Subjekt'
+      ? CLASS_TYPE.subject
       : detail.typ?.includes('Typ objektu práva')
-        ? 'Objekt'
+        ? CLASS_TYPE.object
         : undefined,
     nameModel: {
       name:
@@ -227,9 +248,10 @@ export function mapDetailToFormValues(
         ? false
         : undefined,
     privacyProvisions: detail['ustanovení-dokládající-neveřejnost-údaje'] ?? [],
-    codeListIri: detail['instance-definovány-číselníkem']?.iri ?? '',
-    codeListDataset:
-      detail['instance-definovány-číselníkem']?.['datová-sada-v-nkod'] ?? '',
+    codeList: toCodeListRef(
+      detail['instance-definovány-číselníkem'],
+      detail['instance-definovány-číselníkem-resolved'],
+    ),
   };
 }
 
@@ -300,9 +322,7 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
           className="w-fit border bg-surface!"
           iconStart={<GovIcon name="journal-text" type="components" />}
         >
-          <span className="font-bold text-accent">
-            {conceptDetail?.['název']?.cs ?? slug}
-          </span>
+          <SectionTitle label={conceptDetail?.['název']?.cs ?? slug} />
         </GovTag>
       </div>
 

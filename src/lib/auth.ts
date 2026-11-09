@@ -153,6 +153,9 @@ export const authOptions: NextAuthOptions = {
       const keycloakToken = token as KeycloakToken;
       session.accessToken = keycloakToken.accessToken;
       session.error = keycloakToken.error;
+      if (token.sub && session.user?.name === token.sub) {
+        session.user.name = '';
+      }
       return session;
     },
   },

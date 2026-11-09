@@ -3,6 +3,7 @@
 // so keys must be derivable from mutation variables/response there.
 export const draftKeys = {
   ontologyCreate: 'ontology-create-form',
+  ontologyCreateAi: 'ontology-create-ai-draft',
   ontologyEdit: (slug: string) => `dictionary-draft:edit:${slug}`,
   conceptCreate: (ontologySlug: string) =>
     `concept-draft:create:${ontologySlug}`,

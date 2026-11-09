@@ -9,6 +9,7 @@ import {
   ConceptMetadataModelConceptType,
   ConceptMetadataModelSourceTag,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 
 import { ControlPanelConcept } from './ControlPanelConcept';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -83,9 +84,10 @@ export const ConceptHeader = ({
                 className="w-fit border bg-surface! cursor-pointer"
                 iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <span className="font-bold text-accent cursor-pointer">
-                  {capitalizeFirst(ontology)}
-                </span>
+                <SectionTitle
+                  label={capitalizeFirst(ontology)}
+                  className="cursor-pointer"
+                />
               </GovTag>
             </Link>
           </div>

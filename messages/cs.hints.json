@@ -134,9 +134,9 @@
         "title": "Nadřazený vztah",
         "body": "Obecnější vztah, jehož zpřesněním je tento vztah."
       },
-      "codeListDataset": {
+      "codeList": {
         "title": "Číselník",
-        "body": "Datová sada číselníku, ze které pojem pochází."
+        "body": "Číselník z Národního katalogu otevřených dat, jehož položky jsou instancemi této třídy. Výběrem se vyplní IRI číselníku i IRI jeho datové sady."
       },
       "inTezaurus": {
         "title": "Zařazení do tezauru",

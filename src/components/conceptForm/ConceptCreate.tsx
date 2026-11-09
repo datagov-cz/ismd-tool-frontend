@@ -11,6 +11,7 @@ import {
   useCreateConcept,
   useGetOntologyDetail,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
@@ -64,8 +65,9 @@ export const normalizeFormData = (
 
   const toIri = (refs?: { iri: string; label: string }[]) =>
     refs?.map((r) => r.iri);
+  const { codeList, ...rest } = formData;
   return {
-    ...formData,
+    ...rest,
     nameModel: formData.nameModel?.name
       ? { name: toRecord(formData.nameModel.name, originalLanguageTags?.name) }
       : { name: {} },
@@ -96,6 +98,8 @@ export const normalizeFormData = (
     range: formData.range?.iri,
     agendaCode: formData.agendaCode?.iri,
     agendaSystemCode: formData.agendaSystemCode?.iri,
+    codeListIri: codeList?.codeListIri,
+    codeListDataset: codeList?.datasetIri,
     privacyProvisions: formData.isPublic ? [] : formData.privacyProvisions,
   };
 };
@@ -149,9 +153,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           className="w-fit border bg-surface!"
           iconStart={<GovIcon name="journal-text" type="components" />}
         >
-          <span className="font-bold text-accent">
-            {data?.data?.ontologyDetail?.název?.cs}
-          </span>
+          <SectionTitle label={data?.data?.ontologyDetail?.název?.cs} />
         </GovTag>
       </div>
 
@@ -161,6 +163,7 @@ export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
           onSubmit={handleSubmit}
           isPending={isPending && !isPaused}
           storageKey={storageKey}
+          aiOntologySlug={ontology}
         />
       )}
     </div>

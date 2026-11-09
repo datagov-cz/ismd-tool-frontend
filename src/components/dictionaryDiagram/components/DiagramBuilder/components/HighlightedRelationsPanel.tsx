@@ -28,15 +28,20 @@ export const HighlightedRelationsPanel = ({
   return (
     <Panel
       position="top-left"
-      className="mt-15 w-90 max-w-[calc(100%-2rem)] overflow-hidden rounded-md border border-blue-primary bg-white shadow-subtle top-10!"
+      className="mt-15 w-90 max-w-[calc(100%-2rem)] overflow-hidden rounded-md border border-blue-primary dark:border-diagram-blue-border bg-white dark:bg-diagram-surface shadow-subtle top-10!"
     >
-      <div className="flex items-center gap-2 border-b border-gray-border/50 bg-primary-subtlest px-3 py-2">
-        <GovIcon name="bezier" size="s" color="primary" />
+      <div className="flex items-center gap-2 border-b border-gray-border/50 dark:border-diagram-border bg-primary-subtlest dark:bg-diagram-surface-raised px-3 py-2">
+        <GovIcon
+          name="bezier"
+          size="s"
+          color="primary"
+          className="dark:brightness-150"
+        />
         <div className="min-w-0">
-          <div className="break-words text-sm font-bold text-dark-blue-subtle">
+          <div className="break-words text-sm font-bold text-dark-blue-subtle dark:text-gray-100">
             {title}
           </div>
-          <div className="text-xs text-card-description">
+          <div className="text-xs text-card-description dark:text-gray-300">
             {t('Count', { count: relations.length })}
           </div>
         </div>
@@ -47,7 +52,7 @@ export const HighlightedRelationsPanel = ({
           <button
             type="button"
             key={item.id}
-            className="grid w-full grid-cols-3 items-center gap-2 rounded px-2 py-1.5 text-xs hover:bg-page-background focus-visible:outline-2 focus-visible:outline-blue-primary"
+            className="grid w-full grid-cols-3 items-center gap-2 rounded px-2 py-1.5 text-xs text-dark-blue-subtle dark:text-gray-100 hover:bg-page-background dark:hover:bg-diagram-hover focus-visible:outline-2 focus-visible:outline-blue-primary"
             onClick={() => onRelationClick(item)}
           >
             <span
@@ -57,7 +62,7 @@ export const HighlightedRelationsPanel = ({
               {item.source}
             </span>
             <span
-              className="w-full break-words rounded-xl bg-primary-subtlest px-2 py-1 text-center font-bold text-blue-hover"
+              className="w-full break-words rounded-xl bg-primary-subtlest dark:bg-diagram-blue-selected px-2 py-1 text-center font-bold text-blue-hover dark:text-blue-200"
               title={item.relation}
             >
               → {item.relation} →

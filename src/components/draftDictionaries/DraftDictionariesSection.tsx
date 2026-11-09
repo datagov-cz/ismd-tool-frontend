@@ -50,7 +50,7 @@ export const DraftDictionariesSection = () => {
             })
             ?.slice(0, 8)
             .map(
-              ({ id, name, slug, popis, concepts, updatedAt }) =>
+              ({ id, name, slug, popis, conceptCount, updatedAt }) =>
                 id &&
                 name && (
                   <DictionaryCard
@@ -60,7 +60,7 @@ export const DraftDictionariesSection = () => {
                     titleTranslations={name}
                     link={`/dictionary/${slug}`}
                     textTranslations={popis}
-                    concepts={concepts?.length ?? 0}
+                    concepts={conceptCount ?? 0}
                     modified={updatedAt ? new Date(updatedAt) : undefined}
                     id={id}
                     isPublished={false}

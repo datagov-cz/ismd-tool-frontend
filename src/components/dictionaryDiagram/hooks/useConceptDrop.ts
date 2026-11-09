@@ -1,4 +1,4 @@
-import { type Dispatch, type DragEvent, useCallback } from 'react';
+import { type Dispatch, type DragEvent, useCallback, useEffect } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
@@ -10,7 +10,11 @@ import {
   getConceptIri,
   getConceptKind,
 } from '../model/concept';
-import { parseConceptDrag } from '../model/conceptDrag';
+import {
+  CONCEPT_POINTER_DROP_EVENT,
+  type ConceptPointerDropDetail,
+  parseConceptDrag,
+} from '../model/conceptDrag';
 import {
   type ConceptFlowEdge,
   type ConceptFlowNode,
@@ -22,10 +26,8 @@ import {
  * class + `data-id`). React Flow has no first-class "drop onto a node" event, so
  * this is the workaround — kept here so a library bump only breaks one place.
  */
-const nodeIdFromEvent = (event: DragEvent<HTMLElement>): string | null =>
-  (event.target as HTMLElement)
-    ?.closest?.('.react-flow__node')
-    ?.getAttribute('data-id') ?? null;
+const nodeIdFromElement = (element: Element | null): string | null =>
+  element?.closest?.('.react-flow__node')?.getAttribute('data-id') ?? null;
 
 export const useConceptDrop = (
   dispatch: Dispatch<DiagramAction>,
@@ -42,21 +44,21 @@ export const useConceptDrop = (
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const onDrop = useCallback(
-    (event: DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-
-      const concept = parseConceptDrag(event.dataTransfer);
-      if (!concept) return;
+  const placeConcept = useCallback(
+    (
+      concept: Concept,
+      clientX: number,
+      clientY: number,
+      target: Element | null,
+    ) => {
+      // Ignore pointer releases outside this React Flow instance.
+      if (!target?.closest('.react-flow')) return;
 
       const kind = getConceptKind(concept);
 
       // 1) Třída → new node (reducer auto-fills its Vlastnosti + dedups).
       if (kind === 'trida') {
-        const position = screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
-        });
+        const position = screenToFlowPosition({ x: clientX, y: clientY });
         const conceptId = getConceptId(concept);
         const isForeign = !concepts.some(
           (localConcept) => getConceptId(localConcept) === conceptId,
@@ -92,7 +94,7 @@ export const useConceptDrop = (
 
       // 2) Vlastnost → must land on a Třída node; reducer moves it there.
       if (kind === 'vlastnost') {
-        const targetNodeId = nodeIdFromEvent(event);
+        const targetNodeId = nodeIdFromElement(target);
         if (!targetNodeId) return; // not dropped on a node → ignore
 
         if (getNode(targetNodeId)?.data.readOnly) {
@@ -103,13 +105,46 @@ export const useConceptDrop = (
         }
 
         dispatch({ type: 'assignVlastnost', targetNodeId, vlastnost: concept });
-        return;
       }
 
       // 3) Vztah and anything else: not droppable yet.
     },
     [concepts, dispatch, getNode, screenToFlowPosition, t],
   );
+
+  const onDrop = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+
+      const concept = parseConceptDrag(event.dataTransfer);
+      if (!concept) return;
+      placeConcept(
+        concept,
+        event.clientX,
+        event.clientY,
+        event.target as Element,
+      );
+    },
+    [placeConcept],
+  );
+
+  useEffect(() => {
+    const onPointerDrop = (event: Event) => {
+      const { concept, clientX, clientY } = (
+        event as CustomEvent<ConceptPointerDropDetail>
+      ).detail;
+      placeConcept(
+        concept,
+        clientX,
+        clientY,
+        document.elementFromPoint(clientX, clientY),
+      );
+    };
+
+    window.addEventListener(CONCEPT_POINTER_DROP_EVENT, onPointerDrop);
+    return () =>
+      window.removeEventListener(CONCEPT_POINTER_DROP_EVENT, onPointerDrop);
+  }, [placeConcept]);
 
   return { onDrop, onDragOver };
 };

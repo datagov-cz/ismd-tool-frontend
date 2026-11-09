@@ -6,7 +6,6 @@ export type Hint = { title: string; body: string; recommendation?: string };
 export const conceptHintKeys = [
   'nameModel.name',
   'altNameModel.altName',
-  'conceptType',
   'type',
   'definitionModel.definition',
   'descriptionModel.description',
@@ -33,7 +32,7 @@ export const conceptHintKeys = [
   'range',
   'superProperty',
   'superRelation',
-  'codeListDataset',
+  'codeList',
   'inTezaurus',
 ] as const;
 

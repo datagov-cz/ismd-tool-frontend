@@ -50,7 +50,7 @@ export const DiagramTopBar = ({
   return (
     <Panel
       position="top-right"
-      className="border border-gray-border/50 rounded-sm bg-white text-blue-hover font-bold flex text-sm divide-x divide-gray-border/50"
+      className="border border-gray-border/50 dark:border-diagram-border rounded-sm bg-white dark:bg-diagram-surface text-blue-hover dark:text-gray-100 font-bold flex text-sm divide-x divide-gray-border/50 dark:divide-diagram-border"
     >
       {editingName ? (
         <div className="nodrag nopan relative flex items-center gap-2 px-2 py-1">
@@ -73,7 +73,7 @@ export const DiagramTopBar = ({
                 setEditingName(false);
               }
             }}
-            className="h-8 w-56 rounded-sm border border-gray-border/50 px-2 font-normal text-dark-primary outline-none focus:border-blue-primary"
+            className="h-8 w-56 rounded-sm border border-gray-border/50 dark:border-diagram-border-strong bg-white dark:bg-diagram-surface-muted px-2 font-normal text-dark-primary dark:text-gray-100 outline-none focus:border-blue-primary"
           />
           <GovButton
             nativeType="button"
@@ -86,7 +86,7 @@ export const DiagramTopBar = ({
             {renaming ? t('Saving') : t('Save')}
           </GovButton>
           {nameError && (
-            <span className="absolute right-0 top-[calc(100%+0.25rem)] rounded-sm bg-white px-2 py-1 text-xs font-normal text-status-error-600 shadow-subtle">
+            <span className="absolute right-0 top-[calc(100%+0.25rem)] rounded-sm bg-white dark:bg-diagram-surface px-2 py-1 text-xs font-normal text-status-error-600 shadow-subtle">
               {nameError}
             </span>
           )}
@@ -122,13 +122,13 @@ export const DiagramTopBar = ({
           <div
             role="dialog"
             aria-label={t('EdgeHelp')}
-            className="nodrag nopan absolute right-0 top-[calc(100%+0.5rem)] h-17.5 w-56 overflow-hidden rounded-md border border-gray-border/50 bg-white p-2 pr-8 text-dark-blue-subtle shadow-[0_4px_12px_rgba(0,0,0,0.24)]"
+            className="nodrag nopan absolute right-0 top-[calc(100%+0.5rem)] h-17.5 w-56 overflow-hidden rounded-md border border-gray-border/50 dark:border-diagram-border bg-white dark:bg-diagram-surface p-2 pr-8 text-dark-blue-subtle dark:text-gray-200 shadow-[0_4px_12px_rgba(0,0,0,0.24)]"
           >
             <button
               type="button"
               onClick={() => setShowEdgeHelp(false)}
               aria-label={t('CloseHelp')}
-              className="absolute right-1.5 top-1.5 flex rounded p-0.5 text-dark-blue-subtle hover:bg-page-background"
+              className="absolute right-1.5 top-1.5 flex rounded p-0.5 text-dark-blue-subtle dark:text-gray-200 hover:bg-page-background dark:hover:bg-diagram-hover"
             >
               <GovIcon name="x-lg" size="xs" />
             </button>
@@ -151,7 +151,7 @@ const EdgeEnding = ({ kind }: { kind: 'relation' | 'hierarchy' }) => (
   <svg
     aria-hidden="true"
     viewBox="0 0 56 16"
-    className="h-4 w-14 overflow-visible text-card-description"
+    className="h-4 w-14 overflow-visible text-card-description dark:text-gray-300"
   >
     <line
       x1="2"
@@ -171,6 +171,7 @@ const EdgeEnding = ({ kind }: { kind: 'relation' | 'hierarchy' }) => (
     ) : (
       <path
         d="M 39 1 L 53 8 L 39 15 Z"
+        className="dark:fill-diagram-surface"
         fill="white"
         stroke="currentColor"
         strokeWidth="1.5"

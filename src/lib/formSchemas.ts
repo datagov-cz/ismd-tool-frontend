@@ -10,7 +10,7 @@ export const createCommentSchema = (t: (_key: string) => string) =>
 export type CommentSchemaType = z.infer<ReturnType<typeof createCommentSchema>>;
 
 export const uploadOntologySchema = () =>
-  z.object({ file: z.instanceof(Blob).optional() });
+  z.object({ file: z.instanceof(Blob) });
 
 export type UploadFromFileBody = z.infer<
   ReturnType<typeof uploadOntologySchema>

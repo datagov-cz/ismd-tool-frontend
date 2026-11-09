@@ -161,12 +161,12 @@ export const PendingEditsPanel = ({
   if (edits.length === 0) return null;
 
   return (
-    <section className="overflow-hidden rounded-lg border border-status-warning-400 bg-status-warning-100 shadow-subtle">
+    <section className="overflow-hidden rounded-lg border border-status-warning-400 dark:border-diagram-warning-border bg-status-warning-100 dark:bg-diagram-warning-surface shadow-subtle">
       <button
         type="button"
         aria-expanded={open}
         onClick={() => onOpenChange(!open)}
-        className="flex w-full items-center justify-between bg-status-warning-400 px-3 py-2 text-left text-sm font-bold text-black"
+        className="flex w-full items-center justify-between bg-status-warning-400 dark:bg-diagram-warning-header px-3 py-2 text-left text-sm font-bold text-black"
       >
         <span className="flex items-center gap-2">
           <GovIcon name="info-square" size="s" />
@@ -190,7 +190,7 @@ export const PendingEditsPanel = ({
               return (
                 <article
                   key={id}
-                  className="rounded-sm border border-status-warning-400 bg-white px-3 py-2"
+                  className="rounded-sm border border-status-warning-400 dark:border-diagram-warning-border bg-white dark:bg-diagram-surface px-3 py-2"
                 >
                   <button
                     type="button"
@@ -206,12 +206,13 @@ export const PendingEditsPanel = ({
                         name={TYPE_ICONS[entry.conceptType ?? 'KONCEPT']}
                         size="m"
                         color="primary"
+                        className="dark:brightness-150"
                       />
                       <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-sm font-bold leading-tight text-blue-primary">
+                        <span className="truncate text-sm font-bold leading-tight text-blue-primary dark:text-blue-300">
                           {entry.label?.cs ?? entry.slug ?? entry.iri}
                         </span>
-                        <span className="text-xs text-card-description font-semibold">
+                        <span className="text-xs text-card-description dark:text-gray-300 font-semibold">
                           {t(`Types.${entry.conceptType ?? 'KONCEPT'}`)}
                           {entry.stale ? t('StaleSuffix') : ''}
                         </span>
@@ -219,8 +220,8 @@ export const PendingEditsPanel = ({
                     </span>
 
                     {descriptions.length > 0 && (
-                      <span className="mt-2 ml-7 flex items-start justify-between gap-2 border-t border-gray-border/50 pt-2">
-                        <span className="font-bold leading-tight text-dark-primary text-sm">
+                      <span className="mt-2 ml-7 flex items-start justify-between gap-2 border-t border-gray-border/50 dark:border-diagram-border-subtle pt-2">
+                        <span className="font-bold leading-tight text-dark-primary dark:text-gray-100 text-sm">
                           {descriptions.map(({ title }) => title).join(' ')}
                         </span>
                         <GovIcon
@@ -233,7 +234,7 @@ export const PendingEditsPanel = ({
                   </button>
 
                   {expanded && descriptions.length > 0 && (
-                    <ul className="mt-2 ml-7 flex flex-col gap-2 text-sm text-dark-primary">
+                    <ul className="mt-2 ml-7 flex flex-col gap-2 text-sm text-dark-primary dark:text-gray-200">
                       {descriptions.map(({ title, detail }) => (
                         <li key={title}>{detail}</li>
                       ))}

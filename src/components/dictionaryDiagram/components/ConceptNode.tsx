@@ -52,7 +52,7 @@ export const ConceptNode = ({
     <div
       id={concept.iri}
       className={clsx(
-        'border rounded-md bg-white w-full min-w-50 max-w-50 shadow-subtle group relative',
+        'border rounded-md bg-white dark:bg-diagram-surface w-full min-w-50 max-w-50 shadow-subtle group relative',
         concept.stale
           ? 'border-status-error-600 ring-2 ring-status-error-100'
           : selected
@@ -70,7 +70,7 @@ export const ConceptNode = ({
       />
       <Handle type="source" position={Position.Top} />
 
-      <div className="flex items-center gap-1.5 px-2.5 py-2 group-hover:bg-primary-subtlest justify-between rounded-t-md">
+      <div className="flex items-center gap-1.5 px-2.5 py-2 group-hover:bg-primary-subtlest dark:group-hover:bg-diagram-surface-raised justify-between rounded-t-md">
         <div className="flex flex-col gap-0.5">
           <div className="flex flex-wrap items-center gap-1">
             <span
@@ -78,7 +78,7 @@ export const ConceptNode = ({
                 'font-medium text-sm leading-none',
                 concept.stale
                   ? 'text-status-error-700'
-                  : 'text-dark-blue-subtle',
+                  : 'text-dark-blue-subtle dark:text-white',
               )}
             >
               {getConceptLabel(concept)}
@@ -97,7 +97,7 @@ export const ConceptNode = ({
               </GovTag>
             )}
           </div>
-          <span className="text-xs font-medium text-card-description leading-none">
+          <span className="text-xs font-medium text-card-description dark:text-gray-300 leading-none">
             {t('Class')}
           </span>
         </div>
@@ -131,7 +131,7 @@ export const ConceptNode = ({
                       'text-xs leading-none',
                       v.stale
                         ? 'text-status-error-700'
-                        : 'text-card-description',
+                        : 'text-card-description dark:text-gray-300',
                     )}
                   >
                     {getConceptLabel(v)}
@@ -145,7 +145,7 @@ export const ConceptNode = ({
           <button
             type="button"
             aria-expanded={!propertiesCollapsed}
-            className="cursor-pointer text-xs font-medium flex items-center justify-between border-t border-gray-border/50 pt-2"
+            className="cursor-pointer text-xs font-medium flex items-center justify-between border-t border-gray-border/50 pt-2 text-dark-blue-subtle dark:text-gray-200"
             onClick={(event) => {
               event.stopPropagation();
               data.onPropertiesCollapsedChange?.(!propertiesCollapsed);
@@ -153,7 +153,7 @@ export const ConceptNode = ({
           >
             <span>
               {t('Properties')}{' '}
-              <span className="px-1 py-0.5 rounded-xs bg-border-grey">
+              <span className="px-1 py-0.5 rounded-xs bg-border-grey dark:bg-diagram-border">
                 {vlastnosti.length}
               </span>
             </span>
@@ -259,7 +259,7 @@ const ConceptNodeDetail = ({
       <div
         ref={detailRef}
         onClick={(event) => event.stopPropagation()}
-        className="nodrag nopan w-75 bg-white p-3 shadow-subtle border rounded-md border-gray-border/50 divide-y divide-gray-border/50 space-y-2"
+        className="nodrag nopan w-75 bg-white dark:bg-diagram-surface dark:text-gray-100 p-3 shadow-subtle border rounded-md border-gray-border/50 dark:border-diagram-border divide-y divide-gray-border/50 dark:divide-diagram-border space-y-2"
       >
         <div className="flex items-start justify-between pb-2">
           <div>
@@ -318,7 +318,7 @@ const ConceptNodeDetail = ({
                       'truncate text-xs leading-none',
                       v.stale
                         ? 'text-status-error-700'
-                        : 'text-card-description',
+                        : 'text-card-description dark:text-gray-300',
                     )}
                   >
                     {getConceptLabel(v)}
@@ -347,7 +347,7 @@ const ConceptNodeDetail = ({
               <button
                 type="button"
                 onClick={() => setShowAllProperties(true)}
-                className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
+                className="rounded-full bg-page-background dark:bg-diagram-hover px-2 py-1 text-xs text-card-description dark:text-gray-300 hover:bg-border-grey"
               >
                 {t('More', { count: hiddenPropertiesCount })}
               </button>
@@ -367,7 +367,7 @@ const ConceptNodeDetail = ({
                   size="s"
                   className="[&_svg]:text-[#67329E]!"
                 />
-                <span className="text-xs text-card-description leading-none">
+                <span className="text-xs text-card-description dark:text-gray-300 leading-none">
                   {vztah.label}
                   {vztah.target && ` ${vztah.direction} ${vztah.target}`}
                 </span>
@@ -377,7 +377,7 @@ const ConceptNodeDetail = ({
               <button
                 type="button"
                 onClick={() => setShowAllRelations(true)}
-                className="rounded-full bg-page-background px-2 py-1 text-xs text-card-description hover:bg-border-grey"
+                className="rounded-full bg-page-background dark:bg-diagram-hover px-2 py-1 text-xs text-card-description dark:text-gray-300 hover:bg-border-grey"
               >
                 {t('More', { count: hiddenRelationsCount })}
               </button>

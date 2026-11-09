@@ -30,14 +30,22 @@ export const ToolbarButton = ({
       'group flex h-full items-center whitespace-nowrap px-3 py-1.5 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent',
       labelOnHover ? 'gap-0 hover:gap-2' : 'gap-2',
       color === 'error'
-        ? 'text-status-error-600 hover:bg-status-error-100'
-        : 'hover:bg-blue-subtle',
+        ? 'text-status-error-600 dark:text-red-400 hover:bg-status-error-100 dark:hover:bg-red-950'
+        : 'text-blue-hover dark:text-gray-100 hover:bg-blue-subtle dark:hover:bg-diagram-hover',
     )}
     disabled={disabled}
     aria-label={ariaLabel}
     aria-pressed={ariaPressed}
   >
-    {icon && <GovIcon type="components" name={icon} color={color} size="xs" />}
+    {icon && (
+      <GovIcon
+        type="components"
+        name={icon}
+        color={color}
+        size="xs"
+        className="dark:brightness-150"
+      />
+    )}
 
     {labelOnHover ? (
       <span className="max-w-0 overflow-hidden opacity-0 transition-all duration-300 group-hover:max-w-48 group-hover:opacity-100 group-focus-visible:max-w-48 group-focus-visible:opacity-100">
@@ -48,7 +56,13 @@ export const ToolbarButton = ({
     )}
 
     {trailingIcon && (
-      <GovIcon type="components" name={trailingIcon} color={color} size="s" />
+      <GovIcon
+        type="components"
+        name={trailingIcon}
+        color={color}
+        size="s"
+        className="dark:brightness-150"
+      />
     )}
   </button>
 );

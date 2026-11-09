@@ -15,6 +15,7 @@ import { type ConceptForm as ConceptFormValues } from '@/components/conceptForm/
 import { RequiredNameModelSchema } from '@/components/conceptForm/schema/sharedConceptSchemas';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { Select } from '@/components/shared/Select';
+import { usePageScrollLock } from '@/hooks/usePageScrollLock';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 
 function getDomain(url: string): string | null {
@@ -53,6 +54,8 @@ export const AddNewConceptDialog = ({
   const { data } = useGetOntologyDetail(ontology);
   const { mutate: createConcept, isPending } = useCreateConcept();
   const queryInvalidate = useQueryInvalidator();
+
+  usePageScrollLock(open);
 
   const graphName = data?.data?.ontologyMetadata?.graphName;
 

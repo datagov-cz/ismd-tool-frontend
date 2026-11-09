@@ -8,10 +8,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import {
   DescriptionModelDescription,
   NameModelName,
+  OntologyDetailMetadataDto,
   OntologyDetailModel,
-  OntologyMetadataModel,
   useEditOntology,
 } from '@/api/generated';
+import { SectionTitle } from '@/components/shared/SectionTitle';
 import { useFormDraft } from '@/hooks/useFormDraft';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
@@ -26,7 +27,7 @@ import { LanguageInput } from '../shared/LanguageInput';
 export type DictionaryEditProps = {
   ontologySlug: string;
   ontologyID: number;
-  metadata: OntologyMetadataModel;
+  metadata: OntologyDetailMetadataDto;
   detail: OntologyDetailModel;
 };
 
@@ -165,9 +166,7 @@ export const DictionaryEditForm = ({
                   className="w-fit border bg-surface! cursor-pointer!"
                   iconStart={<GovIcon name="journal-text" type="components" />}
                 >
-                  <span className="font-bold text-accent">
-                    {detail?.['název']?.cs}
-                  </span>
+                  <SectionTitle label={detail?.['název']?.cs} />
                 </GovTag>
               </Link>
             </div>

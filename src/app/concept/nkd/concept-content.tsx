@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 
 import { useGetNkdConceptDetail } from '@/api/generated';
+import { ConceptDatasetsList } from '@/components/conceptDetail/ConceptDatasetsList';
 import { ConceptHeaderNKD } from '@/components/conceptDetail/ConceptHeaderNKD';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
@@ -48,6 +49,7 @@ export const ConceptContentNKD = ({ slug }: Props) => {
         slug={slug}
         isOwnerLoggedIn={false}
       >
+        <ConceptDatasetsList conceptIri={conceptDetail.iri} />
         <OtherOntologyConcepts
           ontology={concept.data.data?.ontologyIri || ''}
           source="NKD"
