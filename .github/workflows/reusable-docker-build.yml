@@ -29,10 +29,23 @@ jobs:
           cache: 'npm'
 
       - name: Get version
+        # Inputs reach the script through env, never as ${{ }} inside run:.
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
+          if ! [[ "$INPUT_BRANCH" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+            echo "::error::branch input has characters outside [A-Za-z0-9._/-]"
+            exit 1
+          fi
+
           # If version provided via input, use it
-          if [ -n "${{ inputs.version }}" ]; then
-            VERSION="${{ inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            if ! [[ "$INPUT_VERSION" =~ ^[0-9A-Za-z._-]+$ ]]; then
+              echo "::error::version input has characters outside [0-9A-Za-z._-]"
+              exit 1
+            fi
+            VERSION="$INPUT_VERSION"
             echo "Using provided version: $VERSION"
           else
             # Get base version from latest Git tag (only tags matching v[0-9]*)
@@ -45,7 +58,7 @@ jobs:
               echo "Found tag: $TAG, using version: $BASE_VERSION"
             fi
             
-            if [ "${{ inputs.branch }}" = "main" ]; then
+            if [ "$INPUT_BRANCH" = "main" ]; then
               # For main, use tag version as-is
               VERSION="$BASE_VERSION"
               echo "Using version from Git tag: $VERSION"
@@ -55,7 +68,7 @@ jobs:
               echo "Using dev version: $VERSION (based on latest tag $BASE_VERSION)"
             fi
           fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "Final version: $VERSION"
       
       - name: Login to GitHub Container Registry
@@ -66,18 +79,20 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set IMAGE_TAG
+        env:
+          REPOSITORY: ${{ github.repository }}
+          INPUT_BRANCH: ${{ inputs.branch }}
         run: |
-          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          if [ "${{ inputs.branch }}" = "main" ]; then
-            IMAGE_TAG=ghcr.io/${REPO_LOWER}:${VERSION}
-            LATEST_TAG=ghcr.io/${REPO_LOWER}:latest
+          if [ "$INPUT_BRANCH" = "main" ]; then
+            REPO_PATH="$REPOSITORY"
           else
             # For dev, VERSION already includes SHA (e.g., 0.1.0-abc1234)
-            IMAGE_TAG=ghcr.io/${REPO_LOWER}-${{ inputs.branch }}:${VERSION}
-            LATEST_TAG=ghcr.io/${REPO_LOWER}-${{ inputs.branch }}:latest
+            REPO_PATH="${REPOSITORY}-${INPUT_BRANCH}"
           fi
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          # Image names must be lowercase
+          REPO_PATH=$(echo "$REPO_PATH" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_TAG=ghcr.io/${REPO_PATH}:${VERSION}" >> "$GITHUB_ENV"
+          echo "LATEST_TAG=ghcr.io/${REPO_PATH}:latest" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: npm ci
@@ -87,6 +102,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t $IMAGE_TAG -t $LATEST_TAG .
-          docker push $IMAGE_TAG
-          docker push $LATEST_TAG
+          docker build -t "$IMAGE_TAG" -t "$LATEST_TAG" .
+          docker push "$IMAGE_TAG"
+          docker push "$LATEST_TAG"
