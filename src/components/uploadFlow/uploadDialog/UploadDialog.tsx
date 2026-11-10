@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GovButton } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -55,7 +56,13 @@ export const UploadDialog = ({
       onError: (error) => {
         // The decision case is handled per-call in onSubmit — don't show it as an error.
         if (getMissingInSchemeError(error)) return;
-        setSubmitError(getErrorMessage(error, tError));
+        const isTimeout =
+          axios.isAxiosError(error) &&
+          (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT');
+
+        setSubmitError(
+          isTimeout ? t('Dialog.TimeoutError') : getErrorMessage(error, tError),
+        );
       },
     },
   });
