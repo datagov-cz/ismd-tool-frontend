@@ -22,6 +22,14 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Warnings are reported but do not fail; errors do. Runs after the build so
+      # Next.js-generated types exist for the type check.
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run check-types
+
       # Test step commented out as there's no test script defined in package.json
       # - name: Run tests
       #   run: npm test
