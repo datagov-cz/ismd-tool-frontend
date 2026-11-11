@@ -50,7 +50,7 @@ export const useLegalSourcePrefill = () => {
     }
 
     const definition = resolved.fragmentBody?.trim()
-      ? resolved.fragmentBody
+      ? resolved.fragmentBody.replace(/\r\n|\r|\n/g, ' ')
       : undefined;
 
     if (definition) {
