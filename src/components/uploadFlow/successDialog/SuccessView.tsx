@@ -2,7 +2,7 @@ import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { OntologyMetadataModel, RejectedConceptDto } from '@/api/generated';
+import { OntologyUploadResultDto, RejectedConceptDto } from '@/api/generated';
 
 type RejectionReasonKey =
   | 'OutsideNamespace'
@@ -64,11 +64,11 @@ const getConceptLabel = (iri?: string) => {
 
 interface SuccessViewProps {
   onClose: () => void;
-  ontologyData: OntologyMetadataModel;
+  ontologyData: OntologyUploadResultDto;
 }
 
 export const SuccessView = ({ onClose, ontologyData }: SuccessViewProps) => {
-  const { id, graphName, slug } = ontologyData;
+  const { id, graphName, slug } = ontologyData.ontology;
   const t = useTranslations('UploadOntology');
   const rejectedConcepts = ontologyData.rejectedConcepts ?? [];
   const rejectionGroups = groupRejectedConcepts(rejectedConcepts);

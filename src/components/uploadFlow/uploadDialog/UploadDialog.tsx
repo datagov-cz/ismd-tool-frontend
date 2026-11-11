@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import {
-  OntologyMetadataModel,
+  OntologyUploadResultDto,
   UploadFromFileBody,
   useUploadFromFile,
 } from '@/api/generated';
@@ -33,7 +33,7 @@ import {
 } from './inSchemeDecision';
 
 interface UploadDialogProps {
-  setSuccess: (_value: OntologyMetadataModel) => void;
+  setSuccess: (_value: OntologyUploadResultDto) => void;
   setDecisionRequired: (_value: InSchemeDecisionData) => void;
 }
 
