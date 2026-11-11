@@ -21,6 +21,7 @@ import { useFormHints } from '@/components/conceptForm/components/hint/useFormHi
 import { AiSuggestionSection } from '@/components/dictionaryCreate/AiSuggestionSection';
 import { Input } from '@/components/shared/Input';
 import { LanguageInput } from '@/components/shared/LanguageInput';
+import { useDictionaryCreateHistory } from '@/hooks/useDictionaryCreateHistory';
 import { useFormDraft } from '@/hooks/useFormDraft';
 import { IRI_CHECK_QUERY_KEY, useIriCheck } from '@/hooks/useIriCheck';
 import { useIsOnline } from '@/hooks/useIsOnline';
@@ -61,6 +62,7 @@ export const CreateForm = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const isOnline = useIsOnline();
+  const isGenerating = useVocabularyDraftStore((state) => !!state.activeJob);
 
   const form = useForm<OntologySchemaType>({
     mode: 'onChange',
@@ -69,6 +71,7 @@ export const CreateForm = () => {
   });
 
   useFormDraft(form, draftKeys.ontologyCreate);
+  const history = useDictionaryCreateHistory(form);
 
   const namespace = useWatch({ control: form.control, name: 'namespace' });
   const nameModel = useWatch({ control: form.control, name: 'nameModel' });
@@ -106,6 +109,10 @@ export const CreateForm = () => {
   });
 
   const onSubmit = (data: OntologySchemaType) => {
+    if (useVocabularyDraftStore.getState().activeJob) {
+      return;
+    }
+
     if (isOnline && iriCheck.status !== 'ok') {
       toast.error(tIri('BlockedSave'));
       return;
@@ -174,6 +181,9 @@ export const CreateForm = () => {
           <AiSuggestionSection iriStatus={iriCheck.status} iri={iriCheck.iri} />
           <FormToolbar<OntologySchemaType>
             isPending={isPending && !isPaused}
+            isSaveDisabled={isGenerating}
+            isHistoryDisabled={isGenerating}
+            history={history}
             onCancel={handleCancel}
           />
         </form>

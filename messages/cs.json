@@ -457,6 +457,7 @@
       "FileInputLabel": "Vyberte soubor",
       "CancelButton": "Zrušit",
       "SubmitButton": "Importovat slovník",
+      "TimeoutError": "Import se nepodařilo dokončit v časovém limitu. Slovník se přesto může ještě vytvářet. Před opakováním zkontrolujte, zda už byl vytvořen.",
       "OfflineUploadSuccess": "Slovník byl úspěšně vytvořen offline. Pro uložení do Národního katalogu dat se musíte obnovit vaše spojení.",
       "OfflineUploadError": "Chyba při vytváření slovníku offline",
       "SyncSuccess": "Slovník byl úspěšně vytvořen a synchronizován s Národním katalogem dat",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GovButton, GovIcon } from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -70,7 +71,13 @@ export const UploadDialog = ({
           return;
         }
         setOfnIssues(undefined);
-        setSubmitError(getErrorMessage(error, tError));
+        const isTimeout =
+          axios.isAxiosError(error) &&
+          (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT');
+
+        setSubmitError(
+          isTimeout ? t('Dialog.TimeoutError') : getErrorMessage(error, tError),
+        );
       },
     },
   });
