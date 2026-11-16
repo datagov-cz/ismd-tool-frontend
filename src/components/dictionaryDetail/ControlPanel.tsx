@@ -302,6 +302,7 @@ export const ControlPanel = ({
       />
       <DownloadDialog
         ontologyID={ontologyID}
+        ontologySlug={slug}
         open={openDownload}
         type="ISMD"
         onClose={() => setOpenDownload(false)}

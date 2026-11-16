@@ -24,7 +24,10 @@ const tError = createTranslator({
   messages,
   namespace: 'Errors',
 });
-const translateError: (_key: string) => string = () => tError('UnknownError');
+const translateError: (_key: string) => string = (key) =>
+  key === 'OfnWriteNonconformant'
+    ? tError('OfnWriteNonconformant')
+    : tError('UnknownError');
 
 type SideEffects<K extends OfflineMutationKey> = {
   onSuccess: (

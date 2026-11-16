@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   GovButton,
   GovFormCheckbox,
+  GovIcon,
   GovTooltip,
 } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
@@ -14,8 +15,14 @@ import {
 import { FormSection } from '@/components/conceptForm/components/FormSection';
 import { CircularLoader } from '@/components/shared/CircularLoader';
 import { ErrorText } from '@/components/shared/ErrorText';
+import { OfnIssuesList } from '@/components/shared/OfnIssuesList';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import {
+  getOfnConformanceError,
+  isOfnUploadNonconformant,
+  OfnIssuesData,
+} from '@/utils/ofnConformance';
 import { InSchemeDecisionData } from '../uploadDialog/inSchemeDecision';
 
 interface InSchemeDecisionDialogProps {
@@ -40,6 +47,7 @@ export const InSchemeDecisionDialog = ({
     data.conceptsMissingInScheme.map((c) => c.conceptIri),
   );
   const [submitError, setSubmitError] = useState<string>();
+  const [ofnIssues, setOfnIssues] = useState<OfnIssuesData>();
 
   const mutation = useUploadFromFile({
     mutation: {
@@ -50,6 +58,14 @@ export const InSchemeDecisionDialog = ({
         }
       },
       onError: (error) => {
+        if (isOfnUploadNonconformant(error)) {
+          setSubmitError(undefined);
+          void getOfnConformanceError(error).then((result) =>
+            setOfnIssues(result?.data),
+          );
+          return;
+        }
+        setOfnIssues(undefined);
         setSubmitError(getErrorMessage(error, tError));
       },
     },
@@ -63,6 +79,7 @@ export const InSchemeDecisionDialog = ({
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(undefined);
+    setOfnIssues(undefined);
     mutation.mutate({
       data: { file: data.file },
       params: {
@@ -135,6 +152,34 @@ export const InSchemeDecisionDialog = ({
         )}
 
         {submitError && <ErrorText text={submitError} />}
+        {ofnIssues && (
+          <section
+            role="alert"
+            aria-live="assertive"
+            className="space-y-3 rounded-lg border border-status-error-600 bg-status-error-100 p-4"
+          >
+            <header className="flex items-start gap-2">
+              <GovIcon
+                type="components"
+                name="exclamation-triangle"
+                color="error"
+                className="mt-0.5 shrink-0"
+              />
+              <div className="space-y-1">
+                <h3 className="font-bold text-status-error-700">
+                  {t('OfnRejectedTitle')}
+                </h3>
+                {ofnIssues.message && (
+                  <p className="text-sm">{ofnIssues.message}</p>
+                )}
+              </div>
+            </header>
+            <div className="space-y-3 border-t border-status-error-600/30 pt-3">
+              <p className="break-all font-medium">{ofnIssues.vocabularyIri}</p>
+              <OfnIssuesList issues={ofnIssues.issues} />
+            </div>
+          </section>
+        )}
 
         <div className="flex gap-2 justify-center">
           <GovButton

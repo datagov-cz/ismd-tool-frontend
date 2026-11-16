@@ -1,17 +1,34 @@
+import { useState } from 'react';
 import { GovButton, GovDialog } from '@gov-design-system-ce/react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
-import { downloadFile, downloadNkdOntology } from '@/api/generated';
+import {
+  downloadFile,
+  downloadNkdOntology,
+  useGetOntologyDetail,
+} from '@/api/generated';
+import { OfnIssuesList } from '@/components/shared/OfnIssuesList';
 import { getBlobErrorMessage } from '@/utils/getErrorMessage';
+import { getOfnConformanceError, OfnIssuesData } from '@/utils/ofnConformance';
 
 type DownloadDialogProps = {
   open: boolean;
   onClose: () => void;
   ontologyName: string;
 } & (
-  | { type: 'ISMD'; ontologyID: number; ontologyIRI?: never }
-  | { type: 'NKD'; ontologyIRI: string; ontologyID?: never }
+  | {
+      type: 'ISMD';
+      ontologyID: number;
+      ontologySlug?: string;
+      ontologyIRI?: never;
+    }
+  | {
+      type: 'NKD';
+      ontologyIRI: string;
+      ontologyID?: never;
+      ontologySlug?: never;
+    }
 );
 
 export const DownloadDialog = ({
@@ -21,11 +38,30 @@ export const DownloadDialog = ({
   ontologyIRI,
   type,
   ontologyName,
+  ontologySlug,
 }: DownloadDialogProps) => {
+  const [blockedIssues, setBlockedIssues] = useState<OfnIssuesData>();
   const t = useTranslations('DownloadDialog');
   const tError = useTranslations('Errors');
+  const { data: ontology } = useGetOntologyDetail(ontologySlug ?? '', {
+    query: { enabled: open && type === 'ISMD' && Boolean(ontologySlug) },
+  });
+
+  const conceptHref = (conceptIri: string) => {
+    if (type === 'NKD') {
+      return `/concept/nkd?iri=${encodeURIComponent(conceptIri)}`;
+    }
+    const concept = ontology?.data?.ontologyMetadata?.concepts?.find(
+      (item) => item.conceptIri === conceptIri,
+    );
+    return concept?.slug
+      ? `/concept/${encodeURIComponent(concept.slug)}`
+      : undefined;
+  };
 
   const handleDownload = async (format: 'json-ld' | 'ttl') => {
+    setBlockedIssues(undefined);
+    let keepOpen = false;
     try {
       const file = await (type === 'ISMD'
         ? downloadFile(ontologyID, { format })
@@ -47,37 +83,69 @@ export const DownloadDialog = ({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Download failed:', error);
-      toast.error(await getBlobErrorMessage(error, tError));
+      const ofnError = await getOfnConformanceError(error, true);
+      if (ofnError) {
+        setBlockedIssues(ofnError.data);
+        keepOpen = true;
+      } else {
+        toast.error(await getBlobErrorMessage(error, tError));
+      }
     } finally {
-      onClose();
+      if (!keepOpen) onClose();
     }
+  };
+
+  const handleClose = () => {
+    setBlockedIssues(undefined);
+    onClose();
   };
 
   return (
     <GovDialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       className="fixed z-100"
-      title={<h2>{t('Title')}</h2>}
+      title={<h2>{blockedIssues ? t('OfnBlockedTitle') : t('Title')}</h2>}
     >
-      <div className="flex items-end justify-end gap-2 w-full">
-        <GovButton
-          size="m"
-          onClick={() => handleDownload('json-ld')}
-          type="solid"
-          color="primary"
-        >
-          JSON
-        </GovButton>
-        <GovButton
-          size="m"
-          onClick={() => handleDownload('ttl')}
-          type="solid"
-          color="primary"
-        >
-          TTL
-        </GovButton>
-      </div>
+      {blockedIssues ? (
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+          {blockedIssues.message && <p>{blockedIssues.message}</p>}
+          <p>{blockedIssues.vocabularyIri}</p>
+          <OfnIssuesList
+            issues={blockedIssues.issues}
+            conceptHref={conceptHref}
+          />
+          <div className="flex justify-end">
+            <GovButton
+              size="m"
+              onClick={handleClose}
+              type="solid"
+              color="primary"
+            >
+              {t('Close')}
+            </GovButton>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-end justify-end gap-2 w-full">
+          <GovButton
+            size="m"
+            onClick={() => handleDownload('json-ld')}
+            type="solid"
+            color="primary"
+          >
+            JSON
+          </GovButton>
+          <GovButton
+            size="m"
+            onClick={() => handleDownload('ttl')}
+            type="solid"
+            color="primary"
+          >
+            TTL
+          </GovButton>
+        </div>
+      )}
     </GovDialog>
   );
 };
