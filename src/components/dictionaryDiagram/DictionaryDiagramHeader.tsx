@@ -74,7 +74,8 @@ export const DictionaryDiagramHeader = ({
   const td = useTranslations('DictionaryDiagram.Header');
   const tc = useTranslations('DictionaryDiagram.Canvas');
   const tError = useTranslations('Errors');
-  const { invalidateDiagram, invalidateOntology } = useQueryInvalidator();
+  const { invalidateDiagram, invalidateOntology, invalidateGetAllDiagrams } =
+    useQueryInvalidator();
   const openMaterializationConflicts = (value: unknown) => {
     const responseConflicts = getMaterializationConflicts(value);
     if (!responseConflicts) return false;
@@ -221,6 +222,7 @@ export const DictionaryDiagramHeader = ({
       ontologySlug: encodeURIComponent(ontologySlug),
       diagramId,
     });
+    invalidateGetAllDiagrams();
   };
 
   const handleMaterialize = () => requestSave('materialize');

@@ -56,8 +56,8 @@ export const MultiCheckBox = ({ name, label, options }: MultiCheckBoxProps) => {
                 />
                 <GovFormLabel
                   size="m"
+                  identifier={checkboxId}
                   className="w-fit mb-0! cursor-pointer"
-                  onClick={() => toggle(option.value)}
                 >
                   <span className="font-bold">{option.label}</span>
                 </GovFormLabel>

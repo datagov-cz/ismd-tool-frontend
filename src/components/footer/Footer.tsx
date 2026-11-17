@@ -116,9 +116,9 @@ export const Footer = ({ isGated = false }: Props) => {
             aria-label={t('BackToTopAria')}
             type="solid"
             size="m"
-            className="bg-white cursor-pointer [&_button]:text-blue"
+            className="footer-back-to-top cursor-pointer"
             onClick={scrollTop}
-            iconStart={<GovIcon name="arrow-up" />}
+            iconStart={<GovIcon name="arrow-up" color="primary" />}
           />
         </div>
         <div className="space-y-4">
