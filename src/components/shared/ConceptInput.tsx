@@ -213,6 +213,7 @@ export const ConceptInput = ({
           {showInput ? (
             <div className="relative" ref={dropdownRef}>
               <GovFormInput
+                autoComplete="off"
                 placeholder={placeholder}
                 value={query}
                 onChange={(e) => setQuery(e.currentTarget.value)}

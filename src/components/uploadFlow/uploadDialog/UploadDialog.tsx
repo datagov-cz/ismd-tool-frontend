@@ -198,6 +198,7 @@ export const UploadDialog = ({
         </div>
       ) : (
         <form
+          autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-4 items-center justify-center"
         >

@@ -121,6 +121,7 @@ export const LanguageInput = <T extends FieldValues>({
                   <GovFormTextarea
                     {...register(fieldPath)}
                     placeholder={placeholder}
+                    autoComplete="off"
                     className="[&input]:border-0! flex-1 [&_span]:pr-14!"
                     rows={4}
                   />
@@ -128,6 +129,7 @@ export const LanguageInput = <T extends FieldValues>({
                   <GovFormInput
                     {...register(fieldPath)}
                     placeholder={placeholder}
+                    autoComplete="off"
                     className="[&input]:border-0! flex-1 [&_span]:pr-14!"
                   />
                 )}

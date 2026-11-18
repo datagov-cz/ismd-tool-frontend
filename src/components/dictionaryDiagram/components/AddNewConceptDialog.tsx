@@ -117,7 +117,7 @@ export const AddNewConceptDialog = ({
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form autoComplete="off" onSubmit={form.handleSubmit(onSubmit)}>
         <GovDialog
           open={open}
           onClose={() => handleClose()}

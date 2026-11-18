@@ -36,6 +36,7 @@ export const OtherOntologyConcepts = ({
         </span>
         <GovFormControl size="m">
           <GovFormInput
+            autoComplete="off"
             identifier="other-ontology-concepts-filter"
             placeholder={t('Groups.Search')}
             size="s"

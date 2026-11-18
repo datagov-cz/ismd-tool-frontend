@@ -139,7 +139,7 @@ export const SearchTypesPopover = ({
               {t('AllTypes')}
             </span>
           ) : (
-            <span className="flex items-center gap-2 font-normal bg-surface">
+            <span className="flex items-center gap-2 font-normal">
               <span className="text-xs lg:text-sm"> {t('Selected')}</span>
               {visibleFilters
                 .filter((f) => value.includes(f.key))

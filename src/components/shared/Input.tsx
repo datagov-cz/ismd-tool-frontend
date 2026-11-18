@@ -76,20 +76,28 @@ export const Input = <T extends FieldValues>({
           >
             {multiline ? (
               <GovFormTextarea
+                autoComplete="off"
                 {...register(name)}
                 id={field.name}
                 placeholder={placeholder}
-                className={clsx('border-0!')}
+                className={clsx(
+                  'border-0!',
+                  disabled && 'gov-form-input-disabled',
+                )}
                 invalid={!!error?.message}
                 rows={4}
                 disabled={disabled}
               />
             ) : (
               <GovFormInput
+                autoComplete="off"
                 {...register(name)}
                 id={field.name}
                 placeholder={placeholder}
-                className={clsx('border-0!')}
+                className={clsx(
+                  'border-0!',
+                  disabled && 'gov-form-input-disabled',
+                )}
                 invalid={!!error?.message}
                 disabled={disabled}
               />

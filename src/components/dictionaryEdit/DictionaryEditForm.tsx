@@ -172,6 +172,7 @@ export const DictionaryEditForm = ({
             </div>
             <FormProvider {...form}>
               <form
+                autoComplete="off"
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-2.5"
                 onFocus={handleFocus}

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
+import { normalizeBasePath } from '@/lib/basePath';
 import { DownloadDialog } from '../../dictionaryDetail/DownloadDialog';
 
 import { CardIconButton } from './CardIconButton';
@@ -84,13 +85,15 @@ export const DictionaryCard = ({
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href + link);
+      const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
+      await navigator.clipboard.writeText(
+        new URL(`${basePath}${link}`, window.location.origin).href,
+      );
       toast(t('LinkCopied'), { type: 'success' });
     } catch {
       toast(t('LinkCopyFailed'), { type: 'error' });
     }
   };
-
   return (
     <div className="rounded-xl border border-border-default overflow-hidden shadow-subtle flex flex-col">
       <Link

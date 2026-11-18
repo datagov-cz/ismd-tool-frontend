@@ -27,8 +27,8 @@ export const ToolbarButton = ({
   <button
     onClick={onClick}
     className={clsx(
-      'group flex h-full items-center whitespace-nowrap px-3 py-1.5 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent',
-      labelOnHover ? 'gap-0 hover:gap-2' : 'gap-2',
+      'group flex items-center whitespace-nowrap px-3 py-1.5 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent',
+      labelOnHover ? 'gap-0 hover:gap-2 h-auto' : 'gap-2 h-full',
       color === 'error'
         ? 'text-status-error-600 dark:text-red-400 hover:bg-status-error-100 dark:hover:bg-red-950'
         : 'text-blue-hover dark:text-gray-100 hover:bg-blue-subtle dark:hover:bg-diagram-hover',
