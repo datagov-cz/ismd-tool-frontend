@@ -20,6 +20,7 @@ interface Props {
   slug: string;
   iri?: string;
   conceptType?: ConceptMetadataModelConceptType;
+  ontologySlug?: string;
 }
 
 export const ControlPanelConcept = ({
@@ -32,6 +33,7 @@ export const ControlPanelConcept = ({
   slug,
   iri,
   conceptType,
+  ontologySlug,
 }: Props) => {
   const [openDelete, setOpenDelete] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
@@ -140,6 +142,7 @@ export const ControlPanelConcept = ({
         type="CONCEPT"
         slug={slug}
         conceptType={conceptType}
+        ontologySlug={ontologySlug}
       />
     </div>
   );

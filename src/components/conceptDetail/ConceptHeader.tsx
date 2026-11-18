@@ -225,6 +225,7 @@ export const ConceptHeader = ({
             slug={slug}
             iri={conceptDetail.iri}
             conceptType={conceptType}
+            ontologySlug={ontologySlug}
           />
         </div>
       </div>

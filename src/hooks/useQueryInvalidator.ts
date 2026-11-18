@@ -59,5 +59,10 @@ export function useQueryInvalidator() {
         queryKey: getListForOntologyQueryKey(encodedSlug),
       });
     },
+    invalidateGetAllDiagrams: async () => {
+      return await queryClient.invalidateQueries({
+        queryKey: getGetAllDiagramsQueryKey(),
+      });
+    },
   };
 }

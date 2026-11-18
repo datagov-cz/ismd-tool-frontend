@@ -253,6 +253,11 @@ button {
   @apply cursor-pointer;
 }
 
+gov-button.footer-back-to-top[type='solid'] .element,
+.gov-button.footer-back-to-top[type='solid'] .element {
+  background-color: white;
+}
+
 @layer {
   table {
     @apply border-collapse;

@@ -318,7 +318,10 @@ export const OntologyLayout = ({
                 />
               )}
               {showValidationSummary && (
-                <ValidationSummary slug={slug} metaData={metaData} />
+                <ValidationSummary
+                  slug={slug}
+                  lastValidationStatus={metaData.lastValidationStatus}
+                />
               )}
             </div>
           )}

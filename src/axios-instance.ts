@@ -29,7 +29,7 @@ export const axiosInstance = <T>(
     ...options,
     paramsSerializer: { indexes: null },
     cancelToken: source.token,
-    timeout: 20000,
+    timeout: 90000,
   }).then(({ data }) => data);
 
   // @ts-expect-error -> cancel does not exist on Promise type
