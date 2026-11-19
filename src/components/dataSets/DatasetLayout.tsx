@@ -248,6 +248,7 @@ export const DatasetLayout = ({
               <div className="flex items-center gap-4">
                 <GovFormGroup className="relative w-full max-w-60">
                   <GovFormInput
+                    autoComplete="off"
                     className="max-w-60 w-full border-0!"
                     size="s"
                     placeholder={t('Main.SearchConcepts')}

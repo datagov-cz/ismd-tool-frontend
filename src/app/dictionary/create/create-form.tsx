@@ -156,6 +156,7 @@ export const CreateForm = () => {
     <FormProvider {...form}>
       <div className="relative w-full lg:max-w-160 xl:max-w-200">
         <form
+          autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-2.5"
           onFocus={handleFocus}

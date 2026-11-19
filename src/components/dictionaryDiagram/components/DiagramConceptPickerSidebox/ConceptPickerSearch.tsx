@@ -117,6 +117,7 @@ export const ConceptPickerSearch = ({
     <div>
       <GovFormGroup>
         <GovFormInput
+          autoComplete="off"
           placeholder={t('SearchOther')}
           size="s"
           value={query}

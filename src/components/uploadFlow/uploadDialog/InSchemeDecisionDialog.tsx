@@ -109,7 +109,11 @@ export const InSchemeDecisionDialog = ({
 
   return (
     <FormSection label={t('Decision.Title')} icon="upload">
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form
+        autoComplete="off"
+        onSubmit={onSubmit}
+        className="flex flex-col gap-4"
+      >
         <p>{t('Decision.Description')}</p>
 
         <fieldset className="flex justify-center gap-2">

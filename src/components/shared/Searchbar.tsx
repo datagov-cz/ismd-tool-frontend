@@ -19,6 +19,7 @@ export const Searchbar = ({ placeholder, size = 'm', onChange }: Props) => {
       <GovFormGroup>
         <GovFormSearch size={size} button={null}>
           <GovFormInput
+            autoComplete="off"
             identifier="searchbar-input"
             size="s"
             placeholder={placeholder}

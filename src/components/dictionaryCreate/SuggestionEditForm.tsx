@@ -53,6 +53,7 @@ export const SuggestionEditForm = ({ item, onSave, onCancel }: Props) => {
           {t('Edit.Name')}
         </GovFormLabel>
         <GovFormInput
+          autoComplete="off"
           id={`${id}-name`}
           value={name}
           onChange={(event) => setName(event.currentTarget.value ?? '')}
@@ -69,6 +70,7 @@ export const SuggestionEditForm = ({ item, onSave, onCancel }: Props) => {
           {t('Edit.Definition')}
         </GovFormLabel>
         <GovFormTextarea
+          autoComplete="off"
           id={`${id}-definition`}
           rows={3}
           value={definition}
@@ -80,6 +82,7 @@ export const SuggestionEditForm = ({ item, onSave, onCancel }: Props) => {
           {t('Edit.Explanation')}
         </GovFormLabel>
         <GovFormTextarea
+          autoComplete="off"
           id={`${id}-explanation`}
           rows={3}
           value={explanation}

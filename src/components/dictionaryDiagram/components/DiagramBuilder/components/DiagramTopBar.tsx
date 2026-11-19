@@ -56,6 +56,7 @@ export const DiagramTopBar = ({
         <div className="nodrag nopan relative flex items-center gap-2 px-2 py-1">
           <input
             autoFocus
+            autoComplete="off"
             type="text"
             value={name}
             maxLength={256}
@@ -110,7 +111,7 @@ export const DiagramTopBar = ({
         labelOnHover
       />
 
-      <div className="relative">
+      <div className="relative h-auto">
         <ToolbarButton
           trailingIcon="question-circle"
           onClick={toggleEdgeHelp}

@@ -46,6 +46,7 @@ export const AiActionPopover = ({ trigger, disabled, onConfirm }: Props) => {
             {t('ContextText')}
           </GovFormLabel>
           <GovFormTextarea
+            autoComplete="off"
             id={`${id}-context`}
             rows={3}
             maxLength={10000}

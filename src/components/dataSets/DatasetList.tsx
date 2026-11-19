@@ -56,6 +56,7 @@ export const DatasetList = ({
         <h1 className="pb-3 text-xl font-medium">{t('AllTitle')}</h1>
         <GovFormGroup className="relative w-full max-w-60">
           <GovFormInput
+            autoComplete="off"
             className="max-w-60 w-full border-0!"
             size="s"
             placeholder={t('SearchOntologies')}
