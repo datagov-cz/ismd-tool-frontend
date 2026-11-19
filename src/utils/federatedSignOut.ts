@@ -1,5 +1,7 @@
 import { signOut } from 'next-auth/react';
 
+import { clearUserDrafts } from './clearUserDrafts';
+
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 /**
@@ -16,6 +18,8 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
  * navigate.
  */
 export async function federatedSignOut(): Promise<void> {
+  clearUserDrafts();
+
   try {
     const url = await fetchLogoutUrl();
 
