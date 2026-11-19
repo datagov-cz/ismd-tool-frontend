@@ -24,7 +24,10 @@ const tError = createTranslator({
   messages,
   namespace: 'Errors',
 });
-const translateError: (_key: string) => string = () => tError('UnknownError');
+const translateError: (_key: string) => string = (key) =>
+  key === 'OfnWriteNonconformant'
+    ? tError('OfnWriteNonconformant')
+    : tError('UnknownError');
 
 type SideEffects<K extends OfflineMutationKey> = {
   onSuccess: (
@@ -100,6 +103,16 @@ export const registerOfflineMutationDefaults = (queryClient: QueryClient) => {
             ),
           }),
         ]);
+      },
+      onError: (error) => toast.error(getErrorMessage(error, translateError)),
+    },
+    createWithConcepts: {
+      onSuccess: () => {
+        clearFormDraft(draftKeys.ontologyCreate);
+        toast(t('CreateOntology.Form.CreateNewDictSuccess'));
+        return queryClient.invalidateQueries({
+          queryKey: getGetOntologyListQueryKey(),
+        });
       },
       onError: (error) => toast.error(getErrorMessage(error, translateError)),
     },

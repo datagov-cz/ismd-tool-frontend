@@ -67,6 +67,7 @@ export const OntologyList = ({
         {!isISMD && (
           <GovFormGroup className="relative w-full max-w-60">
             <GovFormInput
+              autoComplete="off"
               identifier="ontology-list-filter"
               className="max-w-60 w-full border-0!"
               size="s"

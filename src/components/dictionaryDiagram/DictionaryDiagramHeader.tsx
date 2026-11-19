@@ -16,6 +16,8 @@ import {
 } from '@/api/generated';
 import { ConfirmationModal } from '@/components/shared/ConfirmationModal';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import { isOfnWriteNonconformant } from '@/utils/ofnConformance';
 
 import { hasIncompleteObecnyEdge } from './components/DiagramBuilder/utils/edgeHelpers';
 import {
@@ -71,7 +73,9 @@ export const DictionaryDiagramHeader = ({
   const t = useTranslations('ConceptDetail');
   const td = useTranslations('DictionaryDiagram.Header');
   const tc = useTranslations('DictionaryDiagram.Canvas');
-  const { invalidateDiagram, invalidateOntology } = useQueryInvalidator();
+  const tError = useTranslations('Errors');
+  const { invalidateDiagram, invalidateOntology, invalidateGetAllDiagrams } =
+    useQueryInvalidator();
   const openMaterializationConflicts = (value: unknown) => {
     const responseConflicts = getMaterializationConflicts(value);
     if (!responseConflicts) return false;
@@ -119,7 +123,11 @@ export const DictionaryDiagramHeader = ({
       onError: (error) => {
         if (openMaterializationConflicts(error)) return;
 
-        toast.error(td('MaterializeError'));
+        toast.error(
+          isOfnWriteNonconformant(error)
+            ? getErrorMessage(error, tError)
+            : td('MaterializeError'),
+        );
       },
     },
   });
@@ -214,6 +222,7 @@ export const DictionaryDiagramHeader = ({
       ontologySlug: encodeURIComponent(ontologySlug),
       diagramId,
     });
+    invalidateGetAllDiagrams();
   };
 
   const handleMaterialize = () => requestSave('materialize');
@@ -268,10 +277,10 @@ export const DictionaryDiagramHeader = ({
                 color="success"
                 type="subtle"
                 size="xs"
-                className="w-fit border bg-white! cursor-pointer"
+                className="w-fit border bg-white! dark:bg-diagram-green-selected! dark:border-diagram-green-border! cursor-pointer"
                 iconStart={<GovIcon name="journal-text" type="components" />}
               >
-                <span className="font-bold text-blue-primary cursor-pointer">
+                <span className="font-bold text-blue-primary dark:text-green-300 cursor-pointer">
                   {capitalizeFirst(ontologyName ?? '')}
                 </span>
               </GovTag>

@@ -5,14 +5,8 @@ import { useFormContext } from 'react-hook-form';
 import { useActiveAnchor } from '@/hooks/useActiveAnchor';
 
 export const CheckBox = ({ name, label }: { name: string; label: string }) => {
-  const { register, setValue, getValues } = useFormContext();
+  const { register } = useFormContext();
   const isActive = useActiveAnchor(name);
-
-  const toggle = () =>
-    setValue(name, !getValues(name), {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
 
   return (
     <div
@@ -30,8 +24,8 @@ export const CheckBox = ({ name, label }: { name: string; label: string }) => {
         />
         <GovFormLabel
           size="m"
+          identifier={`checkbox-${name}`}
           className="w-fit mb-0! cursor-pointer"
-          onClick={toggle}
         >
           <span className="font-bold">{label}</span>
         </GovFormLabel>

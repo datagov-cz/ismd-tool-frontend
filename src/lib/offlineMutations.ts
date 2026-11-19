@@ -1,6 +1,7 @@
 import {
   getCreateConceptMutationOptions,
   getCreateOntologyMutationOptions,
+  getCreateWithConceptsMutationOptions,
   getEditConceptMutationOptions,
   getEditOntologyMutationOptions,
 } from '@/api/generated';
@@ -10,6 +11,7 @@ export const offlineMutations = {
   editOntology: getEditOntologyMutationOptions,
   createConcept: getCreateConceptMutationOptions,
   editConcept: getEditConceptMutationOptions,
+  createWithConcepts: getCreateWithConceptsMutationOptions,
 } as const;
 
 export type OfflineMutationKey = keyof typeof offlineMutations;

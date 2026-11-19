@@ -89,6 +89,7 @@ export const RPPInput = ({ label, placeholder, name, type }: Props) => {
         <div className="col-span-6 ml-10 flex flex-col gap-2">
           <div className="relative" ref={dropdownRef}>
             <GovFormInput
+              autoComplete="off"
               placeholder={placeholder}
               value={query}
               onChange={(e) => setQuery(e.currentTarget.value)}

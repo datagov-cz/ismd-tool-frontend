@@ -120,6 +120,7 @@ export const SearchInput = ({ autoFocus, className, onClose }: Props) => {
     <div className={clsx('w-full relative', className)} ref={ref}>
       <GovFormGroup className={clsx('relative', onClose && '[&_input]:pr-36!')}>
         <GovFormInput
+          autoComplete="off"
           identifier="search-input"
           ref={inputRef}
           placeholder={t('SearchPlaceholder')}

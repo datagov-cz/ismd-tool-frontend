@@ -171,7 +171,8 @@ export const LegislativeSource = ({
             color="primary"
             type="base"
             size="xs"
-            href={data?.data?.domain}
+            href={data?.data?.lawWebUrl}
+            target="_blank"
             iconStart={<GovIcon name="box-arrow-up-right" type="components" />}
           >
             {t('Main.OpenInESbirka')}

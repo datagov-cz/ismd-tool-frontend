@@ -56,21 +56,22 @@ export const DatasetList = ({
         <h1 className="pb-3 text-xl font-medium">{t('AllTitle')}</h1>
         <GovFormGroup className="relative w-full max-w-60">
           <GovFormInput
+            autoComplete="off"
             className="max-w-60 w-full border-0!"
             size="s"
             placeholder={t('SearchOntologies')}
             value={filterQuery}
             onChange={(e) => onFilterChange(e.target.value ?? '')}
-          >
-            <GovIcon
-              type="components"
-              color="neutral"
-              name="funnel"
-              slot="icon-start"
-              size="s"
-              className="transition-transform duration-200"
-            />
-          </GovFormInput>
+            iconStart={
+              <GovIcon
+                type="components"
+                color="neutral"
+                name="funnel"
+                size="s"
+                className="transition-transform duration-200"
+              />
+            }
+          />
         </GovFormGroup>
       </div>
 

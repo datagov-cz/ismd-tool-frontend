@@ -54,26 +54,12 @@ export const RequiredNameModelSchema = createRequiredNameModelSchema(
   (key) => key,
 );
 
-const NKOD_DATASET_PATTERN =
-  /^https:\/\/data\.gov\.cz\/zdroj\/datové-sady\/.*$/;
-const ABSOLUTE_IRI_PATTERN = /^https?:\/\/\S+$/;
-
-export const CodeListDatasetSchema = z
-  .string()
-  .optional()
-  .refine(
-    (value) =>
-      value == null || value.trim() === '' || NKOD_DATASET_PATTERN.test(value),
-    { message: 'Neplatná URL datové sady v NKOD' },
-  );
-
-export const CodeListIriSchema = z
-  .string()
-  .optional()
-  .refine(
-    (value) =>
-      value == null ||
-      value.trim() === '' ||
-      ABSOLUTE_IRI_PATTERN.test(value.trim()),
-    { message: 'Neplatné IRI číselníku' },
-  );
+export const CodeListRef = z.object({
+  datasetIri: z.string(),
+  codeListIri: z.string(),
+  title: z.string(),
+  publisher: z.string().optional(),
+  description: z.string().optional(),
+  codeListNumber: z.string().optional(),
+  validFrom: z.string().optional(),
+});

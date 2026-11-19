@@ -248,21 +248,22 @@ export const DatasetLayout = ({
               <div className="flex items-center gap-4">
                 <GovFormGroup className="relative w-full max-w-60">
                   <GovFormInput
+                    autoComplete="off"
                     className="max-w-60 w-full border-0!"
                     size="s"
                     placeholder={t('Main.SearchConcepts')}
                     value={filterQuery}
                     onChange={(e) => setFilterQuery(e.target.value ?? '')}
-                  >
-                    <GovIcon
-                      type="components"
-                      color="neutral"
-                      name="funnel"
-                      slot="icon-start"
-                      size="s"
-                      className="transition-transform duration-200"
-                    />
-                  </GovFormInput>
+                    iconStart={
+                      <GovIcon
+                        type="components"
+                        color="neutral"
+                        name="funnel"
+                        size="s"
+                        className="transition-transform duration-200"
+                      />
+                    }
+                  />
                 </GovFormGroup>
               </div>
             </div>

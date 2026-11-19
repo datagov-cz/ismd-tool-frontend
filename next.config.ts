@@ -2,6 +2,7 @@ import createMDX from '@next/mdx';
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import path from 'node:path';
+import remarkGfm from 'remark-gfm';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/popisujeme';
 
@@ -76,6 +77,9 @@ const nextConfig: NextConfig = {
 
 const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
 });
 const withNextIntl = createNextIntlPlugin();
 

@@ -52,7 +52,9 @@ const OPTIONS: {
 const Badge = ({ letter, solid }: { letter: string; solid?: boolean }) => (
   <span
     className={`inline-flex items-center justify-center w-6 h-6 rounded-sm font-bold text-sm shrink-0 ${
-      solid ? 'bg-blue-primary text-white' : 'bg-blue-subtle text-blue-primary'
+      solid
+        ? 'bg-blue-primary text-white dark:bg-diagram-blue-badge-solid'
+        : 'bg-blue-subtle text-blue-primary dark:bg-diagram-blue-badge dark:text-blue-200'
     }`}
   >
     {letter}
@@ -153,18 +155,18 @@ export const RelationshipChooser = ({
 
   return (
     <div
-      className="absolute z-10 w-[min(420px,calc(100vw-16px))] max-h-[calc(100dvh-16px)] overflow-y-auto bg-white rounded-lg border border-gray-border/50 shadow-[0px_4px_12px_0px_rgba(0,0,0,0.15)] p-4 flex flex-col gap-3"
+      className="absolute z-10 w-[min(420px,calc(100vw-16px))] max-h-[calc(100dvh-16px)] overflow-y-auto bg-white dark:bg-diagram-surface dark:text-gray-100 rounded-lg border border-gray-border/50 dark:border-diagram-border shadow-[0px_4px_12px_0px_rgba(0,0,0,0.4)] p-4 flex flex-col gap-3"
       style={position}
       ref={ref}
     >
-      <div className="flex items-center gap-2 font-bold border-b border-gray-border/50 pb-3">
+      <div className="flex items-center gap-2 font-bold border-b border-gray-border/50 dark:border-diagram-border-subtle pb-3">
         {t.rich('Title', {
           a: () => <Badge letter="A" solid />,
           b: () => <Badge letter="B" />,
         })}
       </div>
 
-      <div className="flex gap-6 text-blue-primary font-bold text-sm">
+      <div className="flex gap-6 text-blue-primary dark:text-blue-300 font-bold text-sm">
         <span className="flex items-start gap-2 flex-1">
           <Badge letter="A" solid /> {sourceLabel}
         </span>
@@ -174,7 +176,7 @@ export const RelationshipChooser = ({
       </div>
 
       {(sourceForeign || targetForeign) && (
-        <p className="text-sm text-card-description">
+        <p className="text-sm text-card-description dark:text-gray-300">
           {t('ForeignConceptConstraint')}
         </p>
       )}
@@ -201,10 +203,10 @@ export const RelationshipChooser = ({
               className={clsx(
                 'flex items-center gap-4 border rounded-md py-2.5 px-4 text-left transition-colors',
                 disabled
-                  ? 'cursor-not-allowed border-gray-border/50 bg-bg-primary text-disabled opacity-50'
+                  ? 'cursor-not-allowed border-gray-border/50 bg-bg-primary text-disabled opacity-50 dark:border-diagram-border dark:bg-diagram-disabled-surface dark:text-gray-500 dark:opacity-100'
                   : selected
-                    ? 'border-blue-primary bg-blue-subtle'
-                    : 'border-gray-border/50 hover:bg-blue-subtle',
+                    ? 'border-blue-primary bg-blue-subtle dark:border-diagram-blue-border dark:bg-diagram-blue-selected dark:text-white'
+                    : 'border-gray-border/50 bg-white hover:bg-blue-subtle dark:border-diagram-border-subtle dark:bg-diagram-surface-raised dark:text-gray-100 dark:hover:bg-diagram-hover',
               )}
             >
               <span className="font-bold w-12 shrink-0">{option.symbol}</span>
@@ -212,12 +214,17 @@ export const RelationshipChooser = ({
                 <span className="font-bold text-sm">
                   {t(`Options.${option.key}.Title`)}
                 </span>
-                <span className="text-sm text-card-description">
+                <span className="text-sm text-card-description dark:text-gray-300">
                   {t(`Options.${option.key}.Description`)}
                 </span>
               </span>
               {selected && (
-                <GovIcon name="check2-circle" size="m" color="primary" />
+                <GovIcon
+                  name="check2-circle"
+                  size="m"
+                  color="primary"
+                  className="dark:brightness-150"
+                />
               )}
             </button>
           );
@@ -225,11 +232,11 @@ export const RelationshipChooser = ({
       </div>
 
       {onRemove && (
-        <div className="border-t border-gray-border/50 pt-3">
+        <div className="border-t border-gray-border/50 dark:border-diagram-border-subtle pt-3">
           <button
             type="button"
             onClick={onRemove}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-status-error-600 px-4 py-2.5 font-bold text-status-error-600 transition-colors hover:bg-status-error-100"
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-status-error-600 dark:border-red-400 px-4 py-2.5 font-bold text-status-error-600 dark:text-red-400 transition-colors hover:bg-status-error-100 dark:hover:bg-red-950"
           >
             <GovIcon name="trash" size="m" />
             {t('Remove')}

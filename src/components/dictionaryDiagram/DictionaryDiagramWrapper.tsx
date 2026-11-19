@@ -264,7 +264,7 @@ export const DictionaryDiagramWrapper = ({
   if (isInitialLoadPending) {
     return (
       <main
-        className="min-h-[calc(100vh-72px)] w-full bg-primary-subtlest"
+        className="min-h-[calc(100vh-72px)] w-full bg-primary-subtlest dark:bg-diagram-canvas"
         aria-label={t('Loading')}
       >
         <PageLoader className="min-h-[calc(100vh-72px)]" />
@@ -276,7 +276,7 @@ export const DictionaryDiagramWrapper = ({
     const isRetrying = diagram.isFetching || ontology.isFetching;
 
     return (
-      <main className="min-h-[calc(100vh-72px)] w-full bg-primary-subtlest p-4">
+      <main className="min-h-[calc(100vh-72px)] w-full bg-primary-subtlest p-4 dark:bg-diagram-canvas">
         <section
           role="alert"
           className="mx-auto flex min-h-80 max-w-2xl flex-col items-center justify-center gap-4 text-center"
@@ -308,7 +308,7 @@ export const DictionaryDiagramWrapper = ({
   }
 
   return (
-    <main className="p-4 bg-primary-subtlest w-full min-h-[calc(100vh-72px)] flex flex-col gap-4">
+    <main className="p-4 bg-primary-subtlest dark:bg-diagram-canvas w-full min-h-[calc(100vh-72px)] flex flex-col gap-4">
       <DictionaryDiagramHeader
         ontologyName={ontologyName}
         ontologySlug={slug}

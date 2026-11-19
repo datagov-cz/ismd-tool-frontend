@@ -40,7 +40,7 @@ export const FIELD_GROUPS: FieldGroup[] = [
         key: 'instance-definovány-číselníkem',
         labelKey: 'Sections.InstantiatedByCodeList',
         types: ['TRIDA'],
-        anchor: '#codeListIri',
+        anchor: '#codeList',
       },
       {
         key: 'definiční-obor',
@@ -128,16 +128,19 @@ export const FIELD_GROUPS: FieldGroup[] = [
         key: 'typ-obsahu-údaje',
         labelKey: 'Sections.DataContentType',
         anchor: '#contentType',
+        types: ['VLASTNOST', 'VZTAH'],
       },
       {
         key: 'způsob-získání-údaje',
         labelKey: 'Sections.WayObtainingData',
         anchor: '#acquisitionMethod',
+        types: ['VLASTNOST', 'VZTAH'],
       },
       {
         key: 'způsob-sdílení-údaje',
         labelKey: 'Sections.WaySharingData',
         anchor: '#sharingMethod',
+        types: ['VLASTNOST', 'VZTAH'],
       },
     ],
   },
