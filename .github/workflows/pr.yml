@@ -29,6 +29,9 @@ jobs:
         uses: actions/dependency-review-action@v5.0.0
         with:
           fail-on-severity: high
+          # Dependabot raises minor/patch only, so a vulnerable version on its PR means the fix
+          # needs a major bump, which is done by hand. Report it there instead of blocking.
+          warn-only: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
 
   # The single required status check. Job names above can change without editing the rulesets.
   # Skipped jobs pass; failed or cancelled jobs fail the gate.
