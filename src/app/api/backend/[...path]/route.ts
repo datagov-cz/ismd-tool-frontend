@@ -59,6 +59,12 @@ async function handler(
   if (session?.accessToken) {
     headers.set('Authorization', `Bearer ${session.accessToken}`);
   }
+  // The backend's per-caller rate limit finds the client in this chain (see the backend's
+  // docs/RATE_LIMITING.md). Passed on unchanged; the backend decides which entries to trust.
+  const forwardedFor = req.headers.get('X-Forwarded-For');
+  if (forwardedFor) {
+    headers.set('X-Forwarded-For', forwardedFor);
+  }
 
   const response = await fetch(targetUrl, {
     method: req.method,
