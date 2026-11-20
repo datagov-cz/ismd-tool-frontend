@@ -59,6 +59,7 @@ const SourceInputForm = ({
           name={`${fieldName}.${index}.name`}
           render={({ field }) => (
             <GovFormInput
+              autoComplete="off"
               {...field}
               id={`${fieldName}.${index}.name`}
               placeholder="Zadejte název zdroje"
@@ -79,6 +80,7 @@ const SourceInputForm = ({
           name={`${fieldName}.${index}.description`}
           render={({ field }) => (
             <GovFormInput
+              autoComplete="off"
               {...field}
               id={`${fieldName}.${index}.description`}
               placeholder="Zadejte popis"
@@ -99,6 +101,7 @@ const SourceInputForm = ({
           name={`${fieldName}.${index}.url`}
           render={({ field }) => (
             <GovFormInput
+              autoComplete="off"
               {...field}
               id={`${fieldName}.${index}.url`}
               placeholder="Zadejte odkaz ke zdroji"

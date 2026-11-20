@@ -96,6 +96,7 @@ export const CommentSidebox = ({
           ))}
         </div>
         <form
+          autoComplete="off"
           className={clsx(
             'relative w-full border rounded-md bg-blue-subtle',
             errors.comment ? 'border-border-error' : 'border-border-primary',
@@ -106,6 +107,7 @@ export const CommentSidebox = ({
             {t('TextareaPlaceholder')}
           </label>
           <textarea
+            autoComplete="off"
             id="comment"
             className="size-full px-3 py-2"
             rows={4}

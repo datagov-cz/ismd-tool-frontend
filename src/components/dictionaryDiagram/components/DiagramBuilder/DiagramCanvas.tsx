@@ -663,6 +663,13 @@ export const DiagramCanvas = ({
               edgesReconnectable
               onDrop={onDrop}
               onDragOver={onDragOver}
+              ariaLabelConfig={{
+                'controls.ariaLabel': 'Ovládání diagramu',
+                'controls.zoomIn.ariaLabel': 'Přiblížit',
+                'controls.zoomOut.ariaLabel': 'Oddálit',
+                'controls.fitView.ariaLabel': 'Zobrazit celý diagram',
+                'controls.interactive.ariaLabel': 'Uzamknout pohyb objektů',
+              }}
               fitView
               minZoom={MIN_ZOOM}
               colorMode={isDarkMode ? 'dark' : 'light'}

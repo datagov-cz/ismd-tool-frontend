@@ -248,6 +248,7 @@ export const DiagramConceptPicker = ({
                 <div>
                   <GovFormGroup>
                     <GovFormInput
+                      autoComplete="off"
                       placeholder={t('SearchThis')}
                       size="s"
                       value={search}

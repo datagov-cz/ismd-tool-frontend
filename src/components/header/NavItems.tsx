@@ -45,20 +45,21 @@ export const NavItems = ({ session }: Props) => {
         </GovDropdown>
       )}
       <ConditionalTooltip active message={apiDocs.label}>
-        <GovButton
-          color="primary"
-          size="m"
-          type="solid"
-          className="header-button no-underline"
-          aria-label={apiDocs.label}
-          href={apiDocs.href}
-          target="_blank"
-          iconStart={
-            <GovIcon type="components" name={apiDocs.icon} size="xl" />
-          }
-        ></GovButton>
+        <span className="inline-flex">
+          <GovButton
+            color="primary"
+            size="m"
+            type="solid"
+            className="header-button no-underline"
+            aria-label={apiDocs.label}
+            href={apiDocs.href}
+            target="_blank"
+            iconStart={
+              <GovIcon type="components" name={apiDocs.icon} size="xl" />
+            }
+          />
+        </span>
       </ConditionalTooltip>
-
       <ConditionalTooltip active message={help.label}>
         <GovButton
           color="primary"

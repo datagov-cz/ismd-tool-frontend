@@ -4,6 +4,8 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 
+import { clearUserDrafts } from '@/utils/clearUserDrafts';
+
 const PROTECTED_PATTERNS = [
   /^\/concept\/[^/]+$/,
   /^\/concept\/[^/]+\/edit$/,
@@ -30,6 +32,7 @@ export const SessionGuard = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (session?.error === 'RefreshAccessTokenError' && !isSigningOut.current) {
       isSigningOut.current = true;
+      clearUserDrafts();
       signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_PATH });
     }
   }, [session]);

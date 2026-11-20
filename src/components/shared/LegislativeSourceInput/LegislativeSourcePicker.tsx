@@ -102,6 +102,7 @@ export const LegislativeSourcePicker = ({
       {allowManualEntry && isManualEntry ? (
         <div className="flex flex-col">
           <GovFormInput
+            autoComplete="off"
             value={selectedIri}
             onChange={(event) =>
               handleManualChange(event.currentTarget.value ?? '')

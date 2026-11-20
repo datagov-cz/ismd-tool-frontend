@@ -157,7 +157,10 @@ export const AddPropertyModal = ({
             </div>
           }
         >
-          <form onSubmit={formCreate.handleSubmit(onSubmitCreate)}>
+          <form
+            autoComplete="off"
+            onSubmit={formCreate.handleSubmit(onSubmitCreate)}
+          >
             <LanguageInput<ConceptForm>
               name="nameModel.name"
               label={tLabels('NamingSection.NameLabel')}
@@ -227,7 +230,11 @@ export const AddPropertyModal = ({
           )
         }
       >
-        <form onSubmit={formAdd.handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          autoComplete="off"
+          onSubmit={formAdd.handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <ConceptInput
             placeholder={'Vyberte pojem'}
             name={'concept'}

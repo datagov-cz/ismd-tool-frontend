@@ -67,6 +67,7 @@ export const Autocomplete = <T,>({
   return (
     <div className="relative" ref={containerRef}>
       <GovFormInput
+        autoComplete="off"
         ref={inputRef}
         placeholder={placeholder}
         value={query}

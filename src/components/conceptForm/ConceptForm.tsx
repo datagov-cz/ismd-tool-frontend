@@ -178,6 +178,7 @@ export const ConceptForm = ({
           <span className="flex-1 h-px bg-primary-outlined-hover" />
         </div>
         <form
+          autoComplete="off"
           onSubmit={form.handleSubmit((data) => onSubmit(data, form))}
           onFocus={handleFocus}
           className="w-full space-y-2.5"

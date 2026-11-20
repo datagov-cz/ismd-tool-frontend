@@ -44,7 +44,7 @@ export const LanguageSwitcher = ({
                   <p
                     key={index}
                     className={clsx(
-                      'font-sm text-md',
+                      'font-sm text-md break-normal',
                       lang !== 'cs' && 'opacity-60',
                     )}
                   >

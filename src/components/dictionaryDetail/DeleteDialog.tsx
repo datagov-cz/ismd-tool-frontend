@@ -19,6 +19,7 @@ interface DeleteDialogProps {
   type: 'ONTOLOGY' | 'CONCEPT';
   conceptType?: ConceptMetadataModelConceptType;
   slug: string;
+  ontologySlug?: string;
 }
 
 export const DeleteDialog = ({
@@ -29,6 +30,7 @@ export const DeleteDialog = ({
   type,
   slug,
   conceptType,
+  ontologySlug,
 }: DeleteDialogProps) => {
   const t = useTranslations('DeleteDialog');
   const tError = useTranslations('Errors');
@@ -59,7 +61,7 @@ export const DeleteDialog = ({
       onSuccess: (data) => {
         toast(data.message, { type: 'success' });
         onClose();
-        router.push('/');
+        router.push(`/dictionary/${ontologySlug}`);
       },
       onError: (error) => {
         // eslint-disable-next-line no-console

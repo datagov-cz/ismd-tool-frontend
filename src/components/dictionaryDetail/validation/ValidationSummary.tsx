@@ -5,14 +5,14 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import {
-  OntologyDetailMetadataDto,
+  OntologyDetailMetadataDtoLastValidationStatus,
   useGetValidationReport,
   useValidateOntology,
-  ValidationReport,
   ValidationResult,
   ValidationResultSeverity,
 } from '@/api/generated';
 import { CircularLoader } from '@/components/shared/CircularLoader';
+import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useValidationSideboxStore } from '@/store/validationBoxStore';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
@@ -58,48 +58,35 @@ const groupValidationResults = (
 
 export const ValidationSummary = ({
   slug,
-  metaData,
+  lastValidationStatus,
 }: {
   slug: string;
-  metaData: OntologyDetailMetadataDto;
+  lastValidationStatus?: OntologyDetailMetadataDtoLastValidationStatus;
 }) => {
   const t = useTranslations('DictionaryDetail.ValidationSidebox');
   const tError = useTranslations('Errors');
 
-  const [validationReport, setValidationReport] = useState<ValidationReport>();
-  const [grouped, setGrouped] = useState<GroupedValidation>();
-
   const createValidationReport = useValidateOntology();
-  const getValidationReport = useGetValidationReport(slug, {
-    query: { enabled: false },
-  });
+  const getValidationReport = useGetValidationReport(slug);
+  const { invalidateOntology } = useQueryInvalidator();
+  const validationReport = getValidationReport.data?.data;
+  const grouped = validationReport
+    ? groupValidationResults(validationReport.results ?? [])
+    : undefined;
+  const isValidationUnavailable =
+    lastValidationStatus === 'SKIPPED_UNAVAILABLE';
   const openRule = useValidationSideboxStore((state) => state.openRule);
 
-  const setReport = (report?: ValidationReport) => {
-    if (!report) return;
-
-    setValidationReport(report);
-    setGrouped(groupValidationResults(report.results ?? []));
-  };
-
-  const handleValidate = async () => {
-    const updatedAt = metaData.updatedAt
-      ? new Date(metaData.updatedAt).getTime()
-      : Number.NaN;
-    const lastValidationAt = metaData.lastValidationAt
-      ? new Date(metaData.lastValidationAt).getTime()
-      : Number.NaN;
-
-    if (!Number.isNaN(lastValidationAt) && updatedAt <= lastValidationAt) {
-      const { data } = await getValidationReport.refetch();
-      setReport(data?.data);
-      return;
-    }
-
+  const handleValidate = () => {
     createValidationReport.mutate(
       { slug },
       {
-        onSuccess: (data) => setReport(data.data),
+        onSuccess: async () => {
+          await Promise.all([
+            getValidationReport.refetch(),
+            invalidateOntology(slug),
+          ]);
+        },
         onError: (error) => {
           toast.error(getErrorMessage(error, tError));
         },
@@ -114,7 +101,7 @@ export const ValidationSummary = ({
       </div>
     );
 
-  if (!validationReport || !grouped)
+  if (isValidationUnavailable || !validationReport?.timestamp || !grouped)
     return (
       <div className="flex flex-col items-center">
         <p className="font-medium text-lg mb-3">{t('NotValidated')}</p>

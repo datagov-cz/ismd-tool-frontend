@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
+import { normalizeBasePath } from '@/lib/basePath';
 import { DownloadDialog } from '../../dictionaryDetail/DownloadDialog';
 
 import { CardIconButton } from './CardIconButton';
@@ -18,6 +19,7 @@ export type DictionaryCardProps = {
   modified?: Date;
   concepts: number;
   isPublished?: boolean;
+  ontologySlug?: string;
 } & (
   | { type: 'ISMD'; id: number; ontologyIRI?: never }
   | { type: 'NKD'; ontologyIRI: string; id?: never }
@@ -74,6 +76,7 @@ export const DictionaryCard = ({
   type,
   ontologyIRI,
   isPublished,
+  ontologySlug,
 }: DictionaryCardProps) => {
   const [openDownload, setOpenDownload] = useState(false);
   const t = useTranslations('DictionaryDetail.Main.ControlPanel');
@@ -82,13 +85,15 @@ export const DictionaryCard = ({
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href + link);
+      const basePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
+      await navigator.clipboard.writeText(
+        new URL(`${basePath}${link}`, window.location.origin).href,
+      );
       toast(t('LinkCopied'), { type: 'success' });
     } catch {
       toast(t('LinkCopyFailed'), { type: 'error' });
     }
   };
-
   return (
     <div className="rounded-xl border border-border-default overflow-hidden shadow-subtle flex flex-col">
       <Link
@@ -130,7 +135,11 @@ export const DictionaryCard = ({
 
       <DownloadDialog
         {...(type === 'ISMD'
-          ? { type, ontologyID: id }
+          ? {
+              type,
+              ontologyID: id,
+              ontologySlug: ontologySlug ?? getOntologySlug(link),
+            }
           : { type, ontologyIRI })}
         open={openDownload}
         onClose={() => setOpenDownload(false)}
@@ -138,4 +147,9 @@ export const DictionaryCard = ({
       />
     </div>
   );
+};
+
+const getOntologySlug = (link: string) => {
+  const match = link.match(/^\/dictionary\/([^/?#]+)/);
+  return match?.[1] ? decodeURIComponent(match[1]) : undefined;
 };

@@ -235,6 +235,15 @@ html[data-theme='light'] {
   background-color: var(--button-outlined-primary-hover);
 }
 
+.gov-form-input-disabled {
+  --form-bg-color: var(--background-neutral-subtlest);
+  --form-border-color: var(--border-subtle);
+  --form-state-bg-disabled: var(--background-neutral-subtlest);
+  --form-state-value-disabled: var(--text-secondary);
+  --form-state-border-disabled: var(--border-subtle);
+  --form-hover-color: var(--background-neutral-subtlest);
+}
+
 gov-form-search:focus-within,
 .gov-form-search:focus-within {
   outline: none;
@@ -251,6 +260,11 @@ gov-form-search:focus-within,
 .gov-button,
 button {
   @apply cursor-pointer;
+}
+
+gov-button.footer-back-to-top[type='solid'] .element,
+.gov-button.footer-back-to-top[type='solid'] .element {
+  background-color: white;
 }
 
 @layer {

@@ -6,14 +6,37 @@ import { FieldValues, useFormContext } from 'react-hook-form';
 
 import { useFormHistory } from '@/hooks/useFormHistory';
 
-export const FormToolbar = <T extends FieldValues>({
-  isPending,
-  onCancel,
-}: {
+type HistoryControls = ReturnType<typeof useFormHistory>;
+
+type FormToolbarProps = {
   isPending: boolean;
+  isSaveDisabled?: boolean;
+  isHistoryDisabled?: boolean;
   onCancel: () => void;
-}) => {
-  const { undo, redo, canUndo, canRedo } = useFormHistory<T>();
+};
+
+export const FormToolbar = <T extends FieldValues>({
+  history,
+  ...props
+}: FormToolbarProps & { history?: HistoryControls }) =>
+  history ? (
+    <FormToolbarControls {...props} history={history} />
+  ) : (
+    <DefaultFormToolbar<T> {...props} />
+  );
+
+const DefaultFormToolbar = <T extends FieldValues>(props: FormToolbarProps) => {
+  const history = useFormHistory<T>();
+  return <FormToolbarControls {...props} history={history} />;
+};
+
+const FormToolbarControls = ({
+  isPending,
+  isSaveDisabled = false,
+  isHistoryDisabled = false,
+  onCancel,
+  history: { undo, redo, canUndo, canRedo },
+}: FormToolbarProps & { history: HistoryControls }) => {
   const {
     formState: { isDirty },
   } = useFormContext();
@@ -38,6 +61,7 @@ export const FormToolbar = <T extends FieldValues>({
     const redoRef = { fn: redo };
 
     const handler = (e: KeyboardEvent) => {
+      if (isPending || isHistoryDisabled) return;
       const ctrl = e.ctrlKey || e.metaKey;
       if (!ctrl) return;
 
@@ -48,11 +72,12 @@ export const FormToolbar = <T extends FieldValues>({
         (e.target as HTMLElement)?.isContentEditable;
       if (isEditable) return;
 
-      if (e.key === 'z' && !e.shiftKey) {
+      const key = e.key.toLowerCase();
+      if (key === 'z' && !e.shiftKey) {
         e.preventDefault();
         undoRef.fn();
       }
-      if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+      if (key === 'y' || (key === 'z' && e.shiftKey)) {
         e.preventDefault();
         redoRef.fn();
       }
@@ -60,7 +85,7 @@ export const FormToolbar = <T extends FieldValues>({
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [undo, redo]);
+  }, [undo, redo, isPending, isHistoryDisabled]);
 
   return (
     <>
@@ -80,13 +105,13 @@ export const FormToolbar = <T extends FieldValues>({
               <span className="w-px! h-4! bg-blue-primary" />
             </>
           )}
-          {(isDirty || canRedo) && (
+          {(isDirty || canUndo || canRedo) && (
             <div className="flex gap-2 items-center">
               <GovButton
                 type="base"
                 color="primary"
                 size="s"
-                disabled={!canUndo || isPending}
+                disabled={!canUndo || isPending || isHistoryDisabled}
                 onClick={undo}
                 title={t('UndoTitle')}
                 iconStart={
@@ -100,7 +125,7 @@ export const FormToolbar = <T extends FieldValues>({
                 type="base"
                 color="primary"
                 size="s"
-                disabled={!canRedo || isPending}
+                disabled={!canRedo || isPending || isHistoryDisabled}
                 onClick={redo}
                 title={t('RedoTitle')}
                 iconStart={
@@ -130,7 +155,7 @@ export const FormToolbar = <T extends FieldValues>({
             color="primary"
             size="s"
             nativeType="submit"
-            disabled={isPending}
+            disabled={isPending || isSaveDisabled}
             iconStart={<GovIcon type="components" name="floppy" />}
           >
             {t('Save')}

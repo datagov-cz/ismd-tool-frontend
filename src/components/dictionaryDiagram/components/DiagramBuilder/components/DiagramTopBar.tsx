@@ -50,12 +50,13 @@ export const DiagramTopBar = ({
   return (
     <Panel
       position="top-right"
-      className="border border-gray-border/50 dark:border-diagram-border rounded-sm bg-white dark:bg-diagram-surface text-blue-hover dark:text-gray-100 font-bold flex text-sm divide-x divide-gray-border/50 dark:divide-diagram-border"
+      className="border border-gray-border/50 dark:border-diagram-border rounded-sm bg-white dark:bg-diagram-surface text-blue-hover dark:text-gray-100 font-bold flex text-sm divide-x divide-gray-border/50 dark:divide-diagram-border max-[1100px]:left-0! max-[1100px]:top-10! max-[1100px]:right-auto!"
     >
       {editingName ? (
         <div className="nodrag nopan relative flex items-center gap-2 px-2 py-1">
           <input
             autoFocus
+            autoComplete="off"
             type="text"
             value={name}
             maxLength={256}
@@ -110,7 +111,7 @@ export const DiagramTopBar = ({
         labelOnHover
       />
 
-      <div className="relative">
+      <div className="relative h-auto">
         <ToolbarButton
           trailingIcon="question-circle"
           onClick={toggleEdgeHelp}

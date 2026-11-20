@@ -174,7 +174,10 @@ export const AddRelationModal = ({
             </div>
           }
         >
-          <form onSubmit={formCreate.handleSubmit(onSubmitCreate)}>
+          <form
+            autoComplete="off"
+            onSubmit={formCreate.handleSubmit(onSubmitCreate)}
+          >
             <div className="flex justify-center gap-2">
               <GovButton
                 size="m"
@@ -273,7 +276,7 @@ export const AddRelationModal = ({
           )
         }
       >
-        <form onSubmit={formAdd.handleSubmit(onSubmit)}>
+        <form autoComplete="off" onSubmit={formAdd.handleSubmit(onSubmit)}>
           <div className="flex justify-center gap-2">
             <GovButton
               size="m"
