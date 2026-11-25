@@ -6,8 +6,10 @@ import { ConceptDetailModel, useGetNkdOntologyDetail } from '@/api/generated';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { ControlPanelNKD } from '@/components/dictionaryDetail/ControlPanelNKD';
 import { OntologyLayout } from '@/components/dictionaryDetail/OntologyLayout';
+import { getPreferredTranslation } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
 import { isQueryLoading } from '@/lib/query';
 
@@ -21,6 +23,7 @@ export const DictionaryContentNKD = ({ slug }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
+  usePageTitle('Slovník', getPreferredTranslation(ontologyDetail?.název));
 
   useVisitedOntology(
     ontologyDetail ? { slug, source: 'NKD' } : null,

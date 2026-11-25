@@ -14,6 +14,7 @@ import {
   useGetConceptDetail,
 } from '@/api/generated';
 import { SectionTitle } from '@/components/shared/SectionTitle';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
@@ -266,6 +267,11 @@ export const ConceptEditWrapper = ({ slug }: { slug: string }) => {
 
   const conceptMetadata = data?.data?.conceptMetadata;
   const conceptDetail = data?.data?.conceptDetail;
+  const conceptName =
+    conceptDetail?.['název']?.cs ??
+    conceptDetail?.['název']?.sk ??
+    conceptDetail?.['název']?.en;
+  usePageTitle('Úprava pojmu', conceptName);
   const graphName = conceptMetadata?.graphName ?? '';
   const storageKey = draftKeys.conceptEdit(slug);
 

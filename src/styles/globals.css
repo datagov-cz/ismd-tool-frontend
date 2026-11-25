@@ -262,6 +262,21 @@ button {
   @apply cursor-pointer;
 }
 
+.gov-button.relation-direction-button {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+}
+
+.gov-button.relation-direction-button .element {
+  height: auto;
+  min-height: var(--height-component-m);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
 gov-button.footer-back-to-top[type='solid'] .element,
 .gov-button.footer-back-to-top[type='solid'] .element {
   background-color: white;

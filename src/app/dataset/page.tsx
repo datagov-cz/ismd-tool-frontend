@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { DatasetsListWrapper } from '@/components/dataSets/DatasetsListWrapper';
+
+export const metadata: Metadata = { title: 'Datové sady | ISMD' };
 
 const DatasetsList = async () => {
   return (

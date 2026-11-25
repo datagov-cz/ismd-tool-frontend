@@ -12,6 +12,7 @@ import {
   useGetOntologyDetail,
 } from '@/api/generated';
 import { SectionTitle } from '@/components/shared/SectionTitle';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useSubmitForm } from '@/hooks/useSubmitForm';
 import { draftKeys } from '@/lib/draftKeys';
@@ -106,6 +107,7 @@ export const normalizeFormData = (
 
 export const ConceptCreateWrapper = ({ ontology }: { ontology: string }) => {
   const { data } = useGetOntologyDetail(ontology);
+  usePageTitle('Nový pojem');
   const { mutate: createConcept, isPending, isPaused } = useCreateConcept();
   const tNav = useTranslations('ConceptDetail.Main.ControlPanel');
   const t = useTranslations('ConceptCreateWrapper');

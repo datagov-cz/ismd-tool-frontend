@@ -3,8 +3,10 @@
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetDatasetDetail } from '@/api/generated';
+import { getPreferredTranslation } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { isQueryLoading } from '@/lib/query';
 
 import { DatasetLayout } from './DatasetLayout';
@@ -18,6 +20,7 @@ export const DatasetDetailWrapper = ({ iri }: Props) => {
   const t = useTranslations('DictionaryDetail');
 
   const datasetDetail = dataset.data?.data;
+  usePageTitle('Datová sada', getPreferredTranslation(datasetDetail?.název));
 
   if (isQueryLoading(dataset)) {
     return <PageLoader />;

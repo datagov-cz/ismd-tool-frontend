@@ -18,6 +18,7 @@ import { ConceptCard } from '@/components/shared/ConceptCard/ConceptCard';
 import { DiagramCard } from '@/components/shared/DiagramCard/DiagramCard';
 import { DictionaryCard } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const LIMIT = 20;
 
@@ -34,6 +35,7 @@ const Search = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const q = searchParams.get('q') ?? '';
+  usePageTitle('Vyhledávání');
 
   const rawType = searchParams.get('type');
   const activeType = isApiSearchType(rawType) ? rawType : undefined;

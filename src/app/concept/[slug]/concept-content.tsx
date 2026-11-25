@@ -13,6 +13,7 @@ import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { CommentSidebox } from '@/components/dictionaryDetail/CommentSidebox';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { isQueryLoading } from '@/lib/query';
 import { extractOntologyFromUrl } from '@/utils/conceptDetailUtils';
 
@@ -24,6 +25,13 @@ export const ConceptContent = ({ slug }: Props) => {
   const concept = useGetConceptDetail(slug);
   const { user, isAdmin } = useCurrentUser();
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
+  const conceptDetail = concept.data?.data?.conceptDetail;
+  const conceptName = [
+    conceptDetail?.název?.cs,
+    conceptDetail?.název?.sk,
+    conceptDetail?.název?.en,
+  ].find((name) => name?.trim());
+  usePageTitle('Pojem', conceptName);
 
   if (isQueryLoading(concept)) {
     return <PageLoader />;
@@ -33,15 +41,8 @@ export const ConceptContent = ({ slug }: Props) => {
     return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
   }
 
-  const conceptDetail = concept.data.data?.conceptDetail;
   const conceptMetadata = concept.data.data?.conceptMetadata;
   if (!conceptDetail || !conceptMetadata) return null;
-
-  const conceptName = [
-    conceptDetail.název?.cs,
-    conceptDetail.název?.sk,
-    conceptDetail.název?.en,
-  ].find((name) => name?.trim());
 
   const ontology = extractOntologyFromUrl(conceptMetadata.graphName || '');
   const conceptType = conceptMetadata.conceptType as

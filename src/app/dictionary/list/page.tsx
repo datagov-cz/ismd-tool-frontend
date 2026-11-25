@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { ISMDListWrapper } from '@/components/ontologyList/ISMDlistWrapper';
+
+export const metadata: Metadata = { title: 'Slovníky ISMD | ISMD' };
 
 const ISMDList = async () => {
   return (

@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { ConceptEditWrapper } from '@/components/conceptForm/ConceptEdit';
+
+export const metadata: Metadata = { title: 'Úprava pojmu | ISMD' };
 
 interface Props {
   params: Promise<{

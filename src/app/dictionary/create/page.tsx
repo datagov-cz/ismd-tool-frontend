@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { PageLoader } from '@/components/shared/PageLoader';
 import { UploadFlow } from '@/components/uploadFlow/UploadFlow';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 import { CreateForm } from './create-form';
 
@@ -14,6 +15,7 @@ const CreateDictionary = () => {
   const { user, isLoading } = useCurrentUser();
   const t = useTranslations('CreateOntology');
   const router = useRouter();
+  usePageTitle('Nový slovník');
 
   if (isLoading) {
     return <PageLoader className="flex-1" />;

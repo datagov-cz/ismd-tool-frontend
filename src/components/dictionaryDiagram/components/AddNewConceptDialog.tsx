@@ -12,7 +12,7 @@ import {
 } from '@/api/generated';
 import { normalizeFormData } from '@/components/conceptForm/ConceptCreate';
 import { type ConceptForm as ConceptFormValues } from '@/components/conceptForm/schema/conceptFormSchema';
-import { RequiredNameModelSchema } from '@/components/conceptForm/schema/sharedConceptSchemas';
+import { createRequiredNameModelSchema } from '@/components/conceptForm/schema/sharedConceptSchemas';
 import { LanguageInput } from '@/components/shared/LanguageInput';
 import { Select } from '@/components/shared/Select';
 import { usePageScrollLock } from '@/hooks/usePageScrollLock';
@@ -28,15 +28,20 @@ function getDomain(url: string): string | null {
   }
 }
 
-const AddNewConceptSchema = z.object({
-  nameModel: z.object({
-    name: RequiredNameModelSchema,
-  }),
-  conceptTypeEnum: z.enum(['TRIDA', 'VLASTNOST', 'VZTAH']),
-  type: z.string(),
-});
+const createAddNewConceptSchema = (
+  t: (_key: 'NameRequired' | 'NameTooLong') => string,
+) =>
+  z.object({
+    nameModel: z.object({
+      name: createRequiredNameModelSchema(t),
+    }),
+    conceptTypeEnum: z.enum(['TRIDA', 'VLASTNOST', 'VZTAH']),
+    type: z.string(),
+  });
 
-type AddNewConceptValues = z.infer<typeof AddNewConceptSchema>;
+type AddNewConceptValues = z.infer<
+  ReturnType<typeof createAddNewConceptSchema>
+>;
 
 export const AddNewConceptDialog = ({
   open,
@@ -49,6 +54,7 @@ export const AddNewConceptDialog = ({
 }) => {
   const t = useTranslations('CreateConcept');
   const tWrapper = useTranslations('ConceptCreateWrapper');
+  const tError = useTranslations('Errors');
   const td = useTranslations('DictionaryDiagram.AddConcept');
 
   const { data } = useGetOntologyDetail(ontology);
@@ -60,7 +66,7 @@ export const AddNewConceptDialog = ({
   const graphName = data?.data?.ontologyMetadata?.graphName;
 
   const form = useForm<AddNewConceptValues>({
-    resolver: zodResolver(AddNewConceptSchema),
+    resolver: zodResolver(createAddNewConceptSchema(tError)),
     defaultValues: {
       nameModel: { name: [{ languageTag: 'cs', name: '' }] },
       conceptTypeEnum: 'TRIDA',
@@ -161,6 +167,7 @@ export const AddNewConceptDialog = ({
               label={t('NamingSection.NameLabel')}
               placeholder={t('NamingSection.NamePlaceholder')}
               anchor="name"
+              maxLength={255}
             />
             <Select
               name="conceptTypeEnum"

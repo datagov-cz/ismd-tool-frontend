@@ -46,7 +46,9 @@ const ConceptFormSchema = z.object({
   codeList: CodeListRef.optional(),
 });
 
-export const createConceptFormSchema = (t: (_key: 'NameRequired') => string) =>
+export const createConceptFormSchema = (
+  t: (_key: 'NameRequired' | 'NameTooLong') => string,
+) =>
   ConceptFormSchema.extend({
     nameModel: z.object({ name: createRequiredNameModelSchema(t) }),
   });

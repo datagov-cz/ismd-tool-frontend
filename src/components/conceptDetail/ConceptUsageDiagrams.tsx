@@ -18,7 +18,7 @@ export const ConceptUsageDiagrams = ({
 
   if (placements && placements?.length > 0)
     return (
-      <div className="bg-white px-4 py-3 rounded-md shadow-subtle mt-6">
+      <div className="mt-6 rounded-md bg-surface px-4 py-3 text-foreground shadow-subtle">
         <h4>
           <span className="font-bold">Výskyty v diagramech</span> [
           {placements.length}]
@@ -72,7 +72,7 @@ export const ConceptInDiagram = ({
     ? `${diagramHref}#concept=${encodeURIComponent(conceptIri)}`
     : diagramHref;
   return (
-    <div className="border-t border-secondary/50 py-1.5 last:border-b">
+    <div className="border-t border-border-default py-1.5 last:border-b">
       <div className="flex">
         <div className="flex gap-2">
           <GovIcon name="diagram-3" size="xl" className="text-purple" />
@@ -96,7 +96,7 @@ export const ConceptInDiagram = ({
                   item.broader.length > 0 &&
                   item.broader.map((item) => (
                     <div key={item.iri} className="text-sm">
-                      <span className="font-bold text-dark-secondary">
+                      <span className="font-bold text-foreground-muted">
                         {item.conceptName?.cs}
                       </span>{' '}
                       <span className="pt-2">&rarr;</span>{' '}
@@ -107,7 +107,7 @@ export const ConceptInDiagram = ({
                   item.exactMatch.length > 0 &&
                   item.exactMatch.map((item) => (
                     <div key={item.iri} className="text-sm">
-                      <span className="font-bold text-dark-secondary">
+                      <span className="font-bold text-foreground-muted">
                         {item.conceptName?.cs}
                       </span>{' '}
                       = <span className="font-bold">{conceptName ?? '—'}</span>
@@ -119,13 +119,13 @@ export const ConceptInDiagram = ({
               <>
                 {item.domain && item.range && (
                   <div className="text-sm">
-                    <span className="font-bold text-dark-secondary">
+                    <span className="font-bold text-foreground-muted">
                       {item.domain.conceptName?.cs}
                     </span>{' '}
                     <span className="pt-2">&rarr;</span>{' '}
                     <span className="font-bold">{conceptName ?? '—'}</span>
                     <span className="pt-2">&rarr;</span>{' '}
-                    <span className="font-bold text-dark-secondary">
+                    <span className="font-bold text-foreground-muted">
                       {item.range.conceptName?.cs}
                     </span>
                   </div>
@@ -136,7 +136,7 @@ export const ConceptInDiagram = ({
               <>
                 {item.hostClass && (
                   <div className="text-sm">
-                    <span className="font-bold text-dark-secondary">
+                    <span className="font-bold text-foreground-muted">
                       {item.hostClass.conceptName?.cs}
                     </span>
                     <div className="flex items-center gap-1">

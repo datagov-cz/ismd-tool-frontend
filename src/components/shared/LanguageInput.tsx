@@ -11,10 +11,12 @@ import clsx from 'clsx';
 import {
   ArrayPath,
   FieldArray,
+  FieldPath,
   FieldValues,
   get,
   useFieldArray,
   useFormContext,
+  useWatch,
 } from 'react-hook-form';
 
 import {
@@ -42,6 +44,7 @@ interface Props<T extends FieldValues> {
   multiline?: boolean;
   anchor?: string;
   layout?: 'grid' | 'flex';
+  maxLength?: number;
 }
 
 export const LanguageInput = <T extends FieldValues>({
@@ -51,6 +54,7 @@ export const LanguageInput = <T extends FieldValues>({
   multiline,
   anchor,
   layout = 'grid',
+  maxLength,
 }: Props<T>) => {
   const {
     control,
@@ -64,6 +68,7 @@ export const LanguageInput = <T extends FieldValues>({
     control,
     name: name as ArrayPath<T>,
   });
+  const values = useWatch({ control, name: name as FieldPath<T> });
 
   const availableLanguages = ['cs', 'sk', 'en'] as const;
   const usedTags = fields.map(
@@ -93,6 +98,11 @@ export const LanguageInput = <T extends FieldValues>({
         const fieldPath = `${name}.${index}.name` as Parameters<
           typeof register
         >[0];
+        const value =
+          (values as unknown as LanguageEntry[] | undefined)?.[index]?.name ??
+          (field as unknown as LanguageEntry).name ??
+          '';
+        const isTooLong = maxLength !== undefined && value.length > maxLength;
 
         return (
           <div
@@ -108,56 +118,69 @@ export const LanguageInput = <T extends FieldValues>({
               <span className="font-bold">{index === 0 ? label : ''}</span>
             </GovFormLabel>
             <div className="col-span-6 relative flex items-center gap-2 ml-10">
-              <GovChip
-                type="outlined"
-                color="primary"
-                size="xs"
-                className="uppercase absolute -translate-x-full -left-2 top-1/2 -translate-y-1/2"
-              >
-                {lang}
-              </GovChip>
               <div className="w-full">
-                {multiline ? (
-                  <GovFormTextarea
-                    {...register(fieldPath)}
-                    placeholder={placeholder}
-                    autoComplete="off"
-                    className="[&input]:border-0! flex-1 [&_span]:pr-14!"
-                    rows={4}
-                  />
-                ) : (
-                  <GovFormInput
-                    {...register(fieldPath)}
-                    placeholder={placeholder}
-                    autoComplete="off"
-                    className="[&input]:border-0! flex-1 [&_span]:pr-14!"
-                  />
+                <div className="relative">
+                  <GovChip
+                    type="outlined"
+                    color="primary"
+                    size="xs"
+                    className="uppercase absolute -translate-x-full -left-2 top-1/2 -translate-y-1/2"
+                  >
+                    {lang}
+                  </GovChip>
+                  {multiline ? (
+                    <GovFormTextarea
+                      {...register(fieldPath)}
+                      placeholder={placeholder}
+                      autoComplete="off"
+                      className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                      rows={4}
+                    />
+                  ) : (
+                    <GovFormInput
+                      {...register(fieldPath)}
+                      placeholder={placeholder}
+                      autoComplete="off"
+                      invalid={isTooLong}
+                      className="[&input]:border-0! flex-1 [&_span]:pr-14!"
+                    />
+                  )}
+                  {index === 0 && (
+                    <div className="absolute right-1 top-1/2 -translate-y-1/2">
+                      <LanguageDropDownSelect
+                        availableLanguages={remainingLanguages}
+                        onClick={(lang) =>
+                          append({
+                            name: '',
+                            languageTag: lang,
+                          } as unknown as FieldArray<T, ArrayPath<T>>)
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
+                      onClick={() => remove(index)}
+                    >
+                      <GovIcon type="components" name="x" size="2xl" />
+                    </button>
+                  )}
+                </div>
+                {maxLength !== undefined && (
+                  <div
+                    className={clsx(
+                      'mt-1 text-right text-xs',
+                      isTooLong ? 'text-status-error-600' : 'text-gray-600',
+                    )}
+                    aria-live="polite"
+                  >
+                    {value.length} / {maxLength}
+                  </div>
                 )}
               </div>
-
-              {index === 0 && (
-                <div className="absolute right-1 top-1/2 -translate-y-1/2">
-                  <LanguageDropDownSelect
-                    availableLanguages={remainingLanguages}
-                    onClick={(lang) =>
-                      append({
-                        name: '',
-                        languageTag: lang,
-                      } as unknown as FieldArray<T, ArrayPath<T>>)
-                    }
-                  />
-                </div>
-              )}
-
-              {index > 0 && (
-                <button
-                  type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer flex items-center"
-                  onClick={() => remove(index)}
-                >
-                  <GovIcon type="components" name="x" size="2xl" />
-                </button>
-              )}
             </div>
           </div>
         );

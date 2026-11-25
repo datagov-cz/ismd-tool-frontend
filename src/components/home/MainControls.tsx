@@ -28,12 +28,17 @@ export const MainControls = () => {
           {t('MainControls.CreateNewDict')}
         </GovButton>
 
-        <Link
-          href="/dictionary/list-all"
-          className="underline text-sm text-foreground"
-        >
-          {t('WelcomeSection.BrowseDictionaries')}
-        </Link>
+        <div className="flex flex-col gap">
+          <Link
+            href="/dictionary/list-all"
+            className="underline text-sm text-foreground"
+          >
+            {t('WelcomeSection.BrowseDictionaries')}
+          </Link>
+          <Link href="/dataset" className="underline text-sm text-foreground">
+            {t('WelcomeSection.BrowseDataSets')}
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -11,12 +11,17 @@ export const WelcomeSection = () => {
       <h2 className="text-xl font-bold">{t('WelcomeSection.Title')}</h2>
       <p className="text-lg">{t('WelcomeSection.Description')}</p>
       <SearchInput className="max-w-150" />
-      <Link
-        href="/dictionary/nkd/list"
-        className="underline text-sm text-foreground"
-      >
-        {t('WelcomeSection.BrowseDictionaries')}
-      </Link>
+      <div className="flex flex-col gap">
+        <Link
+          href="/dictionary/list-all"
+          className="underline text-sm text-foreground"
+        >
+          {t('WelcomeSection.BrowseDictionaries')}
+        </Link>
+        <Link href="/dataset" className="underline text-sm text-foreground">
+          {t('WelcomeSection.BrowseDataSets')}
+        </Link>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,8 @@
 import { useTranslations } from 'next-intl';
 
 import { useGetOntologyDetail } from '@/api/generated';
+import { getPreferredTranslation } from '@/components/shared/DictionaryCard/DictionaryCard';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { isQueryLoading } from '@/lib/query';
 import { NotFoundState } from '../shared/NotFoundState';
 import { PageLoader } from '../shared/PageLoader';
@@ -14,6 +16,10 @@ export const DictionaryEditWrapper = ({ slug }: { slug: string }) => {
   const ontology = useGetOntologyDetail(encodeURIComponent(slug));
   const ontologyDetail = ontology.data?.data?.ontologyDetail;
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
+  usePageTitle(
+    'Úprava slovníku',
+    getPreferredTranslation(ontologyDetail?.název),
+  );
 
   if (isQueryLoading(ontology)) {
     return <PageLoader />;

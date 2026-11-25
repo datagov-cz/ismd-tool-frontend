@@ -29,13 +29,13 @@ export const DigitalObject = z.object({
 });
 
 export const createRequiredNameModelSchema = (
-  t: (_key: 'NameRequired') => string,
+  t: (_key: 'NameRequired' | 'NameTooLong') => string,
 ) =>
   z
     .array(
       z.object({
         languageTag: z.string(),
-        name: z.string(),
+        name: z.string().max(255, t('NameTooLong')),
       }),
     )
     .min(1, t('NameRequired'))
