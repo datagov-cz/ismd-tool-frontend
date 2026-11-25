@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { DictionaryContent } from './dictionary-content';
+
+export const metadata: Metadata = { title: 'Slovník | ISMD' };
 
 interface Props {
   params: Promise<{

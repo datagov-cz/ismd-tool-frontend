@@ -11,6 +11,7 @@ import { ValidationSidebox } from '@/components/dictionaryDetail/validation/Vali
 import { getPreferredTranslation } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { useVisitedOntology } from '@/hooks/useVisitedOnotology';
 import { isQueryLoading } from '@/lib/query';
 
@@ -26,6 +27,9 @@ export const DictionaryContent = ({ slug }: Props) => {
   const ontologyMetadata = ontology.data?.data?.ontologyMetadata;
   const publishedConceptDeviations =
     ontology.data?.data?.publishedConceptDeviations;
+
+  const dictionaryName = getPreferredTranslation(ontologyDetail?.název);
+  usePageTitle('Slovník', dictionaryName);
 
   useVisitedOntology({ slug, source: 'ISMD' }, user?.userId);
 

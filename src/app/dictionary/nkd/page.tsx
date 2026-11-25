@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { DictionaryContentNKD } from './dictionary-content';
+
+export const metadata: Metadata = { title: 'Slovník NKD | ISMD' };
 
 interface Props {
   searchParams: Promise<{

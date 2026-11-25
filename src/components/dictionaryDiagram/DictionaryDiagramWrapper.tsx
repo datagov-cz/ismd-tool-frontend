@@ -12,6 +12,7 @@ import {
   useGetOntologyDetail,
   useRenameDiagram,
 } from '@/api/generated';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { isQueryLoading } from '@/lib/query';
@@ -42,6 +43,7 @@ export const DictionaryDiagramWrapper = ({
 
   const { ontologyName, concepts } = useDiagramConcepts(ontology.data);
   const hydratedDiagram = diagram.data?.data;
+  usePageTitle('Diagram', hydratedDiagram?.name || ontologyName);
   const foreignConceptIris = useMemo(() => {
     const iris = (hydratedDiagram?.nodes ?? []).flatMap((node) => {
       if (!node.data?.readOnly) return [];

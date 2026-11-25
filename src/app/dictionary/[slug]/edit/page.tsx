@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { DictionaryEditWrapper } from '@/components/dictionaryEdit/DictionaryEditWrapper';
+
+export const metadata: Metadata = { title: 'Úprava slovníku | ISMD' };
 
 interface Props {
   params: Promise<{

@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { ConceptCreateWrapper } from '@/components/conceptForm/ConceptCreate';
+
+export const metadata: Metadata = { title: 'Nový pojem | ISMD' };
 
 interface Props {
   searchParams: Promise<{

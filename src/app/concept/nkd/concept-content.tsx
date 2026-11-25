@@ -7,8 +7,10 @@ import { ConceptDatasetsList } from '@/components/conceptDetail/ConceptDatasetsL
 import { ConceptHeaderNKD } from '@/components/conceptDetail/ConceptHeaderNKD';
 import { ConceptLayout } from '@/components/conceptDetail/ConceptLayout';
 import { OtherOntologyConcepts } from '@/components/conceptDetail/OtherOntologyConcepts';
+import { getPreferredTranslation } from '@/components/shared/DictionaryCard/DictionaryCard';
 import { NotFoundState } from '@/components/shared/NotFoundState';
 import { PageLoader } from '@/components/shared/PageLoader';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { isQueryLoading } from '@/lib/query';
 
 interface Props {
@@ -18,6 +20,8 @@ interface Props {
 export const ConceptContentNKD = ({ slug }: Props) => {
   const concept = useGetNkdConceptDetail({ iri: slug });
   const t = useTranslations('ConceptDetail.Main.ControlPanel');
+  const conceptDetail = concept.data?.data?.conceptDetail;
+  usePageTitle('Pojem', getPreferredTranslation(conceptDetail?.název));
 
   if (isQueryLoading(concept)) {
     return <PageLoader />;
@@ -27,7 +31,6 @@ export const ConceptContentNKD = ({ slug }: Props) => {
     return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
   }
 
-  const conceptDetail = concept.data.data?.conceptDetail;
   if (!conceptDetail) return null;
 
   const getType = () => {

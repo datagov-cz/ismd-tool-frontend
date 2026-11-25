@@ -2,15 +2,29 @@ import { z } from 'zod';
 
 export const createCommentSchema = (t: (_key: string) => string) =>
   z.object({
-    comment: z.string().min(1, t('MessageRequired')).optional(),
+    comment: z
+      .string()
+      .min(1, t('MessageRequired'))
+      .max(255, t('MessageTooLong'))
+      .optional(),
     ontologyIRI: z.string().min(1, t('MessageRequired')).optional(),
     conceptIRI: z.string().min(1, t('MessageRequired')).optional(),
   });
 
 export type CommentSchemaType = z.infer<ReturnType<typeof createCommentSchema>>;
 
-export const uploadOntologySchema = () =>
-  z.object({ file: z.instanceof(Blob) });
+export const uploadOntologySchema = (t: (_key: string) => string) =>
+  z.object({
+    file: z
+      .instanceof(Blob)
+      .refine(
+        (file) =>
+          'name' in file &&
+          typeof file.name === 'string' &&
+          /\.(ttl|jsonld)$/i.test(file.name),
+        t('FileUpload.InvalidFileType'),
+      ),
+  });
 
 export type UploadFromFileBody = z.infer<
   ReturnType<typeof uploadOntologySchema>

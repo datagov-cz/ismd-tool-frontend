@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { ConceptContentNKD } from './concept-content';
+
+export const metadata: Metadata = { title: 'Pojem NKD | ISMD' };
 
 interface Props {
   searchParams: Promise<{

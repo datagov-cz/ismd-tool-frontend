@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { GovButton, GovIcon } from '@gov-design-system-ce/react';
+import {
+  GovButton,
+  GovControlGroup,
+  GovIcon,
+} from '@gov-design-system-ce/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -45,6 +48,7 @@ export const CommentSidebox = ({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CommentCreateModel>({
     resolver: zodResolver(createCommentSchema(t)),
@@ -81,6 +85,8 @@ export const CommentSidebox = ({
     });
   };
 
+  const commentLength = watch('comment')?.length ?? 0;
+
   return (
     <Sidebox title={t('Title')} isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="flex-1 overflow-hidden flex flex-col h-full justify-between">
@@ -97,40 +103,62 @@ export const CommentSidebox = ({
         </div>
         <form
           autoComplete="off"
-          className={clsx(
-            'relative w-full border rounded-md bg-blue-subtle',
-            errors.comment ? 'border-border-error' : 'border-border-primary',
-          )}
+          className="w-full"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <label htmlFor="comment" className="hidden">
+          <label htmlFor="comment-first" className="hidden">
             {t('TextareaPlaceholder')}
           </label>
-          <textarea
-            autoComplete="off"
-            id="comment"
-            className="size-full px-3 py-2"
-            rows={4}
-            placeholder={t('TextareaPlaceholder')}
-            {...register('comment')}
-          />
+          <div className="mb-1 flex justify-end text-xs text-card-description">
+            <span
+              id="comment-counter"
+              className={`tabular-nums ${
+                commentLength > 255 ? 'text-status-error-600' : ''
+              }`}
+            >
+              {commentLength}/255 znaků
+            </span>
+          </div>
+          <GovControlGroup
+            color={errors.comment ? 'error' : 'primary'}
+            invalid={!!errors.comment}
+            className="w-full bg-blue-subtle [&_span]:h-auto!"
+          >
+            <textarea
+              autoComplete="off"
+              id="comment-first"
+              aria-invalid={!!errors.comment}
+              aria-describedby={
+                errors.comment
+                  ? 'comment-error-first comment-counter'
+                  : 'comment-counter'
+              }
+              className="min-h-24 min-w-0 flex-1 resize-y bg-transparent px-3 py-2"
+              rows={4}
+              placeholder={t('TextareaPlaceholder')}
+              {...register('comment')}
+            />
+            <GovButton
+              aria-label={t('SendButtonAria')}
+              nativeType="submit"
+              type="outlined"
+              color="primary"
+              disabled={isSubmitting || !!errors.comment}
+              size="xs"
+              className="h-full shrink-0 self-stretch [&_.element]:h-full [&_button]:h-full!"
+              iconEnd={<GovIcon name="send" size="l" />}
+            >
+              {t('Send')}
+            </GovButton>
+          </GovControlGroup>
           {errors.comment && (
-            <p className="text-status-error-600 text-sm absolute bottom-1 left-3">
+            <p
+              id="comment-error-first"
+              className="mt-1 text-status-error-600 text-sm"
+            >
               {errors.comment.message}
             </p>
           )}
-          <GovButton
-            aria-label={t('SendButtonAria')}
-            nativeType="submit"
-            type="outlined"
-            color="primary"
-            disabled={isSubmitting || !!errors.comment}
-            size="xs"
-            className="absolute z-1000 bottom-2 right-3"
-            iconEnd={<GovIcon name="send" size="l" />}
-          >
-            {t('Send')}
-          </GovButton>
         </form>
       </div>
     </Sidebox>

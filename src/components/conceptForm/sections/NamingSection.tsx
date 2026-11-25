@@ -14,6 +14,7 @@ export const NamingSection = () => {
         label={t('NameLabel')}
         placeholder={t('NamePlaceholder')}
         anchor="name"
+        maxLength={255}
       />
       <LanguageInput<ConceptForm>
         name="altNameModel.altName"

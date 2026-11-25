@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { DictionaryDiagramWrapper } from '@/components/dictionaryDiagram/DictionaryDiagramWrapper';
+
+export const metadata: Metadata = { title: 'Diagram | ISMD' };
 
 interface Props {
   params: Promise<{

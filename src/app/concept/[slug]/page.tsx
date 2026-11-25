@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { ConceptContent } from './concept-content';
+
+export const metadata: Metadata = { title: 'Pojem | ISMD' };
 
 interface Props {
   params: Promise<{

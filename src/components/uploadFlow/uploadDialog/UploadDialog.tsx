@@ -83,7 +83,7 @@ export const UploadDialog = ({
   });
 
   const form = useForm<UploadFromFileBody>({
-    resolver: zodResolver(uploadOntologySchema()),
+    resolver: zodResolver(uploadOntologySchema(t)),
   });
 
   const { handleSubmit } = form;

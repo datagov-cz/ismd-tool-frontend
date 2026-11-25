@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { FullListWrapper } from '@/components/ontologyList/FullListWrapper';
+
+export const metadata: Metadata = { title: 'Všechny slovníky | ISMD' };
 
 const FullList = async () => {
   return (

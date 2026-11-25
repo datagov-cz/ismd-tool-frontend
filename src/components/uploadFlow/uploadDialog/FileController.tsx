@@ -17,8 +17,7 @@ type FileControllerProps<TForm extends FieldValues> = {
   translationNamespace?: string;
 };
 
-const DEFAULT_ACCEPTED_FILE_TYPES =
-  '.jsonld,application/ld+json,.ttl,text/turtle,.json,.json-ld, ';
+const DEFAULT_ACCEPTED_FILE_TYPES = '.ttl,.jsonld';
 
 export const FileController = ({
   form,

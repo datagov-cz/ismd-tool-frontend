@@ -1,3 +1,7 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Dokumentace API | ISMD' };
+
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/popisujeme';
 
 export default function ApiDocsPage() {

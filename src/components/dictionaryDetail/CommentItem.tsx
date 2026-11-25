@@ -24,6 +24,19 @@ export const CommentItem = ({
   const tError = useTranslations('Errors');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  // Comment timestamps represent the wall-clock time returned by the API.
+  // Normalize timezone-less values as UTC, then format in UTC so the browser
+  // does not shift the time by its local UTC offset.
+  const parsedPostedTime = postedTime
+    ? new Date(
+        /(?:Z|[+-]\d{2}:?\d{2})$/i.test(postedTime)
+          ? postedTime
+          : `${postedTime}Z`,
+      )
+    : null;
+  const hasValidPostedTime =
+    parsedPostedTime && !Number.isNaN(parsedPostedTime.getTime());
+
   const isOwner = userId === loggedUser;
 
   const deleteComment = useDeleteComment({
@@ -57,13 +70,17 @@ export const CommentItem = ({
       <div className="flex gap-4 justify-between">
         <div className="flex gap-4 items-center">
           <span className="text-sm text-foreground flex justify-center items-center gap-1.5 font-medium">
-            {postedTime &&
-              new Date(postedTime).toLocaleTimeString('CS', {
+            {hasValidPostedTime &&
+              parsedPostedTime.toLocaleTimeString('cs-CZ', {
                 hour: 'numeric',
                 minute: 'numeric',
+                timeZone: 'UTC',
               })}
             <span className="min-w-0.5 min-h-0.5 w-0.5 h-0.5 bg-foreground rounded-full block" />
-            {postedTime && new Date(postedTime).toLocaleDateString('CS')}
+            {hasValidPostedTime &&
+              parsedPostedTime.toLocaleDateString('cs-CZ', {
+                timeZone: 'UTC',
+              })}
             {isOwner && (
               <span className="pl-1.5 border-l border-border-default text-accent leading-3">
                 {t('OwnComment')}

@@ -1,4 +1,8 @@
+import type { Metadata } from 'next';
+
 import { NKDListWrapper } from '@/components/ontologyList/NKDlistWrapper';
+
+export const metadata: Metadata = { title: 'Slovníky NKD | ISMD' };
 
 const NKDList = async () => {
   return (
