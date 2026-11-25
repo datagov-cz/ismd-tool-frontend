@@ -5,11 +5,19 @@ type ErrorResponse = {
   errorCode?: string;
 };
 
+const ERROR_CODE_TRANSLATIONS: Record<string, string> = {
+  SERVER_BUSY: 'ServerBusy',
+  ONTOLOGY_CREATION_CONFLICT: 'OntologyCreationConflict',
+};
+
 export const getErrorMessage = (
   error: unknown,
   t: (_key: string) => string,
 ): string => {
   if (axios.isAxiosError<ErrorResponse>(error)) {
+    const errorCode = error.response?.data?.errorCode;
+    const translationKey = errorCode && ERROR_CODE_TRANSLATIONS[errorCode];
+    if (translationKey) return t(translationKey);
     if (error.response?.data?.errorCode === 'OFN_WRITE_NONCONFORMANT') {
       return t('OfnWriteNonconformant');
     }
@@ -18,6 +26,10 @@ export const getErrorMessage = (
 
   return error instanceof Error ? error.message : t('UnknownError');
 };
+
+export const hasApiErrorCode = (error: unknown, errorCode: string): boolean =>
+  axios.isAxiosError<ErrorResponse>(error) &&
+  error.response?.data?.errorCode === errorCode;
 
 export const getBlobErrorMessage = async (
   error: unknown,

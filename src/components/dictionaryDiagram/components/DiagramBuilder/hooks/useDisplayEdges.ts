@@ -16,6 +16,7 @@ type UseDisplayEdgesProps = {
   focusedNodeIds: ReadonlySet<string>;
   pendingConceptIds: ReadonlySet<string>;
   pendingEdgeIds: ReadonlySet<string>;
+  canEditDiagram: boolean;
 };
 
 export const useDisplayEdges = ({
@@ -25,6 +26,7 @@ export const useDisplayEdges = ({
   focusedNodeIds,
   pendingConceptIds,
   pendingEdgeIds,
+  canEditDiagram,
 }: UseDisplayEdgesProps) => {
   const displayEdges = useMemo(() => {
     const base = edges.map((e) => {
@@ -48,9 +50,13 @@ export const useDisplayEdges = ({
             (!!e.data?.vztahIri && pendingConceptIds.has(e.data.vztahIri)) ||
             (!!e.data?.convertedFrom &&
               pendingConceptIds.has(e.data.convertedFrom.vztahIri)),
-          onBendsChange: (bends?: XYPosition[]) =>
-            dispatch({ type: 'setEdgeBends', edgeId: e.id, bends }),
-          ...(e.data?.kind === 'obecny'
+          ...(canEditDiagram
+            ? {
+                onBendsChange: (bends?: XYPosition[]) =>
+                  dispatch({ type: 'setEdgeBends', edgeId: e.id, bends }),
+              }
+            : {}),
+          ...(canEditDiagram && e.data?.kind === 'obecny'
             ? {
                 onDropVztah: (vztah: Concept) => {
                   const iri = getConceptIri(vztah);
@@ -73,6 +79,7 @@ export const useDisplayEdges = ({
     focusedNodeIds,
     pendingConceptIds,
     pendingEdgeIds,
+    canEditDiagram,
   ]);
 
   return { displayEdges };

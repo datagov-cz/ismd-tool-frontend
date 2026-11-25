@@ -24,6 +24,7 @@ import type {
 } from '../model/diagram';
 
 import { useDiagramDispatch } from './diagramDispatchContext';
+import { useCanEditDiagram } from './diagramEditContext';
 import { usePendingChanges } from './pendingChangesContext';
 
 const StaleConceptLabel = () => {
@@ -186,6 +187,7 @@ const ConceptNodeDetail = ({
   onClose: () => void;
 }) => {
   const dispatch = useDiagramDispatch();
+  const canEditDiagram = useCanEditDiagram();
   const t = useTranslations('DictionaryDiagram.Node');
   const detailRef = useRef<HTMLDivElement>(null);
   const [showAllProperties, setShowAllProperties] = useState(false);
@@ -325,22 +327,24 @@ const ConceptNodeDetail = ({
                     {v.stale && t('RemovedSuffix')}
                   </span>
                 </span>
-                <button
-                  type="button"
-                  aria-label={t('RemoveProperty', {
-                    name: getConceptLabel(v) ?? '',
-                  })}
-                  className="flex shrink-0 items-center"
-                  onClick={() =>
-                    dispatch({
-                      type: 'removeVlastnost',
-                      targetNodeId: nodeId,
-                      vlastnostId: getConceptId(v),
-                    })
-                  }
-                >
-                  <GovIcon name="trash" color="error" size="xs" />
-                </button>
+                {canEditDiagram && (
+                  <button
+                    type="button"
+                    aria-label={t('RemoveProperty', {
+                      name: getConceptLabel(v) ?? '',
+                    })}
+                    className="flex shrink-0 items-center"
+                    onClick={() =>
+                      dispatch({
+                        type: 'removeVlastnost',
+                        targetNodeId: nodeId,
+                        vlastnostId: getConceptId(v),
+                      })
+                    }
+                  >
+                    <GovIcon name="trash" color="error" size="xs" />
+                  </button>
+                )}
               </div>
             ))}
             {!showAllProperties && hiddenPropertiesCount > 0 && (
@@ -384,33 +388,35 @@ const ConceptNodeDetail = ({
             )}
           </div>
         </div>
-        <div>
-          <span className="font-medium text-xs">{t('Actions')}</span>
-          <div className="flex flex-col gap-1">
-            {!data.concept.stale && (
+        {canEditDiagram && (
+          <div>
+            <span className="font-medium text-xs">{t('Actions')}</span>
+            <div className="flex flex-col gap-1">
+              {!data.concept.stale && (
+                <GovButton
+                  color="primary"
+                  type="outlined"
+                  size="xs"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
+                  iconStart={<GovIcon name="pencil" color="primary" />}
+                >
+                  {t('EditConcept')}
+                </GovButton>
+              )}
               <GovButton
-                color="primary"
-                type="outlined"
+                color="error"
                 size="xs"
-                href={`${process.env.NEXT_PUBLIC_BASE_PATH}/concept/${data.concept.slug}/edit`}
-                iconStart={<GovIcon name="pencil" color="primary" />}
+                type="outlined"
+                onClick={() => {
+                  data.onRemove?.();
+                  dispatch({ type: 'removeNode', nodeId });
+                }}
               >
-                {t('EditConcept')}
+                <GovIcon name="trash" /> {t('RemoveFromDiagram')}
               </GovButton>
-            )}
-            <GovButton
-              color="error"
-              size="xs"
-              type="outlined"
-              onClick={() => {
-                data.onRemove?.();
-                dispatch({ type: 'removeNode', nodeId });
-              }}
-            >
-              <GovIcon name="trash" /> {t('RemoveFromDiagram')}
-            </GovButton>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </NodeToolbar>
   );

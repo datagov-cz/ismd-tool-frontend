@@ -16,7 +16,7 @@ import {
 } from '@/api/generated';
 import { ConfirmationModal } from '@/components/shared/ConfirmationModal';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
-import { getErrorMessage } from '@/utils/getErrorMessage';
+import { getErrorMessage, hasApiErrorCode } from '@/utils/getErrorMessage';
 import { isOfnWriteNonconformant } from '@/utils/ofnConformance';
 
 import { hasIncompleteObecnyEdge } from './components/DiagramBuilder/utils/edgeHelpers';
@@ -45,6 +45,7 @@ type DictionaryDiagramHeaderProps = {
   removedOverlays: DiagramLayoutOverlay[];
   diagramVersion?: number;
   hasUnsavedChanges: boolean;
+  canEditDiagram: boolean;
   onLayoutSaved: (
     _expected: { nodes: ConceptFlowNode[]; edges: ConceptFlowEdge[] },
     _saved: { nodes: ConceptFlowNode[]; edges: ConceptFlowEdge[] },
@@ -62,6 +63,7 @@ export const DictionaryDiagramHeader = ({
   removedOverlays,
   diagramVersion,
   hasUnsavedChanges,
+  canEditDiagram,
   onLayoutSaved,
 }: DictionaryDiagramHeaderProps) => {
   const router = useRouter();
@@ -124,7 +126,8 @@ export const DictionaryDiagramHeader = ({
         if (openMaterializationConflicts(error)) return;
 
         toast.error(
-          isOfnWriteNonconformant(error)
+          isOfnWriteNonconformant(error) ||
+            hasApiErrorCode(error, 'SERVER_BUSY')
             ? getErrorMessage(error, tError)
             : td('MaterializeError'),
         );
@@ -302,49 +305,54 @@ export const DictionaryDiagramHeader = ({
           >
             {td('Close')}
           </GovButton>
-
-          <GovButton
-            type="solid"
-            color="secondary"
-            size="s"
-            disabled={
-              saveLayout.isPending ||
-              !hasUnsavedChanges ||
-              deleteDiagram.isPending
-            }
-            onClick={handleSaveLayout}
-            iconStart={<GovIcon name="bookmark-plus" size="s" />}
-          >
-            {saveLayout.isPending ? td('Saving') : td('SaveDraft')}
-          </GovButton>
-          <GovButton
-            type="solid"
-            color="primary"
-            size="s"
-            disabled={
-              saveLayout.isPending ||
-              materialize.isPending ||
-              deleteDiagram.isPending
-            }
-            onClick={handleMaterialize}
-            iconStart={<GovIcon name="floppy" size="s" />}
-          >
-            {materialize.isPending ? td('Materializing') : td('Materialize')}
-          </GovButton>
-          <GovButton
-            type="solid"
-            color="error"
-            size="s"
-            disabled={
-              saveLayout.isPending ||
-              materialize.isPending ||
-              deleteDiagram.isPending
-            }
-            onClick={() => setDeleteConfirmationOpen(true)}
-            iconStart={<GovIcon name="trash" size="s" />}
-          >
-            {deleteDiagram.isPending ? td('Deleting') : td('Delete')}
-          </GovButton>
+          {canEditDiagram && (
+            <GovButton
+              type="solid"
+              color="secondary"
+              size="s"
+              disabled={
+                saveLayout.isPending ||
+                !hasUnsavedChanges ||
+                deleteDiagram.isPending
+              }
+              onClick={handleSaveLayout}
+              iconStart={<GovIcon name="bookmark-plus" size="s" />}
+            >
+              {saveLayout.isPending ? td('Saving') : td('SaveDraft')}
+            </GovButton>
+          )}
+          {canEditDiagram && (
+            <GovButton
+              type="solid"
+              color="primary"
+              size="s"
+              disabled={
+                saveLayout.isPending ||
+                materialize.isPending ||
+                deleteDiagram.isPending
+              }
+              onClick={handleMaterialize}
+              iconStart={<GovIcon name="floppy" size="s" />}
+            >
+              {materialize.isPending ? td('Materializing') : td('Materialize')}
+            </GovButton>
+          )}
+          {canEditDiagram && (
+            <GovButton
+              type="solid"
+              color="error"
+              size="s"
+              disabled={
+                saveLayout.isPending ||
+                materialize.isPending ||
+                deleteDiagram.isPending
+              }
+              onClick={() => setDeleteConfirmationOpen(true)}
+              iconStart={<GovIcon name="trash" size="s" />}
+            >
+              {deleteDiagram.isPending ? td('Deleting') : td('Delete')}
+            </GovButton>
+          )}
         </div>
       </div>
 

@@ -4,8 +4,9 @@ import { HistoryAction } from '@/components/dictionaryDiagram/hooks/withHistory'
 
 type Dispatch = React.Dispatch<HistoryAction>;
 
-export const useKeyboardShortcuts = (dispatch: Dispatch) => {
+export const useKeyboardShortcuts = (dispatch: Dispatch, enabled = true) => {
   useEffect(() => {
+    if (!enabled) return;
     const onKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
 
@@ -42,5 +43,5 @@ export const useKeyboardShortcuts = (dispatch: Dispatch) => {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [dispatch]);
+  }, [dispatch, enabled]);
 };

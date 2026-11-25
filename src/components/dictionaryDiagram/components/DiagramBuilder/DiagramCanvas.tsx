@@ -29,6 +29,7 @@ import { toast } from 'react-toastify';
 import { AddNewConceptDialog } from '@/components/dictionaryDiagram/components/AddNewConceptDialog';
 import { ConceptNode } from '@/components/dictionaryDiagram/components/ConceptNode';
 import { DiagramDispatchContext } from '@/components/dictionaryDiagram/components/diagramDispatchContext';
+import { DiagramEditContext } from '@/components/dictionaryDiagram/components/diagramEditContext';
 import { LabelDisplayContext } from '@/components/dictionaryDiagram/components/labelDisplayContext';
 import { LabeledEdge } from '@/components/dictionaryDiagram/components/LabeledEdge';
 import { PendingChangesContext } from '@/components/dictionaryDiagram/components/pendingChangesContext';
@@ -193,6 +194,7 @@ export const DiagramCanvas = ({
   onSelectedConceptIdsChange,
   pendingConceptIds,
   pendingEdgeIds,
+  canEditDiagram,
   diagramName,
   renamingDiagram,
   onRenameDiagram,
@@ -266,6 +268,7 @@ export const DiagramCanvas = ({
     focusedNodeIds,
     pendingConceptIds,
     pendingEdgeIds,
+    canEditDiagram,
   });
 
   const visibleNodeIds = useMemo(() => {
@@ -503,18 +506,18 @@ export const DiagramCanvas = ({
     autoLayout,
   });
 
-  useKeyboardShortcuts(dispatch);
+  useKeyboardShortcuts(dispatch, canEditDiagram);
 
   const onNodesChange = useCallback(
     (changes: NodeChange<ConceptFlowNode>[]) =>
-      dispatch({ type: 'nodesChange', changes }),
-    [dispatch],
+      canEditDiagram && dispatch({ type: 'nodesChange', changes }),
+    [canEditDiagram, dispatch],
   );
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange<ConceptFlowEdge>[]) =>
-      dispatch({ type: 'edgesChange', changes }),
-    [dispatch],
+      canEditDiagram && dispatch({ type: 'edgesChange', changes }),
+    [canEditDiagram, dispatch],
   );
 
   const exportDiagram = useCallback(
@@ -641,110 +644,120 @@ export const DiagramCanvas = ({
       ref={wrapperRef}
     >
       <DiagramDispatchContext.Provider value={dispatch}>
-        <PendingChangesContext.Provider value={pendingConceptIds}>
-          <LabelDisplayContext.Provider value={showFullLabels}>
-            <ReactFlow<ConceptFlowNode, ConceptFlowEdge>
-              nodes={displayNodes}
-              edges={displayEdges}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onEdgeClick={onEdgeClick}
-              onNodeClick={(event, node) => {
-                if ((event.target as Element).closest('.react-flow__handle')) {
-                  return;
-                }
-                toggleFocusedNode(node.id);
-              }}
-              onPaneClick={() => setFocusedNodeIds(new Set())}
-              onConnect={onConnect}
-              onReconnect={onReconnect}
-              edgesReconnectable
-              onDrop={onDrop}
-              onDragOver={onDragOver}
-              ariaLabelConfig={{
-                'controls.ariaLabel': 'Ovládání diagramu',
-                'controls.zoomIn.ariaLabel': 'Přiblížit',
-                'controls.zoomOut.ariaLabel': 'Oddálit',
-                'controls.fitView.ariaLabel': 'Zobrazit celý diagram',
-                'controls.interactive.ariaLabel': 'Uzamknout pohyb objektů',
-              }}
-              fitView
-              minZoom={MIN_ZOOM}
-              colorMode={isDarkMode ? 'dark' : 'light'}
-              style={
-                isDarkMode
-                  ? ({
-                      '--xy-edge-stroke-default': 'var(--color-diagram-edge)',
-                      '--xy-edge-stroke-selected-default':
-                        'var(--color-diagram-edge-selected)',
-                    } as CSSProperties)
-                  : undefined
-              }
-            >
-              <DiagramToolbar
-                canUndo={canUndo}
-                canRedo={canRedo}
-                onUndo={() => dispatch({ type: 'undo' })}
-                onRedo={() => dispatch({ type: 'redo' })}
-                onLayout={runLayout}
-                onAddConcept={() => setOpenAddDialog(true)}
-                canClear={nodes.length > 0 || edges.length > 0}
-                onClear={() => dispatch({ type: 'clearDiagram' })}
-              />
-
-              <HighlightedRelationsPanel
-                title={highlightedRelationsTitle}
-                relations={highlightedRelations}
-                onRelationClick={centerOnUnfocusedRelationNode}
-              />
-
-              <DiagramTopBar
-                onExport={() => setOpenExportDialog(true)}
-                diagramName={diagramName}
-                renaming={renamingDiagram}
-                onRename={onRenameDiagram}
-              />
-
-              <Controls className="text-blue-hover" showInteractive={true}>
-                <ControlButton
-                  onClick={() => setShowFullLabels((v) => !v)}
-                  title={
-                    showFullLabels ? t('ShortenLabels') : t('ShowFullLabels')
+        <DiagramEditContext.Provider value={canEditDiagram}>
+          <PendingChangesContext.Provider value={pendingConceptIds}>
+            <LabelDisplayContext.Provider value={showFullLabels}>
+              <ReactFlow<ConceptFlowNode, ConceptFlowEdge>
+                nodes={displayNodes}
+                edges={displayEdges}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onEdgeClick={canEditDiagram ? onEdgeClick : undefined}
+                onNodeClick={(event, node) => {
+                  if (
+                    (event.target as Element).closest('.react-flow__handle')
+                  ) {
+                    return;
                   }
-                  aria-pressed={showFullLabels}
-                >
-                  <GovIcon
-                    type="components"
-                    name={
-                      showFullLabels
-                        ? 'arrows-collapse-vertical'
-                        : 'arrows-expand-vertical'
-                    }
-                    color="primary"
-                    size="xs"
+                  toggleFocusedNode(node.id);
+                }}
+                onPaneClick={() => setFocusedNodeIds(new Set())}
+                onConnect={canEditDiagram ? onConnect : undefined}
+                onReconnect={canEditDiagram ? onReconnect : undefined}
+                nodesDraggable={canEditDiagram}
+                nodesConnectable={canEditDiagram}
+                edgesReconnectable={canEditDiagram}
+                deleteKeyCode={canEditDiagram ? ['Backspace', 'Delete'] : null}
+                onDrop={canEditDiagram ? onDrop : undefined}
+                onDragOver={canEditDiagram ? onDragOver : undefined}
+                ariaLabelConfig={{
+                  'controls.ariaLabel': 'Ovládání diagramu',
+                  'controls.zoomIn.ariaLabel': 'Přiblížit',
+                  'controls.zoomOut.ariaLabel': 'Oddálit',
+                  'controls.fitView.ariaLabel': 'Zobrazit celý diagram',
+                  'controls.interactive.ariaLabel': 'Uzamknout pohyb objektů',
+                }}
+                fitView
+                minZoom={MIN_ZOOM}
+                colorMode={isDarkMode ? 'dark' : 'light'}
+                style={
+                  isDarkMode
+                    ? ({
+                        '--xy-edge-stroke-default': 'var(--color-diagram-edge)',
+                        '--xy-edge-stroke-selected-default':
+                          'var(--color-diagram-edge-selected)',
+                      } as CSSProperties)
+                    : undefined
+                }
+              >
+                {canEditDiagram && (
+                  <DiagramToolbar
+                    canUndo={canUndo}
+                    canRedo={canRedo}
+                    onUndo={() => dispatch({ type: 'undo' })}
+                    onRedo={() => dispatch({ type: 'redo' })}
+                    onLayout={runLayout}
+                    onAddConcept={() => setOpenAddDialog(true)}
+                    canClear={nodes.length > 0 || edges.length > 0}
+                    onClear={() => dispatch({ type: 'clearDiagram' })}
                   />
-                </ControlButton>
-              </Controls>
-              <MiniMap
-                bgColor={
-                  isDarkMode ? 'var(--color-diagram-surface)' : undefined
-                }
-                maskColor={isDarkMode ? 'rgba(0, 0, 0, 0.55)' : undefined}
-                nodeColor={
-                  isDarkMode ? 'var(--color-diagram-minimap-node)' : undefined
-                }
-              />
-              <Background
-                variant={BackgroundVariant.Dots}
-                gap={12}
-                size={1}
-                color={isDarkMode ? 'var(--color-diagram-grid)' : undefined}
-              />
-            </ReactFlow>
-          </LabelDisplayContext.Provider>
-        </PendingChangesContext.Provider>
+                )}
+
+                <HighlightedRelationsPanel
+                  title={highlightedRelationsTitle}
+                  relations={highlightedRelations}
+                  onRelationClick={centerOnUnfocusedRelationNode}
+                />
+
+                <DiagramTopBar
+                  onExport={() => setOpenExportDialog(true)}
+                  diagramName={diagramName}
+                  renaming={renamingDiagram}
+                  canRename={canEditDiagram}
+                  onRename={onRenameDiagram}
+                />
+
+                <Controls className="text-blue-hover" showInteractive={true}>
+                  <ControlButton
+                    onClick={() => setShowFullLabels((v) => !v)}
+                    title={
+                      showFullLabels ? t('ShortenLabels') : t('ShowFullLabels')
+                    }
+                    aria-pressed={showFullLabels}
+                  >
+                    <GovIcon
+                      type="components"
+                      name={
+                        showFullLabels
+                          ? 'arrows-collapse-vertical'
+                          : 'arrows-expand-vertical'
+                      }
+                      color="primary"
+                      size="xs"
+                    />
+                  </ControlButton>
+                </Controls>
+                <MiniMap
+                  bgColor={
+                    isDarkMode ? 'var(--color-diagram-surface)' : undefined
+                  }
+                  maskColor={isDarkMode ? 'rgba(0, 0, 0, 0.55)' : undefined}
+                  nodeColor={
+                    isDarkMode ? 'var(--color-diagram-minimap-node)' : undefined
+                  }
+                />
+                <Background
+                  variant={BackgroundVariant.Dots}
+                  gap={12}
+                  size={1}
+                  color={isDarkMode ? 'var(--color-diagram-grid)' : undefined}
+                />
+              </ReactFlow>
+            </LabelDisplayContext.Provider>
+          </PendingChangesContext.Provider>
+        </DiagramEditContext.Provider>
       </DiagramDispatchContext.Provider>
 
       {showMinimumZoomWarning && !minimumZoomWarningDismissed && (
@@ -766,18 +779,22 @@ export const DiagramCanvas = ({
         </div>
       )}
 
-      <RelationshipChooserOverlay
-        chooser={chooser}
-        onSelect={selectRelationship}
-        onClose={closeChooser}
-        onRemove={removeEdge}
-      />
+      {canEditDiagram && (
+        <RelationshipChooserOverlay
+          chooser={chooser}
+          onSelect={selectRelationship}
+          onClose={closeChooser}
+          onRemove={removeEdge}
+        />
+      )}
 
-      <AddNewConceptDialog
-        onClose={() => setOpenAddDialog(false)}
-        open={openAddDialog}
-        ontology={ontology}
-      />
+      {canEditDiagram && (
+        <AddNewConceptDialog
+          onClose={() => setOpenAddDialog(false)}
+          open={openAddDialog}
+          ontology={ontology}
+        />
+      )}
 
       <DiagramExportDialog
         open={openExportDialog}
