@@ -152,6 +152,7 @@ export const ApiResponseDtoDiagramDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -377,6 +378,7 @@ export const ApiResponseDtoValidationReportErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -424,9 +426,9 @@ export interface ValidationResult {
   resultPathUri?: string;
   value?: string;
   nkdResource?: NkdResource;
-  focusNodeName?: string;
   warning?: boolean;
   info?: boolean;
+  focusNodeName?: string;
   error?: boolean;
 }
 
@@ -491,6 +493,7 @@ export const ApiResponseDtoOntologyUploadResultDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -636,6 +639,7 @@ export const ApiResponseDtoOntologySummaryDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -805,6 +809,7 @@ export const ApiResponseDtoOntologyCreateWithConceptsResponseDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -901,6 +906,7 @@ export const ApiResponseDtoResolveConceptsResponseErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -1018,6 +1024,7 @@ export const ApiResponseDtoOntologyIriCheckResponseDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -1102,6 +1109,7 @@ export const ApiResponseDtoDiagramConflictDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -1222,6 +1230,7 @@ export const ApiResponseDtoMaterializeResultDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -1468,6 +1477,7 @@ export const ApiResponseDtoConceptMetadataModelErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -1596,6 +1606,7 @@ export const ApiResponseDtoListConceptMetadataModelErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -1679,6 +1690,7 @@ export const ApiResponseDtoGetConceptDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2128,6 +2140,7 @@ export const ApiResponseDtoLinkSnapshotDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2212,6 +2225,7 @@ export const ApiResponseDtoCommentModelErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2497,6 +2511,7 @@ export const ApiResponseDtoReconciliationReportDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2611,6 +2626,7 @@ export const ApiResponseDtoVoidErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2689,6 +2705,7 @@ export const ApiResponseDtoIntegerErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2784,6 +2801,7 @@ export const ApiResponseDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -2862,6 +2880,7 @@ export const ApiResponseDtoDiagramSummaryDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3033,6 +3052,7 @@ export const ApiResponseDtoUserInfoDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3118,6 +3138,7 @@ export const ApiResponseDtoSearchResponseDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3301,6 +3322,7 @@ export const ApiResponseDtoListRppSearchResultDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3385,6 +3407,7 @@ export const ApiResponseDtoValidationReportDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3470,6 +3493,7 @@ export const ApiResponseDtoGetOntologyDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3579,11 +3603,11 @@ export interface PublishedOntologyDeviationModel {
   popis?: PropertyDeviationMapStringString;
 }
 
-export type ApiResponseDtoListOntologySummaryDtoErrorCode =
-  (typeof ApiResponseDtoListOntologySummaryDtoErrorCode)[keyof typeof ApiResponseDtoListOntologySummaryDtoErrorCode];
+export type ApiResponseDtoPageDtoOntologySummaryDtoErrorCode =
+  (typeof ApiResponseDtoPageDtoOntologySummaryDtoErrorCode)[keyof typeof ApiResponseDtoPageDtoOntologySummaryDtoErrorCode];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ApiResponseDtoListOntologySummaryDtoErrorCode = {
+export const ApiResponseDtoPageDtoOntologySummaryDtoErrorCode = {
   MALFORMED_REQUEST: 'MALFORMED_REQUEST',
   MISSING_PARAMETER: 'MISSING_PARAMETER',
   INVALID_PARAMETER: 'INVALID_PARAMETER',
@@ -3640,6 +3664,7 @@ export const ApiResponseDtoListOntologySummaryDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3650,11 +3675,18 @@ export const ApiResponseDtoListOntologySummaryDtoErrorCode = {
   RECONCILIATION_IN_PROGRESS: 'RECONCILIATION_IN_PROGRESS',
 } as const;
 
-export interface ApiResponseDtoListOntologySummaryDto {
-  data?: OntologySummaryDto[];
+export interface ApiResponseDtoPageDtoOntologySummaryDto {
+  data?: PageDtoOntologySummaryDto;
   message?: string;
   success?: boolean;
-  errorCode?: ApiResponseDtoListOntologySummaryDtoErrorCode;
+  errorCode?: ApiResponseDtoPageDtoOntologySummaryDtoErrorCode;
+}
+
+export interface PageDtoOntologySummaryDto {
+  items: OntologySummaryDto[];
+  totalCount: number;
+  limit: number;
+  offset: number;
 }
 
 export type ApiResponseDtoListMinimalConceptDtoErrorCode =
@@ -3718,6 +3750,7 @@ export const ApiResponseDtoListMinimalConceptDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3816,6 +3849,7 @@ export const ApiResponseDtoGetNkodDatasetDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -3918,6 +3952,7 @@ export const ApiResponseDtoNkodDatasetListDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4011,6 +4046,7 @@ export const ApiResponseDtoGetNkdOntologyListDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4109,6 +4145,7 @@ export const ApiResponseDtoGetNkdOntologyDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4191,6 +4228,7 @@ export const ApiResponseDtoGetNkdConceptDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4274,6 +4312,7 @@ export const ApiResponseDtoResolvedLegalSourceDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4352,6 +4391,7 @@ export const ApiResponseDtoListLawVersionDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4439,6 +4479,7 @@ export const ApiResponseDtoLawSearchResultDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4543,6 +4584,7 @@ export const ApiResponseDtoLawContentDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4644,6 +4686,7 @@ export const ApiResponseDtoListDiagramSummaryDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4722,6 +4765,7 @@ export const ApiResponseDtoDiagramConceptUsageDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4775,6 +4819,92 @@ export interface DiagramConceptUsageDto {
   conceptSlug?: string;
   /** Diagramy, na jejichž plátně se pojem nachází. Prázdné, pokud na žádném. */
   placements?: DiagramConceptPlacement[];
+}
+
+export type ApiResponseDtoPageDtoDiagramSummaryDtoErrorCode =
+  (typeof ApiResponseDtoPageDtoDiagramSummaryDtoErrorCode)[keyof typeof ApiResponseDtoPageDtoDiagramSummaryDtoErrorCode];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ApiResponseDtoPageDtoDiagramSummaryDtoErrorCode = {
+  MALFORMED_REQUEST: 'MALFORMED_REQUEST',
+  MISSING_PARAMETER: 'MISSING_PARAMETER',
+  INVALID_PARAMETER: 'INVALID_PARAMETER',
+  REQUEST_VALIDATION_FAILED: 'REQUEST_VALIDATION_FAILED',
+  INVALID_ARGUMENT: 'INVALID_ARGUMENT',
+  DATA_INTEGRITY_VIOLATION: 'DATA_INTEGRITY_VIOLATION',
+  METHOD_NOT_ALLOWED: 'METHOD_NOT_ALLOWED',
+  UNSUPPORTED_MEDIA_TYPE: 'UNSUPPORTED_MEDIA_TYPE',
+  ENDPOINT_NOT_FOUND: 'ENDPOINT_NOT_FOUND',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  ACCESS_DENIED: 'ACCESS_DENIED',
+  RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  IO_ERROR: 'IO_ERROR',
+  ONTOLOGY_NOT_FOUND: 'ONTOLOGY_NOT_FOUND',
+  ONTOLOGY_ALREADY_EXISTS: 'ONTOLOGY_ALREADY_EXISTS',
+  ONTOLOGY_CREATION_CONFLICT: 'ONTOLOGY_CREATION_CONFLICT',
+  ONTOLOGY_VALIDATION_FAILED: 'ONTOLOGY_VALIDATION_FAILED',
+  ONTOLOGY_PROCESSING_FAILED: 'ONTOLOGY_PROCESSING_FAILED',
+  ONTOLOGY_STORAGE_FAILED: 'ONTOLOGY_STORAGE_FAILED',
+  ONTOLOGY_ANALYSIS_FAILED: 'ONTOLOGY_ANALYSIS_FAILED',
+  ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION:
+    'ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION',
+  EXPORT_FAILED: 'EXPORT_FAILED',
+  ONTOLOGY_DOWNLOAD_BLOCKED_BY_OFN: 'ONTOLOGY_DOWNLOAD_BLOCKED_BY_OFN',
+  OFN_WRITE_NONCONFORMANT: 'OFN_WRITE_NONCONFORMANT',
+  UPLOAD_FAILED: 'UPLOAD_FAILED',
+  UPLOAD_FILE_EMPTY: 'UPLOAD_FILE_EMPTY',
+  UPLOAD_FILE_TOO_LARGE: 'UPLOAD_FILE_TOO_LARGE',
+  UPLOAD_RDF_FORMAT_UNSUPPORTED: 'UPLOAD_RDF_FORMAT_UNSUPPORTED',
+  UPLOAD_RDF_PARSE_FAILED: 'UPLOAD_RDF_PARSE_FAILED',
+  UPLOAD_RDF_PARSE_TIMEOUT: 'UPLOAD_RDF_PARSE_TIMEOUT',
+  UPLOAD_DATA_EMPTY: 'UPLOAD_DATA_EMPTY',
+  UPLOAD_ONTOLOGY_IRI_MISSING: 'UPLOAD_ONTOLOGY_IRI_MISSING',
+  UPLOAD_IRI_TRAILING_SLASH_COLLISION: 'UPLOAD_IRI_TRAILING_SLASH_COLLISION',
+  UPLOAD_IN_PROGRESS: 'UPLOAD_IN_PROGRESS',
+  UPLOAD_OFN_NONCONFORMANT: 'UPLOAD_OFN_NONCONFORMANT',
+  UPLOAD_CONCEPT_TYPE_CONFLICT: 'UPLOAD_CONCEPT_TYPE_CONFLICT',
+  UPLOAD_RDF_STORE_FAILED: 'UPLOAD_RDF_STORE_FAILED',
+  UPLOAD_METADATA_SAVE_FAILED: 'UPLOAD_METADATA_SAVE_FAILED',
+  MISSING_INSCHEME_DECISION_REQUIRED: 'MISSING_INSCHEME_DECISION_REQUIRED',
+  CONCEPT_NOT_FOUND: 'CONCEPT_NOT_FOUND',
+  CONCEPT_VALIDATION_FAILED: 'CONCEPT_VALIDATION_FAILED',
+  CONCEPT_STORAGE_FAILED: 'CONCEPT_STORAGE_FAILED',
+  COMMENT_NOT_FOUND: 'COMMENT_NOT_FOUND',
+  COMMENT_INVALID: 'COMMENT_INVALID',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  VALIDATION_REPORT_FAILED: 'VALIDATION_REPORT_FAILED',
+  VALIDATION_SERVICE_UNAVAILABLE: 'VALIDATION_SERVICE_UNAVAILABLE',
+  DIAGRAM_VERSION_CONFLICT: 'DIAGRAM_VERSION_CONFLICT',
+  DIAGRAM_NAME_CONFLICT: 'DIAGRAM_NAME_CONFLICT',
+  DIAGRAM_EDIT_CONFLICT: 'DIAGRAM_EDIT_CONFLICT',
+  DIAGRAM_CONFLICT_RESOLUTION_INVALID: 'DIAGRAM_CONFLICT_RESOLUTION_INVALID',
+  DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
+  DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
+  RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
+  NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
+  NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
+  SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
+  EXTERNAL_SERVICE_UNAVAILABLE: 'EXTERNAL_SERVICE_UNAVAILABLE',
+  EXTERNAL_SERVICE_REJECTED: 'EXTERNAL_SERVICE_REJECTED',
+  EXTERNAL_SERVICE_INVALID_RESPONSE: 'EXTERNAL_SERVICE_INVALID_RESPONSE',
+  OUTBOX_ROW_NOT_RETRYABLE: 'OUTBOX_ROW_NOT_RETRYABLE',
+  RECONCILIATION_IN_PROGRESS: 'RECONCILIATION_IN_PROGRESS',
+} as const;
+
+export interface ApiResponseDtoPageDtoDiagramSummaryDto {
+  data?: PageDtoDiagramSummaryDto;
+  message?: string;
+  success?: boolean;
+  errorCode?: ApiResponseDtoPageDtoDiagramSummaryDtoErrorCode;
+}
+
+export interface PageDtoDiagramSummaryDto {
+  items: DiagramSummaryDto[];
+  totalCount: number;
+  limit: number;
+  offset: number;
 }
 
 export type ApiResponseDtoListDataTypeDtoErrorCode =
@@ -4838,6 +4968,7 @@ export const ApiResponseDtoListDataTypeDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -4916,6 +5047,7 @@ export const ApiResponseDtoListNkodCodelistErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -5193,6 +5325,7 @@ export const ApiResponseDtoOutboxStatusDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -5278,6 +5411,7 @@ export const ApiResponseDtoListOutboxEntryDtoErrorCode = {
   DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
   DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
   RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
   NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
   NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
   SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
@@ -5306,6 +5440,98 @@ export interface OutboxEntryDto {
   createdAt?: string;
   claimedAt?: string;
   seq?: number;
+}
+
+/**
+ * Strojově čitelný kód chyby; HTTP status plyne z kódu.
+ */
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ErrorCode = {
+  MALFORMED_REQUEST: 'MALFORMED_REQUEST',
+  MISSING_PARAMETER: 'MISSING_PARAMETER',
+  INVALID_PARAMETER: 'INVALID_PARAMETER',
+  REQUEST_VALIDATION_FAILED: 'REQUEST_VALIDATION_FAILED',
+  INVALID_ARGUMENT: 'INVALID_ARGUMENT',
+  DATA_INTEGRITY_VIOLATION: 'DATA_INTEGRITY_VIOLATION',
+  METHOD_NOT_ALLOWED: 'METHOD_NOT_ALLOWED',
+  UNSUPPORTED_MEDIA_TYPE: 'UNSUPPORTED_MEDIA_TYPE',
+  ENDPOINT_NOT_FOUND: 'ENDPOINT_NOT_FOUND',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  ACCESS_DENIED: 'ACCESS_DENIED',
+  RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  IO_ERROR: 'IO_ERROR',
+  ONTOLOGY_NOT_FOUND: 'ONTOLOGY_NOT_FOUND',
+  ONTOLOGY_ALREADY_EXISTS: 'ONTOLOGY_ALREADY_EXISTS',
+  ONTOLOGY_CREATION_CONFLICT: 'ONTOLOGY_CREATION_CONFLICT',
+  ONTOLOGY_VALIDATION_FAILED: 'ONTOLOGY_VALIDATION_FAILED',
+  ONTOLOGY_PROCESSING_FAILED: 'ONTOLOGY_PROCESSING_FAILED',
+  ONTOLOGY_STORAGE_FAILED: 'ONTOLOGY_STORAGE_FAILED',
+  ONTOLOGY_ANALYSIS_FAILED: 'ONTOLOGY_ANALYSIS_FAILED',
+  ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION:
+    'ONTOLOGY_DOWNLOAD_BLOCKED_BY_VALIDATION',
+  EXPORT_FAILED: 'EXPORT_FAILED',
+  ONTOLOGY_DOWNLOAD_BLOCKED_BY_OFN: 'ONTOLOGY_DOWNLOAD_BLOCKED_BY_OFN',
+  OFN_WRITE_NONCONFORMANT: 'OFN_WRITE_NONCONFORMANT',
+  UPLOAD_FAILED: 'UPLOAD_FAILED',
+  UPLOAD_FILE_EMPTY: 'UPLOAD_FILE_EMPTY',
+  UPLOAD_FILE_TOO_LARGE: 'UPLOAD_FILE_TOO_LARGE',
+  UPLOAD_RDF_FORMAT_UNSUPPORTED: 'UPLOAD_RDF_FORMAT_UNSUPPORTED',
+  UPLOAD_RDF_PARSE_FAILED: 'UPLOAD_RDF_PARSE_FAILED',
+  UPLOAD_RDF_PARSE_TIMEOUT: 'UPLOAD_RDF_PARSE_TIMEOUT',
+  UPLOAD_DATA_EMPTY: 'UPLOAD_DATA_EMPTY',
+  UPLOAD_ONTOLOGY_IRI_MISSING: 'UPLOAD_ONTOLOGY_IRI_MISSING',
+  UPLOAD_IRI_TRAILING_SLASH_COLLISION: 'UPLOAD_IRI_TRAILING_SLASH_COLLISION',
+  UPLOAD_IN_PROGRESS: 'UPLOAD_IN_PROGRESS',
+  UPLOAD_OFN_NONCONFORMANT: 'UPLOAD_OFN_NONCONFORMANT',
+  UPLOAD_CONCEPT_TYPE_CONFLICT: 'UPLOAD_CONCEPT_TYPE_CONFLICT',
+  UPLOAD_RDF_STORE_FAILED: 'UPLOAD_RDF_STORE_FAILED',
+  UPLOAD_METADATA_SAVE_FAILED: 'UPLOAD_METADATA_SAVE_FAILED',
+  MISSING_INSCHEME_DECISION_REQUIRED: 'MISSING_INSCHEME_DECISION_REQUIRED',
+  CONCEPT_NOT_FOUND: 'CONCEPT_NOT_FOUND',
+  CONCEPT_VALIDATION_FAILED: 'CONCEPT_VALIDATION_FAILED',
+  CONCEPT_STORAGE_FAILED: 'CONCEPT_STORAGE_FAILED',
+  COMMENT_NOT_FOUND: 'COMMENT_NOT_FOUND',
+  COMMENT_INVALID: 'COMMENT_INVALID',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  VALIDATION_REPORT_FAILED: 'VALIDATION_REPORT_FAILED',
+  VALIDATION_SERVICE_UNAVAILABLE: 'VALIDATION_SERVICE_UNAVAILABLE',
+  DIAGRAM_VERSION_CONFLICT: 'DIAGRAM_VERSION_CONFLICT',
+  DIAGRAM_NAME_CONFLICT: 'DIAGRAM_NAME_CONFLICT',
+  DIAGRAM_EDIT_CONFLICT: 'DIAGRAM_EDIT_CONFLICT',
+  DIAGRAM_CONFLICT_RESOLUTION_INVALID: 'DIAGRAM_CONFLICT_RESOLUTION_INVALID',
+  DIAGRAM_SAVED_READBACK_FAILED: 'DIAGRAM_SAVED_READBACK_FAILED',
+  DIAGRAM_CONTENT_UNAVAILABLE: 'DIAGRAM_CONTENT_UNAVAILABLE',
+  RDF_STORE_ERROR: 'RDF_STORE_ERROR',
+  RDF_DATA_MISSING: 'RDF_DATA_MISSING',
+  NKD_RESOURCE_NOT_FOUND: 'NKD_RESOURCE_NOT_FOUND',
+  NKD_UNAVAILABLE: 'NKD_UNAVAILABLE',
+  SPARQL_ENDPOINT_UNAVAILABLE: 'SPARQL_ENDPOINT_UNAVAILABLE',
+  EXTERNAL_SERVICE_UNAVAILABLE: 'EXTERNAL_SERVICE_UNAVAILABLE',
+  EXTERNAL_SERVICE_REJECTED: 'EXTERNAL_SERVICE_REJECTED',
+  EXTERNAL_SERVICE_INVALID_RESPONSE: 'EXTERNAL_SERVICE_INVALID_RESPONSE',
+  OUTBOX_ROW_NOT_RETRYABLE: 'OUTBOX_ROW_NOT_RETRYABLE',
+  RECONCILIATION_IN_PROGRESS: 'RECONCILIATION_IN_PROGRESS',
+} as const;
+
+/**
+ * Doplňující data k chybě, jinak null.
+ */
+export type ApiErrorResponseData = { [key: string]: unknown };
+
+/**
+ * Tělo chybové odpovědi (ApiResponseDto bez dat, nebo s daty k chybě).
+ */
+export interface ApiErrorResponse {
+  /** Vždy false. */
+  success: boolean;
+  /** Text chyby pro uživatele. */
+  message: string;
+  errorCode: ErrorCode;
+  /** Doplňující data k chybě, jinak null. */
+  data?: ApiErrorResponseData;
 }
 
 export type UploadFromFileParams = {
@@ -5446,8 +5672,40 @@ export type DownloadFileParams = {
 export type GetOntologyListParams = {
   userId?: string;
   isPublished?: boolean;
+  /**
+   * Jen slovníky s těmito slugy (nejvýše 6)
+   */
   slugs?: string[];
+  /**
+   * Jen slovník s tímto IRI grafu
+   */
+  graphName?: string;
+  /**
+   * Text hledaný v názvu, popisu a slugu
+   */
+  q?: string;
+  /**
+   * Řazení: NAME (podle českého názvu, výchozí) nebo UPDATED (naposledy upravené první)
+   */
+  sort?: GetOntologyListSort;
+  /**
+   * Maximální počet výsledků na stránku (1-100)
+   */
+  limit?: number;
+  /**
+   * Offset pro stránkování
+   */
+  offset?: number;
 };
+
+export type GetOntologyListSort =
+  (typeof GetOntologyListSort)[keyof typeof GetOntologyListSort];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetOntologyListSort = {
+  NAME: 'NAME',
+  UPDATED: 'UPDATED',
+} as const;
 
 export type GetConceptsByIriParams = {
   /**
@@ -5578,11 +5836,14 @@ export type GetAllDiagramsParams = {
    * Vrátí jen diagramy slovníků tohoto uživatele. Bez parametru se vrací všechny.
    */
   userId?: string;
-};
-
-export type GetConceptListParams = {
-  userId?: string;
-  isPublished?: boolean;
+  /**
+   * Maximální počet výsledků na stránku (1-100)
+   */
+  limit?: number;
+  /**
+   * Offset pro stránkování
+   */
+  offset?: number;
 };
 
 export type ListParams = {
@@ -5632,7 +5893,13 @@ export const saveLayout = (
 };
 
 export const getSaveLayoutMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -5673,12 +5940,27 @@ export type SaveLayoutMutationResult = NonNullable<
   Awaited<ReturnType<typeof saveLayout>>
 >;
 export type SaveLayoutMutationBody = DiagramLayoutDto;
-export type SaveLayoutMutationError = unknown;
+export type SaveLayoutMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Uložení rozvržení diagramu
  */
-export const useSaveLayout = <TError = unknown, TContext = unknown>(
+export const useSaveLayout = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof saveLayout>>,
@@ -5716,7 +5998,13 @@ export const validateOntology = (
 };
 
 export const getValidateOntologyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -5757,12 +6045,27 @@ export type ValidateOntologyMutationResult = NonNullable<
   Awaited<ReturnType<typeof validateOntology>>
 >;
 
-export type ValidateOntologyMutationError = unknown;
+export type ValidateOntologyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Validace slovníku
  */
-export const useValidateOntology = <TError = unknown, TContext = unknown>(
+export const useValidateOntology = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof validateOntology>>,
@@ -5811,7 +6114,12 @@ export const uploadFromFile = (
 };
 
 export const getUploadFromFileMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -5852,12 +6160,25 @@ export type UploadFromFileMutationResult = NonNullable<
   Awaited<ReturnType<typeof uploadFromFile>>
 >;
 export type UploadFromFileMutationBody = UploadFromFileBody;
-export type UploadFromFileMutationError = unknown;
+export type UploadFromFileMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Nahrání slovníku ze souboru
  */
-export const useUploadFromFile = <TError = unknown, TContext = unknown>(
+export const useUploadFromFile = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof uploadFromFile>>,
@@ -5901,7 +6222,12 @@ export const createOntology = (
 };
 
 export const getCreateOntologyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -5942,12 +6268,25 @@ export type CreateOntologyMutationResult = NonNullable<
   Awaited<ReturnType<typeof createOntology>>
 >;
 export type CreateOntologyMutationBody = OntologyCreateModel;
-export type CreateOntologyMutationError = unknown;
+export type CreateOntologyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Vytvoření nového slovníku
  */
-export const useCreateOntology = <TError = unknown, TContext = unknown>(
+export const useCreateOntology = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createOntology>>,
@@ -5991,7 +6330,12 @@ export const createWithConcepts = (
 };
 
 export const getCreateWithConceptsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6033,12 +6377,25 @@ export type CreateWithConceptsMutationResult = NonNullable<
 >;
 export type CreateWithConceptsMutationBody =
   OntologyCreateWithConceptsRequestDto;
-export type CreateWithConceptsMutationError = unknown;
+export type CreateWithConceptsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Vytvoření slovníku s vybranými pojmy
  */
-export const useCreateWithConcepts = <TError = unknown, TContext = unknown>(
+export const useCreateWithConcepts = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createWithConcepts>>,
@@ -6082,7 +6439,7 @@ export const resolveConceptReferences = (
 };
 
 export const getResolveConceptReferencesMutationOptions = <
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6123,13 +6480,16 @@ export type ResolveConceptReferencesMutationResult = NonNullable<
   Awaited<ReturnType<typeof resolveConceptReferences>>
 >;
 export type ResolveConceptReferencesMutationBody = ResolveConceptsRequest;
-export type ResolveConceptReferencesMutationError = unknown;
+export type ResolveConceptReferencesMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Doplnění metadat referencovaných pojmů
  */
 export const useResolveConceptReferences = <
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
   TContext = unknown,
 >(
   options?: {
@@ -6175,7 +6535,12 @@ export const checkIri = (
 };
 
 export const getCheckIriMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6216,12 +6581,25 @@ export type CheckIriMutationResult = NonNullable<
   Awaited<ReturnType<typeof checkIri>>
 >;
 export type CheckIriMutationBody = OntologyIriCheckRequestDto;
-export type CheckIriMutationError = unknown;
+export type CheckIriMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Ověření IRI nového slovníku
  */
-export const useCheckIri = <TError = unknown, TContext = unknown>(
+export const useCheckIri = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof checkIri>>,
@@ -6266,7 +6644,13 @@ export const materialize = (
 };
 
 export const getMaterializeMutationOptions = <
-  TError = ApiResponseDtoDiagramConflictDto,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiResponseDtoDiagramConflictDto
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6307,13 +6691,25 @@ export type MaterializeMutationResult = NonNullable<
   Awaited<ReturnType<typeof materialize>>
 >;
 
-export type MaterializeMutationError = ApiResponseDtoDiagramConflictDto;
+export type MaterializeMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiResponseDtoDiagramConflictDto
+  | ApiErrorResponse;
 
 /**
  * @summary Převzetí (materializace) změn diagramu
  */
 export const useMaterialize = <
-  TError = ApiResponseDtoDiagramConflictDto,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiResponseDtoDiagramConflictDto
+    | ApiErrorResponse,
   TContext = unknown,
 >(
   options?: {
@@ -6360,7 +6756,13 @@ export const createDiagram = (
 };
 
 export const getCreateDiagramMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6401,12 +6803,27 @@ export type CreateDiagramMutationResult = NonNullable<
   Awaited<ReturnType<typeof createDiagram>>
 >;
 export type CreateDiagramMutationBody = DiagramCreateDto;
-export type CreateDiagramMutationError = unknown;
+export type CreateDiagramMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Vytvoření diagramu
  */
-export const useCreateDiagram = <TError = unknown, TContext = unknown>(
+export const useCreateDiagram = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createDiagram>>,
@@ -6451,7 +6868,13 @@ export const createConcept = (
 };
 
 export const getCreateConceptMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6492,12 +6915,27 @@ export type CreateConceptMutationResult = NonNullable<
   Awaited<ReturnType<typeof createConcept>>
 >;
 export type CreateConceptMutationBody = CreateConceptBody;
-export type CreateConceptMutationError = unknown;
+export type CreateConceptMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Vytvoření nového pojmu
  */
-export const useCreateConcept = <TError = unknown, TContext = unknown>(
+export const useCreateConcept = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createConcept>>,
@@ -6542,7 +6980,13 @@ export const createConcepts = (
 };
 
 export const getCreateConceptsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6583,12 +7027,27 @@ export type CreateConceptsMutationResult = NonNullable<
   Awaited<ReturnType<typeof createConcepts>>
 >;
 export type CreateConceptsMutationBody = CreateConceptsBodyItem[];
-export type CreateConceptsMutationError = unknown;
+export type CreateConceptsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Hromadné vytvoření nových pojmů
  */
-export const useCreateConcepts = <TError = unknown, TContext = unknown>(
+export const useCreateConcepts = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createConcepts>>,
@@ -6633,7 +7092,13 @@ export const syncWorkingCopy = (
 };
 
 export const getSyncWorkingCopyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6674,12 +7139,27 @@ export type SyncWorkingCopyMutationResult = NonNullable<
   Awaited<ReturnType<typeof syncWorkingCopy>>
 >;
 export type SyncWorkingCopyMutationBody = WorkingCopySyncRequestDto;
-export type SyncWorkingCopyMutationError = unknown;
+export type SyncWorkingCopyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Synchronizace pracovní kopie s publikovaným pojmem v NKD
  */
-export const useSyncWorkingCopy = <TError = unknown, TContext = unknown>(
+export const useSyncWorkingCopy = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof syncWorkingCopy>>,
@@ -6722,7 +7202,13 @@ export const updateLocalCopy = (
 };
 
 export const getUpdateLocalCopyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6763,12 +7249,27 @@ export type UpdateLocalCopyMutationResult = NonNullable<
   Awaited<ReturnType<typeof updateLocalCopy>>
 >;
 
-export type UpdateLocalCopyMutationError = unknown;
+export type UpdateLocalCopyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Aktualizace lokální kopie NKD pojmu
  */
-export const useUpdateLocalCopy = <TError = unknown, TContext = unknown>(
+export const useUpdateLocalCopy = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof updateLocalCopy>>,
@@ -6812,7 +7313,12 @@ export const postComment = (
 };
 
 export const getPostCommentMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6853,12 +7359,25 @@ export type PostCommentMutationResult = NonNullable<
   Awaited<ReturnType<typeof postComment>>
 >;
 export type PostCommentMutationBody = CommentCreateModel;
-export type PostCommentMutationError = unknown;
+export type PostCommentMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Přidání komentáře
  */
-export const usePostComment = <TError = unknown, TContext = unknown>(
+export const usePostComment = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof postComment>>,
@@ -6904,7 +7423,14 @@ export const likeSuggestions = (
 };
 
 export const getLikeSuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -6945,12 +7471,29 @@ export type LikeSuggestionsMutationResult = NonNullable<
   Awaited<ReturnType<typeof likeSuggestions>>
 >;
 export type LikeSuggestionsMutationBody = AiFeedbackRequestDto[];
-export type LikeSuggestionsMutationError = unknown;
+export type LikeSuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Označí návrhy jako užitečné
  */
-export const useLikeSuggestions = <TError = unknown, TContext = unknown>(
+export const useLikeSuggestions = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof likeSuggestions>>,
@@ -7001,7 +7544,15 @@ export const startVocabularySuggestions = (
 };
 
 export const getStartVocabularySuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7058,13 +7609,29 @@ export type StartVocabularySuggestionsMutationResult = NonNullable<
 >;
 export type StartVocabularySuggestionsMutationBody =
   AiVocabularySuggestionRequestDto;
-export type StartVocabularySuggestionsMutationError = unknown;
+export type StartVocabularySuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Spustí propojený návrh celého slovníku z právního aktu
  */
 export const useStartVocabularySuggestions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(
   options?: {
@@ -7123,7 +7690,15 @@ export const regenerateVocabularyConcept = (
 };
 
 export const getRegenerateVocabularyConceptMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7186,13 +7761,29 @@ export type RegenerateVocabularyConceptMutationResult = NonNullable<
 >;
 export type RegenerateVocabularyConceptMutationBody =
   AiVocabularyRegenerationRequestDto;
-export type RegenerateVocabularyConceptMutationError = unknown;
+export type RegenerateVocabularyConceptMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Přegeneruje texty konkrétního neuloženého pojmu
  */
 export const useRegenerateVocabularyConcept = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(
   options?: {
@@ -7252,7 +7843,15 @@ export const expandVocabulary = (
 };
 
 export const getExpandVocabularyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7308,12 +7907,31 @@ export type ExpandVocabularyMutationResult = NonNullable<
   Awaited<ReturnType<typeof expandVocabulary>>
 >;
 export type ExpandVocabularyMutationBody = AiVocabularyExpansionRequestDto;
-export type ExpandVocabularyMutationError = unknown;
+export type ExpandVocabularyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Vygeneruje další třídy, vlastnosti nebo vztahy pro rozpracovaný návrh
  */
-export const useExpandVocabulary = <TError = unknown, TContext = unknown>(
+export const useExpandVocabulary = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof expandVocabulary>>,
@@ -7375,7 +7993,15 @@ export const startRelationshipSuggestions = (
 };
 
 export const getStartRelationshipSuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7438,13 +8064,29 @@ export type StartRelationshipSuggestionsMutationResult = NonNullable<
 >;
 export type StartRelationshipSuggestionsMutationBody =
   AiSelectedClassSuggestionRequestDto;
-export type StartRelationshipSuggestionsMutationError = unknown;
+export type StartRelationshipSuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Spustí generování návrhů vztahů vybrané třídy z právního aktu
  */
 export const useStartRelationshipSuggestions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(
   options?: {
@@ -7509,7 +8151,15 @@ export const startPropertySuggestions = (
 };
 
 export const getStartPropertySuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7566,13 +8216,29 @@ export type StartPropertySuggestionsMutationResult = NonNullable<
 >;
 export type StartPropertySuggestionsMutationBody =
   AiSelectedClassSuggestionRequestDto;
-export type StartPropertySuggestionsMutationError = unknown;
+export type StartPropertySuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Spustí generování návrhů atributů vybrané třídy z právního aktu
  */
 export const useStartPropertySuggestions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(
   options?: {
@@ -7636,7 +8302,15 @@ export const startClassSuggestions = (
 };
 
 export const getStartClassSuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7692,12 +8366,31 @@ export type StartClassSuggestionsMutationResult = NonNullable<
   Awaited<ReturnType<typeof startClassSuggestions>>
 >;
 export type StartClassSuggestionsMutationBody = AiClassSuggestionRequestDto;
-export type StartClassSuggestionsMutationError = unknown;
+export type StartClassSuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Spustí generování návrhů tříd z právního aktu
  */
-export const useStartClassSuggestions = <TError = unknown, TContext = unknown>(
+export const useStartClassSuggestions = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof startClassSuggestions>>,
@@ -7753,7 +8446,14 @@ export const dislikeSuggestions = (
 };
 
 export const getDislikeSuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7794,12 +8494,29 @@ export type DislikeSuggestionsMutationResult = NonNullable<
   Awaited<ReturnType<typeof dislikeSuggestions>>
 >;
 export type DislikeSuggestionsMutationBody = AiFeedbackRequestDto[];
-export type DislikeSuggestionsMutationError = unknown;
+export type DislikeSuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Označí návrhy jako neužitečné
  */
-export const useDislikeSuggestions = <TError = unknown, TContext = unknown>(
+export const useDislikeSuggestions = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof dislikeSuggestions>>,
@@ -7845,7 +8562,14 @@ export const acceptSuggestions = (
 };
 
 export const getAcceptSuggestionsMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7886,12 +8610,29 @@ export type AcceptSuggestionsMutationResult = NonNullable<
   Awaited<ReturnType<typeof acceptSuggestions>>
 >;
 export type AcceptSuggestionsMutationBody = AiFeedbackRequestDto[];
-export type AcceptSuggestionsMutationError = unknown;
+export type AcceptSuggestionsMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Označí návrhy jako přijaté
  */
-export const useAcceptSuggestions = <TError = unknown, TContext = unknown>(
+export const useAcceptSuggestions = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof acceptSuggestions>>,
@@ -7927,7 +8668,12 @@ export const run = (
 };
 
 export const getRunMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -7964,12 +8710,25 @@ export const getRunMutationOptions = <
 
 export type RunMutationResult = NonNullable<Awaited<ReturnType<typeof run>>>;
 
-export type RunMutationError = unknown;
+export type RunMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Run a PG↔TDB2 consistency scan on demand (detection-only; no repair).
  */
-export const useRun = <TError = unknown, TContext = unknown>(
+export const useRun = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof run>>,
@@ -8006,7 +8765,13 @@ export const retry = (
 };
 
 export const getRetryMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -8047,12 +8812,27 @@ export type RetryMutationResult = NonNullable<
   Awaited<ReturnType<typeof retry>>
 >;
 
-export type RetryMutationError = unknown;
+export type RetryMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Retry a FAILED outbox row (reset to PENDING). Only FAILED rows are retryable.
  */
-export const useRetry = <TError = unknown, TContext = unknown>(
+export const useRetry = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof retry>>,
@@ -8088,7 +8868,12 @@ export const drain = (
 };
 
 export const getDrainMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -8127,12 +8912,25 @@ export type DrainMutationResult = NonNullable<
   Awaited<ReturnType<typeof drain>>
 >;
 
-export type DrainMutationError = unknown;
+export type DrainMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Force an outbox drain pass on demand.
  */
-export const useDrain = <TError = unknown, TContext = unknown>(
+export const useDrain = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof drain>>,
@@ -8175,7 +8973,13 @@ export const editOntology = (
 };
 
 export const getEditOntologyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -8216,12 +9020,27 @@ export type EditOntologyMutationResult = NonNullable<
   Awaited<ReturnType<typeof editOntology>>
 >;
 export type EditOntologyMutationBody = OntologyEditModel;
-export type EditOntologyMutationError = unknown;
+export type EditOntologyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Úprava slovníku
  */
-export const useEditOntology = <TError = unknown, TContext = unknown>(
+export const useEditOntology = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof editOntology>>,
@@ -8265,7 +9084,13 @@ export const renameDiagram = (
 };
 
 export const getRenameDiagramMutationOptions = <
-  TError = ApiResponseDto,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiResponseDto
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -8306,12 +9131,27 @@ export type RenameDiagramMutationResult = NonNullable<
   Awaited<ReturnType<typeof renameDiagram>>
 >;
 export type RenameDiagramMutationBody = DiagramRenameDto;
-export type RenameDiagramMutationError = ApiResponseDto;
+export type RenameDiagramMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiResponseDto
+  | ApiErrorResponse;
 
 /**
  * @summary Přejmenování diagramu
  */
-export const useRenameDiagram = <TError = ApiResponseDto, TContext = unknown>(
+export const useRenameDiagram = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiResponseDto
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof renameDiagram>>,
@@ -8354,7 +9194,13 @@ export const editConcept = (
 };
 
 export const getEditConceptMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -8395,12 +9241,27 @@ export type EditConceptMutationResult = NonNullable<
   Awaited<ReturnType<typeof editConcept>>
 >;
 export type EditConceptMutationBody = EditConceptBody;
-export type EditConceptMutationError = unknown;
+export type EditConceptMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Úprava pojmu
  */
-export const useEditConcept = <TError = unknown, TContext = unknown>(
+export const useEditConcept = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof editConcept>>,
@@ -8442,7 +9303,11 @@ export const getGetCurrentUserQueryKey = () => {
 
 export const getGetCurrentUserQueryOptions = <
   TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>
@@ -8467,11 +9332,19 @@ export const getGetCurrentUserQueryOptions = <
 export type GetCurrentUserQueryResult = NonNullable<
   Awaited<ReturnType<typeof getCurrentUser>>
 >;
-export type GetCurrentUserQueryError = unknown;
+export type GetCurrentUserQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetCurrentUser<
   TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options: {
     query: Partial<
@@ -8493,7 +9366,11 @@ export function useGetCurrentUser<
 };
 export function useGetCurrentUser<
   TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -8515,7 +9392,11 @@ export function useGetCurrentUser<
 };
 export function useGetCurrentUser<
   TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -8533,7 +9414,11 @@ export function useGetCurrentUser<
 
 export function useGetCurrentUser<
   TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -8578,7 +9463,12 @@ export const getSearchQueryKey = (params?: SearchParams) => {
 
 export const getSearchQueryOptions = <
   TData = Awaited<ReturnType<typeof search>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: SearchParams,
   options?: {
@@ -8604,11 +9494,21 @@ export const getSearchQueryOptions = <
 };
 
 export type SearchQueryResult = NonNullable<Awaited<ReturnType<typeof search>>>;
-export type SearchQueryError = unknown;
+export type SearchQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useSearch<
   TData = Awaited<ReturnType<typeof search>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: SearchParams,
   options: {
@@ -8631,7 +9531,12 @@ export function useSearch<
 };
 export function useSearch<
   TData = Awaited<ReturnType<typeof search>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: SearchParams,
   options?: {
@@ -8654,7 +9559,12 @@ export function useSearch<
 };
 export function useSearch<
   TData = Awaited<ReturnType<typeof search>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: SearchParams,
   options?: {
@@ -8673,7 +9583,12 @@ export function useSearch<
 
 export function useSearch<
   TData = Awaited<ReturnType<typeof search>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: SearchParams,
   options?: {
@@ -8719,7 +9634,11 @@ export const getSearchIsvsQueryKey = (params?: SearchIsvsParams) => {
 
 export const getSearchIsvsQueryOptions = <
   TData = Awaited<ReturnType<typeof searchIsvs>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchIsvsParams,
   options?: {
@@ -8747,11 +9666,19 @@ export const getSearchIsvsQueryOptions = <
 export type SearchIsvsQueryResult = NonNullable<
   Awaited<ReturnType<typeof searchIsvs>>
 >;
-export type SearchIsvsQueryError = unknown;
+export type SearchIsvsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useSearchIsvs<
   TData = Awaited<ReturnType<typeof searchIsvs>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | SearchIsvsParams,
   options: {
@@ -8774,7 +9701,11 @@ export function useSearchIsvs<
 };
 export function useSearchIsvs<
   TData = Awaited<ReturnType<typeof searchIsvs>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchIsvsParams,
   options?: {
@@ -8797,7 +9728,11 @@ export function useSearchIsvs<
 };
 export function useSearchIsvs<
   TData = Awaited<ReturnType<typeof searchIsvs>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchIsvsParams,
   options?: {
@@ -8816,7 +9751,11 @@ export function useSearchIsvs<
 
 export function useSearchIsvs<
   TData = Awaited<ReturnType<typeof searchIsvs>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchIsvsParams,
   options?: {
@@ -8862,7 +9801,11 @@ export const getSearchAgendasQueryKey = (params?: SearchAgendasParams) => {
 
 export const getSearchAgendasQueryOptions = <
   TData = Awaited<ReturnType<typeof searchAgendas>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchAgendasParams,
   options?: {
@@ -8890,11 +9833,19 @@ export const getSearchAgendasQueryOptions = <
 export type SearchAgendasQueryResult = NonNullable<
   Awaited<ReturnType<typeof searchAgendas>>
 >;
-export type SearchAgendasQueryError = unknown;
+export type SearchAgendasQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useSearchAgendas<
   TData = Awaited<ReturnType<typeof searchAgendas>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | SearchAgendasParams,
   options: {
@@ -8917,7 +9868,11 @@ export function useSearchAgendas<
 };
 export function useSearchAgendas<
   TData = Awaited<ReturnType<typeof searchAgendas>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchAgendasParams,
   options?: {
@@ -8940,7 +9895,11 @@ export function useSearchAgendas<
 };
 export function useSearchAgendas<
   TData = Awaited<ReturnType<typeof searchAgendas>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchAgendasParams,
   options?: {
@@ -8959,7 +9918,11 @@ export function useSearchAgendas<
 
 export function useSearchAgendas<
   TData = Awaited<ReturnType<typeof searchAgendas>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchAgendasParams,
   options?: {
@@ -9005,7 +9968,7 @@ export const getGetValidationReportQueryKey = (slug?: string) => {
 
 export const getGetValidationReportQueryOptions = <
   TData = Awaited<ReturnType<typeof getValidationReport>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9043,11 +10006,14 @@ export const getGetValidationReportQueryOptions = <
 export type GetValidationReportQueryResult = NonNullable<
   Awaited<ReturnType<typeof getValidationReport>>
 >;
-export type GetValidationReportQueryError = unknown;
+export type GetValidationReportQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetValidationReport<
   TData = Awaited<ReturnType<typeof getValidationReport>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options: {
@@ -9074,7 +10040,7 @@ export function useGetValidationReport<
 };
 export function useGetValidationReport<
   TData = Awaited<ReturnType<typeof getValidationReport>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9101,7 +10067,7 @@ export function useGetValidationReport<
 };
 export function useGetValidationReport<
   TData = Awaited<ReturnType<typeof getValidationReport>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9124,7 +10090,7 @@ export function useGetValidationReport<
 
 export function useGetValidationReport<
   TData = Awaited<ReturnType<typeof getValidationReport>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9174,7 +10140,7 @@ export const getGetOntologyDetailQueryKey = (slug?: string) => {
 
 export const getGetOntologyDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getOntologyDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9211,11 +10177,14 @@ export const getGetOntologyDetailQueryOptions = <
 export type GetOntologyDetailQueryResult = NonNullable<
   Awaited<ReturnType<typeof getOntologyDetail>>
 >;
-export type GetOntologyDetailQueryError = unknown;
+export type GetOntologyDetailQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetOntologyDetail<
   TData = Awaited<ReturnType<typeof getOntologyDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options: {
@@ -9242,7 +10211,7 @@ export function useGetOntologyDetail<
 };
 export function useGetOntologyDetail<
   TData = Awaited<ReturnType<typeof getOntologyDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9269,7 +10238,7 @@ export function useGetOntologyDetail<
 };
 export function useGetOntologyDetail<
   TData = Awaited<ReturnType<typeof getOntologyDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9292,7 +10261,7 @@ export function useGetOntologyDetail<
 
 export function useGetOntologyDetail<
   TData = Awaited<ReturnType<typeof getOntologyDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -9355,7 +10324,7 @@ export const getDownloadFileQueryKey = (
 
 export const getDownloadFileQueryOptions = <
   TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   ontologyId: number,
   params: DownloadFileParams,
@@ -9390,11 +10359,14 @@ export const getDownloadFileQueryOptions = <
 export type DownloadFileQueryResult = NonNullable<
   Awaited<ReturnType<typeof downloadFile>>
 >;
-export type DownloadFileQueryError = unknown;
+export type DownloadFileQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useDownloadFile<
   TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   ontologyId: number,
   params: DownloadFileParams,
@@ -9418,7 +10390,7 @@ export function useDownloadFile<
 };
 export function useDownloadFile<
   TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   ontologyId: number,
   params: DownloadFileParams,
@@ -9442,7 +10414,7 @@ export function useDownloadFile<
 };
 export function useDownloadFile<
   TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   ontologyId: number,
   params: DownloadFileParams,
@@ -9462,7 +10434,7 @@ export function useDownloadFile<
 
 export function useDownloadFile<
   TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   ontologyId: number,
   params: DownloadFileParams,
@@ -9489,7 +10461,7 @@ export function useDownloadFile<
 }
 
 /**
- * Vrací seznam slovníků s možností filtrování podle uživatele, stavu publikace nebo konkrétních slugů. Veřejný endpoint.
+ * Vrací stránku slovníků. Filtry jsou volitelné a kombinují se: uživatel, stav publikace, konkrétní slugy (nejvýše 6), IRI grafu a text `q`, který se hledá v názvu, popisu a slugu bez ohledu na velikost písmen a diakritiku. `totalCount` počítá všechny vyhovující slovníky. Veřejný endpoint.
  * @summary Seznam slovníků
  */
 export const getOntologyList = (
@@ -9497,7 +10469,7 @@ export const getOntologyList = (
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<ApiResponseDtoListOntologySummaryDto>(
+  return axiosInstance<ApiResponseDtoPageDtoOntologySummaryDto>(
     { url: `/api/ontology/list`, method: 'GET', params, signal },
     options,
   );
@@ -9509,7 +10481,7 @@ export const getGetOntologyListQueryKey = (params?: GetOntologyListParams) => {
 
 export const getGetOntologyListQueryOptions = <
   TData = Awaited<ReturnType<typeof getOntologyList>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params?: GetOntologyListParams,
   options?: {
@@ -9541,11 +10513,11 @@ export const getGetOntologyListQueryOptions = <
 export type GetOntologyListQueryResult = NonNullable<
   Awaited<ReturnType<typeof getOntologyList>>
 >;
-export type GetOntologyListQueryError = unknown;
+export type GetOntologyListQueryError = ApiErrorResponse | ApiErrorResponse;
 
 export function useGetOntologyList<
   TData = Awaited<ReturnType<typeof getOntologyList>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params: undefined | GetOntologyListParams,
   options: {
@@ -9572,7 +10544,7 @@ export function useGetOntologyList<
 };
 export function useGetOntologyList<
   TData = Awaited<ReturnType<typeof getOntologyList>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params?: GetOntologyListParams,
   options?: {
@@ -9599,7 +10571,7 @@ export function useGetOntologyList<
 };
 export function useGetOntologyList<
   TData = Awaited<ReturnType<typeof getOntologyList>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params?: GetOntologyListParams,
   options?: {
@@ -9622,7 +10594,7 @@ export function useGetOntologyList<
 
 export function useGetOntologyList<
   TData = Awaited<ReturnType<typeof getOntologyList>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params?: GetOntologyListParams,
   options?: {
@@ -9674,7 +10646,7 @@ export const getGetConceptsByIriQueryKey = (
 
 export const getGetConceptsByIriQueryOptions = <
   TData = Awaited<ReturnType<typeof getConceptsByIri>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params: GetConceptsByIriParams,
   options?: {
@@ -9707,11 +10679,11 @@ export const getGetConceptsByIriQueryOptions = <
 export type GetConceptsByIriQueryResult = NonNullable<
   Awaited<ReturnType<typeof getConceptsByIri>>
 >;
-export type GetConceptsByIriQueryError = unknown;
+export type GetConceptsByIriQueryError = ApiErrorResponse | ApiErrorResponse;
 
 export function useGetConceptsByIri<
   TData = Awaited<ReturnType<typeof getConceptsByIri>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params: GetConceptsByIriParams,
   options: {
@@ -9738,7 +10710,7 @@ export function useGetConceptsByIri<
 };
 export function useGetConceptsByIri<
   TData = Awaited<ReturnType<typeof getConceptsByIri>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params: GetConceptsByIriParams,
   options?: {
@@ -9765,7 +10737,7 @@ export function useGetConceptsByIri<
 };
 export function useGetConceptsByIri<
   TData = Awaited<ReturnType<typeof getConceptsByIri>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params: GetConceptsByIriParams,
   options?: {
@@ -9788,7 +10760,7 @@ export function useGetConceptsByIri<
 
 export function useGetConceptsByIri<
   TData = Awaited<ReturnType<typeof getConceptsByIri>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   params: GetConceptsByIriParams,
   options?: {
@@ -9840,7 +10812,12 @@ export const getGetDatasetDetailQueryKey = (
 
 export const getGetDatasetDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getDatasetDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetDatasetDetailParams,
   options?: {
@@ -9873,11 +10850,21 @@ export const getGetDatasetDetailQueryOptions = <
 export type GetDatasetDetailQueryResult = NonNullable<
   Awaited<ReturnType<typeof getDatasetDetail>>
 >;
-export type GetDatasetDetailQueryError = unknown;
+export type GetDatasetDetailQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetDatasetDetail<
   TData = Awaited<ReturnType<typeof getDatasetDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetDatasetDetailParams,
   options: {
@@ -9904,7 +10891,12 @@ export function useGetDatasetDetail<
 };
 export function useGetDatasetDetail<
   TData = Awaited<ReturnType<typeof getDatasetDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetDatasetDetailParams,
   options?: {
@@ -9931,7 +10923,12 @@ export function useGetDatasetDetail<
 };
 export function useGetDatasetDetail<
   TData = Awaited<ReturnType<typeof getDatasetDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetDatasetDetailParams,
   options?: {
@@ -9954,7 +10951,12 @@ export function useGetDatasetDetail<
 
 export function useGetDatasetDetail<
   TData = Awaited<ReturnType<typeof getDatasetDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetDatasetDetailParams,
   options?: {
@@ -10004,7 +11006,11 @@ export const getListDatasetsQueryKey = (params?: ListDatasetsParams) => {
 
 export const getListDatasetsQueryOptions = <
   TData = Awaited<ReturnType<typeof listDatasets>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListDatasetsParams,
   options?: {
@@ -10032,11 +11038,19 @@ export const getListDatasetsQueryOptions = <
 export type ListDatasetsQueryResult = NonNullable<
   Awaited<ReturnType<typeof listDatasets>>
 >;
-export type ListDatasetsQueryError = unknown;
+export type ListDatasetsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useListDatasets<
   TData = Awaited<ReturnType<typeof listDatasets>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | ListDatasetsParams,
   options: {
@@ -10059,7 +11073,11 @@ export function useListDatasets<
 };
 export function useListDatasets<
   TData = Awaited<ReturnType<typeof listDatasets>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListDatasetsParams,
   options?: {
@@ -10082,7 +11100,11 @@ export function useListDatasets<
 };
 export function useListDatasets<
   TData = Awaited<ReturnType<typeof listDatasets>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListDatasetsParams,
   options?: {
@@ -10101,7 +11123,11 @@ export function useListDatasets<
 
 export function useListDatasets<
   TData = Awaited<ReturnType<typeof listDatasets>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListDatasetsParams,
   options?: {
@@ -10149,7 +11175,11 @@ export const getListDatasetsByConceptQueryKey = (
 
 export const getListDatasetsByConceptQueryOptions = <
   TData = Awaited<ReturnType<typeof listDatasetsByConcept>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ListDatasetsByConceptParams,
   options?: {
@@ -10182,11 +11212,19 @@ export const getListDatasetsByConceptQueryOptions = <
 export type ListDatasetsByConceptQueryResult = NonNullable<
   Awaited<ReturnType<typeof listDatasetsByConcept>>
 >;
-export type ListDatasetsByConceptQueryError = unknown;
+export type ListDatasetsByConceptQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useListDatasetsByConcept<
   TData = Awaited<ReturnType<typeof listDatasetsByConcept>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ListDatasetsByConceptParams,
   options: {
@@ -10213,7 +11251,11 @@ export function useListDatasetsByConcept<
 };
 export function useListDatasetsByConcept<
   TData = Awaited<ReturnType<typeof listDatasetsByConcept>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ListDatasetsByConceptParams,
   options?: {
@@ -10240,7 +11282,11 @@ export function useListDatasetsByConcept<
 };
 export function useListDatasetsByConcept<
   TData = Awaited<ReturnType<typeof listDatasetsByConcept>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ListDatasetsByConceptParams,
   options?: {
@@ -10263,7 +11309,11 @@ export function useListDatasetsByConcept<
 
 export function useListDatasetsByConcept<
   TData = Awaited<ReturnType<typeof listDatasetsByConcept>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ListDatasetsByConceptParams,
   options?: {
@@ -10315,7 +11365,11 @@ export const getGetNkdOntologyListQueryKey = (
 
 export const getGetNkdOntologyListQueryOptions = <
   TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyListParams,
   options?: {
@@ -10348,11 +11402,19 @@ export const getGetNkdOntologyListQueryOptions = <
 export type GetNkdOntologyListQueryResult = NonNullable<
   Awaited<ReturnType<typeof getNkdOntologyList>>
 >;
-export type GetNkdOntologyListQueryError = unknown;
+export type GetNkdOntologyListQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetNkdOntologyList<
   TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyListParams,
   options: {
@@ -10379,7 +11441,11 @@ export function useGetNkdOntologyList<
 };
 export function useGetNkdOntologyList<
   TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyListParams,
   options?: {
@@ -10406,7 +11472,11 @@ export function useGetNkdOntologyList<
 };
 export function useGetNkdOntologyList<
   TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyListParams,
   options?: {
@@ -10429,7 +11499,11 @@ export function useGetNkdOntologyList<
 
 export function useGetNkdOntologyList<
   TData = Awaited<ReturnType<typeof getNkdOntologyList>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyListParams,
   options?: {
@@ -10487,7 +11561,12 @@ export const getDownloadNkdOntologyQueryKey = (
 
 export const getDownloadNkdOntologyQueryOptions = <
   TData = Awaited<ReturnType<typeof downloadNkdOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: DownloadNkdOntologyParams,
   options?: {
@@ -10520,11 +11599,21 @@ export const getDownloadNkdOntologyQueryOptions = <
 export type DownloadNkdOntologyQueryResult = NonNullable<
   Awaited<ReturnType<typeof downloadNkdOntology>>
 >;
-export type DownloadNkdOntologyQueryError = unknown;
+export type DownloadNkdOntologyQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useDownloadNkdOntology<
   TData = Awaited<ReturnType<typeof downloadNkdOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: DownloadNkdOntologyParams,
   options: {
@@ -10551,7 +11640,12 @@ export function useDownloadNkdOntology<
 };
 export function useDownloadNkdOntology<
   TData = Awaited<ReturnType<typeof downloadNkdOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: DownloadNkdOntologyParams,
   options?: {
@@ -10578,7 +11672,12 @@ export function useDownloadNkdOntology<
 };
 export function useDownloadNkdOntology<
   TData = Awaited<ReturnType<typeof downloadNkdOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: DownloadNkdOntologyParams,
   options?: {
@@ -10601,7 +11700,12 @@ export function useDownloadNkdOntology<
 
 export function useDownloadNkdOntology<
   TData = Awaited<ReturnType<typeof downloadNkdOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: DownloadNkdOntologyParams,
   options?: {
@@ -10653,7 +11757,12 @@ export const getGetNkdOntologyDetailQueryKey = (
 
 export const getGetNkdOntologyDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyDetailParams,
   options?: {
@@ -10686,11 +11795,21 @@ export const getGetNkdOntologyDetailQueryOptions = <
 export type GetNkdOntologyDetailQueryResult = NonNullable<
   Awaited<ReturnType<typeof getNkdOntologyDetail>>
 >;
-export type GetNkdOntologyDetailQueryError = unknown;
+export type GetNkdOntologyDetailQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetNkdOntologyDetail<
   TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyDetailParams,
   options: {
@@ -10717,7 +11836,12 @@ export function useGetNkdOntologyDetail<
 };
 export function useGetNkdOntologyDetail<
   TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyDetailParams,
   options?: {
@@ -10744,7 +11868,12 @@ export function useGetNkdOntologyDetail<
 };
 export function useGetNkdOntologyDetail<
   TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyDetailParams,
   options?: {
@@ -10767,7 +11896,12 @@ export function useGetNkdOntologyDetail<
 
 export function useGetNkdOntologyDetail<
   TData = Awaited<ReturnType<typeof getNkdOntologyDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdOntologyDetailParams,
   options?: {
@@ -10819,7 +11953,11 @@ export const getListAllNkdOntologiesQueryKey = (
 
 export const getListAllNkdOntologiesQueryOptions = <
   TData = Awaited<ReturnType<typeof listAllNkdOntologies>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListAllNkdOntologiesParams,
   options?: {
@@ -10852,11 +11990,19 @@ export const getListAllNkdOntologiesQueryOptions = <
 export type ListAllNkdOntologiesQueryResult = NonNullable<
   Awaited<ReturnType<typeof listAllNkdOntologies>>
 >;
-export type ListAllNkdOntologiesQueryError = unknown;
+export type ListAllNkdOntologiesQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useListAllNkdOntologies<
   TData = Awaited<ReturnType<typeof listAllNkdOntologies>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | ListAllNkdOntologiesParams,
   options: {
@@ -10883,7 +12029,11 @@ export function useListAllNkdOntologies<
 };
 export function useListAllNkdOntologies<
   TData = Awaited<ReturnType<typeof listAllNkdOntologies>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListAllNkdOntologiesParams,
   options?: {
@@ -10910,7 +12060,11 @@ export function useListAllNkdOntologies<
 };
 export function useListAllNkdOntologies<
   TData = Awaited<ReturnType<typeof listAllNkdOntologies>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListAllNkdOntologiesParams,
   options?: {
@@ -10933,7 +12087,11 @@ export function useListAllNkdOntologies<
 
 export function useListAllNkdOntologies<
   TData = Awaited<ReturnType<typeof listAllNkdOntologies>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListAllNkdOntologiesParams,
   options?: {
@@ -10985,7 +12143,12 @@ export const getGetNkdConceptDetailQueryKey = (
 
 export const getGetNkdConceptDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdConceptDetailParams,
   options?: {
@@ -11018,11 +12181,21 @@ export const getGetNkdConceptDetailQueryOptions = <
 export type GetNkdConceptDetailQueryResult = NonNullable<
   Awaited<ReturnType<typeof getNkdConceptDetail>>
 >;
-export type GetNkdConceptDetailQueryError = unknown;
+export type GetNkdConceptDetailQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetNkdConceptDetail<
   TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdConceptDetailParams,
   options: {
@@ -11049,7 +12222,12 @@ export function useGetNkdConceptDetail<
 };
 export function useGetNkdConceptDetail<
   TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdConceptDetailParams,
   options?: {
@@ -11076,7 +12254,12 @@ export function useGetNkdConceptDetail<
 };
 export function useGetNkdConceptDetail<
   TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdConceptDetailParams,
   options?: {
@@ -11099,7 +12282,12 @@ export function useGetNkdConceptDetail<
 
 export function useGetNkdConceptDetail<
   TData = Awaited<ReturnType<typeof getNkdConceptDetail>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetNkdConceptDetailParams,
   options?: {
@@ -11151,7 +12339,11 @@ export const getResolveLegalSourceQueryKey = (
 
 export const getResolveLegalSourceQueryOptions = <
   TData = Awaited<ReturnType<typeof resolveLegalSource>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ResolveLegalSourceParams,
   options?: {
@@ -11184,11 +12376,19 @@ export const getResolveLegalSourceQueryOptions = <
 export type ResolveLegalSourceQueryResult = NonNullable<
   Awaited<ReturnType<typeof resolveLegalSource>>
 >;
-export type ResolveLegalSourceQueryError = unknown;
+export type ResolveLegalSourceQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useResolveLegalSource<
   TData = Awaited<ReturnType<typeof resolveLegalSource>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ResolveLegalSourceParams,
   options: {
@@ -11215,7 +12415,11 @@ export function useResolveLegalSource<
 };
 export function useResolveLegalSource<
   TData = Awaited<ReturnType<typeof resolveLegalSource>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ResolveLegalSourceParams,
   options?: {
@@ -11242,7 +12446,11 @@ export function useResolveLegalSource<
 };
 export function useResolveLegalSource<
   TData = Awaited<ReturnType<typeof resolveLegalSource>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ResolveLegalSourceParams,
   options?: {
@@ -11265,7 +12473,11 @@ export function useResolveLegalSource<
 
 export function useResolveLegalSource<
   TData = Awaited<ReturnType<typeof resolveLegalSource>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: ResolveLegalSourceParams,
   options?: {
@@ -11315,7 +12527,11 @@ export const getGetVersionsQueryKey = (params?: GetVersionsParams) => {
 
 export const getGetVersionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVersionsParams,
   options?: {
@@ -11343,11 +12559,19 @@ export const getGetVersionsQueryOptions = <
 export type GetVersionsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getVersions>>
 >;
-export type GetVersionsQueryError = unknown;
+export type GetVersionsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVersionsParams,
   options: {
@@ -11370,7 +12594,11 @@ export function useGetVersions<
 };
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVersionsParams,
   options?: {
@@ -11393,7 +12621,11 @@ export function useGetVersions<
 };
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVersionsParams,
   options?: {
@@ -11412,7 +12644,11 @@ export function useGetVersions<
 
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVersionsParams,
   options?: {
@@ -11460,7 +12696,11 @@ export const getSearchLawsGroupedQueryKey = (
 
 export const getSearchLawsGroupedQueryOptions = <
   TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchLawsGroupedParams,
   options?: {
@@ -11493,11 +12733,19 @@ export const getSearchLawsGroupedQueryOptions = <
 export type SearchLawsGroupedQueryResult = NonNullable<
   Awaited<ReturnType<typeof searchLawsGrouped>>
 >;
-export type SearchLawsGroupedQueryError = unknown;
+export type SearchLawsGroupedQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useSearchLawsGrouped<
   TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | SearchLawsGroupedParams,
   options: {
@@ -11524,7 +12772,11 @@ export function useSearchLawsGrouped<
 };
 export function useSearchLawsGrouped<
   TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchLawsGroupedParams,
   options?: {
@@ -11551,7 +12803,11 @@ export function useSearchLawsGrouped<
 };
 export function useSearchLawsGrouped<
   TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchLawsGroupedParams,
   options?: {
@@ -11574,7 +12830,11 @@ export function useSearchLawsGrouped<
 
 export function useSearchLawsGrouped<
   TData = Awaited<ReturnType<typeof searchLawsGrouped>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: SearchLawsGroupedParams,
   options?: {
@@ -11624,7 +12884,11 @@ export const getGetLawContentQueryKey = (params?: GetLawContentParams) => {
 
 export const getGetLawContentQueryOptions = <
   TData = Awaited<ReturnType<typeof getLawContent>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetLawContentParams,
   options?: {
@@ -11652,11 +12916,19 @@ export const getGetLawContentQueryOptions = <
 export type GetLawContentQueryResult = NonNullable<
   Awaited<ReturnType<typeof getLawContent>>
 >;
-export type GetLawContentQueryError = unknown;
+export type GetLawContentQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetLawContent<
   TData = Awaited<ReturnType<typeof getLawContent>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetLawContentParams,
   options: {
@@ -11679,7 +12951,11 @@ export function useGetLawContent<
 };
 export function useGetLawContent<
   TData = Awaited<ReturnType<typeof getLawContent>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetLawContentParams,
   options?: {
@@ -11702,7 +12978,11 @@ export function useGetLawContent<
 };
 export function useGetLawContent<
   TData = Awaited<ReturnType<typeof getLawContent>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetLawContentParams,
   options?: {
@@ -11721,7 +13001,11 @@ export function useGetLawContent<
 
 export function useGetLawContent<
   TData = Awaited<ReturnType<typeof getLawContent>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetLawContentParams,
   options?: {
@@ -11775,7 +13059,12 @@ export const getGetDiagramQueryKey = (
 
 export const getGetDiagramQueryOptions = <
   TData = Awaited<ReturnType<typeof getDiagram>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   diagramId: number,
@@ -11810,11 +13099,21 @@ export const getGetDiagramQueryOptions = <
 export type GetDiagramQueryResult = NonNullable<
   Awaited<ReturnType<typeof getDiagram>>
 >;
-export type GetDiagramQueryError = unknown;
+export type GetDiagramQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetDiagram<
   TData = Awaited<ReturnType<typeof getDiagram>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   diagramId: number,
@@ -11838,7 +13137,12 @@ export function useGetDiagram<
 };
 export function useGetDiagram<
   TData = Awaited<ReturnType<typeof getDiagram>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   diagramId: number,
@@ -11862,7 +13166,12 @@ export function useGetDiagram<
 };
 export function useGetDiagram<
   TData = Awaited<ReturnType<typeof getDiagram>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   diagramId: number,
@@ -11882,7 +13191,12 @@ export function useGetDiagram<
 
 export function useGetDiagram<
   TData = Awaited<ReturnType<typeof getDiagram>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   diagramId: number,
@@ -11933,7 +13247,12 @@ export const getListForOntologyQueryKey = (ontologySlug?: string) => {
 
 export const getListForOntologyQueryOptions = <
   TData = Awaited<ReturnType<typeof listForOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   options?: {
@@ -11971,11 +13290,21 @@ export const getListForOntologyQueryOptions = <
 export type ListForOntologyQueryResult = NonNullable<
   Awaited<ReturnType<typeof listForOntology>>
 >;
-export type ListForOntologyQueryError = unknown;
+export type ListForOntologyQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useListForOntology<
   TData = Awaited<ReturnType<typeof listForOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   options: {
@@ -12002,7 +13331,12 @@ export function useListForOntology<
 };
 export function useListForOntology<
   TData = Awaited<ReturnType<typeof listForOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   options?: {
@@ -12029,7 +13363,12 @@ export function useListForOntology<
 };
 export function useListForOntology<
   TData = Awaited<ReturnType<typeof listForOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   options?: {
@@ -12052,7 +13391,12 @@ export function useListForOntology<
 
 export function useListForOntology<
   TData = Awaited<ReturnType<typeof listForOntology>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   ontologySlug: string,
   options?: {
@@ -12102,7 +13446,12 @@ export const getGetConceptUsageQueryKey = (conceptSlug?: string) => {
 
 export const getGetConceptUsageQueryOptions = <
   TData = Awaited<ReturnType<typeof getConceptUsage>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   conceptSlug: string,
   options?: {
@@ -12140,11 +13489,21 @@ export const getGetConceptUsageQueryOptions = <
 export type GetConceptUsageQueryResult = NonNullable<
   Awaited<ReturnType<typeof getConceptUsage>>
 >;
-export type GetConceptUsageQueryError = unknown;
+export type GetConceptUsageQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetConceptUsage<
   TData = Awaited<ReturnType<typeof getConceptUsage>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   conceptSlug: string,
   options: {
@@ -12171,7 +13530,12 @@ export function useGetConceptUsage<
 };
 export function useGetConceptUsage<
   TData = Awaited<ReturnType<typeof getConceptUsage>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   conceptSlug: string,
   options?: {
@@ -12198,7 +13562,12 @@ export function useGetConceptUsage<
 };
 export function useGetConceptUsage<
   TData = Awaited<ReturnType<typeof getConceptUsage>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   conceptSlug: string,
   options?: {
@@ -12221,7 +13590,12 @@ export function useGetConceptUsage<
 
 export function useGetConceptUsage<
   TData = Awaited<ReturnType<typeof getConceptUsage>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   conceptSlug: string,
   options?: {
@@ -12251,7 +13625,7 @@ export function useGetConceptUsage<
 }
 
 /**
- * Vrací odlehčený seznam všech diagramů (identita + počet uzlů), např. pro výběr diagramu. Volitelný parametr `userId` omezí výsledek na diagramy slovníků daného uživatele; bez něj se vrací všechny. Vyžaduje oprávnění přihlášeného uživatele.
+ * Vrací stránku diagramů (identita + počet uzlů), naposledy upravené první. Volitelný parametr `userId` omezí výsledek na diagramy slovníků daného uživatele; bez něj se vrací všechny. `totalCount` počítá všechny vyhovující diagramy. Vyžaduje oprávnění přihlášeného uživatele.
  * @summary Seznam diagramů
  */
 export const getAllDiagrams = (
@@ -12259,7 +13633,7 @@ export const getAllDiagrams = (
   options?: SecondParameter<typeof axiosInstance>,
   signal?: AbortSignal,
 ) => {
-  return axiosInstance<ApiResponseDtoListDiagramSummaryDto>(
+  return axiosInstance<ApiResponseDtoPageDtoDiagramSummaryDto>(
     { url: `/api/diagram/all`, method: 'GET', params, signal },
     options,
   );
@@ -12271,7 +13645,11 @@ export const getGetAllDiagramsQueryKey = (params?: GetAllDiagramsParams) => {
 
 export const getGetAllDiagramsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: GetAllDiagramsParams,
   options?: {
@@ -12299,11 +13677,19 @@ export const getGetAllDiagramsQueryOptions = <
 export type GetAllDiagramsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAllDiagrams>>
 >;
-export type GetAllDiagramsQueryError = unknown;
+export type GetAllDiagramsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | GetAllDiagramsParams,
   options: {
@@ -12326,7 +13712,11 @@ export function useGetAllDiagrams<
 };
 export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: GetAllDiagramsParams,
   options?: {
@@ -12349,7 +13739,11 @@ export function useGetAllDiagrams<
 };
 export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: GetAllDiagramsParams,
   options?: {
@@ -12368,7 +13762,11 @@ export function useGetAllDiagrams<
 
 export function useGetAllDiagrams<
   TData = Awaited<ReturnType<typeof getAllDiagrams>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: GetAllDiagramsParams,
   options?: {
@@ -12414,7 +13812,7 @@ export const getGetConceptDetailQueryKey = (slug?: string) => {
 
 export const getGetConceptDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof getConceptDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -12451,11 +13849,14 @@ export const getGetConceptDetailQueryOptions = <
 export type GetConceptDetailQueryResult = NonNullable<
   Awaited<ReturnType<typeof getConceptDetail>>
 >;
-export type GetConceptDetailQueryError = unknown;
+export type GetConceptDetailQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetConceptDetail<
   TData = Awaited<ReturnType<typeof getConceptDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options: {
@@ -12482,7 +13883,7 @@ export function useGetConceptDetail<
 };
 export function useGetConceptDetail<
   TData = Awaited<ReturnType<typeof getConceptDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -12509,7 +13910,7 @@ export function useGetConceptDetail<
 };
 export function useGetConceptDetail<
   TData = Awaited<ReturnType<typeof getConceptDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -12532,7 +13933,7 @@ export function useGetConceptDetail<
 
 export function useGetConceptDetail<
   TData = Awaited<ReturnType<typeof getConceptDetail>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse | ApiErrorResponse,
 >(
   slug: string,
   options?: {
@@ -12550,149 +13951,6 @@ export function useGetConceptDetail<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = getGetConceptDetailQueryOptions(slug, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey;
-
-  return query;
-}
-
-/**
- * Vrací seznam pojmů s možností filtrování podle uživatele nebo stavu publikace. Veřejný endpoint.
- * @summary Seznam pojmů
- */
-export const getConceptList = (
-  params?: GetConceptListParams,
-  options?: SecondParameter<typeof axiosInstance>,
-  signal?: AbortSignal,
-) => {
-  return axiosInstance<ApiResponseDtoListConceptMetadataModel>(
-    { url: `/api/concept/list`, method: 'GET', params, signal },
-    options,
-  );
-};
-
-export const getGetConceptListQueryKey = (params?: GetConceptListParams) => {
-  return [`/api/concept/list`, ...(params ? [params] : [])] as const;
-};
-
-export const getGetConceptListQueryOptions = <
-  TData = Awaited<ReturnType<typeof getConceptList>>,
-  TError = unknown,
->(
-  params?: GetConceptListParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetConceptListQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getConceptList>>> = ({
-    signal,
-  }) => getConceptList(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getConceptList>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetConceptListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getConceptList>>
->;
-export type GetConceptListQueryError = unknown;
-
-export function useGetConceptList<
-  TData = Awaited<ReturnType<typeof getConceptList>>,
-  TError = unknown,
->(
-  params: undefined | GetConceptListParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getConceptList>>,
-          TError,
-          Awaited<ReturnType<typeof getConceptList>>
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetConceptList<
-  TData = Awaited<ReturnType<typeof getConceptList>>,
-  TError = unknown,
->(
-  params?: GetConceptListParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getConceptList>>,
-          TError,
-          Awaited<ReturnType<typeof getConceptList>>
-        >,
-        'initialData'
-      >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetConceptList<
-  TData = Awaited<ReturnType<typeof getConceptList>>,
-  TError = unknown,
->(
-  params?: GetConceptListParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary Seznam pojmů
- */
-
-export function useGetConceptList<
-  TData = Awaited<ReturnType<typeof getConceptList>>,
-  TError = unknown,
->(
-  params?: GetConceptListParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getConceptList>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof axiosInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = getGetConceptListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -12724,7 +13982,7 @@ export const getPropertyDatatypesQueryKey = () => {
 
 export const getPropertyDatatypesQueryOptions = <
   TData = Awaited<ReturnType<typeof propertyDatatypes>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<
@@ -12753,11 +14011,11 @@ export const getPropertyDatatypesQueryOptions = <
 export type PropertyDatatypesQueryResult = NonNullable<
   Awaited<ReturnType<typeof propertyDatatypes>>
 >;
-export type PropertyDatatypesQueryError = unknown;
+export type PropertyDatatypesQueryError = ApiErrorResponse | ApiErrorResponse;
 
 export function usePropertyDatatypes<
   TData = Awaited<ReturnType<typeof propertyDatatypes>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   options: {
     query: Partial<
@@ -12783,7 +14041,7 @@ export function usePropertyDatatypes<
 };
 export function usePropertyDatatypes<
   TData = Awaited<ReturnType<typeof propertyDatatypes>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -12809,7 +14067,7 @@ export function usePropertyDatatypes<
 };
 export function usePropertyDatatypes<
   TData = Awaited<ReturnType<typeof propertyDatatypes>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -12831,7 +14089,7 @@ export function usePropertyDatatypes<
 
 export function usePropertyDatatypes<
   TData = Awaited<ReturnType<typeof propertyDatatypes>>,
-  TError = unknown,
+  TError = ApiErrorResponse | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -12880,7 +14138,11 @@ export const getListQueryKey = (params?: ListParams) => {
 
 export const getListQueryOptions = <
   TData = Awaited<ReturnType<typeof list>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListParams,
   options?: {
@@ -12906,11 +14168,19 @@ export const getListQueryOptions = <
 };
 
 export type ListQueryResult = NonNullable<Awaited<ReturnType<typeof list>>>;
-export type ListQueryError = unknown;
+export type ListQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useList<
   TData = Awaited<ReturnType<typeof list>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: undefined | ListParams,
   options: {
@@ -12933,7 +14203,11 @@ export function useList<
 };
 export function useList<
   TData = Awaited<ReturnType<typeof list>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListParams,
   options?: {
@@ -12956,7 +14230,11 @@ export function useList<
 };
 export function useList<
   TData = Awaited<ReturnType<typeof list>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListParams,
   options?: {
@@ -12975,7 +14253,11 @@ export function useList<
 
 export function useList<
   TData = Awaited<ReturnType<typeof list>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params?: ListParams,
   options?: {
@@ -13035,7 +14317,13 @@ export const getGetVocabularySuggestionsQueryKey = (
 
 export const getGetVocabularySuggestionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVocabularySuggestionsParams,
   options?: {
@@ -13068,11 +14356,23 @@ export const getGetVocabularySuggestionsQueryOptions = <
 export type GetVocabularySuggestionsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getVocabularySuggestions>>
 >;
-export type GetVocabularySuggestionsQueryError = unknown;
+export type GetVocabularySuggestionsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetVocabularySuggestions<
   TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVocabularySuggestionsParams,
   options: {
@@ -13099,7 +14399,13 @@ export function useGetVocabularySuggestions<
 };
 export function useGetVocabularySuggestions<
   TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVocabularySuggestionsParams,
   options?: {
@@ -13126,7 +14432,13 @@ export function useGetVocabularySuggestions<
 };
 export function useGetVocabularySuggestions<
   TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVocabularySuggestionsParams,
   options?: {
@@ -13149,7 +14461,13 @@ export function useGetVocabularySuggestions<
 
 export function useGetVocabularySuggestions<
   TData = Awaited<ReturnType<typeof getVocabularySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetVocabularySuggestionsParams,
   options?: {
@@ -13212,7 +14530,13 @@ export const getGetRelationshipSuggestionsQueryKey = (
 
 export const getGetRelationshipSuggestionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetRelationshipSuggestionsParams,
   options?: {
@@ -13246,11 +14570,23 @@ export const getGetRelationshipSuggestionsQueryOptions = <
 export type GetRelationshipSuggestionsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getRelationshipSuggestions>>
 >;
-export type GetRelationshipSuggestionsQueryError = unknown;
+export type GetRelationshipSuggestionsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetRelationshipSuggestions<
   TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetRelationshipSuggestionsParams,
   options: {
@@ -13277,7 +14613,13 @@ export function useGetRelationshipSuggestions<
 };
 export function useGetRelationshipSuggestions<
   TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetRelationshipSuggestionsParams,
   options?: {
@@ -13304,7 +14646,13 @@ export function useGetRelationshipSuggestions<
 };
 export function useGetRelationshipSuggestions<
   TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetRelationshipSuggestionsParams,
   options?: {
@@ -13327,7 +14675,13 @@ export function useGetRelationshipSuggestions<
 
 export function useGetRelationshipSuggestions<
   TData = Awaited<ReturnType<typeof getRelationshipSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetRelationshipSuggestionsParams,
   options?: {
@@ -13393,7 +14747,13 @@ export const getGetPropertySuggestionsQueryKey = (
 
 export const getGetPropertySuggestionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetPropertySuggestionsParams,
   options?: {
@@ -13426,11 +14786,23 @@ export const getGetPropertySuggestionsQueryOptions = <
 export type GetPropertySuggestionsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getPropertySuggestions>>
 >;
-export type GetPropertySuggestionsQueryError = unknown;
+export type GetPropertySuggestionsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetPropertySuggestions<
   TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetPropertySuggestionsParams,
   options: {
@@ -13457,7 +14829,13 @@ export function useGetPropertySuggestions<
 };
 export function useGetPropertySuggestions<
   TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetPropertySuggestionsParams,
   options?: {
@@ -13484,7 +14862,13 @@ export function useGetPropertySuggestions<
 };
 export function useGetPropertySuggestions<
   TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetPropertySuggestionsParams,
   options?: {
@@ -13507,7 +14891,13 @@ export function useGetPropertySuggestions<
 
 export function useGetPropertySuggestions<
   TData = Awaited<ReturnType<typeof getPropertySuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetPropertySuggestionsParams,
   options?: {
@@ -13569,7 +14959,13 @@ export const getGetClassSuggestionsQueryKey = (
 
 export const getGetClassSuggestionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getClassSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetClassSuggestionsParams,
   options?: {
@@ -13602,11 +14998,23 @@ export const getGetClassSuggestionsQueryOptions = <
 export type GetClassSuggestionsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getClassSuggestions>>
 >;
-export type GetClassSuggestionsQueryError = unknown;
+export type GetClassSuggestionsQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useGetClassSuggestions<
   TData = Awaited<ReturnType<typeof getClassSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetClassSuggestionsParams,
   options: {
@@ -13633,7 +15041,13 @@ export function useGetClassSuggestions<
 };
 export function useGetClassSuggestions<
   TData = Awaited<ReturnType<typeof getClassSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetClassSuggestionsParams,
   options?: {
@@ -13660,7 +15074,13 @@ export function useGetClassSuggestions<
 };
 export function useGetClassSuggestions<
   TData = Awaited<ReturnType<typeof getClassSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetClassSuggestionsParams,
   options?: {
@@ -13683,7 +15103,13 @@ export function useGetClassSuggestions<
 
 export function useGetClassSuggestions<
   TData = Awaited<ReturnType<typeof getClassSuggestions>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   params: GetClassSuggestionsParams,
   options?: {
@@ -13731,7 +15157,11 @@ export const getLastReportQueryKey = () => {
 
 export const getLastReportQueryOptions = <
   TData = Awaited<ReturnType<typeof lastReport>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof lastReport>>, TError, TData>
@@ -13756,11 +15186,19 @@ export const getLastReportQueryOptions = <
 export type LastReportQueryResult = NonNullable<
   Awaited<ReturnType<typeof lastReport>>
 >;
-export type LastReportQueryError = unknown;
+export type LastReportQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useLastReport<
   TData = Awaited<ReturnType<typeof lastReport>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options: {
     query: Partial<
@@ -13782,7 +15220,11 @@ export function useLastReport<
 };
 export function useLastReport<
   TData = Awaited<ReturnType<typeof lastReport>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -13804,7 +15246,11 @@ export function useLastReport<
 };
 export function useLastReport<
   TData = Awaited<ReturnType<typeof lastReport>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -13822,7 +15268,11 @@ export function useLastReport<
 
 export function useLastReport<
   TData = Awaited<ReturnType<typeof lastReport>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -13865,7 +15315,11 @@ export const getStatusQueryKey = () => {
 
 export const getStatusQueryOptions = <
   TData = Awaited<ReturnType<typeof status>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof status>>, TError, TData>
@@ -13888,11 +15342,19 @@ export const getStatusQueryOptions = <
 };
 
 export type StatusQueryResult = NonNullable<Awaited<ReturnType<typeof status>>>;
-export type StatusQueryError = unknown;
+export type StatusQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useStatus<
   TData = Awaited<ReturnType<typeof status>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options: {
     query: Partial<
@@ -13914,7 +15376,11 @@ export function useStatus<
 };
 export function useStatus<
   TData = Awaited<ReturnType<typeof status>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -13936,7 +15402,11 @@ export function useStatus<
 };
 export function useStatus<
   TData = Awaited<ReturnType<typeof status>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -13954,7 +15424,11 @@ export function useStatus<
 
 export function useStatus<
   TData = Awaited<ReturnType<typeof status>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -13997,7 +15471,11 @@ export const getFailedQueryKey = () => {
 
 export const getFailedQueryOptions = <
   TData = Awaited<ReturnType<typeof failed>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof failed>>, TError, TData>
@@ -14020,11 +15498,19 @@ export const getFailedQueryOptions = <
 };
 
 export type FailedQueryResult = NonNullable<Awaited<ReturnType<typeof failed>>>;
-export type FailedQueryError = unknown;
+export type FailedQueryError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 export function useFailed<
   TData = Awaited<ReturnType<typeof failed>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options: {
     query: Partial<
@@ -14046,7 +15532,11 @@ export function useFailed<
 };
 export function useFailed<
   TData = Awaited<ReturnType<typeof failed>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -14068,7 +15558,11 @@ export function useFailed<
 };
 export function useFailed<
   TData = Awaited<ReturnType<typeof failed>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -14086,7 +15580,11 @@ export function useFailed<
 
 export function useFailed<
   TData = Awaited<ReturnType<typeof failed>>,
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
 >(
   options?: {
     query?: Partial<
@@ -14125,7 +15623,13 @@ export const deleteOntology = (
 };
 
 export const getDeleteOntologyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -14166,12 +15670,27 @@ export type DeleteOntologyMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteOntology>>
 >;
 
-export type DeleteOntologyMutationError = unknown;
+export type DeleteOntologyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Smazání slovníku
  */
-export const useDeleteOntology = <TError = unknown, TContext = unknown>(
+export const useDeleteOntology = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteOntology>>,
@@ -14209,7 +15728,13 @@ export const deleteDiagram = (
 };
 
 export const getDeleteDiagramMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -14250,12 +15775,27 @@ export type DeleteDiagramMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteDiagram>>
 >;
 
-export type DeleteDiagramMutationError = unknown;
+export type DeleteDiagramMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Smazání diagramu
  */
-export const useDeleteDiagram = <TError = unknown, TContext = unknown>(
+export const useDeleteDiagram = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteDiagram>>,
@@ -14296,7 +15836,13 @@ export const removeLocalCopy = (
 };
 
 export const getRemoveLocalCopyMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -14337,12 +15883,27 @@ export type RemoveLocalCopyMutationResult = NonNullable<
   Awaited<ReturnType<typeof removeLocalCopy>>
 >;
 
-export type RemoveLocalCopyMutationError = unknown;
+export type RemoveLocalCopyMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Odstranění lokální kopie NKD pojmu
  */
-export const useRemoveLocalCopy = <TError = unknown, TContext = unknown>(
+export const useRemoveLocalCopy = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof removeLocalCopy>>,
@@ -14379,7 +15940,13 @@ export const deleteConcept = (
 };
 
 export const getDeleteConceptMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -14420,12 +15987,27 @@ export type DeleteConceptMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteConcept>>
 >;
 
-export type DeleteConceptMutationError = unknown;
+export type DeleteConceptMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Smazání pojmu
  */
-export const useDeleteConcept = <TError = unknown, TContext = unknown>(
+export const useDeleteConcept = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteConcept>>,
@@ -14462,7 +16044,13 @@ export const deleteComment = (
 };
 
 export const getDeleteCommentMutationOptions = <
-  TError = unknown,
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -14503,12 +16091,27 @@ export type DeleteCommentMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteComment>>
 >;
 
-export type DeleteCommentMutationError = unknown;
+export type DeleteCommentMutationError =
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse
+  | ApiErrorResponse;
 
 /**
  * @summary Smazání komentáře
  */
-export const useDeleteComment = <TError = unknown, TContext = unknown>(
+export const useDeleteComment = <
+  TError =
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse
+    | ApiErrorResponse,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteComment>>,

@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 
 import { useGetConceptDetail } from '@/api/generated';
@@ -27,6 +28,16 @@ export const ConceptContent = ({ slug }: Props) => {
 
   if (isQueryLoading(concept)) {
     return <PageLoader />;
+  }
+
+  if (concept.error) {
+    if (
+      axios.isAxiosError(concept.error) &&
+      concept.error.response?.status === 404
+    ) {
+      return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
+    }
+    throw concept.error;
   }
 
   if (!concept.data) {

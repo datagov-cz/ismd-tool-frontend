@@ -66,7 +66,7 @@ export const VisitedOntologies = () => {
     .map((e) => e.slug);
 
   const { data: ismd, isLoading: isLoadingISMD } = useGetOntologyList(
-    { slugs: ismdSlugs },
+    { slugs: ismdSlugs.slice(0, 6), limit: 6 },
     { query: { enabled: ismdSlugs.length > 0 } },
   );
 
@@ -75,7 +75,7 @@ export const VisitedOntologies = () => {
     { query: { enabled: nkdIris.length > 0 } },
   );
 
-  const ismdOntologies = (ismd?.data ?? []).flatMap((item) =>
+  const ismdOntologies = (ismd?.data?.items ?? []).flatMap((item) =>
     item.id
       ? [
           {

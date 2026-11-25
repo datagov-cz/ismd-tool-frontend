@@ -14,7 +14,7 @@ export const DraftDictionariesSection = () => {
   const { user } = useCurrentUser();
 
   const ontologies = useGetOntologyList(
-    { userId: user?.userId },
+    { userId: user?.userId, sort: 'UPDATED', limit: 8 },
     { query: { enabled: !!user?.userId } },
   );
 
@@ -36,43 +36,30 @@ export const DraftDictionariesSection = () => {
         {isLoading ? (
           <CircularLoader />
         ) : (
-          ontologies.data?.data
-            ?.slice()
-            .sort((a, b) => {
-              const aUpdatedAt = a.updatedAt
-                ? new Date(a.updatedAt).getTime()
-                : 0;
-              const bUpdatedAt = b.updatedAt
-                ? new Date(b.updatedAt).getTime()
-                : 0;
-
-              return (bUpdatedAt || 0) - (aUpdatedAt || 0);
-            })
-            ?.slice(0, 8)
-            .map(
-              ({ id, name, slug, popis, conceptCount, updatedAt }) =>
-                id &&
-                name && (
-                  <DictionaryCard
-                    type="ISMD"
-                    key={id}
-                    title=""
-                    titleTranslations={name}
-                    link={`/dictionary/${slug}`}
-                    textTranslations={popis}
-                    concepts={conceptCount ?? 0}
-                    modified={updatedAt ? new Date(updatedAt) : undefined}
-                    id={id}
-                    isPublished={false}
-                  />
-                ),
-            )
+          ontologies.data?.data?.items.map(
+            ({ id, name, slug, popis, conceptCount, updatedAt }) =>
+              id &&
+              name && (
+                <DictionaryCard
+                  type="ISMD"
+                  key={id}
+                  title=""
+                  titleTranslations={name}
+                  link={`/dictionary/${slug}`}
+                  textTranslations={popis}
+                  concepts={conceptCount ?? 0}
+                  modified={updatedAt ? new Date(updatedAt) : undefined}
+                  id={id}
+                  isPublished={false}
+                />
+              ),
+          )
         )}
       </div>
       <div className="w-full flex items-center justify-center">
         {!isLoading &&
           ontologies?.data?.data &&
-          ontologies.data.data.length > 1 && (
+          ontologies.data.data.totalCount > 1 && (
             <GovButton
               size="m"
               type="outlined"
@@ -82,7 +69,7 @@ export const DraftDictionariesSection = () => {
               iconEnd={<GovIcon name="arrow-right" />}
             >
               {t('DraftDictionariesSection.ShowAll')} (
-              {ontologies.data.data.length})
+              {ontologies.data.data.totalCount})
             </GovButton>
           )}
       </div>
