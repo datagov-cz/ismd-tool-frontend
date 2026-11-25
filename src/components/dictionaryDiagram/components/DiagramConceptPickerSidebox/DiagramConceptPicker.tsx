@@ -137,6 +137,7 @@ export const DiagramConceptPicker = ({
   diagramParentByConceptId,
   onActiveConceptClick,
   pendingEdits,
+  canEditDiagram,
   pendingEditsOpen,
   onPendingEditsOpenChange,
 }: {
@@ -147,6 +148,7 @@ export const DiagramConceptPicker = ({
   diagramParentByConceptId: Map<string, string>;
   onActiveConceptClick: (_conceptId: string) => void;
   pendingEdits: DiagramPendingEditEntry[];
+  canEditDiagram: boolean;
   pendingEditsOpen: boolean;
   onPendingEditsOpenChange: (_open: boolean) => void;
 }) => {
@@ -233,12 +235,14 @@ export const DiagramConceptPicker = ({
 
   return (
     <aside className="flex-300 flex min-h-0 flex-col gap-2">
-      <PendingEditsPanel
-        edits={pendingEdits}
-        concepts={concepts}
-        open={pendingEditsOpen}
-        onOpenChange={onPendingEditsOpenChange}
-      />
+      {canEditDiagram && (
+        <PendingEditsPanel
+          edits={pendingEdits}
+          concepts={concepts}
+          open={pendingEditsOpen}
+          onOpenChange={onPendingEditsOpenChange}
+        />
+      )}
       <div className="min-h-0 bg-white dark:bg-diagram-surface shadow-subtle rounded-md py-2 px-4">
         <PickerTabs
           items={[

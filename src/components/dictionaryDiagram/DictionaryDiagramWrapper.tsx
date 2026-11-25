@@ -12,6 +12,7 @@ import {
   useGetOntologyDetail,
   useRenameDiagram,
 } from '@/api/generated';
+import { useCurrentUser } from '@/components/contexts/CurrentUserProvider';
 import { useQueryInvalidator } from '@/hooks/useQueryInvalidator';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { isQueryLoading } from '@/lib/query';
@@ -38,9 +39,14 @@ export const DictionaryDiagramWrapper = ({
   const encodedSlug = encodeURIComponent(slug);
   const diagram = useGetDiagram(encodedSlug, id);
   const ontology = useGetOntologyDetail(encodedSlug);
+  const { user, isAdmin, isLoading: isCurrentUserLoading } = useCurrentUser();
   const { invalidateDiagram } = useQueryInvalidator();
 
   const { ontologyName, concepts } = useDiagramConcepts(ontology.data);
+  const ontologyOwnerId = ontology.data?.data?.ontologyMetadata?.user?.userId;
+  const canEditDiagram =
+    !isCurrentUserLoading &&
+    (isAdmin || (!!user?.userId && user.userId === ontologyOwnerId));
   const hydratedDiagram = diagram.data?.data;
   const foreignConceptIris = useMemo(() => {
     const iris = (hydratedDiagram?.nodes ?? []).flatMap((node) => {
@@ -320,6 +326,7 @@ export const DictionaryDiagramWrapper = ({
         removedOverlays={removedOverlays}
         diagramVersion={hydratedDiagram.version}
         hasUnsavedChanges={hasUnsavedChanges}
+        canEditDiagram={canEditDiagram}
         onLayoutSaved={(expected, saved) =>
           dispatch({
             type: 'layoutSaved',
@@ -340,6 +347,7 @@ export const DictionaryDiagramWrapper = ({
             setFocusRequest({ conceptId, requestId: Date.now() })
           }
           pendingEdits={hydratedDiagram.pendingEdits ?? []}
+          canEditDiagram={canEditDiagram}
           pendingEditsOpen={pendingEditsOpen}
           onPendingEditsOpenChange={setPendingEditsOpen}
         />
@@ -348,7 +356,7 @@ export const DictionaryDiagramWrapper = ({
           concepts={concepts}
           nodes={nodes}
           edges={edges}
-          autoLayout={shouldGenerateInitialLayout}
+          autoLayout={canEditDiagram && shouldGenerateInitialLayout}
           dispatch={dispatch}
           ontology={slug}
           ontologyName={ontologyName}
@@ -359,6 +367,7 @@ export const DictionaryDiagramWrapper = ({
           onSelectedConceptIdsChange={setSelectedConceptIds}
           pendingConceptIds={pendingConceptIds}
           pendingEdgeIds={pendingEdgeIds}
+          canEditDiagram={canEditDiagram}
           diagramName={hydratedDiagram.name}
           renamingDiagram={renameDiagram.isPending}
           onRenameDiagram={handleRenameDiagram}

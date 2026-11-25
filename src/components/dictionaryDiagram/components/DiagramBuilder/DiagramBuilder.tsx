@@ -25,6 +25,7 @@ export type DiagramBuilderProps = {
   onSelectedConceptIdsChange: (_conceptIds: Set<string>) => void;
   pendingConceptIds: ReadonlySet<string>;
   pendingEdgeIds: ReadonlySet<string>;
+  canEditDiagram: boolean;
   diagramName?: string;
   renamingDiagram: boolean;
   onRenameDiagram: (_name: string) => Promise<void>;

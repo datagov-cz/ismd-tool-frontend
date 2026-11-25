@@ -518,6 +518,8 @@
   "Errors": {
     "UnknownError": "Neznámý error",
     "OfnWriteNonconformant": "Změny se nepodařilo uložit. Nahlaste prosím tento problém správci.",
+    "ServerBusy": "Služba je právě vytížená. Zkuste to prosím za chvíli znovu.",
+    "OntologyCreationConflict": "Slovník právě zpracovává předchozí změny. Zkuste nahrání zopakovat později.",
     "NameRequired": "Název je povinný",
     "CSNameRequired": "Název (CS) je povinný"
   },

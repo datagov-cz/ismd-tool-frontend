@@ -9,6 +9,7 @@ type DiagramTopBarProps = {
   onExport?: () => void;
   diagramName?: string;
   renaming: boolean;
+  canRename?: boolean;
   onRename: (_name: string) => Promise<void>;
   onHelp?: () => void;
 };
@@ -17,6 +18,7 @@ export const DiagramTopBar = ({
   onExport,
   diagramName,
   renaming,
+  canRename = true,
   onRename,
   onHelp,
 }: DiagramTopBarProps) => {
@@ -52,7 +54,7 @@ export const DiagramTopBar = ({
       position="top-right"
       className="border border-gray-border/50 dark:border-diagram-border rounded-sm bg-white dark:bg-diagram-surface text-blue-hover dark:text-gray-100 font-bold flex text-sm divide-x divide-gray-border/50 dark:divide-diagram-border max-[1100px]:left-0! max-[1100px]:top-10! max-[1100px]:right-auto!"
     >
-      {editingName ? (
+      {canRename && editingName ? (
         <div className="nodrag nopan relative flex items-center gap-2 px-2 py-1">
           <input
             autoFocus
@@ -92,7 +94,7 @@ export const DiagramTopBar = ({
             </span>
           )}
         </div>
-      ) : (
+      ) : canRename ? (
         <ToolbarButton
           trailingIcon="pencil-square"
           label={diagramName?.trim() || t('OptionalName')}
@@ -102,6 +104,10 @@ export const DiagramTopBar = ({
             setEditingName(true);
           }}
         />
+      ) : (
+        <span className="px-3 py-2 text-sm">
+          {diagramName?.trim() || t('OptionalName')}
+        </span>
       )}
 
       <ToolbarButton
