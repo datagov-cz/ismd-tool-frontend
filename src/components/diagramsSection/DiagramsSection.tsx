@@ -14,7 +14,7 @@ export const DiagramsSection = () => {
   const { user } = useCurrentUser();
 
   const diagrams = useGetAllDiagrams(
-    { userId: user?.userId },
+    { userId: user?.userId, limit: 8 },
     { query: { enabled: !!user?.userId } },
   );
 
@@ -35,37 +35,22 @@ export const DiagramsSection = () => {
         {isLoading ? (
           <CircularLoader />
         ) : (
-          diagrams.data?.data
-            ?.slice()
-            .sort((a, b) => {
-              const aUpdatedAt = a.updatedAt
-                ? new Date(a.updatedAt).getTime()
-                : 0;
-              const bUpdatedAt = b.updatedAt
-                ? new Date(b.updatedAt).getTime()
-                : 0;
-
-              return (bUpdatedAt || 0) - (aUpdatedAt || 0);
-            })
-            ?.slice(0, 8)
-            .map(
-              ({ diagramId, name, updatedAt, ontologySlug, ontologyLabel }) =>
-                diagramId &&
-                name && (
-                  <DiagramCard
-                    key={diagramId}
-                    title={name}
-                    link={`/dictionary/${ontologySlug}/diagram/${diagramId}`}
-                    modified={updatedAt ? new Date(updatedAt) : undefined}
-                    ontologyName={
-                      ontologyLabel?.cs ??
-                      ontologyLabel?.sk ??
-                      ontologyLabel?.en
-                    }
-                    ontologySlug={ontologySlug}
-                  />
-                ),
-            )
+          diagrams.data?.data?.items.map(
+            ({ diagramId, name, updatedAt, ontologySlug, ontologyLabel }) =>
+              diagramId &&
+              name && (
+                <DiagramCard
+                  key={diagramId}
+                  title={name}
+                  link={`/dictionary/${ontologySlug}/diagram/${diagramId}`}
+                  modified={updatedAt ? new Date(updatedAt) : undefined}
+                  ontologyName={
+                    ontologyLabel?.cs ?? ontologyLabel?.sk ?? ontologyLabel?.en
+                  }
+                  ontologySlug={ontologySlug}
+                />
+              ),
+          )
         )}
       </div>
     </div>

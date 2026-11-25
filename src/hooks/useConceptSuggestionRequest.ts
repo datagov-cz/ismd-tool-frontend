@@ -22,12 +22,13 @@ const ready = (
 
 const useDictionarySlugOfConcept = (conceptIri?: string) => {
   const dictionaryIri = conceptIri ? dictionaryIriOfConcept(conceptIri) : null;
-  const { data, isLoading } = useGetOntologyList(undefined, {
-    query: { enabled: !!dictionaryIri },
-  });
-  const dictionary = dictionaryIri
-    ? data?.data?.find((ontology) => ontology.graphName === dictionaryIri)
-    : undefined;
+  const { data, isLoading } = useGetOntologyList(
+    { graphName: dictionaryIri ?? undefined, limit: 1 },
+    {
+      query: { enabled: !!dictionaryIri },
+    },
+  );
+  const dictionary = data?.data?.items?.[0];
 
   return { slug: dictionary?.slug, isLoading: !!dictionaryIri && isLoading };
 };

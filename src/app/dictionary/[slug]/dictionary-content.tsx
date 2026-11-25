@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 
 import { ConceptDetailModel, useGetOntologyDetail } from '@/api/generated';
@@ -31,6 +32,16 @@ export const DictionaryContent = ({ slug }: Props) => {
 
   if (isQueryLoading(ontology)) {
     return <PageLoader />;
+  }
+
+  if (ontology.error) {
+    if (
+      axios.isAxiosError(ontology.error) &&
+      ontology.error.response?.status === 404
+    ) {
+      return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
+    }
+    throw ontology.error;
   }
 
   if (!ontologyDetail || !ontologyMetadata) {

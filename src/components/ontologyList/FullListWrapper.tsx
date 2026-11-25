@@ -4,10 +4,10 @@ import { useMemo, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import {
+  getOntologyList,
   listAllNkdOntologies,
   NkdOntologyListItemDto,
   OntologySummaryDto,
-  useGetOntologyList,
 } from '@/api/generated';
 import {
   DictionaryCardProps,
@@ -60,7 +60,29 @@ const nkdToCardItem = (
 
 export const FullListWrapper = () => {
   const [filterQuery, setFilterQuery] = useState('');
-  const { data: ismdData, isFetching: isFetchingISMD } = useGetOntologyList();
+  const {
+    data: ismdData,
+    isLoading: isLoadingISMD,
+    isFetchingNextPage: isFetchingNextISMD,
+    fetchNextPage: fetchNextISMD,
+    hasNextPage: hasNextISMD,
+  } = useInfiniteQuery({
+    queryKey: ['ontology-list', 'all', filterQuery.trim()],
+    queryFn: ({ pageParam }) =>
+      getOntologyList({
+        q: filterQuery.trim() || undefined,
+        limit: LIMIT,
+        offset: pageParam,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      const page = lastPage.data;
+      if (!page || page.offset + page.items.length >= page.totalCount) {
+        return undefined;
+      }
+      return page.offset + page.items.length;
+    },
+  });
   const {
     data: nkdData,
     isLoading: isLoadingNKD,
@@ -84,7 +106,10 @@ export const FullListWrapper = () => {
   });
 
   const items = useMemo(() => {
-    const ismdItems = (ismdData?.data ?? []).map(ismdToCardItem);
+    const ismdItems =
+      ismdData?.pages
+        .flatMap((page) => page.data?.items ?? [])
+        .map(ismdToCardItem) ?? [];
     const nkdItems =
       nkdData?.pages
         .flatMap((page) => page.data?.ontologies ?? [])
@@ -95,6 +120,7 @@ export const FullListWrapper = () => {
       .filter((item): item is DictionaryCardProps => item !== null)
       .filter(
         (item) =>
+          item.type === 'ISMD' ||
           !normalizedQuery ||
           item.title.toLocaleLowerCase('cs').includes(normalizedQuery) ||
           item.text?.toLocaleLowerCase('cs').includes(normalizedQuery),
@@ -104,9 +130,17 @@ export const FullListWrapper = () => {
   return (
     <OntologyList
       items={items}
-      isFetching={isFetchingISMD || isLoadingNKD || isFetchingNextPage}
-      hasMore={hasNextPage}
-      onLoadMore={() => fetchNextPage()}
+      isFetching={
+        isLoadingISMD ||
+        isFetchingNextISMD ||
+        isLoadingNKD ||
+        isFetchingNextPage
+      }
+      hasMore={hasNextISMD || hasNextPage}
+      onLoadMore={() => {
+        if (hasNextISMD) void fetchNextISMD();
+        if (hasNextPage) void fetchNextPage();
+      }}
       filterQuery={filterQuery}
       onFilterChange={setFilterQuery}
     />

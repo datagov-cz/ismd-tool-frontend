@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { OntologySummaryDto, useGetOntologyList } from '@/api/generated';
+import { getOntologyList, OntologySummaryDto } from '@/api/generated';
 import { useCurrentUser } from '../contexts/CurrentUserProvider';
 import {
   DictionaryCardProps,
@@ -28,31 +28,36 @@ const toCardItem = (item: OntologySummaryDto): DictionaryCardProps | null => {
 };
 
 export const ISMDListWrapper = () => {
-  const [filterQuery, setFilterQuery] = useState('');
   const { user } = useCurrentUser();
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['ontology-list', 'user', user?.userId],
+      queryFn: ({ pageParam }) =>
+        getOntologyList({ userId: user?.userId, limit: 20, offset: pageParam }),
+      initialPageParam: 0,
+      enabled: !!user?.userId,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data;
+        if (!page || page.offset + page.items.length >= page.totalCount) {
+          return undefined;
+        }
+        return page.offset + page.items.length;
+      },
+    });
 
-  const { data, isFetching } = useGetOntologyList(
-    { userId: user?.userId },
-    { query: { enabled: !!user?.userId } },
-  );
-
-  const items = (data?.data ?? [])
+  const items = (data?.pages.flatMap((page) => page.data?.items ?? []) ?? [])
     .map(toCardItem)
-    .filter((item): item is DictionaryCardProps => item !== null)
-    .filter(
-      (item) =>
-        !filterQuery ||
-        item.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
-        item.text?.toLowerCase().includes(filterQuery.toLowerCase()),
-    );
+    .filter((item): item is DictionaryCardProps => item !== null);
 
   return (
     <OntologyList
       type="ISMD"
       items={items}
-      isFetching={isFetching}
-      filterQuery={filterQuery}
-      onFilterChange={setFilterQuery}
+      isFetching={isLoading || isFetchingNextPage}
+      hasMore={hasNextPage}
+      onLoadMore={() => fetchNextPage()}
+      filterQuery=""
+      onFilterChange={() => undefined}
     />
   );
 };

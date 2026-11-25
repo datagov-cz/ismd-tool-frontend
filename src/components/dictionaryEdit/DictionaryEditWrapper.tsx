@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 
 import { useGetOntologyDetail } from '@/api/generated';
@@ -17,6 +18,16 @@ export const DictionaryEditWrapper = ({ slug }: { slug: string }) => {
 
   if (isQueryLoading(ontology)) {
     return <PageLoader />;
+  }
+
+  if (ontology.error) {
+    if (
+      axios.isAxiosError(ontology.error) &&
+      ontology.error.response?.status === 404
+    ) {
+      return <NotFoundState title={t('NotFound')} backLabel={t('Back')} />;
+    }
+    throw ontology.error;
   }
 
   if (!ontologyDetail || !ontologyMetadata?.id) {
